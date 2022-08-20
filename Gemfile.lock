@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/heartcombo/simple_form.git
-  revision: 31fe25504771bd6cd425b585a4e0ed652fba4521
+  revision: 1b3e91036a948eb532d14bfde01b4d5bd79b3523
   specs:
     simple_form (5.1.0)
       actionpack (>= 5.2)
@@ -254,6 +254,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-20
+  x86_64-darwin-21
   x86_64-linux
 
 DEPENDENCIES
@@ -281,7 +282,7 @@ DEPENDENCIES
   webdrivers
 
 RUBY VERSION
-   ruby 2.7.0p0
+   ruby 3.0.0p0
 
 BUNDLED WITH
    2.3.20
