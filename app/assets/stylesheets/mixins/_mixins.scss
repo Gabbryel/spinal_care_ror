@@ -1,0 +1,59 @@
+@mixin custom-form {
+  display: grid;
+  position: relative;
+  justify-items: center;
+  align-items: center;
+  grid-template-columns: 5fr 1fr;
+  gap: 10px;
+  border-radius: 7px;
+  padding: 10px 30px;
+  border: 1px solid $grey-spinal;
+}
+
+@mixin shape-svg {
+  position: relative;
+  grid-area: 2 / 1 / 6 / 13;
+  opacity: .6;
+  @media (min-width: 768px) and (orientation: portrait) {
+    grid-area: 2 / 2 / 6 / 12;
+  }
+  @media (min-width: 768px) and (orientation: landscape) {
+    grid-area:  1 / 7 / 5 / 13;
+  }
+  @media (min-width: 1024px) and (orientation: landscape) {
+    grid-area: 1 / 7 / 5 / 13;
+    justify-self: center;
+  }
+  @media (min-width: 1024px) {
+    grid-area: 2 / 7 / 5 / 13;
+  }
+}
+
+@mixin mottos {
+  position: relative;
+    font-size: clamp(20px, calc(var(--vh) * 2), 40px);
+    p {
+      display: block;
+      color: $color-1;
+      background-color: $color-contrast;
+      padding: 30px;
+      width: 80%;
+      min-height: fit-content;
+      margin: -50px auto 0;
+      border-radius: 20px;
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: bolder;
+      font-size: inherit;
+      &:nth-child(2) {
+        font-size: .6em;
+      }
+    }
+    @media (min-width: 768px) and (orientation: portrait) {
+      font-size: clamp(26px, calc(var(--vh) * 3), 60px);
+    }
+    @media (min-width: 768px) and (orientation: landscape) {
+      font-size: clamp(26px, calc(var(--vh) * 4), 50px);
+      align-self: center;
+    }
+}

@@ -1,12 +1,41 @@
 .navbar-lewagon {
   justify-content: space-between;
-  background: white;
+  background: $white-spinal;
+  height: calc(var(--vh) * 9);
 }
 
 .navbar-lewagon .navbar-collapse {
   flex-grow: 0;
 }
 
+.navbar-collapse, .dropdown-menu {
+  z-index: 11;
+  text-align: center;
+  background-color: #ffffff50;
+  border: none;
+}
+
 .navbar-lewagon .navbar-brand img {
-  width: 40px;
+  height: calc(var(--vh) * 6);
+  @media(min-width: 576px) {
+    height: calc(var(--vh) * 7);
+  }
+}
+
+.featurette-heading {
+  color: $blue-spinal;
+  span {
+    color: $green-spinal;
+  }
+}
+
+.featurette-divider {
+  background-color: $blue-spinal;
+  hr {
+    height: 3px !important;
+  }
+}
+
+.dropdown-menu {
+  background-color: #ffffff00
 }

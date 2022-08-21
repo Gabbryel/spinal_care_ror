@@ -1,0 +1,12 @@
+footer {
+  min-height: calc(var(--vh) * 11);
+  background: $white-spinal;
+}
+
+.nav {
+  li a {
+    &:hover {
+      color: $blue-spinal !important;
+    }
+  }
+}

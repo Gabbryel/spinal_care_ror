@@ -1,0 +1,204 @@
+.team-members-admin {
+  width: 100%;
+  .form-group {
+    display: flex;
+    align-items: center;
+    .form-control, .form-control::placeholder {
+      font-size: 0.875rem;
+      height: 20px;
+      background-color: #ffffff00;
+      border: none;
+      color: $grey-spinal;
+    }
+    .form-control.is-valid {
+      background: none;
+      color: darkgreen;
+    }
+  }
+  h3 {
+    text-align: left;
+    color: $grey-spinal;
+  }
+}
+
+.professions-section {
+  background-color: #bebebe;
+}
+
+.specialties-section {
+  background-color: #cecece;
+}
+
+.members-section {
+  background-color: #bfbfbf;
+}
+
+.profession-form, .specialties-form {
+  width: 30%;
+  min-width: 300px;
+  max-width: 400px;
+  form {
+    @include custom-form;
+  }
+}
+
+
+.professions-index, .specialties-index {
+  form {
+    @include custom-form;
+    grid-template-columns: 4fr 1fr;
+    gap: 10px;
+  }
+}
+
+.professions-index, .specialties-index {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+  row-gap: 20px;
+  form {
+    @include custom-form;
+    grid-template-columns: 8fr repeat(2, 1fr);
+  }
+}
+
+.professions-each, .specialties-each {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 20px;
+  form {
+    @include custom-form;
+    padding: 5px 15px;
+    width: 230px;
+    grid-template-columns: 8fr repeat(2, 1fr);
+  }
+}
+
+
+.member-index {
+  position: relative;
+  width: 100%;
+  padding: 30px;
+  display: grid;
+  grid-template-columns: repeat( auto-fit, minmax(300px, 1fr));
+  grid-template-rows: auto;
+  justify-items: center;
+  align-items: center;
+  gap: 50px 0;
+  @media(min-width: 1024px) {
+    gap: 30px;
+  }
+}
+
+.member-card {
+  position: relative;
+  display: grid;
+  height: 400px;
+  width: 280px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  grid-template-columns: 1fr;
+  grid-template-rows: 5fr 1fr;
+  text-align: center;
+  border: 1px solid $green-spinal;
+  border-radius: 10px;
+  transition: .6s ease-out;
+  overflow: visible;
+  a {
+    text-decoration: none;
+  }
+}
+.member_card__details {
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  background-color: $white-spinal-transparent;
+  border-radius: 0 0 10px 10px;
+  align-items: center;
+  color: $blue-spinal;
+  h3, p {
+    margin: 0;
+    font-weight: 700;
+  }
+}
+
+.member_card__crud {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: $white-spinal-transparent;
+  padding: 5px 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 10px;
+}
+
+.card-button {
+  transform: translate(-50%, 125%);
+  width: 60%;
+  border-radius: 1rem;
+  border: none;
+  background-color: $blue-spinal;
+  color: #fff;
+  font-size: 1rem;
+  padding: .5rem 1rem;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  opacity: 0;
+  transition: .6s ease-out;
+ }
+
+ .member-card:hover {
+  border: 3px solid $blue-spinal;
+  box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
+ }
+ 
+ .member-card:hover .card-button {
+  transform: translate(-50%, 50%);
+  opacity: 1;
+  color: $white-spinal;
+ }
+
+ .member-new-form-container,
+ .member-edit-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 100px 0;
+ }
+
+ .new_member_form {
+  position: relative;
+  z-index: 101;
+  width: 270px;
+  height: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  border-radius: 30px;
+  background: #ffffff00;
+  padding: 40px 60px;
+  color: $grey-spinal;
+  border: 1px solid $grey-spinal;
+  .form-control {
+    padding: 0;
+  }
+  @media(min-width: 768px) {
+    width: 500px;
+    }
+  }
+
+  .member-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(5, 1fr);
+    gap: 1rem 0;
+    .cancel-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+    }
+  }
+
+

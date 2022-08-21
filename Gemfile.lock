@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/heartcombo/simple_form.git
-  revision: 1b3e91036a948eb532d14bfde01b4d5bd79b3523
+  revision: 31fe25504771bd6cd425b585a4e0ed652fba4521
   specs:
     simple_form (5.1.0)
       actionpack (>= 5.2)
@@ -154,8 +154,6 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.13.8-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.13.8-x86_64-linux)
-      racc (~> 1.4)
     orm_adapter (0.5.0)
     pg (1.4.3)
     public_suffix (5.0.0)
@@ -253,9 +251,7 @@ GEM
     zeitwerk (2.6.0)
 
 PLATFORMS
-  x86_64-darwin-20
   x86_64-darwin-21
-  x86_64-linux
 
 DEPENDENCIES
   autoprefixer-rails

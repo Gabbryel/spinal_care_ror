@@ -1,0 +1,23 @@
+<div class="main-attractions">
+  <div id="main-attractions-motto">
+    <p>De ce <br>
+    <span>Spinal Care</span>?</p>
+  </div>
+  <!-- <div id="main-photo-image">
+    <%= image_tag('photo-break.png') %>
+  </div> -->
+  <div id="main-attractions-cards">
+    <% cards.each do |c| %>
+      <div class="info-card">
+        <div class="info-card_icon">
+          <%= c[:icon].html_safe %>
+        </div>
+        <div class="info-card_title"><p><%= c[:title] %> </p></div>
+        <div class="info-card_main">
+          <p><%= c[:content] %> </p>
+        </div>
+        <%= link_to 'Vezi mai multe...', "#" %>
+      </div>
+    <% end %>
+  </div>
+</div>

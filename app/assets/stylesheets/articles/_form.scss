@@ -1,0 +1,19 @@
+#new_article {
+  position: relative;
+  width: 90%;
+  margin: 0 auto;
+  background-color: $white-spinal;
+}
+
+.article-form {
+  width: 100%;
+  .new_article {
+    padding: 50px;
+  }
+}
+
+.article_title, .article_member {
+  .form-control {
+    width: 300px;
+  }
+}
