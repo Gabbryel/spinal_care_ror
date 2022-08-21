@@ -7,9 +7,9 @@
     <%= image_tag('photo-break.png') %>
   </div> -->
   <div id="main-attractions-cards">
-    <% cards.each do |c| %>
-      <div class="info-card">
-        <div class="info-card_icon">
+    <% cards.each_with_index do |c, i| %>
+      <div class="info-card" data-controller="animation hello" data-action="scroll@window->animation#svgscroll" style="transition: <%=i + 0.5%>s">
+        <div class="info-card_icon" >
           <%= c[:icon].html_safe %>
         </div>
         <div class="info-card_title"><p><%= c[:title] %> </p></div>

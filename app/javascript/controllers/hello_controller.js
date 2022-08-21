@@ -2,6 +2,8 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   connect() {
-    console.log('hello')
+    window.onscroll = () => {
+      console.log(this.element.getBoundingClientRect().top, window.innerHeight)
+    }
   }
 }

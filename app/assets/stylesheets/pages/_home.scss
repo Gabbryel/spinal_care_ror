@@ -18,35 +18,17 @@
     @include shape-svg;
   }
 
-  @keyframes main-shape-1 {
-    from {
-      opacity: 0;
-      transform: translateY(-100px);
-    }
-    to {
-      transform: translate(0);
-    }
+  #shape-svg-1 {
+    transform: translateY(-400px);
+  }
+  #shape-svg-2 {
+    transform: translateX(-400px);
   }
 
-  @keyframes main-shape-2 {
-    from {
-      opacity: 0;
-      transform: translateY(100px);
-    }
-    to {
-      transform: translate(0);
-    }
-  }
-
-  @keyframes main-image {
-    0% {
-      opacity: 0;
-      transform: translate(-400px);
-    }
-    100% {
-      opacity: 1;
-      transform: translate(0);
-    }
+  #shape-svg-1.active-svg,
+  #shape-svg-2.active-svg {
+    opacity: .6;
+    transform: translate(0);
   }
 
   @keyframes main-motto {
@@ -59,14 +41,6 @@
       transform: translate(0);
     }
   }
-  #shape-svg-1 {
-    margin-top: -4px;
-    animation: main-shape-1 2s;
-  }
-  #shape-svg-2 {
-    opacity: 1;
-    animation: main-shape-2 2s;
-  }
   #main-image {
     position: relative;
     grid-area: 3 / 2 / 7 / 12;
@@ -74,7 +48,9 @@
     border-radius: 50%;
     overflow: hidden;
     aspect-ratio: 1 / 1;
-    animation: main-image 2s;
+    opacity: 0;
+    transform: translateY(400px);
+    transition: 2s;
     img {
       min-height: 100%;
       width: 100%;
@@ -88,6 +64,10 @@
     @media (min-width: 1024px) and (orientation: landscape) {
       grid-area: 3 / 8 / 8 / 12;
     }
+  }
+  #main-image.active-svg {
+    opacity: 1;
+    transform: translate(0);
   }
 
   .main-motto-dark {
@@ -209,6 +189,8 @@
       align-items: center;
       padding-top: 40px;
       width: 300px;
+      opacity: 0;
+      transform: translateY(500px);
       @media (min-width: 1080px) {
         width: 230px;
       }
@@ -251,6 +233,10 @@
         font-size: 14px;
         color: $color-contrast;
       }
+    }
+    .info-card.active-svg {
+      opacity: 1;
+      transform: translate(0);
     }
   }
 }
