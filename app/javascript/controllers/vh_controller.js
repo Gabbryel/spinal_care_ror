@@ -9,7 +9,6 @@ export default class extends Controller {
     document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
   }
   windowResize({ width, height, event }) {
-    console.log(height)
     document.documentElement.style.setProperty("--vh", `${height * 0.01}px`);
   }
 }

@@ -1,0 +1,25 @@
+.main-info {
+  position: relative;
+  grid-area: 3 / 1 / 4 / -1;
+  background-color: $color-contrast;
+  padding: 20px 40px;
+  text-align: center;
+  font-size: clamp(16px, 2rem, 24px);
+  font-weight: 900;
+  @media(min-width: 768px) {
+    padding: 50px 100px;
+    font-size: clamp(18px, 2.5rem, 30px);
+  }
+  @media(min-width: 1024px) {
+    padding: 10vh 10vw;
+  }
+  p {
+    color: $color-1;
+    span {
+      color: $color-2;
+    }
+    @media(min-width: 1024px) {
+      font-size: clamp(16px, calc(var(--vh) * 4), 48px);
+    }
+  }
+}
