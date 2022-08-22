@@ -5,11 +5,12 @@ export default class extends Controller {
     this.element.classList.add('active-svg')
   }
   svgscroll() {
-    let windowHeight = window.innerHeight;
-        let distanceFromTop = this.element.getBoundingClientRect().bottom;
-        if (distanceFromTop > windowHeight * (-0.1)) {
-          this.element.classList.add('active-svg')
-        } else if (distanceFromTop < windowHeight * (0.1)) {
-          this.element.classList.remove('active-svg')
-    }}
+    if (window.innerHeight < this.element.getBoundingClientRect().top) {
+      this.element.classList.remove('active-svg')
+    } else if (window.innerHeight > this.element.getBoundingClientRect().top && this.element.getBoundingClientRect().bottom > 0) {
+      this.element.classList.add('active-svg')
+    } else if (this.element.getBoundingClientRect().bottom < 0) {
+      this.element.classList.remove('active-svg')
+    }
+  }
   }

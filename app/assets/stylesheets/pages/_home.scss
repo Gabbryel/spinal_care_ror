@@ -31,16 +31,6 @@
     transform: translate(0);
   }
 
-  @keyframes main-motto {
-    0% {
-      opacity: 0;
-      transform: translateY(200px);
-    }
-    100% {
-      opacity: 1;
-      transform: translate(0);
-    }
-  }
   #main-image {
     position: relative;
     grid-area: 3 / 2 / 7 / 12;
@@ -62,7 +52,7 @@
       grid-area: 2 / 8 / 4 / 12;
     }
     @media (min-width: 1024px) and (orientation: landscape) {
-      grid-area: 3 / 8 / 8 / 12;
+      grid-area: 4 / 8 / 8 / 12;
     }
   }
   #main-image.active-svg {
@@ -78,7 +68,9 @@
     position: relative;
     grid-area: 9 / 1 / 12 / -1;
     font-size: clamp(20px, calc(var(--vh) * 2), 40px);
-    animation: main-motto 2s;
+    opacity: 0;
+    transition: 2s;
+    transform: translateY(200px);
     p {
       display: block;
       color: $color-1;
@@ -111,6 +103,10 @@
     @media (min-width: 1024px) and (orientation: landscape) {
       grid-area: 4 / 1 / 10 / 8;
     }
+  }
+  #main-motto.active-svg {
+    opacity: 1;
+    transform: translate(0);
   }
 }
 
@@ -190,7 +186,10 @@
       padding-top: 40px;
       width: 300px;
       opacity: 0;
-      transform: translateY(500px);
+      transform: translateY(100px);
+      @media(min-width: 768px) {
+        transform: translateY(250px);
+      }
       @media (min-width: 1080px) {
         width: 230px;
       }
@@ -279,6 +278,9 @@
     border-radius: 50%;
     overflow: hidden;
     aspect-ratio: 1 / 1;
+    opacity: 0;
+    transition: 3s;
+    transform: translateY(200px);
     img {
       min-height: 100%;
       width: 100%;
@@ -287,19 +289,34 @@
       grid-area: 3 / 3 / 13 / 7;
     }
   }
+  #second-image.active-svg {
+    opacity: 1;
+    transform: translate(0);
+  }
   #sec-shape-svg-1, #sec-shape-svg-2 {
     position: inherit;
     grid-area: 1 / 1 / 12 / 12;
     opacity: .5;
+    transition: 2s;
+    opacity: 0;
+    transform: translateX(200px);
     @media(min-width: 1024px) {
       grid-area: 2 / 2 / 13 / 8;
     }
   }
   #sec-shape-svg-2 {
+    transform: translateX(-200px);
     @media(min-width: 1024px) {
       grid-area: 2 / 2 / 13 / 7;
     }
   }
+
+  #sec-shape-svg-1.active-svg,
+  #sec-shape-svg-2.active-svg {
+    opacity: .6;
+    transform: translate(0)
+  }
+
   #second-motto {
     @include mottos;
     grid-area: 9 / 2 / 13 / 12;

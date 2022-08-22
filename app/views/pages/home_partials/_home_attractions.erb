@@ -1,14 +1,10 @@
 <div class="main-attractions">
   <div id="main-attractions-motto">
-    <p>De ce <br>
-    <span>Spinal Care</span>?</p>
+    <p>De ce <span>Spinal Care?</span></p>
   </div>
-  <!-- <div id="main-photo-image">
-    <%= image_tag('photo-break.png') %>
-  </div> -->
   <div id="main-attractions-cards">
     <% cards.each_with_index do |c, i| %>
-      <div class="info-card" data-controller="animation hello" data-action="scroll@window->animation#svgscroll" style="transition: <%=i + 0.5%>s">
+      <div class="info-card" data-controller="animation" data-action="scroll@window->animation#svgscroll" style="transition: <%=i + 0.5%>s">
         <div class="info-card_icon" >
           <%= c[:icon].html_safe %>
         </div>

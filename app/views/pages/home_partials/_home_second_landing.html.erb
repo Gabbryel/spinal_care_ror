@@ -1,7 +1,7 @@
 <div class="second-landing">
-  <%= image_tag('second-shape-1.svg', id: 'sec-shape-svg-2') %>
-  <%= image_tag('second-shape-2.svg', id: 'sec-shape-svg-1') %>
-  <div id="second-image">
+  <%= image_tag('second-shape-1.svg', id: 'sec-shape-svg-2', data: { controller: 'animation', action: 'scroll@window->animation#svgscroll'}) %>
+  <%= image_tag('second-shape-2.svg', id: 'sec-shape-svg-1', data: { controller: 'animation', action: 'scroll@window->animation#svgscroll'}) %>
+  <div id="second-image" data-controller="animation" data-action="scroll@window->animation#svgscroll">
     <%= image_tag('sec-main-photo.png') %>
   </div>
   <div id="second-motto">
