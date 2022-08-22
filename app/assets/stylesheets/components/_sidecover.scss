@@ -1,0 +1,20 @@
+.sidecover {
+  position: fixed;
+  height: calc(var(--vh) * 100);
+  width: calc(100% - 300px);
+  top: 0;
+  transform: translateX(100px);
+  @media(min-width: 768px) {
+    transform: translateX(500px);
+  }
+  right: 0;
+  background-color: #000000cc;
+  opacity: 0;
+  transition: 2s;
+}
+
+.sidecover.active {
+  z-index: 1001;
+  transform: translate(0);
+  opacity: 1;
+}

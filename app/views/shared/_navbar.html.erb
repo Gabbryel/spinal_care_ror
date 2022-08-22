@@ -1,8 +1,8 @@
 <div class="navbar navbar-expand-sm navbar-light navbar-lewagon">
   <div class="container-fluid">
     <%= link_to root_path, class: "navbar-brand" do %>
-      <%= image_tag "logo2.png" %>
+      <%= image_tag "logo2-color.png", class: 'navbar-brand-img', data: {sidemenu_toggle_target: 'toggle'} %>
     <% end %>
-    <%= link_to 'Admin', admin_path %>
+    <i class="fas fa-bars" data-action="click->sidemenu-toggle#toggle"></i>
   </div>
 </div>

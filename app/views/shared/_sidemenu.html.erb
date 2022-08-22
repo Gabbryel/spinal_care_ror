@@ -1,0 +1,19 @@
+<div class="side-menu" data-sidemenu-toggle-target="toggle">
+  <div class="side-menu-logo">
+    <%= image_tag('logo2-color.png') %>
+  </div>
+  <div class="side-menu-options">
+    <ul>
+      <li><%= link_to 'Spinal Care', root_path %></li>
+      <li><%= link_to 'Echipa' %></li>
+      <li><%= link_to 'Specialități medicale' %></li>
+      <li><%= link_to 'Aparatura medicală' %></li>
+      <li><%= link_to 'Pacient' %></li>
+      <li><%= link_to 'Despre noi' %></li>
+      <li><%= link_to 'Admin', admin_path %></li>
+    </ul>
+  </div>
+  <div class="close-side-menu" data-action="click->sidemenu-toggle#close">
+    <i class="fas fa-times"></i>
+  </div>
+</div>
