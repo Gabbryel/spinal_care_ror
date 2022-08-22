@@ -1,6 +1,6 @@
 .navbar-lewagon {
   justify-content: space-between;
-  background: $white-spinal;
+  background: $color-1;
   height: calc(var(--vh) * 9);
 }
 
@@ -15,11 +15,18 @@
   border: none;
 }
 
-.navbar-lewagon .navbar-brand img {
+.navbar-brand-img {
   height: calc(var(--vh) * 6);
+  opacity: 1;
   @media(min-width: 576px) {
     height: calc(var(--vh) * 7);
   }
+}
+.navbar-brand-img.trigger {
+  transition: 1s;
+}
+.navbar-brand-img.active {
+  opacity: 0;
 }
 
 .featurette-heading {
@@ -38,4 +45,12 @@
 
 .dropdown-menu {
   background-color: #ffffff00
+}
+
+.fa-bars {
+  color: $color-2;
+  font-size: 30px;
+  margin-right: 20px;
+  cursor: pointer;
+  z-index: 2000;
 }
