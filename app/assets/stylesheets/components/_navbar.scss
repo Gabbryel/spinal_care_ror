@@ -2,6 +2,24 @@
   justify-content: space-between;
   background: $color-1;
   height: calc(var(--vh) * 9);
+  .container-fluid {
+    .fas {
+      color: $color-2;
+      font-size: 30px;
+      margin-right: 20px;
+      cursor: pointer;
+      z-index: 2000;
+      transition: 2s;
+    }
+    .fas.active {
+      transform: rotateZ(360deg);
+    }
+    .fas.hidden {
+      visibility: hidden;
+    }
+    .fas.show {
+      visibility: visible;    }
+  }
 }
 
 .navbar-lewagon .navbar-collapse {
@@ -45,12 +63,4 @@
 
 .dropdown-menu {
   background-color: #ffffff00
-}
-
-.fa-bars {
-  color: $color-2;
-  font-size: 30px;
-  margin-right: 20px;
-  cursor: pointer;
-  z-index: 2000;
 }
