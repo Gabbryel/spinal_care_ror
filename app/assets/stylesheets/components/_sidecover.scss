@@ -8,13 +8,15 @@
     transform: translateX(500px);
   }
   right: 0;
-  background-color: #000000cc;
+  background-color: $color-1-90;
   opacity: 0;
   transition: 2s;
-  z-index: 1001;
+  z-index: 0;
 }
 
 .sidecover.active {
+  z-index: 1001;
   transform: translate(0);
   opacity: 1;
+  backdrop-filter: blur(12px);
 }
