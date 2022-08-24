@@ -10,7 +10,9 @@ footer {
   min-height: calc(var(--vh) * 11);
   background: $color-1;
   @media (min-width: 1024px) {
+    padding: 40px 80px;
     flex-direction: row;
+    justify-content: space-between;
   }
 }
 
