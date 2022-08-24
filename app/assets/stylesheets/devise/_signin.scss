@@ -23,3 +23,54 @@
   position: relative;
   height: calc(var(--vh) * 80 );
 }
+
+.form-container {
+  position: relative;
+  height: calc(var(--vh) * 91);
+  width: 100%;
+  background-color: $color-2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: $font-mont;
+}
+
+.form-container_a {
+  width: 300px;
+  max-height: 600px;
+  background-color: $color-1;
+  padding: 60px 30px;
+  border-radius: 20px;
+  color: $color-2;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  @media (min-width: 768px) {
+    width: 500px;
+    padding: 60px;
+  }
+  h2, a {
+    font-family: inherit;
+    color: inherit;
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  a {
+    &:hover {
+      color: $white-spinal;
+    }
+  }
+  .form-actions {
+    input {
+      color: inherit;
+      border: 1px solid $color-2;
+      &:hover {
+        color: $white-spinal;
+        border: 1px solid $white-spinal;
+      }
+    }
+  }
+}

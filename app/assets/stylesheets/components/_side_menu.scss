@@ -5,15 +5,17 @@
   top: 0;
   transform: translateX(-300px);
   left: 0;
-  background-color: black;
+  background-color: $color-1;
   z-index: 1001;
   transition: 1s;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: 20px repeat(11, 1fr);
+  display: none;
 }
 
 .side-menu.active {
+  display: block;
   transform: translate(0);
 }
 
@@ -47,15 +49,5 @@
         color: $white-spinal;
       }
     }
-  }
-}
-
-.close-side-menu {
-  grid-area: 11 / 6 / 13 / 6;
-  color: $color-2;
-  font-size: 30px;
-  cursor: pointer;
-  &:hover {
-    color: $white-spinal;
   }
 }

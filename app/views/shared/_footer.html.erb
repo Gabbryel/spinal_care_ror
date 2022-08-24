@@ -1,0 +1,18 @@
+<footer>
+  <div class="footer-up">
+    <%= image_tag('logo2-color.png') %>
+    <p>&copy; 2004-<%=Time.now.year%></p>
+  </div>
+  <div class="contact-cards">
+    <% contact_cards.each do |cc| %>
+      <div class="contact-card">
+        <p><i class="fas fa-hospital-symbol"></i></p>
+        <p><%= cc[:address] %></p>
+        <a href="tel:<%=cc[:tel_fix]%>" title="Contact telefonic"><i class="fas fa-phone"></i> <%=cc[:tel_fix]%></a>
+        <% if cc[:tel_mob] %>
+          <a href="tel:<%=cc[:tel_mob]%>" title="Contact telefonic"><i class="fas fa-phone"></i> <%=cc[:tel_mob]%></a>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</footer>

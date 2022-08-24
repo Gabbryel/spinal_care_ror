@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  get 'admin/main'
   devise_for :users
   root to: "pages#home"
+  resources :persons
 
   get 'admin', to: 'admin#main'
 end

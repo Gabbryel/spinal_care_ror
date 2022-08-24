@@ -1,0 +1,18 @@
+<div class="home-reviews-container">
+  <div class="home-reviews-punchline">
+    <p><span class="color-1">Părerea ta</span> <span class="color-2">contează</span></p>
+  </div>
+  <div class="home-reviews-approved" data-controller="reviews">
+    <% reviews_cards.each_with_index do |rc, i| %>
+      <div class="review-card color-2 <%= "active" if i == 0 %>">
+        <p><%= "#{'✩' * rc[:rating]}"  %></p>
+        <p><%= rc[:content] %></p>
+        <p><%= rc[:author] %></p>
+        <p><%= rc[:created_at] %></p>
+      </div>
+    <% end %>
+  </div>
+  <div class="home-reviews-form">
+    <p>Scrie și tu o recenzie!</p>
+  </div>
+</div>
