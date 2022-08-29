@@ -1,0 +1,18 @@
+<div class="main-specialists">
+  <div class="main-specialists-intro">
+    <p><span>Clinica Spinal Care</span><br> colaborează cu unii dintre<br> <span>cei mai buni medici</span></p>
+  </div>
+  <div class="main-specialists-index">
+    <% persons.each_with_index do |p, i| %>
+      <div class="specialist-card" style="background-image: url('<%=image_url p[:photo]%>'); transition: <%=i + 0.5%>s;" data-controller="animation" data-action="scroll@window->animation#svgscroll">
+        <div class="specialist-card-info" >
+          <p><%= p[:first_name].concat(" #{p[:last_name]}") %></p>
+          <p><%= p[:profession] %></p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="home_specialists_link">
+    <p><%= link_to 'Vezi toată echipa medicală', persons_path %> </p>
+  </div>
+</div>

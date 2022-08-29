@@ -1,0 +1,77 @@
+.main-specialists {
+  position: relative;
+  grid-area: 5 / 1 / 6 / -1;
+  .main-specialists-intro {
+    position: relative;
+    width: 100%;
+    background-color: $white-spinal;
+    padding: 60px 0;
+    p {
+      font-size: clamp(16px, calc(var(--vh) * 3.7), 48px);
+      font-weight: 900;
+      text-align: center;
+      color: $color-1;
+      padding: 20px 40px;
+      span {
+        color: $color-2;
+      }
+    }
+
+  }
+}
+
+.main-specialists-index {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 80px;
+  padding: 150px 0;
+  @media(min-width: 1024px) {
+    gap: 50px;
+  }
+  .specialist-card {
+    position: relative;
+    width: 300px;
+    height: 400px;
+    background-size: contain;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    overflow: hidden;
+    transform: translateY(100px);
+    opacity: 0;
+    .specialist-card-info {
+      position: relative;
+      bottom: 0;
+      text-align: center;
+      background: $white-spinal;
+      width: 100%;
+      padding: 15px 0;
+      p {
+        font-size: 1.1em;
+        font-weight: 700;
+        &:nth-child(2) {
+          margin: 0;
+        }
+      }
+    }
+  }
+  .specialist-card.active-svg {
+    transform: translate(0);
+    opacity: 1;
+  }
+}
+
+.home_specialists_link {
+  position: absolute;
+  text-align: center;
+  bottom: 50px;
+  right: 0;
+  left: 0;
+  a {
+    color: $color-2;
+  }
+}

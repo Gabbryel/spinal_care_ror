@@ -2,17 +2,23 @@
   <div class="home-reviews-punchline">
     <p><span class="color-1">Părerea ta</span> <span class="color-2">contează</span></p>
   </div>
-  <div class="home-reviews-approved" data-controller="reviews">
-    <% reviews_cards.each_with_index do |rc, i| %>
-      <div class="review-card color-2 <%= "active" if i == 0 %>">
-        <p><%= "#{'✩' * rc[:rating]}"  %></p>
-        <p><%= rc[:content] %></p>
-        <p><%= rc[:author] %></p>
-        <p><%= rc[:created_at] %></p>
+  <div class="home-reviews-approved" id="reviews-approved" data-controller="reviews">
+    <% @reviews.each_with_index do |rc, i| %>
+      <div class="review-card color-1 <%= "active" if i == 0 %>">
+        <p><%= "#{'✩' * rc[:rating] if rc[:rating]}"  %></p>
+        <p><%= rc[:content].length > 120 ? rc[:content].first(120)... : rc[:content] %><br><span><%= link_to 'Citește mai multe', reviews_path(anchor: "review-#{rc[:id]}") %></span></p>
+        <p><%= rc[:author] ? rc[:author] : 'Anonim' %></p>
+        <p><%= date_ro(rc[:created_at]) %></p>
       </div>
     <% end %>
   </div>
   <div class="home-reviews-form">
     <p>Scrie și tu o recenzie!</p>
+    <%= simple_form_for @review do |f| %>
+      <%= f.input :rating, label: false, collection: (1..5).to_a, input_html: {data: {controller: "star-rating"}} %>
+      <%= f.input :content, label: false, placeholder: 'Părerea ta...' %>
+      <%= f.input :author, label: false, placeholder: 'Numele tău' %>
+      <%= f.submit 'Adaugă recenzie', class: 'btn-custom', local: true %>
+    <% end %>
   </div>
 </div>

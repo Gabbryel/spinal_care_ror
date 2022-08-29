@@ -6,17 +6,19 @@ export default class extends Controller {
       this.toggleTargets.forEach(el => {
         el.classList.add('trigger');
         el.classList.toggle('active');
-        setTimeout(() => {
-          el.classList.add('hidden')
-        }, 200)
-        setTimeout(() => {
-          el.classList.remove('hidden')
-          el.classList.add('show')
-        }, 900)
-        setTimeout(() => {
-          el.classList.toggle('fa-bars')
-          el.classList.toggle('fa-times')
-        }, 1000)
+        if(el.classList.contains('fas')) {
+        // setTimeout(() => {
+        //   el.classList.add('hidden')
+        // }, 200)
+        // setTimeout(() => {
+        //   el.classList.remove('hidden')
+        //   el.classList.add('show')
+        // }, 900)
+          setTimeout(() => {
+            el.classList.toggle('fa-bars')
+            el.classList.toggle('fa-times')
+          }, 1000)
+        }
       });
     }
   close() {

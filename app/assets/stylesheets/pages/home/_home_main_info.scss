@@ -2,9 +2,9 @@
   position: relative;
   grid-area: 3 / 1 / 4 / -1;
   background-color: $color-contrast;
-  padding: 20px 40px;
+  padding: 70px 40px;
   text-align: center;
-  font-size: clamp(16px, 2rem, 24px);
+  font-size: clamp(16px, calc(var(--vh) * 3), 48px);
   font-weight: 900;
   @media(min-width: 768px) {
     padding: 50px 100px;
