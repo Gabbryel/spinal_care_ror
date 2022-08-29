@@ -12,9 +12,9 @@ export default class extends Controller {
         active.classList.add('inactive')
         const next = index === reviews.length -1 ? reviews[0] : reviews[index + 1]
         next.classList.add('active')
-    }, 5000)
+    }, 8000)
     setTimeout(() => {
       clearInterval(reviewsInterval)
-    }, 60000);
+    }, 120000);
   }
 }

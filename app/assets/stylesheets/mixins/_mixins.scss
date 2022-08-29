@@ -20,12 +20,12 @@
   @media (min-width: 768px) and (orientation: landscape) {
     grid-area:  1 / 7 / 5 / 13;
   }
-  @media (min-width: 1024px) and (orientation: landscape) {
-    grid-area: 1 / 7 / 5 / 13;
-    justify-self: center;
+  @media (min-width: 1024px) and (orientation: portrait) {
+    grid-area: 2 / 2 / 5 / 12;
   }
-  @media (min-width: 1024px) {
+  @media (min-width: 1024px) and (orientation: landscape) {
     grid-area: 2 / 7 / 5 / 13;
+    justify-self: center;
   }
 }
 

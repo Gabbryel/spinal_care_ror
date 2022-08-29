@@ -4,6 +4,7 @@
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: repeat(12, 1fr);
+  padding: 100px 0;
   #second-image {
     position: relative;
     grid-area: 2 / 2 / 8 / 12;
@@ -73,7 +74,7 @@
 
   #second-motto {
     @include mottos;
-    grid-area: 9 / 2 / 13 / 12;
+    grid-area: 9 / 1 / 13 / 13;
     @media(min-width: 1024px) {
       grid-area: 5 / 7 / 13 / 13;
     }

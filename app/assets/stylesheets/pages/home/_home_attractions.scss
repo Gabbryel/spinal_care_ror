@@ -36,7 +36,7 @@
     align-items: center;
     p {
       text-align: center;
-      font-size: 50px;
+      font-size: clamp(16px, calc(var(--vh) * 6), 50px);;
       font-family: $font-mont;
       font-weight: 900;
       opacity: 1;
@@ -56,14 +56,16 @@
     align-items: center;
     justify-content: center;
     gap: 30px;
-    padding: 60px 0;
+    padding: 100px 0;
     @media (min-width: 768px) {
       flex-direction: row;
       flex-wrap: wrap;
-      padding: 80px 0;
     }
     @media (min-width: 1080px) {
       padding: 140px 0;
+    }
+    @media (min-width: 960px) and (max-width: 1080px) {
+      gap: 80px;
     }
     .info-card {
       position: relative;

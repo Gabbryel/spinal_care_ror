@@ -3,4 +3,13 @@
   bottom: 16px;
   right: 16px;
   z-index: 1000;
+  animation: alert 2s 5s;
+}
+
+@keyframes alert {
+  from {
+    opacity: 1;
+  } to {
+    opacity: 0;
+  }
 }

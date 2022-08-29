@@ -7,15 +7,13 @@
   left: 0;
   background-color: $color-1;
   z-index: 1001;
-  transition: 3s;
+  transition: 1s;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: 20px repeat(11, 1fr);
-  display: none;
 }
 
 .side-menu.active {
-  display: block;
   transform: translate(0);
 }
 

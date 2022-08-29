@@ -4,7 +4,14 @@
 	word-wrap: break-word;
 }
 
+html {
+	max-width: 1900px;
+	position: relative;
+	margin: 0 auto;
+}
+
 html, body {
+	overflow-x: hidden;
 	background-color: $color-1;
 	font-family: 'Montserrat', sans-serif;
 }
