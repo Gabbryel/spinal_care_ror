@@ -40,6 +40,20 @@
   resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-7.0.3.tgz#71f08e958883af64f6a20489318b5e95d2c6dc5b"
   integrity sha512-Iefl21FZD+ck1di6xSHMYzSzRiNJTHV4NrAzCfDfqc/wPz4xncrP8f2/fJ+2jzwKIaDn76UVMsALh7R5OzsF8Q==
 
+"@rails/actiontext@^7.0.3-1":
+  version "7.0.3-1"
+  resolved "https://registry.yarnpkg.com/@rails/actiontext/-/actiontext-7.0.3-1.tgz#cd6ada90068376e3e9081067a12b4dfe8e72d433"
+  integrity sha512-4gyYWbc6gdRlTITOU1cy83d9dq5J9IPm+p2418Iy6ekG1XoZwW2zsuSJisKCc6AF8tGrYM4LtLtXif04zz8bXg==
+  dependencies:
+    "@rails/activestorage" ">= 7.0.0-alpha1"
+
+"@rails/activestorage@>= 7.0.0-alpha1":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@rails/activestorage/-/activestorage-7.0.3.tgz#516770d49f702bb2b746a826779465a513804003"
+  integrity sha512-pdIoQUNcimjbSlhUgnRyFimVvsp/J9C1yTxV3P40oQrRU81f3uM9tT4IY/wMfe691Zj7tJBiqsbThUoPT88TAA==
+  dependencies:
+    spark-md5 "^3.0.1"
+
 "@webpack-cli/configtest@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@webpack-cli/configtest/-/configtest-1.2.0.tgz#7b20ce1c12533912c3b217ea68262365fa29a6f5"
@@ -614,6 +628,11 @@ source-map@^0.6.1:
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
   integrity sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
 
+spark-md5@^3.0.1:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/spark-md5/-/spark-md5-3.0.2.tgz#7952c4a30784347abcee73268e473b9c0167e3fc"
+  integrity sha512-wcFzz9cDfbuqe0FZzfi2or1sgyIrsDwmPwfZC4hiNidPdPINjeUwNfv5kldczoEAcjl9Y1L3SM7Uz2PUEQzxQw==
+
 star-rating.js@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/star-rating.js/-/star-rating.js-4.3.0.tgz#6ce4e092480b0693e74fe1799b3a37a7b85caf67"
@@ -639,6 +658,11 @@ to-regex-range@^5.0.1:
   integrity sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==
   dependencies:
     is-number "^7.0.0"
+
+trix@^2.0.0-beta.0:
+  version "2.0.0-beta.0"
+  resolved "https://registry.yarnpkg.com/trix/-/trix-2.0.0-beta.0.tgz#e7034867182356c023abdef90c7bdc341bb3e105"
+  integrity sha512-D1c7FxP1hGXM/MnTd/+fGUbSDLkfxsqjA0NxOTzByQywVJVNHDOkn8xAScCKVOiAN6hXlqUR2qX4CPJHTGj+cQ==
 
 webpack-cli@^4.10.0:
   version "4.10.0"

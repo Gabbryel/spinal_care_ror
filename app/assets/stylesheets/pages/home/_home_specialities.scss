@@ -1,0 +1,89 @@
+.main-specialities {
+  position: relative;
+  grid-area: 6 / 1 / 7 / -1;
+  width: 100%;
+  .main-specialities-intro {
+    position: relative;
+    width: 100%;
+    background-color: $white-spinal;
+    padding: 60px 0;
+    p {
+      font-size: clamp(16px, calc(var(--vh) * 3.7), 48px);
+      font-weight: 900;
+      text-align: center;
+      color: $color-1;
+      padding: 20px 40px;
+      span {
+        color: $color-2;
+      }
+    }
+  }
+  .main-specialities-index {
+    position: relative;
+    display: grid;
+    justify-content: center;
+    padding: 100px;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    @media (min-width: 600px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: 900px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (min-width: 1200px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    @media (min-width: 1300px) {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 60px 0;
+    }
+    a {
+      justify-self: center;
+      .speciality-card {
+        position: relative;
+        background: $white-spinal;
+        width: 270px;
+        height: 90px;
+        text-align: center;
+        padding: 15px 30px;
+        border-radius: 10px;
+        align-self: center;
+        justify-self: center;
+        font-size: 1.15em;
+        font-weight: 700;
+        z-index: 2;
+        overflow: hidden;
+        p {
+          position: absolute;
+          color: $color-1;
+          margin: 0;
+          &:nth-child(1) {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+          }
+          &:nth-child(2) {
+            left: 0;
+            right: 0;
+            font-size: .5em;
+            bottom: 4px;
+            a {
+              color: color-1;
+            }
+          }
+        }
+      }
+    }
+  }
+  img {
+    position: absolute;
+    bottom: 0;
+    height: 70%;
+    right: 0;
+  }
+}

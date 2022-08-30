@@ -15,7 +15,7 @@
   <div class="home-reviews-form">
     <p>Scrie și tu o recenzie!</p>
     <%= simple_form_for @review do |f| %>
-      <%= f.input :rating, label: false, collection: (1..5).to_a, input_html: {data: {controller: "star-rating"}} %>
+      <%= f.input :rating, label: false, collection: (1..5).to_a, input_html: {data: {controller: "star-rating", options: {clearable: true, tooltip: false }}} %>
       <%= f.input :content, label: false, placeholder: 'Părerea ta...' %>
       <%= f.input :author, label: false, placeholder: 'Numele tău' %>
       <%= f.submit 'Adaugă recenzie', class: 'btn-custom', local: true %>
