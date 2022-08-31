@@ -14,11 +14,20 @@
   </head>
 
   <body data-controller="vh sidemenu-toggle" data-action="scroll@window->sidemenu-toggle#close">
-    <%= render "shared/navbar" %>
-    <%= render "shared/sidemenu" %>
-    <%= render "shared/sidecover" %>
+    <% if !dashboard_page_helper %>
+      <%= render "shared/navbar" %>
+      <%= render "shared/sidemenu" %>
+      <%= render "shared/sidecover" %>
+    <% elsif dashboard_page_helper %>
+      <%= render "shared/admin_navbar" %>
+      <%= render "shared/admin_menu" %>
+    <% end %>
     <%= render "shared/flashes" %>
-      <%= yield %>
-    <%= render "shared/footer" %>
+      <div class="<%= dashboard_page_helper ? 'admin_container' : 'main' %>">
+        <%= yield %>
+      </div>
+      <% if !dashboard_page_helper %>
+        <%= render "shared/footer" %>
+      <% end %>
   </body>
 </html>

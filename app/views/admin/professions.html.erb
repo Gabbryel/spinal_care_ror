@@ -1,0 +1,27 @@
+<div class="professions-container">
+  <div class="professions-main">
+    <div class="professions-form">
+      <p>Profesiune nouă</p>
+      <%= simple_form_for @profession do |f| %>
+        <%= f.input :name %>
+        <%= f.submit 'Trimite' %>
+      <% end %>
+    </div>
+    <div class="professions-index">
+
+    </div>
+  </div>
+  <div class="specialties-main">
+    <div class="specialties-form">
+      <p>Specialitate medicală nouă</p>
+      <%= simple_form_for @specialty do |f| %>
+        <%= f.input :name %>
+        <%= f.rich_text_area :description %>
+        <%= f.submit 'Trimite' %>
+      <% end %>
+    </div>
+    <div class="specialties-index">
+
+    </div>
+  </div>
+</div>

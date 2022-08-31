@@ -5,10 +5,10 @@
 .main {
   position: relative;
   display: grid;
-  min-height: calc(var(--vh) * 100);
+  min-height: calc(var(--vh) * 93);
   width: 100%;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: calc(var(--vh) * 100), 200px, min-content, min-content, min-content, min-content, min-content;
+  grid-template-rows: calc(var(--vh) * 93), 200px, min-content, min-content, min-content, min-content, min-content;
 }
 
 .main-landing {
