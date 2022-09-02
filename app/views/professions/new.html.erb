@@ -1,2 +1,6 @@
-<h1>Professions#new</h1>
-<p>Find me in app/views/professions/new.html.erb</p>
+<div class="professions-form">
+  <p>Profesiune nouă</p>
+  <%= turbo_frame_tag "prof-new" do %>
+    <%= render "form", profession: @profession %>
+  <% end %>
+</div>

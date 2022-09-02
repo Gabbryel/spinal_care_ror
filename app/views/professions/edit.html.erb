@@ -1,2 +1,6 @@
-<h1>Professions#edit</h1>
-<p>Find me in app/views/professions/edit.html.erb</p>
+<div class="professions-form">
+  <p>Modifică profesiune</p>
+  <%= turbo_frame_tag @profession do %>
+    <%= render "form", profession: @profession %>
+  <% end %>
+</div>

@@ -9,4 +9,24 @@
   background-color: $white-spinal;
   border-radius: 5px;
   padding: 5px 15px;
+  text-decoration: none;
+}
+
+.btn-crud {
+  border: none;
+}
+
+.btn-red {
+  color: red;
+  &:hover {
+    color: white;
+    background-color: red;
+  }
+}
+.btn-green {
+  color: green;
+  &:hover {
+    color: white;
+    background-color: green;
+  }
 }

@@ -1,0 +1,12 @@
+<%= simple_form_for @profession do |f| %>
+  <% if @profession.errors.any? %>
+  <div class="error-message">
+    <%= @profession.errors.full_messages.to_sentence.capitalize %>
+  </div>
+  <% end %>
+  <%= f.input :name, label: false, placeholder: 'profesie', input_html: { autofocus: true } %>
+  <button class="btn-custom btn-green btn-crud"><i class="far fa-paper-plane"></i></button>
+  <%= link_to dashboard_profesii_path, class: 'btn-custom btn-red btn-crud' do %>
+    <i class="fas fa-ban"></i>
+  <% end %>
+<% end %>
