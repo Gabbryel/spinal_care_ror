@@ -1,13 +1,18 @@
 .professions-container {
   position: relative;
   display: grid;
+  gap: 50px 0;
   grid-template-rows: 50px max-content max-content;
+  @media(min-width: 1024px) {
+    grid-template-columns: repeat(2, 50%);
+    gap: 50px 10px;
+    justify-content: center;
+  }
 }
 
-.professions-main {
+.professions-main, .specialties-main {
   position: relative;
   display: flex;
-  border: 1px solid #000;
   padding: 30px;
   flex-wrap: wrap;
   flex-flow: column;
@@ -16,39 +21,71 @@
   margin: 0 auto;
   border-radius: 5px;
   grid-area: 2 / 1/ 3 / -1;
+  box-shadow: 0 0 5px $color-1-40;
   h1 {
     color: inherit;
     font-family: inherit;
   }
+  @media(min-width: 1024px) {
+    grid-area: 2 / 1/ 3 / 2;
+  }
+
 }
-#professions {
+
+#professions, #specialties {
   position: relative;
   display: flex;
   flex-wrap: wrap;
-  gap: 30px 0;
+  gap: 30px 15px;
   justify-content: space-between;
 }
 
-.profession {
-  position: relative;
-  border: 1px solid $color-1;
-  padding: 5px 20px;
+.profession, .specialty {
+  // border: 0.1px solid #29332b;
+  box-shadow: 0 0 5px $color-1-40;
+  padding: 5px 15px;
   border-radius: 10px;
+  font-size: 12px;
   color: $color-1;
   a {
     text-decoration: none;
   }
-  .profession-crud {
+  .profession-crud, .specialty-crud {
     position: relative;
     width: 100%;
     display: flex;
-    justify-content: space-between;
-    font-size: 12px;
+    justify-content: flex-start;
+    font-size: 10px;
     gap: 0 10px;
   }
 }
 
-.specialties-main {
-  position: relative;
-  grid-area: 3 / 1 / 4 / -1;
+.prof-edit-form,
+.profession-form,
+.specialty-form {
+  position: absolute;
+  width: 300px;
+  min-height: 180px;
+  background: #fff;
+  padding: 30px;
+  z-index: 100;
+  box-shadow: 0 0 5px $color-1-40;
+  left: 0;
+  right: 0;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  border-radius: 10px;
 }
+
+.specialties-main {
+  grid-area: 3 / 1 / 4 / -1;
+  @media(min-width: 1024px) {
+    grid-area: 2 / 2 / 3 / 3;
+  }
+}
+
+.spec-crud {
+  margin-top: 30px;
+}
+

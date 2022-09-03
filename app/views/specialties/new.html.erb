@@ -1,2 +1,6 @@
-<h1>Specialties#new</h1>
-<p>Find me in app/views/specialties/new.html.erb</p>
+<%= turbo_frame_tag "spec-new" do %>
+<div class="specialty-form">
+  <p>Specialitate medicală nouă</p>
+    <%= render "form", specialty: @specialty %>
+  </div>
+<% end %>

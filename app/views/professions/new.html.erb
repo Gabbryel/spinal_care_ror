@@ -1,6 +1,6 @@
-<div class="professions-form">
+<%= turbo_frame_tag "prof-new" do %>
+<div class="profession-form">
   <p>Profesiune nouă</p>
-  <%= turbo_frame_tag "prof-new" do %>
     <%= render "form", profession: @profession %>
-  <% end %>
-</div>
+  </div>
+<% end %>

@@ -10,7 +10,7 @@ class ProfessionsController < ApplicationController
     if @profession.save
       respond_to do |format|
         format.html { redirect_to dashboard_profesii_path, notice: "Profesia #{@profession.name} a fost creată!" }
-        format.turbo_stream {flash.now[:notice] = "Profesia #{@profession.name} a fost creată!" }
+        format.turbo_stream { flash.now[:notice] = "Profesia #{@profession.name} a fost creată!" }
       end
     else
       render :new, status: :unprocessable_entity, notice: "Ceva nu a mers. Reîncearcă, te rog!"

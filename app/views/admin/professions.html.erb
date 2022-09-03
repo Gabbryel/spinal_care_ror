@@ -22,17 +22,22 @@
 
 
 
-  <div class="specialties-main">
-    <div class="specialties-form">
-      <p>Specialitate medicală nouă</p>
-      <%= simple_form_for @specialty do |f| %>
-        <%= f.input :name %>
-        <%= f.rich_text_area :description %>
-        <%= f.submit 'Trimite' %>
-      <% end %>
-    </div>
-    <div class="specialties-index">
+    <div class="specialties-main">
+      <h1>Specialități medicale</h1>
+      <p>*pentru editare completă apasă <i class="fas fa-eye"></i></p>
+      <div>
+        <%= link_to "Adaugă specialitate medicală",
+        new_specialty_path,
+        class: 'btn-custom',
+        data: { turbo_frame: 'spec-new'} %>
+      </div>
+      <%= turbo_frame_tag 'spec-new' %>
 
+      <div class="specialties-index">
+        <%= turbo_stream_from "specialties" %>
+        <%= turbo_frame_tag "specialties" do %>
+          <%= render @specialties %>
+        <% end %>
+      </div>
     </div>
   </div>
-</div>

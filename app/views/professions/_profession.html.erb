@@ -1,11 +1,13 @@
-<%= turbo_frame_tag profession, class: 'profession' do %>
-    <%= profession.name %>
-    <div class="profession-crud">
-      <%= link_to edit_profession_path(profession) do %>
-        <i class="fas fa-edit"></i>
-      <% end %>
-      <%= link_to profession_path(profession), data: { turbo_method: :delete, turbo_confirm: "Sigur ștergi profesia #{profession.slug}?"} do %>
-        <i class="fas fa-trash-alt"></i>
-      <% end %>
-    </div>
+<%= turbo_frame_tag profession do %>
+<div class="profession">
+  <%= profession.name %>
+  <div class="profession-crud">
+    <%= link_to edit_profession_path(profession) do %>
+      <i class="fas fa-edit"></i>
+    <% end %>
+    <%= link_to profession_path(profession), data: { turbo_method: :delete, turbo_confirm: "Sigur ștergi profesia #{profession.slug}?"} do %>
+      <i class="fas fa-trash-alt"></i>
+    <% end %>
+  </div>
+</div>
 <% end %>

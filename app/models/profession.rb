@@ -12,4 +12,5 @@ class Profession < ApplicationRecord
   def slug_helper(slug)
     Profession.select { |p| p.slug == slug}.empty?
   end
+
 end

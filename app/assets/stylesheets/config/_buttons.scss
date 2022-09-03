@@ -5,7 +5,8 @@
 
 .btn-custom {
   color: $color-1;
-  border: 1px solid $color-1;
+  // border: 1px solid $color-1;
+  box-shadow: 0 0 5px $color-1-40;
   background-color: $white-spinal;
   border-radius: 5px;
   padding: 5px 15px;
@@ -17,7 +18,7 @@
 }
 
 .btn-red {
-  color: red;
+  color: rgb(111, 0, 0);
   &:hover {
     color: white;
     background-color: red;
@@ -29,4 +30,8 @@
     color: white;
     background-color: green;
   }
+}
+
+.box-shadow {
+  box-shadow: 0 0 5px $color-1-40;
 }

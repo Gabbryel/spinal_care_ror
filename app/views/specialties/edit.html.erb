@@ -1,2 +1,6 @@
-<h1>Specialties#edit</h1>
-<p>Find me in app/views/specialties/edit.html.erb</p>
+<%= turbo_frame_tag @specialty do %>
+<div class="specialty-form">
+  <p>Modifică profesiune</p>
+    <%= render "form", specialty: @specialty %>
+  </div>
+<% end %>
