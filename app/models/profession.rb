@@ -2,7 +2,8 @@ class Profession < ApplicationRecord
   validates :name, presence: true
   broadcasts_to ->(profession) { "professions" }, inserts_by: :prepend
   include SlugHelper
-  after_save :slugify, unless: :slug
+  include CheckSlugHelper
+  after_save :slugify, unless: :check_slug
   def to_param
     "#{slug}"
   end

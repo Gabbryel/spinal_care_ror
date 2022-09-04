@@ -1,5 +1,7 @@
 class SpecialtiesController < ApplicationController
-  before_action :set_specialty, only: %i[show edit update destroy]
+  before_action :skip_authorization, only: %i[about all_specialties]
+  skip_before_action :authenticate_user!, only: %i[about all_specialties]
+  before_action :set_specialty, only: %i[show about edit update destroy]
   def new
     @specialty = authorize Specialty.new
   end
@@ -7,10 +9,7 @@ class SpecialtiesController < ApplicationController
   def create
     @specialty = authorize Specialty.new(specialty_params)
     if @specialty.save
-      respond_to do |format|
-        format.html { redirect_to dashboard_profesii_path, notice: "Specialitatea medicală #{@specialty.name} a fost creată!" }
-        format.turbo_stream { flash.now[:notice] = "Specialitatea medicală #{@specialty.name} a fost creată!"}
-      end
+      redirect_to dashboard_profesii_path
     else
       render :new, status: :unprocessable_entity, notice: "Ceva nu a mers. Reîncearcă, te rog!"
     end
@@ -21,10 +20,7 @@ class SpecialtiesController < ApplicationController
 
   def update
     if @specialty.update(specialty_params)
-      respond_to do |format|
-        format.html { redirect_to dashboard_profesii_path, notice: "Specialitatea medicală #{@specialty.name} a fost modificată!" }
-        format.turbo_stream {flash.now[:notice] = "Specialitatea medicală #{@specialty.name} a fost modificată!" }
-      end
+      redirect_to specialty_path(@specialty)
     else
       render :edit, status: :unprocessable_entity, notice: "Ceva nu a mers. Reîncearcă, te rog!"
     end
@@ -34,7 +30,13 @@ class SpecialtiesController < ApplicationController
     @specialties = policy_scope(Specialty).all
   end
 
+  def all_specialties
+    @specialties = policy_scope(Specialty).all.order(name: :asc)
+  end
+
   def show
+  end
+  def about
   end
 
   def destroy

@@ -41,6 +41,7 @@
 }
 
 .profession, .specialty {
+  position: relative;
   // border: 0.1px solid #29332b;
   box-shadow: 0 0 5px $color-1-40;
   padding: 5px 15px;
@@ -60,7 +61,6 @@
   }
 }
 
-.prof-edit-form,
 .profession-form,
 .specialty-form {
   position: absolute;

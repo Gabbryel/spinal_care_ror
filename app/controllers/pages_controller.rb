@@ -4,5 +4,6 @@ class PagesController < ApplicationController
   def home
     @review = Review.new()
     @reviews = Review.all.shuffle
+    @specialties = Specialty.all.order(name: :asc)
   end
 end

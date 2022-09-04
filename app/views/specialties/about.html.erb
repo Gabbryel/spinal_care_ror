@@ -1,0 +1,6 @@
+<div class="about-container">
+  <%= link_to 'Specialități medicale', specialitati_medicale_path, class: 'btn btn-custom', id: 'about-container__link-back' %>
+  <h1><%= @specialty.name %></h1>
+  <div class="about-container__specialty"><%= @specialty.description %></div>
+  <%= image_tag('wave-home-page', id: 'about-container__specialty__wave') %>
+</div>

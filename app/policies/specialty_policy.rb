@@ -14,8 +14,14 @@ class SpecialtyPolicy < ApplicationPolicy
   def index?
     new?
   end
+  def all_specialties?
+    true
+  end
   def show?
     new?
+  end
+  def about?
+    true
   end
   def destroy?
     new?

@@ -1,0 +1,19 @@
+.all-specialties__container {
+  position: relative;
+  width: 100%;
+  min-height: $min-height;
+  grid-area: 1 / 1 / -1 / -1;
+  .main-specialities {
+    position: relative;
+    display: flex;
+    height: 100%;
+    .main-specialities-index {
+      gap: 60px;
+      justify-self: last baseline;
+      display: grid;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+    }
+  }
+}

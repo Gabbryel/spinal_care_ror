@@ -8,10 +8,8 @@ class ProfessionsController < ApplicationController
   def create
     @profession = authorize Profession.new(profession_params)
     if @profession.save
-      respond_to do |format|
-        format.html { redirect_to dashboard_profesii_path, notice: "Profesia #{@profession.name} a fost creată!" }
-        format.turbo_stream { flash.now[:notice] = "Profesia #{@profession.name} a fost creată!" }
-      end
+      redirect_to dashboard_profesii_path
+      flash.alert = 'ok'
     else
       render :new, status: :unprocessable_entity, notice: "Ceva nu a mers. Reîncearcă, te rog!"
     end
@@ -23,8 +21,7 @@ class ProfessionsController < ApplicationController
   def update
     if @profession.update(profession_params)
       respond_to do |format|
-        format.html { redirect_to dashboard_profesii_path, notice: "Profesia #{@profession.name} a fost modificată!" }
-        format.turbo_stream {flash.now[:notice] = "Profesia #{@profession.name} a fost modificată!" }
+        redirect_to dashboard_profesii_path
       end
     else
       render :edit, status: :unprocessable_entity, notice: "Ceva nu a mers. Reîncearcă, te rog!"

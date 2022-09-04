@@ -1,5 +1,5 @@
 <%= simple_form_for @specialty do |f| %>
-<%= f.input :name %>
+<%= f.input :name, input_html: { autofocus: true } %>
 <%#= f.rich_text_area :description %>
 <div class="spec-crud">
     <button class="btn-custom btn-green btn-crud"><i class="far fa-paper-plane"></i></button>

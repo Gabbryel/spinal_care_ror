@@ -1,6 +1,6 @@
-<%= turbo_frame_tag @specialty do %>
+<%= turbo_frame_tag 'edit-spec' do %>
 <div class="specialty-form">
   <p>Modifică profesiune</p>
-    <%= render "form", specialty: @specialty %>
+    <%= render "form_complete", specialty: @specialty %>
   </div>
 <% end %>
