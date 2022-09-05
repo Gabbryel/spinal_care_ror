@@ -1,30 +1,62 @@
 .about-container {
-  // position: relative;
   grid-area: 1 / 1 / -1 / -1;
   display: flex;
-  flex-wrap: wrap;
   flex-flow: column;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
   gap: 150px 0;
   color: $color-2;
-  font-weight: 100;
-  font-size: 1.2em;
-  text-align: center;
   font-family: $font-mont;
   justify-content: center;
-  background: #4a5b5c70;
-  padding: 100px 100px 300px;
-  border-radius: 20px;
   z-index: 2;
+  padding: 0;
+  min-height: $min-height;
+  border-radius: 20px;
+  @media(min-width: 1024px) {
+    padding: 100px 100px 300px;
+
+  }
+}
+
+.about-container__main {
+  width: 90%;
+  max-width: 1200px;
+  margin: 70px auto;
+  background: $color-3-60;
+  padding: 40px 30px;
+  font-weight: 300;
+  font-size: 1em;
+  border-radius: 20px;
+@media(min-width: 1024px) {
+  width: 100%;
+  margin: 0 auto;
+  padding: 100px;
+  font-size: 1.2em;
+}
   #about-container__link-back {
     position: absolute;
-    top: 5%;
+    top: 1%;
+    left: 1%;
   }
   a, h1 {
     color: inherit;
     font-family: inherit;
+  }
+  h1 {
+    display: block;
+    width: fit-content;
+    padding: 15px 30px;
+    position: relative;
+    background: $color-1-90;
+    z-index: 3;
+    left: 0;
+    bottom: 10px;
+    transform: rotate(-4deg);
+    box-shadow: .1px .1px 5px #bcb28550;
+    font-size: 1.4em;
+    @media(min-width: 1024px) {
+      font-size: 2.5em;
+      left: -50px;
+    }
   }
   .about-container__specialty {
     position: relative;
@@ -33,9 +65,13 @@
   }
   #about-container__specialty__wave {
     position: absolute;
-    width: 100%;
+    width: 200%;
     bottom: 0;
-    left: 0;
+    right: 0;
     z-index: 0;
+    @media(min-width: 1024px) {
+      width: 100%;
+      left: 0;
+    }
   }
 }
