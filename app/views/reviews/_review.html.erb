@@ -1,0 +1,6 @@
+<div class="review-card color-1 <%= "active" if i == 0 %>">
+  <p><%= "#{'✩' * rc[:rating] if rc[:rating]}"  %></p>
+  <p><%= rc[:content].length > 120 ? rc[:content].first(120)... : rc[:content] %><br><span><%= link_to 'Citește mai multe', reviews_path(anchor: "review-#{rc[:id]}") %></span></p>
+  <p><%= rc[:author] ? rc[:author] : 'Anonim' %></p>
+  <p><%= date_ro(rc[:created_at]) %></p>
+</div>

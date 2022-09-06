@@ -11,7 +11,7 @@ class ReviewsController < ApplicationController
       redirect_to root_path(anchor: 'reviews-approved')
       flash.alert = 'Recenzie creată. Va fi publicată după aprobare!'
     else
-      render :new
+      render :new, status: :unprocessable_entity, notice: "Ceva nu a mers. Reîncearcă, te rog!"
     end
   end
 

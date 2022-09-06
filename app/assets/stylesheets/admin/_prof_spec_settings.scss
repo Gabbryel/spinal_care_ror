@@ -89,3 +89,31 @@
   margin-top: 30px;
 }
 
+
+.no-access {
+  background-image: url(http://localhost:3001/assets/no-access-b438b54….png);
+  height: calc(var(--vh) * 93);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 50px;
+  background-color: black;
+  color: $white-spinal;
+  text-align: center;
+  h1 {
+    font-size: clamp(30px 2em 60px);
+    font-family: $font-mont;
+    color: inherit;
+    text-align: inherit;
+  }
+  p {
+    color: inherit;
+  }
+  a {
+    color: inherit;
+  }
+}
