@@ -1,0 +1,14 @@
+<main class="container">
+    <div>
+      <h1>Professions</h1>
+      <%= link_to "New profession",
+                  new_profession_path,
+                  class: 'btn-custom',
+                  data: { turbo_frame: 'prof-new'} %>
+    </div>
+  <%= turbo_frame_tag "prof-new" %>
+  <%= turbo_stream_from "professions" %>
+  <%= turbo_frame_tag "professions" do %>
+    <%= render @professions %>
+  <% end %>
+</main>

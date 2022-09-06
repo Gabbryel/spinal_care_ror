@@ -1,0 +1,10 @@
+<div class="specialty-container">
+<%= turbo_frame_tag 'edit-spec' do %>
+  <h1><%= @specialty.name %></h1>
+    <%= link_to edit_specialty_path(@specialty), class: 'btn-custom', data: { turbo_frame: @speciality} do %>
+      <i class="fas fa-edit"></i>
+    <% end %>
+    <div><%= @specialty.description %></div>
+<% end %>
+</div>
+<%= turbo_frame_tag 'edit-spec' %>

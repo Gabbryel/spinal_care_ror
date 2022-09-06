@@ -28,4 +28,14 @@
 .trix-content action-text-attachment .attachment {
   padding: 0 !important;
   max-width: 100% !important;
+  img {
+    width: 250px;
+  }
+}
+
+trix-editor {
+  min-height: 270px;
+  img {
+    width: 250px;
+  }
 }

@@ -1,0 +1,24 @@
+<div class="personal-container">
+  <div class="personal-form">
+    <div class="form">
+      <h3>Adaugă un nou membru</h3>
+      <%= simple_form_for @member do |f|%>
+        <%= f.input :first_name, label: false, placeholder: 'Prenume' %>
+        <%= f.input :last_name, label: false, placeholder: 'Nume' %>
+        <%= f.input :photo, label: false %>
+        <%= f.input :professions, collection: @professions.map { |p| p.name}, prompt: 'Alege profesia', label: false %>
+        <%= f.input :specialties, collection: @specialties, prompt: 'Alege specialitatea medicală', label: false %>
+        <p>Despre</p>
+        <%= f.rich_text_area :description %>
+        <%= f.submit 'Trimite' %>
+      <% end %>
+    </div>
+    <div class="personal-index">
+      <% @members.each do |m| %>
+        <div class="personal-member">
+
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

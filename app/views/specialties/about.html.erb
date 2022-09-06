@@ -1,0 +1,21 @@
+<div class="about-container">
+  <div class="about-container__main">
+    <%= link_to '˿ Specialități medicale', specialitati_medicale_path, class: 'btn btn-custom', id: 'about-container__link-back' %>
+    <h1><%= @specialty.name %></h1>
+    <div class="about-container__specialty"><%= @specialty.description %></div>
+    <div class="about-container__specialists">
+      <h2>Medici de <%= @specialty.name %> </h2>
+      <div class="about-container__specialists-index">
+        <% persons.each_with_index do |p, i| %>
+        <div class="specialist-card" style="background-image: url('<%=image_url p[:photo]%>'); transition: <%=i + 0.5%>s;" data-controller="animation" data-action="scroll@window->animation#svgscroll">
+          <div class="specialist-card-info" >
+            <p><%= p[:first_name].concat(" #{p[:last_name]}") %></p>
+            <p><%= p[:profession] %></p>
+          </div>
+        </div>
+        <% end %>
+      </div>
+    </div>
+    <%= image_tag('wave-home-page', id: 'about-container__specialty__wave') %>
+  </div>
+</div>

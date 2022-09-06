@@ -5,8 +5,33 @@
 
 .btn-custom {
   color: $color-1;
-  border: 1px solid $color-1;
+  // border: 1px solid $color-1;
+  box-shadow: 0 0 5px $color-1-40;
   background-color: $white-spinal;
   border-radius: 5px;
   padding: 5px 15px;
+  text-decoration: none;
+}
+
+.btn-crud {
+  border: none;
+}
+
+.btn-red {
+  color: rgb(111, 0, 0);
+  &:hover {
+    color: white;
+    background-color: red;
+  }
+}
+.btn-green {
+  color: green;
+  &:hover {
+    color: white;
+    background-color: green;
+  }
+}
+
+.box-shadow {
+  box-shadow: 0 0 5px $color-1-40;
 }

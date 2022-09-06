@@ -1,0 +1,24 @@
+.personal-container {
+  position: relative;
+  min-height: calc(var(--vh * 93));
+  width: 100%;
+  display: grid;
+  grid-template-rows: 700px;
+  grid-template-columns: 20px auto 20px;
+  @media(min-width: 1024px) {
+    grid-template-columns: 50px repeat(10, 1fr) 50px;
+  }
+}
+
+.personal-form {
+  position: relative;
+  padding: 30px;
+  grid-area: 1 /2 / 2 / 3;
+  width: 100%;
+  .form {
+    width: 100%;
+  }
+  @media(min-width: 1024px) {
+    grid-area: 1 / 2 / 2 / 6;
+  }
+}
