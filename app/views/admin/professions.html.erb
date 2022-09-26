@@ -1,4 +1,4 @@
-<% if current_user && current_user.admin %>
+<% if access %>
   <div class="professions-container">
     <div class="professions-main">
       <h1>Profesii</h1>
@@ -37,9 +37,5 @@
       </div>
     </div>
   <% else %>
-  <div class="no-access" style="background-image: url('<%=image_url('no-access.png')%>')">
-    <h1>Nu aveți drepturi de administrare!</h1>
-    <p>Înapoi la <%= link_to 'pagina publică', root_path %></p>
-    
-  </div>
+  <%= no_access %>
 <% end %>

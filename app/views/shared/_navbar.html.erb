@@ -3,6 +3,11 @@
     <%= link_to root_path, class: "navbar-brand" do %>
       <%= image_tag "logo2-color.png", class: 'navbar-brand-img', data: {sidemenu_toggle_target: 'toggle'} %>
     <% end %>
-    <i class="fas fa-bars" data-sidemenu-toggle-target="toggle" data-action="click->sidemenu-toggle#toggle"></i>
+    <div id="hamburger" class="hamburger" data-sidemenu-toggle-target="hamburger" data-action="click->sidemenu-toggle#toggle">
+      <div class="short-line" data-sidemenu-toggle-target="shortline"></div>
+      <div id="long-line" class="long-line" data-sidemenu-toggle-target="longline"></div>
+      <div id="long-line-2" class="long-line long-line-2" data-sidemenu-toggle-target="longline2"></div>
+      <div class="short-line" data-sidemenu-toggle-target="shortline"></div>
+    </div>
   </div>
 </div>

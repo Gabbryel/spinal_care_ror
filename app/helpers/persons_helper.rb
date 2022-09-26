@@ -4,7 +4,7 @@ module PersonsHelper
       first_name: 'Anghel',
       last_name: 'Dobrovici',
       profession: 'medic',
-      photo: 'doctor.png'
+      photo: '0236.png'
     },
     {
       first_name: 'Sorin',
@@ -16,7 +16,7 @@ module PersonsHelper
       first_name: 'Dorin',
       last_name: 'Serbu',
       profession: 'medic',
-      photo: 'doctor.png'
+      photo: '0236.png'
     },
     {
       first_name: 'Sorina',
