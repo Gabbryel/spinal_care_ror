@@ -4,11 +4,13 @@
   </div>
   <div class="main-specialists-index">
     <% persons.each_with_index do |p, i| %>
-      <div class="specialist-card" style="background-image: url('<%=image_url p[:photo]%>'); transition: <%=i + 0.5%>s;" data-controller="animation" data-action="scroll@window->animation#svgscroll">
-        <div class="specialist-card-info" >
-          <p><%= p[:first_name].concat(" #{p[:last_name]}") %></p>
-          <p><%= p[:profession] %></p>
-        </div>
+      <div class="specialist-card" style="transition: <%=i + 0.5%>s;" data-controller="animation" data-action="scroll@window->animation#svgscroll">
+        <div class="specialist-card__back"></div>
+        <div class="specialist-card__photo-holder" style="background-image: url('<%=image_url p[:photo]%>');"></div>
+          <div class="specialist-card-info" >
+            <p><%= p[:first_name].concat(" #{p[:last_name]}") %><br>
+            <%= p[:profession] %></p>
+          </div>
       </div>
     <% end %>
   </div>

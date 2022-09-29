@@ -33,29 +33,47 @@
   }
   .specialist-card {
     position: relative;
-    width: 300px;
-    height: 400px;
-    background-size: contain;
-    border-radius: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: end;
+    width: 320px;
+    height: 420px;
     overflow: hidden;
     transform: translateY(100px);
     opacity: 0;
+    .specialist-card__back {
+      position: relative;
+      background-color: $color-2;
+      width: 90%;
+      margin: 0 auto;
+      height: 100%;
+    }
+    .specialist-card__photo-holder {
+      position: absolute;
+      width: 320px;
+      height: 390px;
+      top: 15px;
+      left: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
     .specialist-card-info {
       position: relative;
-      bottom: 0;
       text-align: center;
-      background: $white-spinal;
-      width: 100%;
-      padding: 15px 0;
+      position: absolute;
+      width: 300px;
+      margin-left: 0;
+      margin-right: 0;
+      bottom: 38px;
+      background-color: #4a5b5c;
+      padding: 10px 30px;
+      left: 0;
+      right: 0;
       p {
-        font-size: 1.1em;
-        font-weight: 700;
-        &:nth-child(2) {
-          margin: 0;
-        }
+        color: #bcb285;
+        margin: 0;
+        font-size: 1.4em;
+        text-shadow: 0.1px 0.1px 1px #ffffff10;
+        font-family: $font-mont;
+        font-weight: 600;
       }
     }
   }

@@ -1,4 +1,5 @@
 class Profession < ApplicationRecord
+  has_and_belongs_to_many :members, optional: true
   validates :name, presence: true
   broadcasts_to ->(profession) { "professions" }, inserts_by: :prepend
   include SlugHelper

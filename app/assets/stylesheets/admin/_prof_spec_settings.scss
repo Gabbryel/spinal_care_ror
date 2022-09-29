@@ -1,4 +1,4 @@
-.professions-container {
+.professions-container, .users-container {
   position: relative;
   display: grid;
   gap: 50px 0;
@@ -10,7 +10,7 @@
   }
 }
 
-.professions-main, .specialties-main {
+.professions-main, .specialties-main, .users-main {
   position: relative;
   display: flex;
   padding: 30px;
@@ -32,7 +32,7 @@
 
 }
 
-#professions, #specialties {
+#professions, #specialties, .users-index {
   position: relative;
   display: flex;
   flex-wrap: wrap;
@@ -40,7 +40,7 @@
   justify-content: space-between;
 }
 
-.profession, .specialty {
+.profession, .specialty, .user {
   position: relative;
   // border: 0.1px solid #29332b;
   box-shadow: 0 0 5px $color-1-40;
@@ -59,6 +59,9 @@
     font-size: 10px;
     gap: 0 10px;
   }
+}
+.user {
+  
 }
 
 .profession-form,
@@ -89,3 +92,31 @@
   margin-top: 30px;
 }
 
+
+.no-access {
+  background-image: url(http://localhost:3001/assets/no-access-b438b54….png);
+  height: calc(var(--vh) * 93);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 50px;
+  background-color: black;
+  color: $white-spinal;
+  text-align: center;
+  h1 {
+    font-size: clamp(30px 2em 60px);
+    font-family: $font-mont;
+    color: inherit;
+    text-align: inherit;
+  }
+  p {
+    color: inherit;
+  }
+  a {
+    color: inherit;
+  }
+}

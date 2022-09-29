@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+
   svgload() {
     this.element.classList.add('active-svg')
     this.element.classList.remove('inactive')
@@ -18,4 +19,4 @@ export default class extends Controller {
       this.element.classList.add('inactive')
     }
   }
-  }
+}

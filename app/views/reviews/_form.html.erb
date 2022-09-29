@@ -1,0 +1,14 @@
+<div class="home-reviews-form">
+  <p>Scrie și tu o recenzie!</p>
+  <%= simple_form_for @review do |f| %>
+    <% if @review.errors.any? %>
+      <div class="error-message">
+        <%= @review.errors.full_messages.to_sentence.capitalize %>
+      </div>
+    <% end %>
+    <%= f.input :rating, label: false, collection: (1..5).to_a, input_html: {data: {controller: "star-rating", options: {clearable: true, tooltip: false }}} %>
+    <%= f.input :content, label: false, placeholder: 'Părerea ta...' %>
+    <%= f.input :author, label: false, placeholder: 'Numele tău' %>
+    <%= f.submit 'Adaugă recenzie', class: 'btn-custom', local: true %>
+  <% end %>
+</div>

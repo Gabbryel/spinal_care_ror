@@ -2,6 +2,7 @@ class AdminController < ApplicationController
   def dashboard
     @m = Member.new()
     @professions = Profession.all
+    @users = User.all.order(email: :asc)
   end
 
   def personal

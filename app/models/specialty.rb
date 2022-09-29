@@ -1,4 +1,5 @@
 class Specialty < ApplicationRecord
+  has_and_belongs_to_many :members, optional: true
   has_rich_text :description
   validates :name, presence: true
   broadcasts_to ->(specialty) { "specialties" }, inserts_by: :prepend
