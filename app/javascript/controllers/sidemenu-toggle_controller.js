@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["toggle", "hamburger", "shortline", "longline", "longline2"]
+
   toggle() {
       this.toggleTargets.forEach(el => {
         el.classList.add('trigger');
@@ -12,7 +13,6 @@ export default class extends Controller {
       let longLine2 = this.longline2Targets[0];
       let shortLines = this.shortlineTargets;
       let elements = [hamburger, longLine, longLine2, shortLines].flat();
-
       hamburger.classList.toggle("closed");
   if (hamburger.classList.contains("closed")) {
     elements.forEach((el) => el.classList.add("trigger"));
@@ -55,8 +55,8 @@ export default class extends Controller {
     setTimeout(() => {
       hamburger.classList.remove("active");
     }, 780);
-  }
-    }
+  }}
+
   close() {
     this.toggleTargets.forEach(el => {
       el.classList.remove('active')
@@ -65,8 +65,5 @@ export default class extends Controller {
         el.classList.add('fa-bars')
       }
     });
-  }
-  toggleHamburger() {
-
   }
 }

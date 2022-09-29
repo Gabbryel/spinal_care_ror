@@ -12,6 +12,7 @@
       cursor: pointer;
       z-index: 1200;
       margin-right: 50px;
+      width: 27px;
     }
     .trigger {
       transition: 0.8s ease;
@@ -27,11 +28,11 @@
       position: relative;
       width: 27px;
       border-bottom: 2px solid $color-2;
-      border-radius: 10%;
+      border-radius: 20px;
     }
     .long-line {
       position: absolute;
-      top: 42%;
+      top: 45%;
     }
     .short-line {
       width: 20px;
@@ -41,11 +42,11 @@
     }
     .long-line.active-long-line-1 {
       transform: rotate(315deg);
-      border-bottom: 5px solid $color-2;
+      border-bottom: 3px solid $color-2;
     }
     .long-line-2.active-long-line-2 {
       transform: rotate(225deg);
-      border-bottom: 5px solid $color-2;
+      border-bottom: 3px solid $color-2;
     }
   }
 }
