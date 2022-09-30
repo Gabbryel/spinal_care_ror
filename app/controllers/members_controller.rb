@@ -1,5 +1,6 @@
 class MembersController < ApplicationController
   skip_before_action :authenticate_user!, except: %i[new create edit update destroy]
+  before_action :set_member, only: %i[edit update show destroy]
   def new
     @member = authorize Member.new()
   end
@@ -8,7 +9,7 @@ class MembersController < ApplicationController
     @member = authorize Member.new(member_params)
     respond_to do |format|
       if @member.save
-        format.html { redirect_to personal_dashboard, notice: 'Noul membru al echipei adăugat!'}
+        format.html { redirect_to dashboard_personal_path, notice: 'Noul membru al echipei adăugat!'}
         format.json { render :show, status: :created, location: @member}
       else
         format.turbo_stream
@@ -22,15 +23,31 @@ class MembersController < ApplicationController
   end
 
   def update
+    respond_to do |format|
+      if @member.update(member_params)
+        format.html { redirect_to dashboard_personal_path, notice: 'Ați modificat cu succes!'}
+        format.json { render :show, status: :updated, location: @member}
+      else
+        format.turbo_stream
+        format.html { render :edit }
+        format.json { render json: @member.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   def index
+    @posts = policy_scope(Member).all
   end
 
   def show
   end
 
   def destroy
+    respond_to do |format|
+      if @member.destroy
+        format.html { redirect_to dashboard_personal_path, notice: 'Ștergere efectuată!'}
+      end
+    end
   end
 
   private

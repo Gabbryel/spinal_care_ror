@@ -1,11 +1,19 @@
-<div class="personal-container">
+<div>
+  <%= link_to "#", class: 'btn btn-custom', data: { bs_toggle: "modal", bs_target: "#newMemberModal" } do %>
+    Adaugă membru
+  <% end %>
   <div class="personal-form">
-    <%= render 'members/form' %>
+    <%= render partial: 'members/modal', locals: { new: true, modal_id: 'newMemberModal', member: @member } %>
   </div>
     <div class="personal-index">
-      <% @members.each do |m| %>
+      <% @members.each do |member| %>
         <div class="personal-member">
-          <p><%= m.last_name %> <%= m.first_name %> </p>
+          <p><%= member.last_name %> <%= member.first_name %> <%= member.profession.name %> <%= member.specialty.name %></p>
+          <%= link_to 'Modifică membru', class: 'btn btn-custom', data: { bs_toggle: "modal", bs_target: "#edit#{member.id}" } do %>
+           Modifică membru
+          <% end %>
+          <%= render partial: 'members/modal', locals: {new: false, modal_id: "edit#{member.id}", member: member } %>
+          <%= link_to 'Șterge', member_path(member), class: "btn btn-custom", data: { turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să-l ștergi pe #{full_name(member)}?"} %>
         </div>
       <% end %>
     </div>

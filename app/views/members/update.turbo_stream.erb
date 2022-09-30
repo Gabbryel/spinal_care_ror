@@ -1,0 +1,3 @@
+<%= render "modal", modal_id: "edit#{@member.id}", new: false, member: @member  do %>
+  <%= turbo_stream.replace "edit#{@member.id}", partial: 'form', locals: { member: member} %>
+<% end %>
