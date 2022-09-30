@@ -1,0 +1,2 @@
+<%= turbo_stream.replace 'new_member', partial: 'members/form', locals: { member: @member } %>
+<%= turbo_stream.append 'flash', partial: 'shared/flashes', locals: { notice: notice, alert: alert, message: 'Membru adăugat' } %>

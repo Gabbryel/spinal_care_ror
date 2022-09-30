@@ -1,2 +1,3 @@
-<h1>Members#update</h1>
-<p>Find me in app/views/members/update.html.erb</p>
+<%= turbo_stream.replace 'edit_member', partial: 'members/form', locals: { member: @member } %>
+<%= turbo_stream.append 'flash', partial: 'shared/flashes', locals: { notice: notice, alert: alert, message: 'Membru actualizat' } %>
+<!--  -->

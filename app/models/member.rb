@@ -1,12 +1,9 @@
 class Member < ApplicationRecord
   has_rich_text :description
   has_one_attached :photo
-  
-  validates :last_name, presence: true
-  validates :first_name, presence: true
-  validates :profession_id, presence: true
-  validates :specialty_id, presence: true
-
+  belongs_to :profession
+  belongs_to :specialty
+  validates :last_name, :first_name, :profession_id, :specialty_id, :description, presence: true
   include SlugHelper
   include CheckSlugHelper
   after_save :slugify, unless: :check_slug
