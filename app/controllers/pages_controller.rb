@@ -5,5 +5,6 @@ class PagesController < ApplicationController
     @review = Review.new()
     @reviews = Review.all.shuffle
     @specialties = Specialty.all.order(name: :asc)
+    @members = Member.all.sample(4)
   end
 end

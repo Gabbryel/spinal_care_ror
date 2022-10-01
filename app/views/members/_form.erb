@@ -1,16 +1,15 @@
-<div class="form">
+<div class="form" data-controller="memberFormSpecialty">
   <%= simple_form_for(member, id: (member.id ? dom_id(member, :edit) : dom_id(Member.new)) ) do |f|%>
     <% if member.errors.any? %>
     <div class="error-message">
       <%= member.errors.full_messages.to_sentence.capitalize %>
     </div>
     <% end %>
-    <%= member.id ? dom_id(member, :edit) : dom_id(Member.new) %>
     <%= f.input :first_name, label: false, placeholder: 'Prenume' %>
     <%= f.input :last_name, label: false, placeholder: 'Nume' %>
     <%= f.input :photo, label: false %>
-    <%= f.input :profession_id, collection: Profession.all, prompt: 'Alege profesia', label: false %>
-    <%= f.input :specialty_id, collection: Specialty.all, prompt: 'Alege specialitatea medicală', label: false %>
+    <%= f.input :profession_id, collection: Profession.all, prompt: 'Alege profesia', label: false,  input_html: { data: { memberFormSpecialty_target: 'profession', action: 'change->memberFormSpecialty#change'}} %>
+    <%= f.input :specialty_id, collection: Specialty.all, prompt: 'Alege specialitatea medicală, dacă este cazul!', label: false, input_html: { data: {memberFormSpecialty_target: 'specialty'}} %>
     <%= f.rich_text_area :description, placeholder: 'Bio sau alte info despre membrul echipei Spinal Care' %>
     <br>
     <%= f.submit 'Trimite' %>

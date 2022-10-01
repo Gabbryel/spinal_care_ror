@@ -1,0 +1,11 @@
+#member_specialty_id {
+  display: none;
+}
+#member_specialty_id.trigger {
+  display: block;
+  opacity: 0;
+  transition: 1s;
+}
+#member_specialty_id.active {
+  opacity: 1;
+}

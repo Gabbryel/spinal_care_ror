@@ -22,3 +22,51 @@
     grid-area: 1 / 2 / 2 / 6;
   }
 }
+
+
+.personal-index {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  margin: 0 auto;
+  gap: 20px 10px;
+}
+.personal-profession {
+  position: relative;
+  width: 90%;
+  margin: 20px auto;
+  h3 {
+    margin-bottom: 60px;
+    position: relative;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .fas, .far {
+    font-size: 14px;
+    line-height: 2.3;
+  }
+}
+.personal-member {
+  position: relative;
+  padding: 10px 15px;
+  border: 1px solid black;
+  width: 300px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 30px;
+  .personal-info {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    grid-area: 1 / 2 / 2 / 4;
+    justify-self: center;
+  }
+  .personal-crud {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    gap: 0 10px;
+  }
+}
