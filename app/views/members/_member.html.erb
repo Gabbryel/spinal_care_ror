@@ -1,0 +1,8 @@
+<div class="specialist-card" data-controller="animation" data-action="scroll@window->animation#svgscroll">
+  <div class="specialist-card__back"></div>
+  <div class="specialist-card__photo-holder" style="background-image: image-url('<%= cl_image_path(member.photo.key) %>');"></div>
+    <div class="specialist-card-info" >
+      <p><%= full_name(member) %><br>
+      <%= member[:profession] %></p>
+    </div>
+</div>

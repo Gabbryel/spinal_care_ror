@@ -1,2 +1,21 @@
-<h1>Members#show</h1>
-<p>Find me in app/views/members/show.html.erb</p>
+<div class="member-container">
+  <div class="member-container__main">
+    <div class="member-card">
+      <div class="member-card__back"></div>
+      <div class="member-card__photo-holder" style="background-image: url('<%= cl_image_path @member.photo.key if @member.photo.key.present? %>');"></div>
+        <div class="member-card-info" >
+          <p><%= full_name(@member) %></p>
+          <span><%= @member.profession.name %></span><br>
+          <% unless @member.specialty.nil? %>
+            <%= link_to "../specialitati-medicale/#{@member.specialty.slug}" do %>
+              <%= @member.specialty.name %>
+            <% end %>
+          <% end %>
+        </div>
+    </div>
+    <div class="member-bio">
+      <%= @member.description %>
+    </div>
+  </div>
+  <%= image_tag('wave-home-page.svg', class: 'member-page-wave') %>
+</div>

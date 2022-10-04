@@ -59,7 +59,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_28_175437) do
     t.datetime "updated_at", null: false
     t.string "slug"
     t.bigint "profession_id", null: false
-    t.bigint "specialty_id", null: false
+    t.bigint "specialty_id"
     t.index ["profession_id"], name: "index_members_on_profession_id"
     t.index ["specialty_id"], name: "index_members_on_specialty_id"
   end
