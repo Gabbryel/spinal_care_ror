@@ -58,6 +58,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
   gem "dotenv-rails"
   gem 'byebug', '~> 9.0', '>= 9.0.6'
+  gem 'pry', '~> 0.13.1'
 end
 
 group :development do

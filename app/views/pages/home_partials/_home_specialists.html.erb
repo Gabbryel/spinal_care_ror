@@ -3,15 +3,18 @@
     <p><span>Clinica Spinal Care</span><br> colaborează cu unii dintre<br> <span>cei mai buni medici</span></p>
   </div>
   <div class="main-specialists-index">
-    <% @members.each_with_index do |m, i| %>
-      <div class="specialist-card" style="transition: <%=i + 0.5%>s;" data-controller="animation" data-action="scroll@window->animation#svgscroll">
-        <div class="specialist-card__back"></div>
-        <div class="specialist-card__photo-holder" style="background-image: url('<%=cl_image_path m.photo.key if m.photo.key.present? %>');"></div>
-          <div class="specialist-card-info" >
-            <p><%= full_name(m) %></p>
-            <span><%= m.profession.name %></span>
-          </div>
-      </div>
+    <% @medics.each_with_index do |m, i| %>
+      <%= link_to member_path(m) do %>
+        <div class="specialist-card" style="transition: <%= i + 0.5 %>s;" data-controller="animation" data-action="scroll@window->animation#svgscroll">
+          <div class="specialist-card__back"></div>
+          <div class="specialist-card__photo-holder" style="background-image: url('<%=cl_image_path m.photo.key if m.photo.key.present? %>');"></div>
+            <div class="specialist-card-info" >
+              <p><%= full_name(m) %></p>
+              <span><%= m.profession.name %></span><br>
+              <span><%= m.specialty.name unless m.specialty.nil? %></span>
+            </div>
+        </div>
+      <% end %>
     <% end %>
   </div>
   <div class="home_specialists_link">

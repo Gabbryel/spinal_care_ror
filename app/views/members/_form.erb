@@ -8,8 +8,8 @@
     <%= f.input :first_name, label: false, placeholder: 'Prenume' %>
     <%= f.input :last_name, label: false, placeholder: 'Nume' %>
     <%= f.input :photo, label: false %>
-    <%= f.input :profession_id, collection: Profession.all, prompt: 'Alege profesia', label: false,  input_html: { data: { memberFormSpecialty_target: 'profession', action: 'change->memberFormSpecialty#change'}} %>
-    <%= f.input :specialty_id, collection: Specialty.all, prompt: 'Alege specialitatea medicală, dacă este cazul!', label: false, input_html: { data: {memberFormSpecialty_target: 'specialty'}} %>
+    <%= f.association :profession, input_html: { data: { memberFormSpecialty_target: 'profession', action: 'change->memberFormSpecialty#change'}}, label: false %>
+    <%= f.association :specialty, label: false, input_html: { data: {memberFormSpecialty_target: 'specialty'}} %>
     <%= f.rich_text_area :description, placeholder: 'Bio sau alte info despre membrul echipei Spinal Care' %>
     <br>
     <%= f.submit 'Trimite' %>

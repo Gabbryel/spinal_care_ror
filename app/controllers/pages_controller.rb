@@ -5,6 +5,6 @@ class PagesController < ApplicationController
     @review = Review.new()
     @reviews = Review.all.shuffle
     @specialties = Specialty.all.order(name: :asc)
-    @members = Member.all.sample(4)
+    @medics = Profession.find_by(slug: 'medic').members.sample(4)
   end
 end
