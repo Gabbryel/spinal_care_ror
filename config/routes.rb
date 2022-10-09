@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   resources :specialties
   get 'specialitati-medicale', to: 'specialties#all_specialties'
   get 'specialitati-medicale/:id', to: 'specialties#about'
+  get 'echipa', to: 'pages#medical_team'
 
   get 'dashboard', to: 'admin#dashboard'
   get 'dashboard/personal', to: 'admin#personal'

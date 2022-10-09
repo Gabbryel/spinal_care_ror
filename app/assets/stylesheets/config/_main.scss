@@ -4,6 +4,21 @@
 .color-2 {
   color: $color-2;
 }
+.color-3 {
+  color: $color-3;
+}
+
+.bkg-color-1 {
+  background-color: $color-1;
+}
+
+.bkg-color-2 {
+  background-color: $color-2;
+}
+
+.bkg-color-3 {
+  background-color: $color-3;
+}
 
 $min-height: calc(var(--vh) * 93);
 
