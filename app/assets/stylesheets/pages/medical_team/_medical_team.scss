@@ -1,0 +1,54 @@
+.medical-team {
+  position: relative;
+  grid-area: 1/1/-1/-1;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  display: grid;
+  gap: 70px;
+  align-content: center;
+  width: 90%;
+  margin: 0 auto;
+  padding: 130px 0;
+  .member-index {
+    grid-area: auto !important;
+  }
+  .modal {
+    background-color: $color-1-40;
+  }
+  .modal-content {
+    color: $color-1;
+    background-color: $color-2;
+    border-radius: 5px;
+    .modal-header {
+      border: none;
+    }
+    .modal-body {
+      padding: 0;
+      background-color: $color-3;
+      border-radius: 0 0 5px 5px;
+    }
+  }
+  #filter-proffesion-form,
+  #filter-specialty-form,
+  #filter-name-form {
+    display: block;
+    position: relative;
+    background-color: $color-3;
+    color: $color-2;
+    padding: 10px;
+    border-radius: 0 0 5px 5px;
+    fieldset {
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px;
+      legend {
+        display: none;
+      }
+    }
+  }
+  #filter-specialty-form, #filter-name-form {
+    display: none;
+  }
+  #filter-name-form {
+    padding: 20px 10px 40px;
+  }
+}

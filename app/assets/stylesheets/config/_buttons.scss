@@ -35,3 +35,21 @@
 .box-shadow {
   box-shadow: 0 0 5px $color-1-40;
 }
+
+.btns-icon {
+  position: absolute;
+  background-color: #fff0;
+  font-size: 35px;
+  color: #bcb285;
+  padding: 0;
+  border: none;
+}
+.btns__b-d {
+  border: 1px solid #29332b50;
+  padding: 3px 12px;
+  border-radius: 4px;
+}
+.btns-close {
+  bottom: 0px;
+  right: 15px;
+}

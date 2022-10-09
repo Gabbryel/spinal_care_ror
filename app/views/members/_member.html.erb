@@ -1,8 +1,22 @@
-<div class="specialist-card" data-controller="animation" data-action="scroll@window->animation#svgscroll">
-  <div class="specialist-card__back"></div>
-  <div class="specialist-card__photo-holder" style="background-image: image-url('<%= cl_image_path(member.photo.key) %>');"></div>
-    <div class="specialist-card-info" >
-      <p><%= full_name(member) %><br>
-      <%= member[:profession] %></p>
+<div class="member-container">
+  <div class="member-container__main">
+    <div class="member-card">
+      <div class="member-card__back"></div>
+      <div class="member-card__photo-holder" style="background-image: url('<%= cl_image_path @member.photo.key if @member.photo.key.present? %>');"></div>
+        <div class="member-card-info" >
+          <p><%= full_name(@member) %></p>
+          <span><%= @member.profession.name %></span>
+          <% unless @member.specialty.nil? %>
+            <%= link_to "../specialitati-medicale/#{@member.specialty.slug}" do %>
+              <%= @member.specialty.name %>
+            <% end %>
+          <% end %>
+        </div>
     </div>
+    <div class="member-bio">
+      <%= @member.description %>
+    </div>
+  </div>
+  <%= image_tag('wave-home-page.svg', class: 'member-page-wave') %>
+  <!-- <h1><%= full_name(@member) %></h1> -->
 </div>
