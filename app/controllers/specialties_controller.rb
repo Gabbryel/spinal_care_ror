@@ -57,6 +57,6 @@ class SpecialtiesController < ApplicationController
   end
 
   def specialty_params
-    params.require(:specialty).permit(:name, :slug, :description )
+    params.require(:specialty).permit(:name, :slug, :description, :photo )
   end
 end

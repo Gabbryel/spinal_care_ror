@@ -4,15 +4,24 @@
     <h1><%= @specialty.name %></h1>
     <div class="about-container__specialty"><%= @specialty.description %></div>
     <div class="about-container__specialists">
-      <h2>Medici de <%= @specialty.name %> </h2>
+      <h2>Medici <%= @specialty.name.downcase %> </h2>
       <div class="about-container__specialists-index">
-        <% persons.each_with_index do |p, i| %>
-        <div class="specialist-card" style="background-image: url('<%=image_url p[:photo]%>'); transition: <%=i + 0.5%>s;" data-controller="animation" data-action="scroll@window->animation#svgscroll">
-          <div class="specialist-card-info" >
-            <p><%= p[:first_name].concat(" #{p[:last_name]}") %></p>
-            <p><%= p[:profession] %></p>
-          </div>
-        </div>
+        <% @specialty.belongs_to_specialty.each_with_index do |medic| %>
+          <%= link_to member_path(medic) do  %>
+            <div class="member-card member-index" data-identity="<%= full_name(medic) %>" data-profession="<%= medic.profession.name %>" data-specialty="<%= medic.specialty.name if medic.specialty %>">
+              <div class="member-card__back"></div>
+              <div class="member-card__photo-holder" style="background-image: url('<%= cl_image_path medic.photo.key if medic.photo.key.present? %>');"></div>
+                <div class="member-card-info" >
+                  <p><%= full_name(medic) %></p>
+                  <span><%= medic.profession.name %></span>
+                  <% unless medic.specialty.nil? %>
+                    <%= link_to "../specialitati-medicale/#{medic.specialty.slug}" do %>
+                      <%= medic.specialty.name %>
+                    <% end %>
+                  <% end %>
+                </div>
+            </div>
+          <% end %>
         <% end %>
       </div>
     </div>

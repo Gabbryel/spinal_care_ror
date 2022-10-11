@@ -8,9 +8,15 @@
   <div class="main-specialities-index">
     <% @specialties.each_with_index do |sp, i| %>
       <%= link_to "specialitati-medicale/#{sp.slug}" do %>
-        <div class="speciality-card" style="transition: <%=i + 0.5%>s;" data-controller="animation" data-action="scroll@window->animation#svgscroll">
-          <div class="specialty-card__cover" style="background-image: url('<%=image_url 'logo_sm.png' %>')"></div>
-            <p><%= sp[:name] %></p>
+        <div class="speciality-card" style="transition: <%=i%>s;" data-controller="animation" data-action="scroll@window->animation#svgscroll">
+          <div class="specialty-card__cover__photo">
+            <%= cl_image_tag(sp.photo.key.present? ? sp.photo.key : "med-gen_t4zqmq.svg") %>
+          </div>
+          <div class="specialty-card__cover-name">
+            <% sp[:name].split(Regexp.union([' ', '-']), 3).each do |w| %>
+              <%= tag.p(w) %>
+            <% end %>
+          </div>
         </div>
       <% end %>
     <% end %>
