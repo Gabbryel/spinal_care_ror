@@ -7,8 +7,8 @@ class MembersController < ApplicationController
 
   def create
     @member = authorize Member.new(member_params)
-    @member.profession_id = Profession.find_by(slug: params[:member][:profession_id]).id
-    @member.specialty_id = Specialty.find_by(slug: params[:member][:specialty_id]).id if params[:member][:specialty_id].present?
+    @member.profession_id = params[:member][:profession_id]
+    @member.specialty_id = params[:member][:specialty_id] if params[:member][:specialty_id].present?
     respond_to do |format|
       if @member.save
         format.html { redirect_to dashboard_personal_path, notice: 'Noul membru al echipei adăugat!'}
