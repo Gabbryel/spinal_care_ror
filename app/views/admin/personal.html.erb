@@ -2,6 +2,9 @@
   <div class="personal-form">
     <%= render partial: 'members/modal', locals: { new: true, modal_id: 'newMemberModal', member: @member } %>
   </div>
+  <% if @professions.empty? %>
+    <h3><%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newMemberModal" } do %><i class="fas fa-user-plus"></i><% end %></h3>
+  <% end %>
   <% @professions.each do |p| %>
     <% if !p.members.empty? %>
       <div class="personal-profession">

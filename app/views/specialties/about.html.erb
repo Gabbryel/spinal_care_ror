@@ -1,6 +1,7 @@
 <div class="about-container">
   <div class="about-container__main">
     <%= link_to '˿ Specialități medicale', specialitati_medicale_path, class: 'btn btn-custom', id: 'about-container__link-back' %>
+    <%= link_to "my link", :back %>
     <h1><%= @specialty.name %></h1>
     <div class="about-container__specialty"><%= @specialty.description %></div>
     <div class="about-container__specialists">
