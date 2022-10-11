@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   connect() {
-    // console.log(this.element)
+    this.element.value = ""
   }
   cssController(counter, mainContainer, members) {
     if (counter === 1) {
@@ -46,6 +46,7 @@ export default class extends Controller {
     })
     this.cssController(counter, mainContainer, members)
   }
+  
   activateForm() {
     let elementValue = this.element.innerText;
     let professionForm = document.getElementById('filter-proffesion-form');
@@ -65,12 +66,12 @@ export default class extends Controller {
       nameForm.style.display = 'block';
     }
   }
-  test(event) {
+  searchName(event) {
     if (event.key === 'Enter') {
       setTimeout(() => {
         let query = window.location.search;
         const urlParams  = new URLSearchParams(query);
-        const nameReference = urlParams.get('search[name]').toLowerCase();
+        const nameReference = urlParams.get('search[name]')
         let members = Array.from(document.getElementsByClassName('member-card'));
         let mainContainer = document.getElementById('medical-team');
         let counter = 0;
@@ -83,7 +84,7 @@ export default class extends Controller {
           }
         })
         this.cssController(counter, mainContainer, members)
-      }, 200 )
+      }, 300 )
     }
   }
 }
