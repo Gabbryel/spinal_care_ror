@@ -12,20 +12,13 @@
 
 @mixin shape-svg {
   position: relative;
-  grid-area: 2 / 1 / 6 / 13;
+  grid-area: 1 / 1 / 8 / 25;
   background-color: #ffffff00;
-  @media (min-width: 768px) and (orientation: portrait) {
-    grid-area: 2 / 2 / 6 / 12;
+  @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
+    grid-area: 1 / 14 / 15 / 25;;
   }
-  @media (min-width: 768px) and (orientation: landscape) {
-    grid-area:  1 / 7 / 5 / 13;
-  }
-  @media (min-width: 1024px) and (orientation: portrait) {
-    grid-area: 2 / 2 / 5 / 12;
-  }
-  @media (min-width: 1024px) and (orientation: landscape) {
-    grid-area: 2 / 7 / 5 / 13;
-    justify-self: center;
+  @media (min-width: 950px) and (min-height: 542px) and (orientation: landscape) {
+    grid-area: 3 / 14 / 15 / 25;
   }
 }
 
@@ -52,7 +45,7 @@
     @media (min-width: 768px) and (orientation: portrait) {
       font-size: clamp(26px, calc(var(--vh) * 3), 60px);
     }
-    @media (min-width: 768px) and (orientation: landscape) {
+    @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
       font-size: clamp(26px, calc(var(--vh) * 4), 50px);
       align-self: center;
     }
