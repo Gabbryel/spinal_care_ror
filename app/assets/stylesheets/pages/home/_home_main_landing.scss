@@ -46,7 +46,6 @@
 
   #shape-svg-1.active-svg,
   #shape-svg-2.active-svg {
-    opacity: .6;
     transform: translate(0);
   }
 
@@ -120,35 +119,7 @@
   }
 
   #main-motto {
-    position: relative;
-    grid-area: 16 / 1 / 21 / 25;
-    font-size: clamp(20px, calc(var(--vh) * 2), 36px);
-    animation: main-motto 2s;
-    p {
-      display: block;
-      color: $color-1;
-      background-color: $color-contrast;
-      padding: 30px;
-      width: 80%;
-      min-height: fit-content;
-      margin: -50px auto 0;
-      border-radius: 20px;
-      text-align: center;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: bolder;
-      font-size: inherit;
-      &:nth-child(2) {
-        font-size: .6em;
-      }
-      span {
-        color: $color-2;
-      }
-    }
-    @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
-      font-size: clamp(17px, calc(var(--vh) * 4), 36px);
-      grid-area: 8 / 1 / 20 / 14;
-      align-self: center;
-    }
+    @include mottos;
   }
 
   @keyframes main-motto {

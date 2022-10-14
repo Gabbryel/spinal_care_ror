@@ -4,19 +4,18 @@
   .main-specialists-intro {
     position: relative;
     width: 100%;
-    background-color: $white-spinal;
-    padding: 60px 0;
+    background-color: $color-3;
+    padding: 30px;
     p {
-      font-size: clamp(16px, calc(var(--vh) * 3.7), 48px);
+      margin: 0;
+      font-size: clamp(18px, 2vw, 34px);
       font-weight: 900;
       text-align: center;
-      color: $color-1;
-      padding: 20px 40px;
+      color: $color-contrast;
       span {
         color: $color-2;
       }
     }
-
   }
 }
 
@@ -30,6 +29,9 @@
   padding: 150px 0;
   @media(min-width: 1024px) {
     gap: 40px;
+  }
+  a {
+    filter: drop-shadow(2px 2px 2px #00000030);
   }
   .specialist-card {
     position: relative;

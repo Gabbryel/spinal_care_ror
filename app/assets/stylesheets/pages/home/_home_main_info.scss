@@ -1,25 +1,15 @@
 .main-info {
   position: relative;
   grid-area: 3 / 1 / 4 / -1;
-  background-color: $color-contrast;
+  background-color: $color-3;
   padding: 70px 40px;
   text-align: center;
-  font-size: clamp(16px, calc(var(--vh) * 3), 48px);
-  font-weight: 900;
-  @media(min-width: 768px) {
-    padding: 50px 100px;
-    font-size: clamp(18px, 2.5rem, 30px);
-  }
-  @media(min-width: 1024px) {
-    padding: 10vh 10vw;
-  }
+  font-size: clamp(18px, 2vw, 34px);
+  font-weight: 700;
   p {
-    color: $color-1;
+    color: $color-2;
     span {
-      color: $color-2;
-    }
-    @media(min-width: 1024px) {
-      font-size: clamp(16px, calc(var(--vh) * 4), 48px);
+      color: $color-contrast;
     }
   }
 }
