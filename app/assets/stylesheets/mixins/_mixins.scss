@@ -12,48 +12,69 @@
 
 @mixin shape-svg {
   position: relative;
-  grid-area: 2 / 1 / 6 / 13;
+  grid-area: 1 / 1 / 8 / 25;
   background-color: #ffffff00;
-  @media (min-width: 768px) and (orientation: portrait) {
-    grid-area: 2 / 2 / 6 / 12;
+  filter: $d-sh-img;
+  @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
+    grid-area: 1 / 14 / 15 / 25;;
   }
-  @media (min-width: 768px) and (orientation: landscape) {
-    grid-area:  1 / 7 / 5 / 13;
+  @media (min-width: 950px) and (min-height: 542px) and (orientation: landscape) {
+    grid-area: 3 / 14 / 15 / 25;
   }
-  @media (min-width: 1024px) and (orientation: portrait) {
-    grid-area: 2 / 2 / 5 / 12;
+}
+
+@mixin landing-images {
+  position: relative;
+  grid-area: 3 / 3 / 13 / 23;
+  background-color: $color-contrast;
+  border-radius: 50%;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  animation: anim-main-image 2s;
+  img {
+    min-height: 100%;
+    width: 100%;
   }
-  @media (min-width: 1024px) and (orientation: landscape) {
-    grid-area: 2 / 7 / 5 / 13;
-    justify-self: center;
+  @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
+    grid-area: 3 / 14 / 20 / 24;
+  }
+  @media (min-width: 950px) and (min-height: 542px) and (orientation: landscape) {
+    grid-area: 4 / 14 / 20 / 24;
   }
 }
 
 @mixin mottos {
   position: relative;
-    font-size: clamp(20px, calc(var(--vh) * 2), 40px);
+    grid-area: 16 / 1 / 24 / 25;
+    font-size: clamp(20px, calc(var(--vh) * 2), 36px);
+    -webkit-animation: main-motto 2s;
+    animation: main-motto 2s;
+    background-color: #fff;
+    padding: 40px 30px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    filter: $d-sh-box;
     p {
       display: block;
       color: $color-1;
-      background-color: $color-contrast;
-      padding: 30px;
-      width: 80%;
       min-height: fit-content;
-      margin: -50px auto 0;
       border-radius: 20px;
       text-align: center;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: bolder;
+      font-family: $font-mont;
+      font-weight: 900;
       font-size: inherit;
       &:nth-child(2) {
         font-size: .6em;
       }
+      span {
+        color: $color-2;
+      }
     }
-    @media (min-width: 768px) and (orientation: portrait) {
-      font-size: clamp(26px, calc(var(--vh) * 3), 60px);
-    }
-    @media (min-width: 768px) and (orientation: landscape) {
-      font-size: clamp(26px, calc(var(--vh) * 4), 50px);
+    @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
+      font-size: clamp(17px, calc(var(--vh) * 4), 36px);
+      grid-area: 7 / 1 / 20 / 13;
       align-self: center;
     }
 }

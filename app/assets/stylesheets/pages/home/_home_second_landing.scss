@@ -1,25 +1,21 @@
 .second-landing {
   position: relative;
+  height: calc(var(--vh) * 91);
   grid-area: 4 / 1 / 5 / -1;
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(12, 1fr);
-  padding: 100px 0;
+  grid-template-columns: repeat(24, 1fr);
+  grid-template-rows: repeat(24, 1fr);
+  padding: calc(var(--vh) * 5) 3vw;
+  @media (min-width: 720px) {
+    padding: calc(var(--vh) * 5) 5vw;
+  }
   #second-image {
-    position: relative;
-    grid-area: 2 / 2 / 8 / 12;
-    border-radius: 50%;
-    overflow: hidden;
-    aspect-ratio: 1 / 1;
-    opacity: 0;
-    transition: 3s;
-    transform: translateY(200px);
-    img {
-      min-height: 100%;
-      width: 100%;
+    @include landing-images;
+    @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
+      grid-area: 3 / 1 / 20 / 10;
     }
-    @media(min-width: 1024px) {
-      grid-area: 3 / 3 / 13 / 7;
+    @media (min-width: 950px) and (min-height: 542px) and (orientation: landscape) {
+      grid-area: 4 / 1 / 20 / 11;
     }
   }
   #second-image.active-svg {
@@ -27,19 +23,16 @@
     transform: translate(0);
   }
   #sec-shape-svg-1, #sec-shape-svg-2 {
-    position: inherit;
-    grid-area: 1 / 1 / 12 / 12;
-    opacity: .6;
-    animation: animation-shapes 2s;
-    @media(min-width: 1024px) {
-      grid-area: 2 / 2 / 13 / 8;
+    @include shape-svg;
+    @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
+      grid-area: 1 / 1 / 15 / 11;
+    }
+    @media (min-width: 950px) and (min-height: 542px) and (orientation: landscape) {
+      grid-area: 3 / 1 / 15 / 12;
     }
   }
   #sec-shape-svg-2 {
     animation: animation-shapes 2s reverse;
-    @media(min-width: 1024px) {
-      grid-area: 2 / 2 / 13 / 7;
-    }
   }
 
   #sec-shape-svg-1.trigger,
@@ -49,7 +42,6 @@
 
   #sec-shape-svg-1.active-svg,
   #sec-shape-svg-2.active-svg {
-    opacity: .6;
     transform: translate(0)
   }
 
@@ -74,12 +66,12 @@
 
   #second-motto {
     @include mottos;
-    grid-area: 9 / 1 / 13 / 13;
-    @media(min-width: 1024px) {
-      grid-area: 5 / 7 / 13 / 13;
+    @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
+      grid-area: 5 / 14 / 22 / 24;
+      align-self: unset;
     }
-    span {
-      color: $color-2;
+    @media (min-width: 950px) and (min-height: 542px) and (orientation: landscape) {
+      grid-area: 9 / 14 / span 10 / span 10;
     }
   }
 }

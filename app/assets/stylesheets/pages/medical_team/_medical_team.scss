@@ -8,6 +8,9 @@
   width: 90%;
   margin: 0 auto;
   padding: 130px 0;
+  [data-bs-target="#filterModal"] {
+    top: 50px;
+  }
   .member-index {
     grid-area: auto !important;
   }

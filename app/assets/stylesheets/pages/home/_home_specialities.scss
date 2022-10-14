@@ -5,14 +5,14 @@
   .main-specialities-intro {
     position: relative;
     width: 100%;
-    background-color: $white-spinal;
-    padding: 60px 0;
+    background-color: $color-3;
+    padding: 30px;
     p {
-      font-size: clamp(16px, calc(var(--vh) * 3.7), 48px);
+      margin: 0;
+      font-size: clamp(18px, 2vw, 34px);
       font-weight: 900;
       text-align: center;
-      color: $color-1;
-      padding: 20px 40px;
+      color: $color-contrast;
       span {
         color: $color-2;
       }
@@ -49,6 +49,7 @@
       z-index: 100;
       overflow: hidden;
       border-radius: 10px;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
       .speciality-card {
         position: relative;
         width: 100%;
