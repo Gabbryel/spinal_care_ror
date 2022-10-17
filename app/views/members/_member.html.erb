@@ -1,5 +1,5 @@
 <div class="member-container">
-  <div class="member-container__main">
+  <div class="member-container__main" data-controller="bio">
     <div class="member-card">
       <div class="member-card__back"></div>
       <div class="member-card__photo-holder" style="background-image: url('<%= cl_image_path @member.photo.key if @member.photo.key.present? %>');"></div>
@@ -13,9 +13,10 @@
           <% end %>
         </div>
     </div>
-    <div class="member-bio">
+    <div class="member-bio" data-bio-target="bio">
       <%= @member.description %>
     </div>
+    <span id="member-bio__more" data-bio-target="more">⬇</span>
   </div>
   <%= image_tag('wave-home-page.svg', class: 'member-page-wave') %>
   <!-- <h1><%= full_name(@member) %></h1> -->
