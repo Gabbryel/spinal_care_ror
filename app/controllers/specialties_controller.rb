@@ -53,7 +53,7 @@ class SpecialtiesController < ApplicationController
   private
 
   def set_specialty
-    @specialty = authorize Specialty.find_by(slug: params[:id])
+    @specialty = authorize Specialty.find_by!(slug: params[:id])
   end
 
   def specialty_params

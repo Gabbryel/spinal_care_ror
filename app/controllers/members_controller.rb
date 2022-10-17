@@ -1,6 +1,16 @@
 class MembersController < ApplicationController
   skip_before_action :authenticate_user!, except: %i[new create edit update destroy]
   before_action :set_member, only: %i[edit update show destroy]
+  rescue_from ActiveRecord::RecordNotFound do |exception|
+    @members = Member.where("slug LIKE ?", "%#{params[:id]}%")
+    if @members.empty?
+      redirect_to echipa_path
+      flash.alert = 'Adresă greșită! V-am redirecționat către pagina cu echipa medicală a Clinicii Spinal Care'
+    else
+      render action: :search_when_error
+    end
+  end
+  
   def new
     @member = authorize Member.new()
   end
@@ -59,7 +69,7 @@ class MembersController < ApplicationController
   private
 
   def set_member
-    @member = authorize Member.find_by(slug: params[:id])
+    @member = authorize Member.find_by!(slug: params[:id])
   end
 
   def member_params

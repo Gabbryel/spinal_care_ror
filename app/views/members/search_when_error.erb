@@ -1,0 +1,8 @@
+<div class="medical-team">
+  <h3>Probabil că linkul dvs este greșit</h3>
+  <p>Iată câteva sugestii apropiate de căutarea dvs</p>
+      <% @members.each do |m| %>
+        <%= render partial: "members/member_card", locals: {m: m, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
+      <% end %>
+</div>
+

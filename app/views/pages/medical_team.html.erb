@@ -7,7 +7,6 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <!-- <h1 class="modal-title fs-5 text-center w-100" id="filterModalLabel">Filtru după profesie</h1> -->
             <%= button_tag 'Profesie', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
             <%= button_tag 'Specialitate', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
             <%= button_tag 'Nume', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
@@ -27,25 +26,8 @@
         </div>
       </div>
     </div>
-    
 
-
-
-  <% @team_members.each do |medic| %>
-  <div class="member-card member-index" data-identity="<%= full_name(medic) %>" data-profession="<%= medic.profession.name %>" data-specialty="<%= medic.specialty.name if medic.specialty %>">
-    <%= link_to(member_path(medic)) do %>
-        <div class="member-card__back"></div>
-        <div class="member-card__photo-holder" style="background-image: url('<%= cl_image_path medic.photo.key if medic.photo.key.present? %>');"></div>
-          <div class="member-card-info" >
-            <p><%= full_name(medic) %></p>
-            <span><%= medic.profession.name %></span>
-            <% unless medic.specialty.nil? %>
-              <%= link_to "../specialitati-medicale/#{medic.specialty.slug}" do %>
-                <%= medic.specialty.name %>
-              <% end %>
-            <% end %>
-          </div>
-          <% end %>
-      </div>
+  <% @team_members.each do |m| %>
+    <%= render partial: "members/member_card", locals: {m: m, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
   <% end %>
 </div>

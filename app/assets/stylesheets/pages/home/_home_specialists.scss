@@ -33,59 +33,6 @@
   a {
     filter: drop-shadow(2px 2px 2px #00000030);
   }
-  .specialist-card {
-    position: relative;
-    width: 300px;
-    height: 420px;
-    overflow: hidden;
-    transform: translateY(100px);
-    opacity: 0;
-    .specialist-card__back {
-      position: relative;
-      background-color: $color-2;
-      width: 90%;
-      margin: 0 auto;
-      height: 100%;
-      border-radius: 3px;
-    }
-    .specialist-card__photo-holder {
-      position: absolute;
-      width: 300px;
-      height: 390px;
-      top: 15px;
-      left: 0;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      border-radius: 3px;
-    }
-    .specialist-card-info {
-      position: relative;
-      text-align: center;
-      width: 270px;
-      bottom: 110px;
-      margin: 0 auto;
-      background-color: $color-3-90;
-      padding: 5px 20px;
-      font-family: $font-mont;
-      font-weight: 600;
-      border-radius: 3px;
-      p, span {
-        color: $color-contrast;
-        margin: 0;
-        font-size: 1.3em;
-        text-shadow: 0.1px 0.1px 1px #ffffff10;
-      }
-      span {
-        font-size: 1em;
-        font-weight: 300;
-      }
-    }
-  }
-  .specialist-card.active-svg {
-    transform: translate(0);
-    opacity: 1;
-  }
 }
 
 .home_specialists_link {

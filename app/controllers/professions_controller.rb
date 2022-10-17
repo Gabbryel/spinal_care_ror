@@ -49,7 +49,7 @@ class ProfessionsController < ApplicationController
   private
 
   def set_profession
-    @profession = authorize Profession.find_by(slug: params[:id])
+    @profession = authorize Profession.find_by!(slug: params[:id])
   end
 
   def profession_params

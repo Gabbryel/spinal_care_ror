@@ -1,0 +1,20 @@
+<div
+  class="member-card <%= not_animated %> <%= no_grid_area%>"
+  style="transition: <%= i + 0.5 unless i.nil? %>s"
+  data-controller="animation"
+  data-action="scroll@window->animation#svgscroll"
+  data-identity="<%= full_name(m) %>" data-profession="<%= m.profession.name %>" data-specialty="<%= m.specialty.name if m.specialty %>">
+  <%= link_to member_path(m) do %>
+    <div class="member-card__back"></div>
+    <div class="member-card__photo-holder" style="background-image: url('<%=cl_image_path m.photo.key if m.photo.key.present? %>');"></div>
+    <div class="member-card-info">
+      <p><%= full_name(m) %></p>
+      <span><%= m.profession.name %></span><br />
+      <span><% unless m.specialty.nil? %>
+        <%= link_to "../specialitati-medicale/#{m.specialty.slug}" do %>
+          <%= m.specialty.name %>
+        <% end %>
+      <% end %></span>
+    </div>
+  <% end %>
+</div>
