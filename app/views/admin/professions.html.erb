@@ -35,6 +35,23 @@
           <% end %>
         </div>
       </div>
+      <div class="services-main">
+        <h1>Servicii medicale</h1>
+        <div>
+          <%= link_to "Adaugă serviciu medical",
+          new_medical_service_path,
+          class: 'btn-custom' %>
+        </div>
+        <div class="specialties-index">
+          <% @mss.each do |el| %>
+            <p><%= el.name %></p>
+            <p><%= link_to 'del' %></p>
+          <% end %>
+        </div>
+        <div class="services-form">
+          <%= render partial: 'medical_services/form' %>
+        </div>
+      </div>
     </div>
   <% else %>
   <%= no_access %>

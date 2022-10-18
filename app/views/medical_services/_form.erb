@@ -1,0 +1,7 @@
+<%= simple_form_for @ms do |f| %>
+  <%= f.input :name %>
+  <%= f.association :specialty %>
+  <%= f.rich_text_area :description %>
+  <%= f.input :price %>
+  <%= f.submit 'Trimite' %>
+<% end %>

@@ -10,7 +10,7 @@
   }
 }
 
-.professions-main, .specialties-main, .users-main {
+.professions-main, .specialties-main, .users-main, .services-main {
   position: relative;
   display: flex;
   padding: 30px;
@@ -60,9 +60,6 @@
     gap: 0 10px;
   }
 }
-.user {
-  
-}
 
 .profession-form,
 .specialty-form {
@@ -86,6 +83,10 @@
   @media(min-width: 1024px) {
     grid-area: 2 / 2 / 3 / 3;
   }
+}
+
+.services-main {
+  grid-area: 3 / 1/ 4 / 2;
 }
 
 .spec-crud {

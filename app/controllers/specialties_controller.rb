@@ -2,6 +2,7 @@ class SpecialtiesController < ApplicationController
   before_action :skip_authorization, only: %i[about all_specialties]
   skip_before_action :authenticate_user!, only: %i[about all_specialties]
   before_action :set_specialty, only: %i[show about edit update destroy]
+
   rescue_from ActiveRecord::RecordNotFound do |exception|
     @specialties = Specialty.where("slug LIKE ?", "%#{params[:id]}%")
     if @specialties.empty?
@@ -11,6 +12,7 @@ class SpecialtiesController < ApplicationController
       render action: :search_when_error
     end
   end
+  
   def new
     @specialty = authorize Specialty.new
   end

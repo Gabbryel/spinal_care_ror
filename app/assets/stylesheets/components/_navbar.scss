@@ -3,53 +3,6 @@
   background: $color-1;
   height: calc(var(--vh) * 9);
   min-height: 70px;
-  .container-fluid {
-    .hamburger {
-      position: fixed;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      align-items: center;
-      cursor: pointer;
-      z-index: 1200;
-      right: 2%;
-      width: 27px;
-    }
-    .trigger {
-      transition: 0.8s ease;
-    }
-    .hidden {
-      display: none;
-    }
-    .hamburger.active {
-      gap: 0;
-    }
-    .long-line,
-    .short-line {
-      position: relative;
-      width: 27px;
-      border-bottom: 2px solid $color-2;
-      border-radius: 20px;
-    }
-    .long-line {
-      position: absolute;
-      top: 44%;
-    }
-    .short-line {
-      width: 20px;
-    }
-    .short-line.active {
-      width: 0;
-    }
-    .long-line.active-long-line-1 {
-      transform: rotate(315deg);
-      border-bottom: 3px solid $color-2;
-    }
-    .long-line-2.active-long-line-2 {
-      transform: rotate(225deg);
-      border-bottom: 3px solid $color-2;
-    }
-  }
 }
 
 .navbar-lewagon .navbar-collapse {
@@ -94,3 +47,51 @@
 .dropdown-menu {
   background-color: #ffffff00
 }
+
+// hamburger
+  .hamburger {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1200;
+    right: 2%;
+    width: 27px;
+  }
+  .trigger {
+    transition: 0.8s ease;
+  }
+  .hidden {
+    display: none;
+  }
+  .hamburger.active {
+    gap: 0;
+  }
+  .long-line,
+  .short-line {
+    position: relative;
+    width: 27px;
+    border-bottom: 2px solid $color-2;
+    border-radius: 20px;
+  }
+  .long-line {
+    position: absolute;
+    top: 44%;
+  }
+  .short-line {
+    width: 20px;
+  }
+  .short-line.active {
+    width: 0;
+  }
+  .long-line.active-long-line-1 {
+    transform: rotate(315deg);
+    border-bottom: 3px solid $color-2;
+  }
+  .long-line-2.active-long-line-2 {
+    transform: rotate(225deg);
+    border-bottom: 3px solid $color-2;
+  }
+  // hamburger

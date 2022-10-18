@@ -3,6 +3,7 @@ class AdminController < ApplicationController
     @m = Member.new()
     @professions = Profession.all
     @users = User.all.order(email: :asc)
+
   end
 
   def personal
@@ -17,5 +18,7 @@ class AdminController < ApplicationController
     @professions = Profession.all
     @specialty = Specialty.new()
     @specialties = Specialty.all
+    @ms = MedicalService.new()
+    @mss = MedicalService.all
   end
 end

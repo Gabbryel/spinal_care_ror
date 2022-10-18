@@ -1,5 +1,6 @@
 class Specialty < ApplicationRecord
   has_many :members
+  has_many :medical_services
   has_rich_text :description
   has_one_attached :photo
   validates :name, presence: true

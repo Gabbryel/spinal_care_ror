@@ -10,7 +10,7 @@ export default class extends Controller {
     this.shortLines = this.shortlineTargets
     this.elements = [this.hamburger, this.longLine, this.longLine2, this.shortLines].flat()
   }
-  
+
   toggle() {
       this.toggleTargets.forEach(el => {
         el.classList.add('trigger');
