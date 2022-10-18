@@ -1,10 +1,12 @@
 class ErrorsController < ApplicationController
   before_action :skip_authorization
   def not_found
-    render status: 404
+    redirect_to root_path
+    flash.alert = "Pagina căutată nu există. Redirecționare către pagina principală!"
   end
 
   def internal_server_error
-    render status: 500
+    redirect_to root_path
+    flash.alert = "Pagina căutată nu există. Redirecționare către pagina principală!"
   end
 end

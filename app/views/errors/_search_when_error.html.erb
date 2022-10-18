@@ -1,7 +1,15 @@
 <div class="error-messages">
-  <h3>Probabil că linkul dvs este greșit</h3>
+  <h3>Pagina căutată nu (mai) există!</h3>
   <p>Iată câteva sugestii apropiate de căutarea dvs</p>
-  <%= link_to 'Pagina principală', root_path, class: "btn box-shadow" %>
-  <%= link_to 'Specialități medicale', specialitati_medicale_path, class: "btn box-shadow" %>
-  <%= link_to 'Echipa medicală', echipa_path, class: "btn box-shadow"  %>
+  <div class="escape-btns">
+    <%= link_to root_path, class: "btn box-shadow" do %>
+    <i class="fas fa-home"></i>
+    <% end %>
+    <%= link_to echipa_path, class: "btn box-shadow" do %>
+      <i class="fas fa-user-md"></i>
+    <% end %>
+    <%= link_to specialitati_medicale_path, class: "btn box-shadow" do %>
+      <i class="fas fa-briefcase-medical"></i>
+    <% end %>
+  </div>
 </div>
