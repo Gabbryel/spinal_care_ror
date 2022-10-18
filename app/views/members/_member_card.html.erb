@@ -4,7 +4,7 @@
   data-controller="animation"
   data-action="scroll@window->animation#svgscroll"
   data-identity="<%= full_name(m) %>" data-profession="<%= m.profession.name %>" data-specialty="<%= m.specialty.name if m.specialty %>">
-  <%= link_to member_path(m) do %>
+  <%= link_to "../echipa/#{m.slug}" do %>
     <div class="member-card__back"></div>
     <div class="member-card__photo-holder" style="background-image: url('<%=cl_image_path m.photo.key if m.photo.key.present? %>');"></div>
     <div class="member-card-info">

@@ -55,3 +55,20 @@
     padding: 20px 10px 40px;
   }
 }
+
+
+
+.error-messages {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  text-align: center;
+  font-family: $font-mont;
+  color: $color-1;
+  z-index: 1000;
+  h3 {
+    font-family: $font-mont;
+    font-weight: 900;
+    color: inherit;
+  }
+}

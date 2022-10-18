@@ -3,12 +3,13 @@ Rails.application.routes.draw do
   root to: "pages#home"
   devise_for :users
   resources :reviews
-  resources :members
+  resources :members, except: %i[show]
   resources :professions
   resources :specialties
   get 'specialitati-medicale', to: 'specialties#all_specialties'
   get 'specialitati-medicale/:id', to: 'specialties#about'
   get 'echipa', to: 'pages#medical_team'
+  get 'echipa/:id', to: 'members#show'
 
   get 'dashboard', to: 'admin#dashboard'
   get 'dashboard/personal', to: 'admin#personal'
