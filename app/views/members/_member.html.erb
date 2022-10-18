@@ -1,18 +1,6 @@
 <div class="member-container">
   <div class="member-container__main" data-controller="bio">
-    <div class="member-card">
-      <div class="member-card__back"></div>
-      <div class="member-card__photo-holder" style="background-image: url('<%= cl_image_path @member.photo.key if @member.photo.key.present? %>');"></div>
-        <div class="member-card-info" >
-          <p><%= full_name(@member) %></p>
-          <span><%= @member.profession.name %></span>
-          <% unless @member.specialty.nil? %>
-            <%= link_to "../specialitati-medicale/#{@member.specialty.slug}" do %>
-              <%= @member.specialty.name %>
-            <% end %>
-          <% end %>
-        </div>
-    </div>
+    <%= render partial: "members/member_card", locals: {m: @member, i: nil, not_animated: 'not_animated', no_grid_area: nil} %>
     <div class="member-bio" data-bio-target="bio">
       <%= @member.description %>
     </div>
