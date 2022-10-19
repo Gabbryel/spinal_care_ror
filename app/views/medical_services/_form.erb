@@ -1,7 +1,12 @@
-<%= simple_form_for @ms do |f| %>
+<%= simple_form_for(ms, id: (ms.id ? dom_id(ms, :edit) : dom_id(MedicalService.new))) do |f| %>
+<% if ms.errors.any? %>
+    <div class="error-message">
+      <%= ms.errors.full_messages.to_sentence.capitalize %>
+    </div>
+  <% end %>
   <%= f.input :name %>
   <%= f.association :specialty %>
-  <%= f.rich_text_area :description %>
   <%= f.input :price %>
+  <%= f.rich_text_area :description %>
   <%= f.submit 'Trimite' %>
 <% end %>

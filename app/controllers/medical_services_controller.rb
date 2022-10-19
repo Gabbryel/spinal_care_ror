@@ -11,7 +11,7 @@ class MedicalServicesController < ApplicationController
     @medical_service = authorize MedicalService.new(medical_service_params)
     @medical_service.specialty_id = params[:medical_service][:specialty_id]
     respond_to do |format|
-      if @medical_service.save!
+      if @medical_service.save
         format.html { redirect_to dashboard_profesii_path, notice: 'Serviciu medical adăugat!' }
         format.json { render :show, status: :created, location: @medical_service }
       else
@@ -61,6 +61,6 @@ class MedicalServicesController < ApplicationController
   end
 
   def medical_service_params
-    params.require(:medical_service).permit(:name, :description, :price, :slug, :specialty)
+    params.require(:medical_service).permit(:name, :description, :price, :slug, :specialty_id)
   end
 end

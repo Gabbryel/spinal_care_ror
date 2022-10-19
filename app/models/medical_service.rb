@@ -4,6 +4,7 @@ class MedicalService < ApplicationRecord
   include SlugHelper
   include CheckSlugHelper
   after_save :slugify, unless: :check_slug
+  validates :name, :price, presence: true
 
   def to_param
     "#{slug}"

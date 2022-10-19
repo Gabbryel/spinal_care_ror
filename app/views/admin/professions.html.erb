@@ -35,23 +35,31 @@
           <% end %>
         </div>
       </div>
+
+
+
       <div class="services-main">
         <h1>Servicii medicale</h1>
         <div>
-          <%= link_to "Adaugă serviciu medical",
-          new_medical_service_path,
-          class: 'btn-custom' %>
+          <%= link_to "#", data: {bs_toggle: "modal", bs_target: "#newServiceModal"}, class: 'btn-custom' do %>Adaugă serviciu medical<% end %>
         </div>
-        <div class="specialties-index">
-          <% @mss.each do |el| %>
-            <p><%= el.name %></p>
-            <p><%= link_to 'del' %></p>
+        <div class="services-index">
+          <% @medical_services.each do |el| %>
+            <span><%= el.name %></span>
+            <span><%= el.price %></span>
+            <span><%= link_to 'del', medical_service_path(el), data: {turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să ștergi #{el.name}"} %></span>
           <% end %>
         </div>
         <div class="services-form">
-          <%= render partial: 'medical_services/form' %>
+          <%= render partial: 'medical_services/modal', locals: {modal_id: "newServiceModal", title: "Adaugă serviciu medical"} %>
         </div>
       </div>
+
+
+
+
+
+
     </div>
   <% else %>
   <%= no_access %>

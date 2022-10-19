@@ -18,7 +18,7 @@ class AdminController < ApplicationController
     @professions = Profession.all
     @specialty = Specialty.new()
     @specialties = Specialty.all
-    @ms = MedicalService.new()
-    @mss = MedicalService.all
+    @medical_service = MedicalService.new()
+    @medical_services = MedicalService.all
   end
 end
