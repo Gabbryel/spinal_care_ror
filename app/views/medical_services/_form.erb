@@ -6,7 +6,7 @@
   <% end %>
   <%= f.input :name, label: false, placeholder: 'numele serviciului medical' %>
   <%= f.association :specialty, value_method: :id, label: false, prompt: 'specialitate medicală' %>
-  <%= f.association :member, collection: Member.all.select {|m| m.profession_name == 'medic' || m.profession_name == 'kinetoterapeut'}, value_method: :id, label: false, prompt: 'alege specialistul' %>
+  <%= f.association :member, collection: Member.all.select {|m| m.profession_name == 'medic' || m.profession_name == 'kinetoterapeut'}, label_method: :form_label, value_method: :id, label: false, prompt: 'alege specialistul' %>
   <%= f.input :price, label: false, placeholder: 'prețul în lei' %>
   <%= f.rich_text_area :description %>
   <%= f.submit 'Trimite' %>
