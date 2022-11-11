@@ -1,9 +1,9 @@
 class Specialty < ApplicationRecord
   has_many :members
+  has_many :medical_services
   has_rich_text :description
   has_one_attached :photo
   validates :name, presence: true
-  broadcasts_to ->(specialty) { "specialties" }, inserts_by: :prepend
   include SlugHelper
   include CheckSlugHelper
   after_save :slugify, unless: :check_slug

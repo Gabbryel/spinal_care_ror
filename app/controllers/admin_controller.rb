@@ -3,6 +3,7 @@ class AdminController < ApplicationController
     @m = Member.new()
     @professions = Profession.all
     @users = User.all.order(email: :asc)
+
   end
 
   def personal
@@ -12,10 +13,17 @@ class AdminController < ApplicationController
     @specialties = Specialty.all.order(name: :asc)
   end
 
-  def professions
+  def admin_content
     @profession = Profession.new()
-    @professions = Profession.all
+    @professions = Profession.all.order(name: :asc)
     @specialty = Specialty.new()
-    @specialties = Specialty.all
+    @specialties = Specialty.all.order(name: :asc)
+  end
+
+  def medical_services
+    @medical_service = MedicalService.new()
+    @medical_services = MedicalService.all.order(name: :asc)
+    @selected_members = Member.all.select { |m| m.medical_services.count > 0}
+    @specialties = Specialty.all.order(name: :asc)
   end
 end

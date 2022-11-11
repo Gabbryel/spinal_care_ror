@@ -1,7 +1,6 @@
 class Profession < ApplicationRecord
   has_many :members
   validates :name, presence: true
-  broadcasts_to ->(profession) { "professions" }, inserts_by: :prepend
   include SlugHelper
   include CheckSlugHelper
   after_save :slugify, unless: :check_slug

@@ -1,6 +1,1 @@
-<%= turbo_frame_tag @profession do %>
-<div class="profession-form">
-  <p>Modifică profesiune</p>
-    <%= render "form", profession: @profession %>
-  </div>
-<% end %>
+<%= turbo_stream.replace "edit_profession_#{@profession.id}", partial: 'professions/form', locals: { profession: @profession} %>

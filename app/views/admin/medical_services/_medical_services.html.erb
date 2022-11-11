@@ -1,0 +1,32 @@
+<div class="services-main section-main" data-controller="tooltip">
+  <h2>Servicii medicale</h2>
+
+  <% if  access && god_mode && current_page?('/dashboard/servicii-medicale') %>
+    <div><%= link_to "#", data: {bs_toggle: "modal", bs_target: "#newMedicalServiceModal"}, class: 'btn-custom' do %>Adaugă serviciu medical<% end %></div>
+  <% end %>
+
+  <div class="admin-elements services-index">
+    <% @specialties.select { |sp| sp.medical_services.count > 0 }.each do |sp| %>
+      <div class="medical-services-list__specialty">
+        <h4><%= link_to sp.name %></h4>
+        <% sp.medical_services.select { |ms| ms.member == nil}.each do |ms| %>
+          <%= render ms %>
+        <% end %>
+        <% sp.members.select { |m| m.medical_services.count > 0 }.each do |m| %>
+          <div class="medical-services-list__specialist">
+            <h5><%= link_to m.name %></h5>
+            <% m.medical_services.each do |ms| %>
+              <%= render ms %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  
+  <% if  access && god_mode && current_page?('/dashboard/servicii-medicale')  %>
+    <div class="services-form">
+      <%= render partial: 'medical_services/modal', locals: {new: true, modal_id: "newMedicalServiceModal", title: "Adaugă serviciu medical", medical_service: @medical_service} %>
+    </div>
+  <% end %>
+  </div>

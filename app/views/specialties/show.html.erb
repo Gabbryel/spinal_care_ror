@@ -1,10 +1,8 @@
 <div class="specialty-container">
-<%= turbo_frame_tag 'edit-spec' do %>
   <h1><%= @specialty.name %></h1>
-    <%= link_to edit_specialty_path(@specialty), class: 'btn-custom', data: { turbo_frame: @speciality} do %>
-      <i class="fas fa-edit"></i>
+    <%= link_to "#", data: {bs_toggle: "modal", bs_target: "#editSpecialty#{@specialty.slug}Modal"}, class: 'btn box-shadow mb-5' do %>
+      Completează datele specialității medicale
     <% end %>
     <div><%= @specialty.description %></div>
-<% end %>
 </div>
-<%= turbo_frame_tag 'edit-spec' %>
+<%= render partial: "specialties/modal_form_complete", locals: {modal_id: "editSpecialty#{@specialty.slug}Modal"} %>

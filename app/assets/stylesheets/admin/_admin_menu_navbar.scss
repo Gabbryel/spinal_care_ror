@@ -9,6 +9,12 @@
   font-size: clamp(14px, 2em, 18px);
   font-weight: 700;
   margin: 0 0 0 auto;
+  .hamburger {
+    .long-line,
+    .short-line {
+    border-bottom: 2px solid $color-1;
+  }
+  }
   p {
     color: $color-1;
     margin: 0;
@@ -37,7 +43,7 @@
 
 
 .admin-menu {
-  position: absolute;
+  position: fixed;
   height: calc(var(--vh) * 100);
   width: 150px;
   top: 0;

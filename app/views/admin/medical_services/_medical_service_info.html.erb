@@ -1,0 +1,6 @@
+<% if medical_service.description.present? %>
+    <%= tag.span "ℹ", data: { tooltip_target: 'trigger'}, class: 'tooltip-span' %>
+    <div class="medical-service__description" data-tooltip-target="description">
+      <%= medical_service.description %>
+    </div>
+  <% end %>

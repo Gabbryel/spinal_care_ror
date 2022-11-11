@@ -7,7 +7,7 @@ export default class extends Controller {
     let professions = this.professionTargets;
     professions.forEach((p, i) => {
       let value = Array.from(p.children).find(el => el.value === p.value).innerHTML
-      if (value === 'medic' || value === 'asistent medical') {
+      if (['medic', 'asistent medical', 'kinetoterapeut'].includes(value)) {
         specialties[i].classList.add('trigger')
         setTimeout(() => {specialties[i].classList.add('active')}, 100)
       }
@@ -18,7 +18,7 @@ export default class extends Controller {
     let professions = this.professionTargets;
     professions.forEach((p, i) => {
       let value = Array.from(p.children).find(el => el.value === p.value).innerHTML
-      if (value === 'medic' || value === 'asistent medical') {
+      if (['medic', 'asistent medical', 'kinetoterapeut'].includes(value)) {
         specialties[i].classList.add('trigger')
         setTimeout(() => {specialties[i].classList.add('active')}, 100)
       }

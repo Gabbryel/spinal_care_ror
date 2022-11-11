@@ -1,0 +1,13 @@
+<%= simple_form_for(medical_service, id: (medical_service.id ? "edit_medical_service_#{medical_service.id}" : dom_id(MedicalService.new))) do |f| %>
+<% if medical_service.errors.any? %>
+    <div class="error-message">
+      <%= medical_service.errors.full_messages.to_sentence.capitalize %>
+    </div>
+  <% end %>
+  <%= f.input :name, label: false, placeholder: 'numele serviciului medical' %>
+  <%= f.association :specialty, value_method: :id, label: false, prompt: 'specialitate medicală' %>
+  <%= f.association :member, collection: Member.all.select {|m| m.profession_name == 'medic' || m.profession_name == 'kinetoterapeut'}, value_method: :id, label: false, prompt: 'alege specialistul' %>
+  <%= f.input :price, label: false, placeholder: 'prețul în lei' %>
+  <%= f.rich_text_area :description %>
+  <%= f.submit 'Trimite' %>
+<% end %>

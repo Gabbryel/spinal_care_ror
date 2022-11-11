@@ -1,2 +1,1 @@
-<%= turbo_stream.prepend "specialties", @specialty %>
-<%= turbo_stream.update Specialty.new, "" %>
+<%= turbo_stream.replace 'new_specialty', partial: 'specialties/form', locals: {specialty: @specialty} %>
