@@ -3,9 +3,9 @@ module CardsHelper
     cards = [
       {
         icon: '<i class="fas fa-hand-holding-usd"></i>',
-        title: 'Costuri',
+        title: 'Tarife',
         content: 'Avem prețuri competitive și contract cu Casa de Asigurări',
-        link: '#',
+        link: '/servicii-medicale',
       },
       {
         icon: '<i class="fas fa-hand-holding-usd"></i>',

@@ -14,10 +14,16 @@
     a {
       background-color: $color-2;
       position: relative;
-      padding: 5px 40px;
+      padding: 10px 40px;
       display: inherit;
       color: $color-1;
+      &:hover {
+        text-decoration: underline;
+      }
     }
+  }
+  h2 {
+    text-align: left;
   }
   h5 {
     font-weight: 500;

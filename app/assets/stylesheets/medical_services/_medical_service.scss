@@ -20,8 +20,9 @@
 }
 .medical-service__body {
   position: relative;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 73% 27%;
+  gap: 5px;
 }
 
 .tooltip-span {
@@ -44,18 +45,18 @@
 
 .medical-service__description {
   position: absolute;
-  display: none;
-  max-width: 200px;
-  max-height: 150px;
-  color: white;
-  background-color: black;
-  padding: 10px;
-  border-radius: 4px;
-  top: 37px;
-  z-index: 1000;
+    display: none;
+    width: 290px;
+    color: $color-contrast;
+    background-color: $color-1;
+    padding: 10px;
+    border-radius: 4px;
+    top: 37px;
+    z-index: 1000;
+    left: -5px;
   &:before {
     content: '';
-    background-color: #000;
+    background-color: $color-1;
     display: block;
     height: 20px;
     width: 20px;

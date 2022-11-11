@@ -17,6 +17,10 @@ class Member < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
+  def form_label
+    "#{first_name} #{last_name} - #{specialty_name.downcase}"
+  end
+
   def profession_name
     "#{Profession.find(self.profession_id).name}" if self.profession_id
   end

@@ -2,7 +2,7 @@
   <%= render partial: "admin/medical_services/medical_service_info", locals: { medical_service: medical_service } %>
   <div class="medical-service__body">
     <span><%= medical_service.name %></span>
-    <span><%= medical_service.price %> lei</span>
+    <span class="text-end"><%= medical_service.price == 0 ? "📞" : "#{medical_service.price} lei" %> </span>
   </div>
   <%= render partial: "admin/medical_services/medical_service_policy", locals: { medical_service: medical_service } %>
 </div>
