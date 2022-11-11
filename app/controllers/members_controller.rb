@@ -40,7 +40,7 @@ class MembersController < ApplicationController
         @member.specialty_id = nil
       end
       @member.update(member_params)
-      if @member.save!
+      if @member.save
         format.html { redirect_to dashboard_personal_path, notice: 'Ați modificat cu succes!'}
         format.json { render :show, status: :updated, location: @member}
       else

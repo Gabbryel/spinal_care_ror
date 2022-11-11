@@ -1,0 +1,40 @@
+<div class="container-fluid">
+
+  <div class="personal-form">
+    <%= render partial: 'members/modal', locals: { new: true, modal_id: 'newMemberModal', member: @member } %>
+  </div>
+
+  <% if @members.empty? %>
+    <h3><%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newMemberModal" } do %><i class="fas fa-user-plus"></i><% end %></h3>
+  <% end %>
+
+  <% @professions.each do |p| %>
+    <% if !p.members.empty? %>
+      <div class="personal-profession">
+        <h3><%= p.name %> <%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newMemberModal" } do %><i class="fas fa-user-plus"></i><% end %></h3>
+        <div class="personal-index">
+              <% @members.select { |member| member.profession == p}.each do |member| %>
+                <div class="personal-member">
+                  <%= cl_image_tag(member.photo.key, width: 50) if member.photo.key.present? %>
+                  <div class="personal-info">
+                    <span><%= full_name(member) %></span>
+                    <span><%= member.profession.name if member.profession %></span>
+                    <span><%= member.specialty.name if member.specialty %></span>
+                  </div>
+                  <div class="personal-crud">
+                    <%= link_to member_path(member) do %><i class="fas fa-link"></i><% end %>
+                    <%= link_to "#", data: { bs_toggle: "modal", bs_target: "#edit#{member.id}" } do %><i class="far fa-edit"></i><% end %>
+                    <%= render partial: 'members/modal', locals: {new: false, modal_id: "edit#{member.id}", member: member } %>
+                    <%= link_to member_path(member), data: { turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să-l ștergi pe #{full_name(member)}?"} do %><i class="fas fa-trash-alt"></i><% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+      </div>
+      <hr>
+      <% else %>
+      <h3><%= p.name %></h3>
+      <p>Nu ai membri adăugați pentru <%= "#{p.name}"%></p>
+    <% end %>
+  <% end %>
+</div>

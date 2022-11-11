@@ -19,10 +19,14 @@ class SpecialtiesController < ApplicationController
 
   def create
     @specialty = authorize Specialty.new(specialty_params)
-    if @specialty.save
-      redirect_to dashboard_profesii_path
-    else
-      render :new, status: :unprocessable_entity, notice: "Ceva nu a mers. Reîncearcă, te rog!"
+    respond_to do |format|
+      if @specialty.save
+        format.html { redirect_to dashboard_profesii_specialitati_path, notice: 'Specialitate medicală adăugată!' }
+      else
+        format.turbo_stream
+        format.html { render :new }
+        format.json { render json: @specialty.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -30,10 +34,16 @@ class SpecialtiesController < ApplicationController
   end
 
   def update
-    if @specialty.update(specialty_params)
-      redirect_to specialty_path(@specialty)
-    else
-      render :edit, status: :unprocessable_entity, notice: "Ceva nu a mers. Reîncearcă, te rog!"
+    respond_to do |format|
+      @specialty.update(specialty_params)
+      if @specialty.save
+        format.html { redirect_to dashboard_profesii_specialitati_path, notice: 'Specialitate medicală modificată!' }
+        format.json { render :show, status: :updated, location: @specialty}
+      else
+        format.turbo_stream
+        format.html {render :edit}
+        format.json {render json: @specialty.errors, status: :unprocessable_entity}
+      end
     end
   end
 
@@ -53,11 +63,10 @@ class SpecialtiesController < ApplicationController
   def destroy
     if @specialty.destroy
       respond_to do |format|
-        format.html { redirect_to dashboard_profesii_path, notice: "Ai șters cu succes!" }
-        format.turbo_stream
+        format.html { redirect_to dashboard_profesii_specialitati_path, notice: "Ai șters cu succes!" }
       end
       else
-        redirect_to dashboard_profesii_path, notice: "Se pare că acest cont are extra-vieți! Mai încearcă încă o dată ștergerea!"
+        redirect_to dashboard_profesii_path, notice: "Se pare că această specialitate medicală are extra-vieți! Mai încearcă încă o dată ștergerea!"
     end
   end
 

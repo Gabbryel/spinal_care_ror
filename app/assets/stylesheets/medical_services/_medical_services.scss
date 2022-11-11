@@ -1,0 +1,44 @@
+.services-main {
+  position: relative;
+  font-family: $font-nuni;
+  color: $color-1;
+  box-shadow: none;
+  h2, h4, h5 {
+    color: inherit;
+    font: {
+      family: $font-mont;
+      weight: 700;
+    }
+    width: 100%;
+    text-align: center;
+    a {
+      background-color: $color-2;
+      position: relative;
+      padding: 5px 40px;
+      display: inherit;
+      color: $color-1;
+    }
+  }
+  h5 {
+    font-weight: 500;
+  }
+}
+
+.medical-services-list__specialty {
+  position: relative;
+  width: 320px;
+  margin: 20px 0;
+  padding: 20px 0;
+  border-top: 3px solid #00000040;
+  border-bottom: 3px solid #00000040;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+.medical-services-list__specialist {
+  position: relative;
+  margin: 20px 0 10px;
+  padding: 10px 0;
+  width: 100%;
+}

@@ -1,6 +1,6 @@
 class MedicalServicePolicy < ApplicationPolicy
   def new?
-    user.admin
+    user && user.admin
   end
   def create?
     new?
@@ -12,7 +12,7 @@ class MedicalServicePolicy < ApplicationPolicy
     new?
   end
   def index?
-    new?
+    true
   end
   def show?
     new?

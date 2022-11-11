@@ -16,7 +16,8 @@ Rails.application.routes.draw do
 
   get 'dashboard', to: 'admin#dashboard'
   get 'dashboard/personal', to: 'admin#personal'
-  get 'dashboard/profesii', to: 'admin#professions'
+  get 'dashboard/profesii-specialitati', to: 'admin#admin_content'
+  get 'dashboard/servicii-medicale', to: 'admin#medical_services'
 
   get "*any", to: "errors#not_found", via: :all
   get "/500", to: "errors#internal_server_error", via: :all

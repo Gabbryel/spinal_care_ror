@@ -7,24 +7,31 @@ class ProfessionsController < ApplicationController
 
   def create
     @profession = authorize Profession.new(profession_params)
-    if @profession.save
-      redirect_to dashboard_profesii_path
-      flash.alert = 'ok'
-    else
-      render :new, status: :unprocessable_entity, notice: "Ceva nu a mers. Reîncearcă, te rog!"
+    respond_to do |format|
+      if @profession.save
+        format.html { redirect_to dashboard_profesii_specialitati_path, notice: 'Profesie nouă adăugată!'}
+      else
+        format.turbo_stream
+        format.html { render :new }
+        format.json { render json: @profession.errors, status: :unprocessable_entity }
+      end
     end
   end
 
   def edit
   end
-  
+
   def update
-    if @profession.update(profession_params)
-      respond_to do |format|
-        redirect_to dashboard_profesii_path
+    respond_to do |format|
+      @profession.update(profession_params)
+      if @profession.save
+          format.html { redirect_to dashboard_profesii_specialitati_path, notice: 'Profesie modificată!' }
+          format.json { render :show, status: :updated, location: @profession}
+      else
+        format.turbo_stream
+        format.html {render :edit}
+        format.json {render json: @profession.errors, status: :unprocessable_entity}
       end
-    else
-      render :edit, status: :unprocessable_entity, notice: "Ceva nu a mers. Reîncearcă, te rog!"
     end
   end
 
@@ -38,11 +45,10 @@ class ProfessionsController < ApplicationController
   def destroy
     if @profession.destroy
       respond_to do |format|
-        format.html { redirect_to dashboard_profesii_path, notice: "Ai șters contul cu succes!" }
-        format.turbo_stream
+        format.html { redirect_to dashboard_profesii_specialitati_path, notice: "Ai șters profesia cu succes!" }
       end
       else
-        redirect_to dashboard_profesii_path, notice: "Se pare că acest cont are extra-vieți! Mai încearcă încă o dată ștergerea!"
+        redirect_to dashboard_profesii_specialitati_path, notice: "Se pare că această profesie are extra-vieți! Mai încearcă încă o dată ștergerea!"
     end
   end
 

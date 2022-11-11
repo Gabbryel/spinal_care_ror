@@ -1,2 +1,1 @@
-<%= turbo_stream.prepend "professions", @profession %>
-<%= turbo_stream.update Profession.new, "" %>
+<%= turbo_stream.replace 'new_profession', partial: 'professions/form', locals: { profession: @profession } %>

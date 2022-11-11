@@ -3,7 +3,7 @@ module ApplicationHelper
     request.path.split('/')[1].to_s
   end
   def dashboard_page_helper
-    current_page?(dashboard_path) || current_page?(dashboard_personal_path) || current_page?(dashboard_profesii_path) || path_helper == 'professions' || path_helper == 'specialties'
+    current_page?(dashboard_path) || current_page?(dashboard_personal_path) || current_page?(dashboard_profesii_specialitati_path) || current_page?(dashboard_servicii_medicale_path) || path_helper == 'professions' || path_helper == 'specialties'
   end
 
   def access
@@ -28,5 +28,9 @@ module ApplicationHelper
 
   def full_name(member)
     "#{member.first_name} #{member.last_name}"
+  end
+# helper for medical_service dots
+  def m_s_helper(ms)
+    30 - (ms.name.length + ms.price.to_s.length).to_i
   end
 end

@@ -1,5 +1,6 @@
 class MedicalService < ApplicationRecord
   belongs_to :specialty
+  belongs_to :member, optional: true
   has_rich_text :description
   include SlugHelper
   include CheckSlugHelper
@@ -8,6 +9,10 @@ class MedicalService < ApplicationRecord
 
   def to_param
     "#{slug}"
+  end
+
+  def specialist
+    "#{Member.find(self.member_id).name}" if self.member_id
   end
 
   private
