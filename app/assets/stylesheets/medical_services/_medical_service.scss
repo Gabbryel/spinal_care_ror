@@ -51,9 +51,9 @@
     background-color: $color-1;
     padding: 10px;
     border-radius: 4px;
-    top: 37px;
+    top: 40px;
     z-index: 1000;
-    left: -5px;
+    left: -23px;
   &:before {
     content: '';
     background-color: $color-1;
@@ -63,5 +63,9 @@
     position: absolute;
     top: -5px;
     transform: rotate(45deg);
+  }
+  .trix-content {
+    text-align: justify;
+    padding: 7px 0;
   }
 }

@@ -59,6 +59,7 @@ group :development, :test do
   gem "dotenv-rails"
   gem 'byebug', '~> 9.0', '>= 9.0.6'
   gem 'pry', '~> 0.13.1'
+  gem 'bullet', group: 'development'
 end
 
 group :development do
@@ -69,7 +70,9 @@ group :development do
   # gem "rack-mini-profiler"
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
-  # gem "spring"
+  gem "spring"
+  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'listen', '~> 3.2'
   gem "better_errors"
   gem "binding_of_caller"
 end
