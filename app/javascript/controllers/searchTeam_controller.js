@@ -84,7 +84,7 @@ export default class extends Controller {
           }
         })
         this.cssController(counter, mainContainer, members)
-      }, 300 )
+      }, 500 )
     }
   }
 }

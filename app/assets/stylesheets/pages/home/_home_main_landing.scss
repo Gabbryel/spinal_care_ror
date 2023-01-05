@@ -4,6 +4,8 @@
 
 .main {
   position: relative;
+  max-width: 2000px;
+  margin: 0 auto;
   display: grid;
   min-height: calc(var(--vh) * 93);
   width: 100%;

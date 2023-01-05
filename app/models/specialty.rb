@@ -11,7 +11,7 @@ class Specialty < ApplicationRecord
     "#{slug}"
   end
 
-  def belongs_to_specialty
+  def members_belonging_to_specialty
     self.members
   end
 

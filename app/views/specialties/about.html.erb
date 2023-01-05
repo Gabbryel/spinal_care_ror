@@ -1,17 +1,18 @@
-<div class="about-container">
-  <div class="about-container__main">
-    <%= link_to '˿ Specialități medicale', specialitati_medicale_path, class: 'btn btn-custom', id: 'about-container__link-back' %>
-    <%= link_to "my link", :back %>
+<div class="about-specialty-container">
+  <div class="about-specialty-container__main">
     <h1><%= @specialty.name %></h1>
-    <div class="about-container__specialty"><%= @specialty.description %></div>
-    <div class="about-container__specialists">
+    <div class="about-specialty-container__specialty"><%= @specialty.description %></div>
+    <div class="about-specialty-container__specialists">
       <h2>Medici <%= @specialty.name.downcase %> </h2>
-      <div class="about-container__specialists-index">
-        <% @specialty.belongs_to_specialty.each_with_index do |member| %>
+      <div class="about-specialty-container__specialists-index">
+        <% @specialty.members_belonging_to_specialty.each_with_index do |member| %>
           <%= render partial: 'members/member_card', locals: {m: member, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
         <% end %>
       </div>
     </div>
-    <%= image_tag('wave-home-page.svg', id: 'about-container__specialty__wave') %>
+    <div class="mt-5 d-flex justify-content-center" data-controller="tooltip">
+      <%= render partial: "admin/medical_services/render_medical_services" %>
+    </div>
+    <%= image_tag('wave-home-page.svg', id: 'about-specialty-container__specialty__wave') %>
   </div>
 </div>

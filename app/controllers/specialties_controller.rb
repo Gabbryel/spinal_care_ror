@@ -1,7 +1,7 @@
 class SpecialtiesController < ApplicationController
   before_action :skip_authorization, only: %i[about all_specialties]
   skip_before_action :authenticate_user!, only: %i[about all_specialties]
-  before_action :set_specialty, only: %i[show about edit update destroy]
+  before_action :set_specialty, only: %i[show about edit update destroy about]
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
     @specialties = Specialty.where("slug LIKE ?", "%#{params[:id]}%")
@@ -58,6 +58,7 @@ class SpecialtiesController < ApplicationController
   def show
   end
   def about
+    @specialties = [@specialty]
   end
 
   def destroy
