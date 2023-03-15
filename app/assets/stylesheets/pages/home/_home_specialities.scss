@@ -6,11 +6,11 @@
     position: relative;
     width: 100%;
     background-color: $color-3;
-    padding: 30px;
+    padding: 5vh;
     p {
       margin: 0;
       font-size: clamp(18px, 2vw, 34px);
-      font-weight: 900;
+      font-weight: 700;
       text-align: center;
       color: $color-contrast;
       span {
@@ -28,20 +28,6 @@
     gap: 30px;
     max-width: 1600px;
     margin: 0 auto;
-    // @media (min-width: 600px) {
-    //   grid-template-columns: repeat(2, 300px);
-    //   grid-auto-flow: unset;
-    // }
-    // @media (min-width: 1000px) {
-    //   grid-template-columns: repeat(3, 300px);
-    // }
-    // @media (min-width: 1300px) {
-    //   grid-template-columns: repeat(4, 300px);
-    // }
-    // @media (min-width: 1600px) {
-    //   grid-template-columns: repeat(5, 300px);
-    // }
-
     a {
       justify-self: center;
       width: 250px;

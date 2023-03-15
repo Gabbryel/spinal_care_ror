@@ -12,4 +12,7 @@
       color: $color-contrast;
     }
   }
+  @media (min-width: 1025px) and (orientation: landscape) {
+    padding: 5vh 15vw;
+  }
 }
