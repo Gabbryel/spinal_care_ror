@@ -5,11 +5,11 @@
     position: relative;
     width: 100%;
     background-color: $color-3;
-    padding: 30px;
+    padding: 5vh;
     p {
       margin: 0;
       font-size: clamp(18px, 2vw, 34px);
-      font-weight: 900;
+      font-weight: 700;
       text-align: center;
       color: $color-contrast;
       span {
@@ -21,15 +21,14 @@
 
 .main-specialists-index {
   position: relative;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   justify-content: center;
   align-items: center;
-  gap: 80px;
-  padding: 150px 0;
-  @media(min-width: 1024px) {
-    gap: 40px;
-  }
+  gap: 50px 0;
+  padding: 150px 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .home_specialists_link {

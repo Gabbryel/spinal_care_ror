@@ -1,14 +1,6 @@
 .second-landing {
-  position: relative;
   height: calc(var(--vh) * 91);
   grid-area: 4 / 1 / 5 / -1;
-  display: grid;
-  grid-template-columns: repeat(24, 1fr);
-  grid-template-rows: repeat(24, 1fr);
-  padding: calc(var(--vh) * 5) 3vw;
-  @media (min-width: 720px) {
-    padding: calc(var(--vh) * 5) 5vw;
-  }
   #second-image {
     @include landing-images;
     @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {

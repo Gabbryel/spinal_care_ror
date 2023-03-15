@@ -12,15 +12,19 @@
 
 @mixin shape-svg {
   position: relative;
-  grid-area: 1 / 1 / 8 / 25;
   background-color: #ffffff00;
-  max-width: 100%;
+  grid-area: 1 / 1 / 2 / 3;
+  max-width: 90vw;
   filter: $d-sh-img;
-  @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
-    grid-area: 1 / 14 / 15 / 25;;
+  justify-self: center;
+  align-self: center;
+  max-height: 100%;
+  @media (min-width: 540px) and (min-height: 375px) and (max-height: 650px) and (orientation: landscape) {
+    grid-area: 1 / 2 / 3 / 3;
+    width: 34vw;
   }
-  @media (min-width: 950px) and (min-height: 542px) and (orientation: landscape) {
-    grid-area: 3 / 14 / 15 / 25;
+  @media (min-width: 1025px) and (orientation: landscape) {
+    grid-area: 1/2/3/3;;
   }
 }
 
@@ -46,17 +50,20 @@
 
 @mixin mottos {
   position: relative;
-    grid-area: 16 / 1 / 24 / 25;
-    font-size: clamp(20px, calc(var(--vh) * 2), 36px);
-    -webkit-animation: main-motto 2s;
-    animation: main-motto 2s;
-    background-color: #fff;
-    padding: 40px 30px;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    filter: $d-sh-box;
+  grid-area: 2 / 1 / 3 / 3;
+  font-size: clamp(20px, calc(var(--vh) * 2.3), 30px);
+  -webkit-animation: main-motto 2s;
+  animation: main-motto 2s;
+  padding: 40px 10px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  filter: $d-sh-box;
+  max-height: 80%;
+  align-self: center;
+  max-width: 90%;
+  justify-self: center;
     p {
       display: block;
       color: $color-1;
@@ -73,9 +80,13 @@
         color: $color-2;
       }
     }
-    @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
+    @media (min-width: 540px) and (min-height: 375px) and (max-height: 650px) and (orientation: landscape) {
       font-size: clamp(17px, calc(var(--vh) * 4), 36px);
-      grid-area: 7 / 1 / 20 / 13;
+      grid-area: 1 / 1 / 3 / 2;
       align-self: center;
+    }
+    @media (min-width: 1025px) and (orientation: landscape) {
+      font-size: clamp(20px, calc(var(--vh) * 3), 48px);
+      grid-area: 1 / 1 / 3 / 2;
     }
 }
