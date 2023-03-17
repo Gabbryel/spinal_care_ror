@@ -1,61 +1,13 @@
 .second-landing {
-  height: calc(var(--vh) * 91);
+  height: calc(var(--vh) * 70);
   grid-area: 4 / 1 / 5 / -1;
-  #second-image {
-    @include landing-images;
-    @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
-      grid-area: 3 / 1 / 20 / 10;
-    }
-    @media (min-width: 950px) and (min-height: 542px) and (orientation: landscape) {
-      grid-area: 4 / 1 / 20 / 11;
-    }
-  }
-  #second-image.active-svg {
-    opacity: 1;
-    transform: translate(0);
+  .second-image {
+    width: auto !important;
+    max-width: 90% !important;
   }
   #sec-shape-svg-1, #sec-shape-svg-2 {
     @include shape-svg;
-    @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
-      grid-area: 1 / 1 / 15 / 11;
-    }
-    @media (min-width: 950px) and (min-height: 542px) and (orientation: landscape) {
-      grid-area: 3 / 1 / 15 / 12;
-    }
   }
-  #sec-shape-svg-2 {
-    animation: animation-shapes 2s reverse;
-  }
-
-  #sec-shape-svg-1.trigger,
-  #sec-shape-svg-2.trigger {
-    transition: 2s;
-  }
-
-  #sec-shape-svg-1.active-svg,
-  #sec-shape-svg-2.active-svg {
-    transform: translate(0)
-  }
-
-  #sec-shape-svg-1.inactive,
-  #sec-shape-svg-2.inactive {
-    opacity: 0;
-  }
-
-  #sec-shape-svg-1.inactive {
-    transform: translateY(200px);
-    @media(min-width:768px) {
-      transform: translateX(200px);
-    }
-  }
-
-  #sec-shape-svg-2.inactive {
-    transform: translateY(-200px);
-      @media(min-width:768px) {
-        transform: translateX(-200px);
-      }
-  }
-
   #second-motto {
     @include mottos;
     @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
