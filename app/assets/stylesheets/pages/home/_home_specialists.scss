@@ -24,11 +24,19 @@
   display: grid;
   justify-content: center;
   align-items: center;
-  gap: 50px 0;
+  gap: 50px 40px;
   padding: 150px 20px;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  max-width: 1400px;
   margin: 0 auto;
+  max-width: 1360px;
+  @media (min-width: 979px) and (max-width: 1359px) {
+    grid-template-columns: repeat(2, minmax(300px, 1fr));
+    max-width: 800px;
+  }
+  .member-card {
+    justify-self: center;
+    align-self: center;
+  }
 }
 
 .home_specialists_link {

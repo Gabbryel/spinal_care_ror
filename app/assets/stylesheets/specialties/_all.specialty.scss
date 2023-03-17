@@ -12,20 +12,10 @@
       justify-content: unset;
     }
     .main-specialities-index {
+      display: grid;
+      grid-template-columns: 1fr;
+      justify-content: center;
       gap: 45px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-evenly;
-      @media(min-width: 768px) {
-        gap: 60px 25px;
-      }
-      @media(min-width: 768px) {
-        gap: 60px 25px;
-      }
-      @media(min-width: 1024px) {
-        gap: 10px 60px;
-        align-items: center;
-      }
     }
   }
 }
