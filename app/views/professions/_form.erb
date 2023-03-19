@@ -5,6 +5,7 @@
   </div>
   <% end %>
   <%= f.input :name, label: false, placeholder: 'profesie', input_html: { autofocus: true } %>
+  <%= f.input :has_specialty, label: 'profesie medicală?' %>
   <button class="btn-custom btn-green btn-crud"><i class="far fa-paper-plane"></i></button>
   <%= link_to dashboard_profesii_specialitati_path, class: 'btn-custom btn-red btn-crud' do %>
     <i class="fas fa-ban"></i>
