@@ -9,7 +9,6 @@
   <% end %>
 
   <% @professions.each do |p| %>
-    <% if !p.members.empty? %>
       <div class="personal-profession">
         <h3><%= p.name %> <%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newMemberModal" } do %><i class="fas fa-user-plus"></i><% end %></h3>
         <div class="personal-index">
@@ -32,9 +31,5 @@
             </div>
       </div>
       <hr>
-      <% else %>
-      <h3><%= p.name %></h3>
-      <p>Nu ai membri adăugați pentru <%= "#{p.name}"%></p>
-    <% end %>
   <% end %>
 </div>
