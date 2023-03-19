@@ -1,5 +1,15 @@
 <div class="about-specialty-container">
   <div class="about-specialty-container__main">
+    <div class="btn-group dropdown-center">
+      <button type="button" class="btn-drop dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        Alte specialități medicale
+      </button>
+      <ul class="dropdown-menu">
+        <% @all_specialties.each do |spec| %>
+          <li><%= link_to spec.name, "#{spec.slug}", class: 'dropdown-item btn-color' %></li>
+        <% end %>
+      </ul>
+    </div>
     <h1><%= @specialty.name %></h1>
     <div class="about-specialty-container__specialty"><%= @specialty.description %></div>
     <div class="about-specialty-container__specialists">
@@ -10,8 +20,23 @@
         <% end %>
       </div>
     </div>
-    <div class="mt-5 d-flex justify-content-center" data-controller="tooltip">
-      <%= render partial: "admin/medical_services/render_medical_services" %>
+    <div data-controller="tooltip" class="about-medical-prices">
+      <h3>Prețuri servicii medicale de <%= "#{@specialty.name.downcase}" %></h3>
+      <div class="medical-services-general">
+      <% @specialty.medical_services.select { |ms| ms.member == nil}.each do |ms| %>
+        <%= render ms %>
+        <% end %>
+      </div>
+      <div class="medical-services-specialist">
+        <% @specialty.members.select { |m| m.medical_services.count > 0 }.each do |m| %>
+          <div class="medical-services-list__specialist">
+            <h5><%= link_to m.name, "echipa/#{m.slug}" %></h5>
+            <% m.medical_services.each do |ms| %>
+              <%= render ms %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
     </div>
     <%= image_tag('wave-home-page.svg', id: 'about-specialty-container__specialty__wave') %>
   </div>

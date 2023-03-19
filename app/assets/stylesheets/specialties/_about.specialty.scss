@@ -32,6 +32,23 @@
   padding: 100px;
   font-size: 1.2em;
 }
+.dropdown-center {
+  display: flex;
+  justify-content: center;
+  .dropdown-menu {
+    background-color: $color-2;
+    border-radius: 10px;
+    padding: 30px 10px;
+    li {
+      .dropdown-item {
+        &:hover {
+          color: #bcb285;
+          background-color: #29332b;
+        }
+      }
+    }
+  }
+}
   #about-specialty-container__link-back {
     position: absolute;
     top: 1%;
@@ -73,7 +90,8 @@
     position: relative;
     display: grid;
     gap: 40px;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    z-index: 1;
     .specialist-card {
       position: relative;
       width: 300px;
@@ -103,7 +121,15 @@
   }
 }
 
-.about-specialty-container__medical-services {
+.about-medical-prices {
   position: relative;
   margin-top: 50px;
+  display: grid;
+  padding: 100px 0;
+  grid-template-columns: repeat(auto-fill, 300px);
+  gap: 40px;
+  align-items: first baseline;
+  h3 {
+    grid-area: 1/1/1/-1;
+  }
 }

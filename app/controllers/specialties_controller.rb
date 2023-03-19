@@ -59,6 +59,7 @@ class SpecialtiesController < ApplicationController
   end
   def about
     @specialties = [@specialty]
+    @all_specialties = Specialty.all.order(:name)
   end
 
   def destroy
