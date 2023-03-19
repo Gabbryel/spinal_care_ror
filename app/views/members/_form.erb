@@ -1,4 +1,4 @@
-<div class="form" data-controller="memberFormSpecialty">
+<div class="form" data-controller="memberFormSpecialty" id="med-prof" data-medical-professions="<%= Profession.all.select {|el| el.has_specialty}.pluck(:name)%>">
   <%= simple_form_for(member, id: (member.id ? dom_id(member, :edit) : dom_id(Member.new))) do |f|%>
     <% if member.errors.any? %>
     <div class="error-message">
@@ -8,8 +8,8 @@
     <%= f.input :first_name, label: false, placeholder: 'Prenume' %>
     <%= f.input :last_name, label: false, placeholder: 'Nume' %>
     <%= f.input :photo, label: false %>
-    <%= f.association :profession, input_html: { data: { memberFormSpecialty_target: 'profession', action: 'change->memberFormSpecialty#change'}}, label: false %>
-    <%= f.association :specialty, label: false, input_html: { data: {memberFormSpecialty_target: 'specialty'}} %>
+    <%= f.association :profession, input_html: { data: { memberFormSpecialty_target: 'profession', action: 'change->memberFormSpecialty#change'}}, label: false, prompt: 'Alege profesia' %>
+    <%= f.association :specialty, label: false, input_html: { data: {memberFormSpecialty_target: 'specialty'}}, prompt: 'Alege specialitatea' %>
     <%= f.rich_text_area :description, placeholder: 'Bio sau alte info despre membrul echipei Spinal Care' %>
     <br>
     <%= f.submit 'Trimite' %>
