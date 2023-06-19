@@ -21,7 +21,7 @@
                     <span><%= member.specialty.name if member.specialty %></span>
                   </div>
                   <div class="personal-crud">
-                    <%= link_to member_path(member) do %><i class="fas fa-link"></i><% end %>
+                    <%= link_to "/echipa/#{member.slug}" do %><i class="fas fa-link"></i><% end %>
                     <%= link_to "#", data: { bs_toggle: "modal", bs_target: "#edit#{member.id}" } do %><i class="far fa-edit"></i><% end %>
                     <%= render partial: 'members/modal', locals: {new: false, modal_id: "edit#{member.id}", member: member } %>
                     <%= link_to member_path(member), data: { turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să-l ștergi pe #{full_name(member)}?"} do %><i class="fas fa-trash-alt"></i><% end %>
