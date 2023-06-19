@@ -8,6 +8,14 @@
   width: 90%;
   margin: 0 auto;
   padding: 130px 0;
+  #medical-team__no-answer {
+    text-align: center;
+    font-size: clamp(24px, 2em, 30px);
+    font-weight: 600;
+    p {
+      color: $color-3;
+    }
+  }
   [data-bs-target="#filterModal"] {
     top: 50px;
   }

@@ -9,9 +9,6 @@
     <% @specialties.each_with_index do |sp, i| %>
       <%= link_to "specialitati-medicale/#{sp.slug}" do %>
         <div class="speciality-card" style="transition: <%=i%>s;" data-controller="animation" data-action="scroll@window->animation#svgscroll">
-          <div class="specialty-card__cover__photo">
-            <%= cl_image_tag(sp.photo.key.present? ? sp.photo.key : "SPINAL_CARE_LOGO_ICON_CC_wulwbr.svg", alt: "#{sp.name} la Spinal Care Bacau") %>
-          </div>
           <div class="specialty-card__cover-name">
             <% sp[:name].split(Regexp.union([' ', '-']), 3).each do |w| %>
               <%= tag.p(w) %>

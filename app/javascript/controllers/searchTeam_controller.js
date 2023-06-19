@@ -5,18 +5,43 @@ export default class extends Controller {
     this.element.value = "";
   }
   cssController(counter, mainContainer, members) {
-    if (counter === 1) {
+    const validAnswer = () => {
+      let noAnswer = document.getElementById('medical-team__no-answer');
+      if (noAnswer) {
+        mainContainer.removeChild(noAnswer)
+      }
+    }
+    if (counter === 0 ) {
+      if (!document.getElementById('medical-team__no-answer')) {
+        let answer = document.createElement('div');
+        answer.setAttribute('id', 'medical-team__no-answer')
+        let image = "<img src= 'https://res.cloudinary.com/www-spinalcare-ro/image/upload/v1665771386/development/SPINAL_CARE_LOGO_ICON_CC_wulwbr.svg' >"
+        answer.innerHTML = image;
+        mainContainer.appendChild(answer);
+        let answerTxt =  document.createElement('p');
+        answerTxt.innerText = 'Niciun rezultat pentru căutarea dvs.!'
+        answer.appendChild(answerTxt);
+      }
+
+
       mainContainer.style.gridTemplateColumns = '1fr';
       members.forEach(m => m.style.justifySelf = 'center')
+    } else if (counter === 1) {
+      mainContainer.style.gridTemplateColumns = '1fr';
+      members.forEach(m => m.style.justifySelf = 'center');
+      validAnswer()
     } else if (counter === 2) {
-      mainContainer.style.gridTemplateColumns = 'repeat(2, minmax(300px, 1fr))'
-      members.forEach(m => m.style.justifySelf = 'center')
+      mainContainer.style.gridTemplateColumns = 'repeat(2, minmax(300px, 1fr))';
+      members.forEach(m => m.style.justifySelf = 'center');
+      validAnswer()
     } else if (counter === 3) {
-      mainContainer.style.gridTemplateColumns = 'repeat(3, minmax(300px, 1fr))'
-      members.forEach(m => m.style.justifySelf = 'center')
+      mainContainer.style.gridTemplateColumns = 'repeat(3, minmax(300px, 1fr))';
+      members.forEach(m => m.style.justifySelf = 'center');
+      validAnswer()
     } else {
-      mainContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))'
-      members.forEach(m => m.style.justifySelf = 'unset')
+      mainContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+      members.forEach(m => m.style.justifySelf = 'unset');
+      validAnswer()
     }
   }
   filter() {

@@ -135,23 +135,29 @@
     background-color: $color-3-90;
     padding: 10px 20px;
     font-family: $font-mont;
-    font-weight: 600;
+    font-weight: 400;
     line-height: 20px;
     border-radius: 3px;
     display: flex;
     flex-direction: column;
     gap: 0;
-    p, span, a {
+    font-size: clamp(14px, 1rem, 18px);
+    a {
       color: $color-contrast;
       margin: 0;
       margin-bottom: 6px;
-      font-size: 1.3rem;
+      font-size: 1.1em;
       text-shadow: 0.1px 0.1px 1px #ffffff10;
-    }
-    span, a {
-      font-size: 1rem;
-      font-weight: 300;
-      margin: 0;
+      p {
+        font-size: inherit;
+      }
+      span {
+        font-size: 0.8em;
+        font-weight: 500;
+      }
+      &:nth-child(2) {
+        font-size: 1em;
+      }
     }
   }
 }

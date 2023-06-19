@@ -1,5 +1,4 @@
-<div
-  class="member-card <%= not_animated %> <%= no_grid_area%>"
+<div class="member-card <%= not_animated %> <%= no_grid_area %>"
   style="transition: <%= i + 0.5 unless i.nil? %>s"
   data-controller="animation"
   data-action="scroll@window->animation#svgscroll"
@@ -9,12 +8,12 @@
     <div class="member-card__photo-holder" style="background-image: url('<%=cl_image_path m.photo.key if m.photo.key.present? %>');"></div>
     <div class="member-card-info">
       <p><%= full_name(m) %></p>
-      <span><%= m.profession.name %></span><br />
-      <span><% unless m.specialty.nil? %>
+      <span><%= m.profession.name %></span>
+      <% unless m.specialty.nil? %>
         <%= link_to "../specialitati-medicale/#{m.specialty.slug}" do %>
           <%= m.specialty.name %>
         <% end %>
-      <% end %></span>
+      <% end %>
     </div>
   <% end %>
 </div>
