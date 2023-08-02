@@ -22,8 +22,6 @@ export default class extends Controller {
         answerTxt.innerText = 'Niciun rezultat pentru căutarea dvs.!'
         answer.appendChild(answerTxt);
       }
-
-
       mainContainer.style.gridTemplateColumns = '1fr';
       members.forEach(m => m.style.justifySelf = 'center')
     } else if (counter === 1) {
@@ -32,15 +30,18 @@ export default class extends Controller {
       validAnswer()
     } else if (counter === 2) {
       mainContainer.style.gridTemplateColumns = 'repeat(2, minmax(300px, 1fr))';
+      mainContainer.style.maxWidth = '800px';
       members.forEach(m => m.style.justifySelf = 'center');
       validAnswer()
     } else if (counter === 3) {
       mainContainer.style.gridTemplateColumns = 'repeat(3, minmax(300px, 1fr))';
+      mainContainer.style.maxWidth = '1200px';
       members.forEach(m => m.style.justifySelf = 'center');
       validAnswer()
     } else {
       mainContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
       members.forEach(m => m.style.justifySelf = 'unset');
+      mainContainer.style.maxWidth = 'none';
       validAnswer()
     }
   }
