@@ -8,21 +8,9 @@ Bundler.require(*Rails.groups)
 
 module SpinalCareRor
   class Application < Rails::Application
-    config.generators do |generate|
-      generate.assets false
-      generate.helper false
-      generate.test_framework :test_unit, fixture: false
-    end
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
-    config.exceptions_app = self.routes
-
-    config.middleware.insert_before 0, Rack::Cors do
-      allow do
-        origins '*'
-        resource '*', headers: :any, methods: [:get, :post, :patch, :put]
-      end
-    end
+    config.active_storage.variant_processor = :mini_magick
 
     # Configuration for the application, engines, and railties goes here.
     #

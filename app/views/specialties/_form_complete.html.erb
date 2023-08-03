@@ -1,7 +1,7 @@
 <%= simple_form_for @specialty do |f| %>
 <%= f.input :name %>
 <%= f.input :photo %>
-<%= f.rich_text_area :description %>
+<%= f.rich_text_area :description, direct_upload: true %>
 <div class="spec-crud">
     <button class="btn-custom btn-green btn-crud"><i class="far fa-paper-plane"></i></button>
     <%= link_to specialty_path(@specialty), class: 'btn-custom btn-red btn-crud' do %>
