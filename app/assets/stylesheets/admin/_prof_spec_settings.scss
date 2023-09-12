@@ -113,7 +113,7 @@
   color: $white-spinal;
   text-align: center;
   h1 {
-    font-size: clamp(30px 2em 60px);
+    font-size: clamp(30px, 2em, 60px);
     font-family: $font-mont;
     color: inherit;
     text-align: inherit;

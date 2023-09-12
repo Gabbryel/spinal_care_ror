@@ -1,6 +1,6 @@
 .personal-container {
   position: relative;
-  min-height: calc(var(--vh * 93));
+  min-height: calc(var(--vh) * 93);
   width: 100%;
   display: grid;
   grid-template-rows: 700px;
