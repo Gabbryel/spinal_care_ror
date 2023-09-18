@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   get 'specialitati-medicale', to: 'specialties#all_specialties'
   get 'specialitati-medicale/:id', to: 'specialties#about'
   get '/echipa', to: 'pages#medical_team'
-  get '/echipa/:id', to: 'members#show'
+  get '/echipa/:id', to: 'members#show', as: 'colectiv'
   resources :medical_services, except: %i[index show]
   get 'servicii-medicale', to: 'medical_services#index'
   get 'servicii-medicale/:id', to: 'medical_services#show'
