@@ -11,6 +11,7 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
+      
     <script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
@@ -21,6 +22,7 @@
       <%= render "shared/navbar" %>
       <%= render "shared/sidemenu" %>
       <%= render "shared/sidecover" %>
+      <%= render "shared/gdpr" %>
     <% elsif dashboard_page_helper %>
       <%= render "shared/admin_navbar" %>
       <%= render "shared/admin_menu" %>
