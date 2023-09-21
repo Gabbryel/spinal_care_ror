@@ -131,9 +131,6 @@ GEM
     ffi (1.15.5)
     font-awesome-sass (6.4.2)
       sassc (~> 2.0)
-    gdpr (1.4.0)
-      js_cookie_rails
-      rails
     globalid (1.1.0)
       activesupport (>= 5.0)
     http-accept (1.7.0)
@@ -150,8 +147,6 @@ GEM
     jbuilder (2.11.5)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
-    js_cookie_rails (2.2.0)
-      railties (>= 3.1)
     jsbundling-rails (1.1.2)
       railties (>= 6.0.0)
     listen (3.8.0)
@@ -333,7 +328,6 @@ DEPENDENCIES
   devise
   dotenv-rails
   font-awesome-sass (~> 6.1)
-  gdpr
   image_processing (~> 1.2)
   jbuilder
   jsbundling-rails
