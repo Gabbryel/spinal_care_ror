@@ -1,0 +1,26 @@
+#contact-modal {
+  display: none;
+  background-color: $color-3-90;
+}
+
+.modal-contact-custom {
+  background: #29332b;
+  padding: 30px;
+  filter: drop-shadow(5px 5px 5px #4a5b5cdd);
+  border-radius: 6px;
+  color: #bcb285;
+  font-size: 15px;
+  .contact-cards {
+    flex-direction: column;
+  }
+  .modal-header {
+    border: none;
+    text-align: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  #close-contact-modal {
+    text-align: end;
+    cursor: pointer;
+  }
+}

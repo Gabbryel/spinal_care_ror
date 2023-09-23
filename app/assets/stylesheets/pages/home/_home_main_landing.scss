@@ -130,7 +130,7 @@
   #main-motto {
     @include mottos;
     #signature {
-      font-size: 14px;
+      font-size: clamp(14px, 1.1rem, 20px);
       font-weight: 400;
       color: $color-1;
     }

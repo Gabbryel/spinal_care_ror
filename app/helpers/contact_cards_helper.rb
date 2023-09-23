@@ -8,7 +8,7 @@ module ContactCardsHelper
     {
       address: 'Str. Nicolae Titulescu nr. 31, Bacău',
       tel_fix: '0334405676',
-      tel_mob: nil,
+      tel_mob: '0745155053',
     }
   ]
   end
