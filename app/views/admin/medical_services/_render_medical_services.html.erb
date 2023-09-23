@@ -7,7 +7,7 @@
       <% end %>
       <% sp.members.select { |m| m.medical_services.count > 0 }.each do |m| %>
         <div class="medical-services-list__specialist">
-          <h5><%= link_to m.name, "echipa/#{m.slug}" %></h5>
+          <h5><%= link_to "dr. #{m.name}", "echipa/#{m.slug}" %></h5>
           <% m.medical_services.each do |ms| %>
             <%= render ms %>
           <% end %>
