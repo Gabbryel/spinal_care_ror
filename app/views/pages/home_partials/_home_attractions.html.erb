@@ -1,4 +1,4 @@
-<div class="main-attractions">
+<div class="main-attractions" data-controller="contact">
   <div id="main-attractions-motto">
     <p>De ce Spinal Care?</p>
   </div>
@@ -12,8 +12,13 @@
         <div class="info-card_main">
           <p><%= c[:content] %> </p>
         </div>
-        <%= link_to 'Vezi mai multe...', c[:link] %>
+        <% if c[:type] == 'link_to' %>
+          <%= link_to c[:link_text], c[:link] %>
+        <% elsif c[:type] == 'button_tag' %>
+          <%= button_tag c[:link_text], class: 'btn-nude', data: {action: "click->contact#contact"} %>
+        <% end %>
       </div>
     <% end %>
   </div>
+  <%= render 'pages/home_partials/contact_modal' %>
 </div>
