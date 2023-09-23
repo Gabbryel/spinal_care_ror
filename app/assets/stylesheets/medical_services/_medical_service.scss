@@ -1,6 +1,6 @@
 .medical-service {
   position: relative;
-  width: 250px;
+  width: 300px;
   padding: 10px;
   border-bottom: 1px solid #00000020;
   margin: 0 auto;
@@ -9,10 +9,11 @@
     margin: 0;
   }
   .medical-service-crud {
-    display: inline-block;
     position: absolute;
-    right: -25px;
-    top: 9px;
+    left: 310px;
+    top: 4px;
+    display: flex;
+    flex-direction: column;
     a {
       font-size: 12px;
     }
@@ -21,8 +22,11 @@
 .medical-service__body {
   position: relative;
   display: grid;
-  grid-template-columns: 73% 27%;
+  grid-template-columns: 75% 25%;
   gap: 5px;
+  .text-end {
+    letter-spacing: -.06em ;
+  }
 }
 
 .tooltip-span {
