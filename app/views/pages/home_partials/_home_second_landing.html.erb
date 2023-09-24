@@ -5,6 +5,6 @@
     <%= image_tag('sec-main-photo.png') %>
   </div>
   <div id="main-motto" data-controller="animation" data-action="scroll@window->animation#svgscroll">
-    <p>"Fiecare pacient <span>care pleacă cu</span> zâmbetul pe buze <span>ne face să ne simțim</span> <span>împliniți"</span><br><span id="signature">Laura Neagu, kinetoterapeut</span></p>
+    <p>"Fiecare pacient <span>care pleacă cu</span> zâmbetul pe buze <span>ne face să ne simțim</span> <span>împliniți"</span><br><span id="signature"><%= full_name(@kineto_signature) %>, <%= @kineto_signature.profession.name %></span></p>
   </div>
 </div>

@@ -9,25 +9,33 @@
           <div class="modal-header">
             <%= button_tag 'Profesie', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
             <%= button_tag 'Specialitate', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
-            <%= button_tag 'Nume', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
+            <%#= button_tag 'Nume', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
           </div>
           <div class="modal-body">
             <%= simple_form_for :search, html: {id: 'filter-proffesion-form'}, url: echipa_path, method: 'GET' do |f| %>
-              <%= f.input :profession, collection: ['Toată echipa'].concat(Profession.all.map {|p| p.name}), as: :radio_buttons, label: false, input_html: { data: {controller: 'searchTeam', action: 'change->searchTeam#filter'} } %>
+              <%= f.input :profession, collection: ['Toată echipa'].concat(Profession.select{|p| p.members.count > 0}.map {|p| p.name}), as: :radio_buttons, label: false, input_html: { data: {controller: 'searchTeam', action: 'change->searchTeam#filter', bs_dismiss: 'modal'} } %>
             <% end %>
             <%= simple_form_for :search, html: {id: 'filter-specialty-form'},url: echipa_path, method: 'GET' do |f| %>
-              <%= f.input :specialty, collection: ['Toată echipa'].concat(Specialty.all.map {|p| p.name}), as: :radio_buttons, label: false, input_html: { data: {controller: 'searchTeam', action: 'change->searchTeam#filter'} } %>
+              <%= f.input :specialty, collection: ['Toată echipa'].concat(Specialty.select{|s| s.members.count > 0}.map {|p| p.name}), as: :radio_buttons, label: false, input_html: { data: {controller: 'searchTeam', action: 'change->searchTeam#filter', bs_dismiss: 'modal'} } %>
             <% end %>
-            <%= simple_form_for :search, html: {id: 'filter-name-form', autofocus: true },url: echipa_path, method: 'GET' do |f| %>
-              <%= f.input :name, label: 'Tastează numele dorit', input_html: { data: {type: 'button', controller: 'searchTeam', action: 'beforeinput->searchTeam#search keyup->searchTeam#searchName'} } %>
-            <% end %>
+            <%#= simple_form_for :search, html: {id: 'filter-name-form', autofocus: true },url: echipa_path, method: 'GET' do |f| %>
+              <%#= f.input :name, label: 'Tastează numele dorit și apasă "enter"', input_html: { data: {type: 'button', controller: 'searchTeam', action: 'beforeinput->searchTeam#search keyup->searchTeam#searchName'} } %>
+            <%# end %>
             <button type="button" class="btns-icon btns-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
           </div>
         </div>
       </div>
     </div>
 
-  <% @team_members.each do |m| %>
-    <%= render partial: "members/member_card", locals: {m: m, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
+
+
+  <% Profession.all.order(:order).each do |p| %>
+    <% if p.members.count > 0 %>
+      <div class="profession-div" id="profession-div__custom">
+          <% p.members.order(:last_name).each do |m| %>
+            <%= render partial: "members/member_card", locals: {m: m, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
+          <% end %>
+      </div>
+    <% end %>
   <% end %>
 </div>
