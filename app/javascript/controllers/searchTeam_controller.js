@@ -54,19 +54,19 @@ export default class extends Controller {
     let elementValue = this.element.innerText;
     let professionForm = document.getElementById('filter-proffesion-form');
     let specialtyForm = document.getElementById('filter-specialty-form');
-    let nameForm = document.getElementById('filter-name-form');
+    // let nameForm = document.getElementById('filter-name-form');
     if (elementValue === 'Profesie') {
       professionForm.style.display = 'block';
       specialtyForm.style.display = 'none';
-      nameForm.style.display = 'none';
+      // nameForm.style.display = 'none';
     } else if (elementValue === 'Specialitate') {
       specialtyForm.style.display = 'block';
       professionForm.style.display = 'none';
-      nameForm.style.display = 'none';
+      // nameForm.style.display = 'none';
     } else if (elementValue === 'Nume') {
       specialtyForm.style.display = 'none';
       professionForm.style.display = 'none';
-      nameForm.style.display = 'block';
+      // nameForm.style.display = 'block';
     }
   }
   // searchName(event) {
