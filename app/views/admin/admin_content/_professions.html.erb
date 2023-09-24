@@ -7,6 +7,6 @@
   </div>
   <%= render partial: "professions/modal", locals: {new: true, modal_id: 'newProfessionModal', profession: @profession} %>
   <div class="professions-index admin-elements">
-    <%= render @professions %>
+    <%= render Profession.order(order: :asc) %>
   </div>
 </div>

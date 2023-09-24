@@ -59,6 +59,6 @@ class ProfessionsController < ApplicationController
   end
 
   def profession_params
-    params.require(:profession).permit(:name, :slug, :has_specialty)
+    params.require(:profession).permit(:name, :slug, :has_specialty, :order)
   end
 end

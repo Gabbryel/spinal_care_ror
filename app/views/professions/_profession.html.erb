@@ -1,5 +1,5 @@
 <div class="profession">
-  <%= profession.name %>
+  <%= profession.order if profession.order %> <%= profession.name %>
   <div class="profession-crud">
     <%= link_to "#", data: {bs_toggle: "modal", bs_target: "#editProfession#{profession.id}Modal"} do %>
       <i class="fas fa-edit"></i>
