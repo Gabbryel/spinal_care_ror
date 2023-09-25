@@ -104,9 +104,10 @@ export default class extends Controller {
           pd.style.display = 'none'
           pd.removeAttribute('id', 'profession-div__custom')
         } else if (count > 0 && count < 4) {
-            pd.style.gridTemplateColumns = `repeat(auto-fill, minmax(300px, 1fr))`
-            pd.style.maxWidth = `${count*400}px`
+            pd.style.display = 'flex'
+            pd.style.flexWrap = 'wrap'
             pd.style.justifySelf = 'center'
+            pd.style.justifyContent = 'center'
         } else {
           pd.style.gridTemplateColumns = `repeat(auto-fill, minmax(300px, 1fr))`
         }
