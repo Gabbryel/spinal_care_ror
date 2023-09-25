@@ -11,6 +11,8 @@ class PagesController < ApplicationController
   end
 
   def medical_team
-    @team_members = Member.all.order(:order)
+    @team_members = Member.all.order(:last_name)
+    @professions = Profession.all.order(:order)
+    @specialties = Specialty.all.order(:name)
   end
 end
