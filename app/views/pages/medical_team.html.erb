@@ -1,3 +1,6 @@
+<%= content_for :meta_title, 'Echipa medicală Spinal Care Bacău' %>
+<%= content_for :meta_keywords, @professions.pluck(:name).concat(@team_members.map{|tm| full_name(tm)}).concat(@specialties.pluck(:name)).join(', ') %>
+
 <div class="medical-team" id="medical-team" data-controller="memberIndexFilter">
     <%= button_tag 'Filtru', class: 'btns-icon fs-5', data: { bs_toggle: 'modal', bs_target: '#filterModal' } do %>
       <i class="fas fa-search"></i> Căutare
@@ -29,7 +32,7 @@
 
 
 
-  <% Profession.all.order(:order).each do |p| %>
+  <% @professions.each do |p| %>
     <% if p.members.count > 0 %>
       <div class="profession-div" id="profession-div__custom">
           <% p.members.order(:last_name).each do |m| %>
