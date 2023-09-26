@@ -5,6 +5,7 @@
       <%= member.errors.full_messages.to_sentence.capitalize %>
     </div>
     <% end %>
+    <%= f.input :academic_title, label: false, placeholder: 'titlu academic' %>
     <%= f.input :first_name, label: false, placeholder: 'Prenume' %>
     <%= f.input :last_name, label: false, placeholder: 'Nume' %>
     <%= f.input :photo, label: false %>
