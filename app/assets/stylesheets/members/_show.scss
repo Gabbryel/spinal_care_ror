@@ -95,7 +95,7 @@
 
 .member-card {
   position: relative;
-  width: 300px;
+  width: 320px;
   height: 420px;
   overflow: hidden;
   justify-self: center;
@@ -113,12 +113,12 @@
  }
   .member-card__photo-holder {
     position: absolute;
-    width: 300px;
+    width: 320px;
     height: 390px;
     top: 10px;
     left: 0;
-    background-size: 80%;
-    background-position: 50% -80%;
+    background-size: 70%;
+    background-position: 50% -40%;
     background-repeat: no-repeat;
     border-radius: 3px;
   }
@@ -148,6 +148,11 @@
       text-transform: uppercase;
       letter-spacing: -.05em;
       white-space: nowrap;
+      span {
+        font-size: .6rem;
+        position: absolute;
+        top: -15px;
+      }
     }
   }
 }
