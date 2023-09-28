@@ -16,8 +16,9 @@
                 <div class="personal-member">
                   <%= cl_image_tag(member.photo.key, width: 50) if member.photo.key.present? %>
                   <div class="personal-info">
-                    <span><%= full_name(member) %></span>
-                    <span><%= member.profession.name if member.profession %></span>
+                    <span><%= member.academic_title %></span>
+                    <span> <%= full_name(member) %></span>
+                    <span><%= member.profession.name if member.profession %> <%= member.doctor_grade if member.doctor_grade %> </span>
                     <span><%= member.specialty.name if member.specialty %></span>
                   </div>
                   <div class="personal-crud">
