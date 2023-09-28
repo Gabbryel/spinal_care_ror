@@ -1,9 +1,5 @@
-<% if access %>
-  <% if god_mode %>
+<% if access && god_mode %>
     <%= render 'admin/dashboard/users_container' %>
-  <% else %>
+  <% else  %>
     <%= no_access %>
-  <% end %>
-<% else %>
-  <%= no_access %>
 <% end %>
