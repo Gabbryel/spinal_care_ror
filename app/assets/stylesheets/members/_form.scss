@@ -1,11 +1,11 @@
-#member_specialty_id {
+#member_specialty_id, #member_doctor_grade {
   display: none;
 }
-#member_specialty_id.trigger {
+#member_specialty_id.trigger, #member_doctor_grade.trigger {
   display: block;
   opacity: 0;
   transition: 1s;
 }
-#member_specialty_id.active {
+#member_specialty_id.active, #member_doctor_grade.active {
   opacity: 1;
 }

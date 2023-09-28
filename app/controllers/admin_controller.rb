@@ -9,7 +9,7 @@ class AdminController < ApplicationController
   def personal
     @member = Member.new()
     @members = Member.all.order(last_name: :asc)
-    @professions = Profession.all.order(name: :asc)
+    @professions = Profession.all.order(order: :asc)
     @specialties = Specialty.all.order(name: :asc)
   end
 
