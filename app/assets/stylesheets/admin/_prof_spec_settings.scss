@@ -99,17 +99,17 @@
 
 
 .no-access {
-  background-image: url(http://localhost:3001/assets/no-access-b438b54….png);
+  // background-image: url(http://localhost:3001/assets/no-access-b438b54….png);
   height: calc(var(--vh) * 93);
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   padding: 50px;
-  background-color: black;
+  background-color: $color-3;
   color: $white-spinal;
   text-align: center;
   h1 {
@@ -122,6 +122,6 @@
     color: inherit;
   }
   a {
-    color: inherit;
+    color: $color-2;
   }
 }

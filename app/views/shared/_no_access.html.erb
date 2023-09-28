@@ -1,4 +1,5 @@
-<div class="no-access" style="background-image: url('<%=image_url('no-access.png')%>')">
-  <h1>Nu aveți drepturi de administrare!</h1>
-  <p>Înapoi la <%= link_to 'pagina publică', root_path %></p>
+<div class="no-access">
+  <h1>Nu aveți drepturi de administrare pentru această pagină!</h1>
+  <p>Înapoi la <%= link_to 'pagina publică', root_path %> sau</p>
+  <p>dacă sunteți admin puteți modifica: <%= link_to 'personal', dashboard_personal_path %> / <%= link_to 'profesii & spec.', dashboard_profesii_specialitati_path %> / <%= link_to 'servicii medicale', dashboard_servicii_medicale_path %>.</p>
 </div>

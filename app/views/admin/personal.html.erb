@@ -1,9 +1,5 @@
 <% if access %>
-  <% if god_mode %>
-      <%= render partial: "admin/personal/add_edit_members_page" %>
-      <% else %>
-    <%= no_access %>
-  <% end %>
+    <%= render partial: "admin/personal/add_edit_members_page" %>
 <% else %>
-  <%= no_access %>
+    <%= no_access %>
 <% end %>
