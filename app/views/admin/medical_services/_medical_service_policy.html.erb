@@ -6,7 +6,7 @@
     <%= simple_form_for medical_service do |f| %>
       <%= f.hidden_field :member_id, value: nil %>
       <%= button_to medical_service_path(medical_service), class: 'btn-nude delete-medic-from-ms' do %>
-        <i class="fa-solid fa-link-slash"></i>
+      <i class="fa-solid fa-user-doctor"></i>
         <p>⚠️ Disociază <%= medical_service.name %> de <%= full_name(medical_service.member) %></p>
       <% end %>
     <% end %>
