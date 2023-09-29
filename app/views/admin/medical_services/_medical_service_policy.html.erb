@@ -1,7 +1,16 @@
-<% if policy(medical_service).edit? && policy(medical_service).destroy? && access && god_mode && current_page?('/dashboard/servicii-medicale') %>
+<% if policy(medical_service).edit? && policy(medical_service).destroy? && access && current_page?('/dashboard/servicii-medicale') %>
 <div class="medical-service-crud specialty-crud">
   <%= link_to "#", data: {bs_toggle: "modal", bs_target: "#editMedicalService#{medical_service.id}Modal"} do %><i class="fas fa-edit"></i><% end %>
   <%= link_to medical_service_path(medical_service), data: {turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să ștergi #{medical_service.name}?"} do %><i class="fas fa-trash-alt"></i><% end %>
+  <% unless medical_service.member_id.nil? %>
+    <%= simple_form_for medical_service do |f| %>
+      <%= f.hidden_field :member_id, value: nil %>
+      <%= button_to medical_service_path(medical_service), class: 'btn-nude delete-medic-from-ms' do %>
+        <i class="fa-solid fa-link-slash"></i>
+        <p>⚠️ Disociază <%= medical_service.name %> de <%= full_name(medical_service.member) %></p>
+      <% end %>
+    <% end %>
+  <% end %>
   <%= render partial: "medical_services/modal", locals: {new: false, modal_id: "editMedicalService#{medical_service.id}Modal", medical_service: medical_service} %>
 </div>
 <% end %>
