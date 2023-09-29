@@ -43,10 +43,6 @@ footer {
   position: relative;
   width: 100%;
   max-width: 300px;
-  @media(min-width: 768px) {
-    max-width: 350px;
-    min-width: 320px;
-  }
   height: 140px;
   display: flex;
   flex-direction: column;
@@ -55,6 +51,8 @@ footer {
   border-radius: 20px;
   padding: 10px;
   gap: 10px;
+  font-size: 14px;
+  letter-spacing: -.02em;
   p {
     margin: 0;
   }
