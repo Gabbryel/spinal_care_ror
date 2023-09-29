@@ -9,11 +9,11 @@
     margin: 0;
   }
   .medical-service-crud {
-    position: absolute;
-    left: 310px;
-    top: 4px;
+    position: relative;
     display: flex;
-    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    gap: 5px;
     a {
       font-size: 12px;
     }
@@ -71,5 +71,24 @@
   .trix-content {
     text-align: justify;
     padding: 7px 0;
+  }
+}
+
+.delete-medic-from-ms {
+  padding: 0;
+  p {
+    position: absolute;
+    // width: 300px;
+    left: -200px;
+    background: #000;
+    color: #fff;
+    padding: 10px;
+    display: none;
+    font-size: 12px;
+  }
+  &:hover {
+    p {
+      display: block;
+    }
   }
 }
