@@ -14,7 +14,7 @@
         <div class="personal-index">
               <% @members.select { |member| member.profession == p}.each do |member| %>
                 <div class="personal-member">
-                  <%= cl_image_tag(member.photo.key, width: 50) if member.photo.key.present? %>
+                  <%= cl_image_tag(member.photo.key, width: 50, alt: full_name(member)) if member.photo.key.present? %>
                   <div class="personal-info">
                     <span><%= member.academic_title %></span>
                     <span> <%= full_name(member) %></span>

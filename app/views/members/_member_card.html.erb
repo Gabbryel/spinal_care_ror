@@ -4,7 +4,7 @@
   data-action="scroll@window->animation#svgscroll"
   data-identity="<%= full_name(m) %>" data-profession="<%= m.profession.name %>" data-specialty="<%= m.specialty.name if m.specialty %>">
   <%= link_to colectiv_path(m.slug) do %>
-    <div class="member-card__main">
+    <div class="member-card__main" title="<%= m.academic_title %> <%= full_name(m) %>">
       <div class="member-card__photo-holder" style="background-image: url('<%= cl_image_path(m.photo.key, :quality=>"auto:best", :fetch_format=>:webp) if m.photo.key.present? %>');"></div>
       <div class="member-card-info">
         <h1 class="member-card-info__name"><span><%= m.academic_title if m.academic_title != '-' %></span> <%= full_name(m) %></h1>
