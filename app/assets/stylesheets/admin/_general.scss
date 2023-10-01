@@ -1,14 +1,6 @@
-.admin_container {
-  position: relative;
-  width: 100%;
-  min-height: calc(var(--vh) * 93);
-  font-family: $font-mont;
-  background-color: $white-spinal;
-}
-
 /* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
+	 v2.0 | 20110126
+	 License: none (public domain)
 */
 
 html, body, div, span, applet, object, iframe,
@@ -27,8 +19,6 @@ time, mark, audio, video {
 	margin: 0;
 	padding: 0;
 	border: 0;
-	font-size: 100%;
-	font: inherit;
 	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
@@ -53,4 +43,12 @@ q:before, q:after {
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
+}
+
+.admin_container {
+  position: relative;
+  width: 100%;
+  min-height: calc(var(--vh) * 93);
+  font-family: $font-mont !important;
+  background-color: $white-spinal;
 }
