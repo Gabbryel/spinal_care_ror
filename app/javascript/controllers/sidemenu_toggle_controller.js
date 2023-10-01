@@ -86,4 +86,7 @@ export default class extends Controller {
       this.hamburger.classList.remove("active");
     }, 780);
   }
+  activateAdmin() {
+    console.log('working')
+  }
 }
