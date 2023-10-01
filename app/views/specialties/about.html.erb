@@ -1,3 +1,8 @@
+<% replacements = {"<div>" => '', "</div" => '', "<br>" => '', "<strong>" => '', "</strong>" => '', ">" => ''} %>
+
+<%= content_for :meta_title, "#{@specialty.name} Spinal Care Bacau" %>
+<%= content_for :meta_description, description_gsub(@specialty) %>
+
 <div class="about-specialty-container">
   <div class="about-specialty-container__main">
     <div class="btn-group dropdown-center">

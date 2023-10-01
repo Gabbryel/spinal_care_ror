@@ -33,4 +33,10 @@ module ApplicationHelper
   def m_s_helper(ms)
     30 - (ms.name.length + ms.price.to_s.length).to_i
   end
+
+  def description_gsub(item)
+    description = item.description.body.to_s
+    replacements = {'<div>' => '', '</div' => '', '<br>' => '', '<strong>' => '', '</strong>' => '', '>' => '', '<li>' => '', '</li>' => '', '<ul>' => '', '</ul>' => '', '<div class="trix-content"' => ''}
+    description.gsub(/#{Regexp.union(replacements.keys)}/, replacements).strip
+  end
 end
