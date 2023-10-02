@@ -1,16 +1,23 @@
-<% if access %>
-  <div class="services-main section-main" data-controller="tooltip">
-    <h2>Servicii medicale</h2>
-    <% if access && current_page?('/dashboard/servicii-medicale') %>
-      <div><%= link_to "#", data: {bs_toggle: "modal", bs_target: "#newMedicalServiceModal"}, class: 'btn-custom' do %>Adaugă serviciu medical<% end %></div>
-    <% end %>
-    <%= render partial: "admin/medical_services/render_medical_services" %>
-    <% if access && current_page?('/dashboard/servicii-medicale')  %>
-      <div class="services-form">
-        <%= render partial: 'medical_services/modal', locals: {new: true, modal_id: "newMedicalServiceModal", title: "Adaugă serviciu medical", medical_service: @medical_service} %>
-      </div>
-    <% end %>
+  <% if current_page?('/servicii-medicale') %>
+    <div class="services-main section-main" data-controller="tooltip">
+      <h2>Servicii medicale</h2>
+      <%= render partial: "admin/medical_services/render_medical_services" %>
     </div>
-<% else %>
-  <%= no_access %>
-<% end %>
+  <% elsif access && current_page?('/dashboard/servicii-medicale') %>
+    <div class="services-main section-main" data-controller="tooltip">
+      <h2>Servicii medicale</h2>
+      <% if access && current_page?('/dashboard/servicii-medicale') %>
+        <div><%= link_to "#", data: {bs_toggle: "modal", bs_target: "#newMedicalServiceModal"}, class: 'btn-custom' do %>Adaugă serviciu medical<% end %></div>
+      <% end %>
+      <%= render partial: "admin/medical_services/render_medical_services" %>
+      <% if access && current_page?('/dashboard/servicii-medicale')  %>
+        <div class="services-form">
+          <%= render partial: 'medical_services/modal', locals: {new: true, modal_id: "newMedicalServiceModal", title: "Adaugă serviciu medical", medical_service: @medical_service} %>
+        </div>
+      <% end %>
+      </div>
+  <% else %>
+      <%= no_access %>
+  <% end %>
+  
+
