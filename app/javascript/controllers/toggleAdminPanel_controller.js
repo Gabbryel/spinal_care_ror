@@ -1,29 +1,36 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  connect() {
-    let body = document.getElementsByTagName("body")[0];
+  showAdminLink() {
     let sideMenu = document.getElementById("side-menu-options");
     let exitLink = document.getElementById("exitLink");
+    let adminLinkContainer = document.createElement("li");
+    let adminLink = document.createElement("a");
+    adminLink.setAttribute("href", "/dashboard");
+    adminLink.setAttribute("id", "adminLink");
+    adminLink.innerText = "Admin";
+    sideMenu.insertBefore(adminLinkContainer, exitLink);
+    adminLinkContainer.appendChild(adminLink);
+  }
+  connect() {
+    let body = document.getElementsByTagName("body")[0];
     body.addEventListener("keydown", (e) => {
       if (e.key === "a") {
         body.addEventListener("keydown", (e) => {
           if (e.key === "d") {
             body.addEventListener("keydown", (e) => {
               if (e.key === "m" && !document.getElementById("adminLink")) {
-                let adminLinkContainer = document.createElement("li");
-                let adminLink = document.createElement("a");
-                adminLink.setAttribute("href", "/dashboard");
-                adminLink.setAttribute("id", "adminLink");
-                adminLink.innerText = "Admin";
-                sideMenu.insertBefore(adminLinkContainer, exitLink);
-                adminLinkContainer.appendChild(adminLink);
+                this.showAdminLink()
               }
             });
           }
         });
       }
     });
+    if (document.getElementById('exitLink')) {
+      this.showAdminLink()
+    }
+
   }
 }
 
