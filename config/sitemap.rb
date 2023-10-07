@@ -11,6 +11,9 @@ SitemapGenerator::Sitemap.create do
   changefreq: 'daily',
   priority: 0.6
 
+  add "/servicii-medicale",
+  changefreq: 'daily',
+  priority: 0.6
 
   Member.all.order(id: :desc).each do |m|
     add "/echipa/#{m.slug}",
