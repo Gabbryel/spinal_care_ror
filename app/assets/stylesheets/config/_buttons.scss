@@ -58,3 +58,30 @@
   bottom: 0px;
   right: 15px;
 }
+
+.btn-action {
+  color: $color-5;
+  background-color: $color-3;
+  width: 100%;
+  max-width: 320px;
+  font-size: clamp(16px, 3vw, 24px);
+}
+
+.btn-color {
+  color: $btn-font-color;
+}
+
+.btn-drop {
+  position: relative;
+  background: none;
+  padding: 10px 0;
+  border: none;
+  color: inherit;
+  margin-bottom: 30px;
+}
+
+.link-to {
+  position: relative;
+  color: $btn-font-color;
+  text-decoration: none;
+}
