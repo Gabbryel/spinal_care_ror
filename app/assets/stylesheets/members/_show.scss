@@ -86,7 +86,6 @@
   transform: translateY(70px);
   opacity: 0;
   @media(min-width: 992px) and (orientation: landscape) {
-    // justify-self: unset;
     grid-area: 1/1/3/2;
     align-self: center;
   }
@@ -104,6 +103,9 @@
     background-position: 50% -40%;
     background-repeat: no-repeat;
     border-radius: 3px;
+    &:hover {
+      filter: drop-shadow(2px 2px 1px $color-1);
+    }
   }
   .member-card-info {
     position: relative;
