@@ -17,4 +17,8 @@ class PagesController < ApplicationController
     @professions = Profession.all.order(:order)
     @specialties = Specialty.all.order(:name)
   end
+
+  def pacient_page
+    
+  end
 end

@@ -1,9 +1,12 @@
 class AdminController < ApplicationController
+  layout "dashboard"
   def dashboard
     @m = Member.new()
     @professions = Profession.all
+  end
+  
+  def edit_users
     @users = User.all.order(email: :asc)
-
   end
 
   def personal
