@@ -34,14 +34,15 @@
     gap: 50px;
     padding: 50px;
     border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+    box-shadow:$about-shadow;
   }
   @media (min-width: 540px) and (min-height: 375px) and (orientation: landscape) {
     width: 80%;
     gap: 50px;
     padding: 50px;
     border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+    box-shadow: $about-shadow;
+    grid-template-columns: auto;
   }
   .member-bio {
     position: relative;

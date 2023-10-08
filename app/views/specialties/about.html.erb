@@ -1,7 +1,5 @@
-<% replacements = {"<div>" => '', "</div" => '', "<br>" => '', "<strong>" => '', "</strong>" => '', ">" => ''} %>
-
 <%= content_for :meta_title, "#{@specialty.name} Spinal Care Bacau" %>
-<%= content_for :meta_description, description_gsub(@specialty) %>
+<%= content_for :meta_description, description_gsub(@specialty)[0, 160] %>
 
 <div class="about-specialty-container">
   <div class="about-specialty-container__main">
@@ -18,7 +16,8 @@
     <h1><%= @specialty.name %></h1>
     <div class="about-specialty-container__specialty"><%= @specialty.description %></div>
     <div class="about-specialty-container__specialists">
-      <h2>Medici <%= @specialty.name.downcase %> </h2>
+      
+      <!-- <h2>Medici <%= @specialty.name.downcase %> </h2> -->
       <div class="about-specialty-container__specialists-index">
         <% @specialty.members_belonging_to_specialty.each_with_index do |member| %>
           <%= render partial: 'members/member_card', locals: {m: member, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
@@ -26,7 +25,7 @@
       </div>
     </div>
     <div data-controller="tooltip" class="about-medical-prices">
-      <h3>Prețuri servicii medicale de <%= "#{@specialty.name.downcase}" %></h3>
+      <!-- <h3>Prețuri servicii medicale de <%= "#{@specialty.name.downcase}" %></h3> -->
       <div class="medical-services-general">
       <% @specialty.medical_services.select { |ms| ms.member == nil}.each do |ms| %>
         <%= render ms %>
