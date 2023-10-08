@@ -19,12 +19,13 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   </head>
 
-  <body data-controller="vh sidemenu-toggle toggleAdminPanel" data-action="scroll@window->sidemenu-toggle#close keydown.a->toggleAdminPanel#showItWorks" tabindex="0">
+  <body data-controller="vh sidemenu-toggle toggleAdminPanel contact" data-action="scroll@window->sidemenu-toggle#close keydown.a->toggleAdminPanel#showItWorks" tabindex="0">
     <% if !dashboard_page_helper %>
       <%= render "shared/navbar" %>
       <%= render "shared/sidemenu" %>
       <%= render "shared/sidecover" %>
       <%= render "shared/gdpr" %>
+      <%= render 'pages/home_partials/contact_modal' %>
     <% elsif dashboard_page_helper %>
       <%= render "shared/admin_navbar" %>
       <%= render "shared/admin_menu" %>

@@ -8,7 +8,7 @@
   <div class="main-specialities-index">
     <% @specialties.each_with_index do |sp, i| %>
       <%= link_to "specialitati-medicale/#{sp.slug}" do %>
-        <div class="speciality-card" style="transition: <%=i%>s;" data-controller="animation" data-action="scroll@window->animation#svgscroll">
+        <div class="speciality-card">
           <div class="specialty-card__cover-name">
             <% sp[:name].split(Regexp.union([' ', '-']), 3).each do |w| %>
               <%= tag.p(w) %>

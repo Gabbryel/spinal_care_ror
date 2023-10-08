@@ -16,7 +16,7 @@
     <h1><%= @specialty.name %></h1>
     <div class="about-specialty-container__specialty"><%= @specialty.description %></div>
     <div class="about-specialty-container__specialists">
-      
+      <%= button_tag "Programează-te acum!", class: 'btn-nude btn-action btn-custom', data: {action: "click->contact#contact"} %>
       <!-- <h2>Medici <%= @specialty.name.downcase %> </h2> -->
       <div class="about-specialty-container__specialists-index">
         <% @specialty.members_belonging_to_specialty.each_with_index do |member| %>
@@ -32,12 +32,14 @@
         <% end %>
       </div>
       <div class="medical-services-specialist">
-        <% @specialty.members.select { |m| m.medical_services.count > 0 }.each do |m| %>
+        <% @specialty.members.select { |m| m.medical_services.count > 0 }.shuffle.each do |m| %>
           <div class="medical-services-list__specialist">
-            <h5><%= link_to m.name, "echipa/#{m.slug}" %></h5>
-            <% m.medical_services.each do |ms| %>
-              <%= render ms %>
-            <% end %>
+            <h2><%= link_to "#{m.academic_title} #{m.name}", "echipa/#{m.slug}" %></h2>
+            <div class="medical-services-general">
+              <% m.medical_services.each do |ms| %>
+                <%= render ms %>
+              <% end %>
+            </div>
           </div>
         <% end %>
       </div>
