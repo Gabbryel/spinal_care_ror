@@ -1,9 +1,12 @@
 class AdminController < ApplicationController
+  layout "dashboard"
   def dashboard
     @m = Member.new()
     @professions = Profession.all
+  end
+  
+  def edit_users
     @users = User.all.order(email: :asc)
-
   end
 
   def personal
@@ -25,5 +28,9 @@ class AdminController < ApplicationController
     @medical_services = MedicalService.all.order(name: :asc)
     @selected_members = Member.all.select { |m| m.medical_services.count > 0}
     @specialties = Specialty.all.order(name: :asc)
+  end
+
+  def info_pacient
+    @
   end
 end

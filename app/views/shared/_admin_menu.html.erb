@@ -2,10 +2,11 @@
   <p id="admin-menu-title">App admin</p>
   <div class="admin-menu-index">
     <p><%= link_to 'Pagina publică', root_path %></p>
-    <p><%= link_to 'Admins & Gods', dashboard_path %></p>
+    <p><%= link_to 'Admins & Gods', dashboard_users_path %></p>
     <p><%= link_to 'Personal', dashboard_personal_path %></p>
     <p><%= link_to 'Profesii & spec.', dashboard_profesii_specialitati_path %></p>
     <p><%= link_to 'Servicii medicale', dashboard_servicii_medicale_path %></p>
+    <p><%= link_to 'Info pacient', dashboard_info_pacient_path %></p>
     <p><%= link_to 'Recenzii' %></p>
     <% if current_user %>
           <%= link_to 'Ieșire', destroy_user_session_path, data: {turbo_method: :delete} %>
