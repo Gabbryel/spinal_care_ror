@@ -6,7 +6,7 @@ export default class extends Controller {
     let exitLink = document.getElementById("exitLink");
     let adminLinkContainer = document.createElement("li");
     let adminLink = document.createElement("a");
-    adminLink.setAttribute("href", "/dashboard");
+    adminLink.setAttribute("href", "/dashboard/users");
     adminLink.setAttribute("id", "adminLink");
     adminLink.innerText = "Admin";
     sideMenu.insertBefore(adminLinkContainer, exitLink);

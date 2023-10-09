@@ -29,4 +29,8 @@ class AdminController < ApplicationController
     @selected_members = Member.all.select { |m| m.medical_services.count > 0}
     @specialties = Specialty.all.order(name: :asc)
   end
+
+  def info_pacient
+    @
+  end
 end
