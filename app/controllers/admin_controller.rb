@@ -31,6 +31,6 @@ class AdminController < ApplicationController
   end
 
   def info_pacient
-    @
+    @information = Information.new()
   end
 end
