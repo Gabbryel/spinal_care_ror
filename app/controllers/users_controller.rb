@@ -5,13 +5,13 @@ class UsersController < ApplicationController
 
   def update
     if @user.update(user_params)
-      redirect_to dashboard_path
+      redirect_to dashboard_users_path
       if @user.admin && params[:user][:admin]
         flash.alert = 'Utilizatorul este administrator din acest moment!'
       elsif !@user.admin && params[:user][:admin]
         flash.alert = 'Utilizatorul nu mai are drepturi de administrare!'
       elsif params[:user][:alias]
-        flash.alert = params[:user][:alias].empty? ? "Ai uitat să-i pui o poreclă!" : "Utilizatorul are aliasul #{params[:user][:alias]}!"
+        flash.alert = params[:user][:alias].empty? ? "Ai uitat să-i pui un alias!" : "Utilizatorul are aliasul #{params[:user][:alias]}!"
       end
     end
   end

@@ -1,0 +1,13 @@
+<div class="modal fade modal-lg" id="<%= modal_id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Completează datele specialității medicale</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= render partial: "specialties/form_complete", locals: {specialty: specialty} %>
+      </div>
+    </div>
+  </div>
+</div>

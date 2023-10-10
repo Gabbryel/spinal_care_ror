@@ -21,7 +21,7 @@ class SpecialtiesController < ApplicationController
     @specialty = authorize Specialty.new(specialty_params)
     respond_to do |format|
       if @specialty.save
-        format.html { redirect_to dashboard_profesii_specialitati_path, notice: 'Specialitate medicală adăugată!' }
+        format.html { redirect_to admin_specialties_path, notice: 'Specialitate medicală adăugată!' }
       else
         format.turbo_stream
         format.html { render :new }
@@ -37,7 +37,7 @@ class SpecialtiesController < ApplicationController
     respond_to do |format|
       @specialty.update(specialty_params)
       if @specialty.save
-        format.html { redirect_to dashboard_profesii_specialitati_path, notice: 'Specialitate medicală modificată!' }
+        format.html { redirect_to admin_specialties_path, notice: 'Specialitate medicală modificată!' }
         format.json { render :show, status: :updated, location: @specialty}
       else
         format.turbo_stream
@@ -65,10 +65,10 @@ class SpecialtiesController < ApplicationController
   def destroy
     if @specialty.destroy
       respond_to do |format|
-        format.html { redirect_to dashboard_profesii_specialitati_path, notice: "Ai șters cu succes!" }
+        format.html { redirect_to admin_specialties_path, notice: "Ai șters cu succes!" }
       end
       else
-        redirect_to dashboard_profesii_path, notice: "Se pare că această specialitate medicală are extra-vieți! Mai încearcă încă o dată ștergerea!"
+        redirect_to admin_specialties_path, notice: "Se pare că această specialitate medicală are extra-vieți! Mai încearcă încă o dată ștergerea!"
     end
   end
 

@@ -1,5 +1,5 @@
 <div class="profession">
-  <%= profession.order if profession.order %> <%= profession.name %>
+  <p><b><%= profession.name %></b>, ordine de afișare <b><%= profession.order if profession.order %></b></p>
   <div class="profession-crud">
     <%= link_to "#", data: {bs_toggle: "modal", bs_target: "#editProfession#{profession.id}Modal"} do %>
       <i class="fas fa-edit"></i>

@@ -1,5 +1,5 @@
 class ProfessionsController < ApplicationController
-  before_action :set_profession, only: %i[show edit update destroy]
+  before_action :set_profession, only: %i[ edit update destroy]
 
   def new
     @profession = authorize Profession.new
@@ -9,7 +9,7 @@ class ProfessionsController < ApplicationController
     @profession = authorize Profession.new(profession_params)
     respond_to do |format|
       if @profession.save
-        format.html { redirect_to dashboard_profesii_specialitati_path, notice: 'Profesie nouă adăugată!'}
+        format.html { redirect_to admin_professions_path, notice: 'Profesie nouă adăugată!'}
       else
         format.turbo_stream
         format.html { render :new }
@@ -24,8 +24,8 @@ class ProfessionsController < ApplicationController
   def update
     respond_to do |format|
       @profession.update(profession_params)
-      if @profession.save
-          format.html { redirect_to dashboard_profesii_specialitati_path, notice: 'Profesie modificată!' }
+      if @profession.save!
+          format.html { redirect_to admin_professions_path, notice: 'Profesie modificată!' }
           format.json { render :show, status: :updated, location: @profession}
       else
         format.turbo_stream
@@ -35,20 +35,13 @@ class ProfessionsController < ApplicationController
     end
   end
 
-  def index
-    @professions = policy_scope(Profession).all
-  end
-
-  def show
-  end
-
   def destroy
     if @profession.destroy
       respond_to do |format|
-        format.html { redirect_to dashboard_profesii_specialitati_path, notice: "Ai șters profesia cu succes!" }
+        format.html { redirect_to admin_professions_path, notice: "Ai șters profesia cu succes!" }
       end
       else
-        redirect_to dashboard_profesii_specialitati_path, notice: "Se pare că această profesie are extra-vieți! Mai încearcă încă o dată ștergerea!"
+        redirect_to admin_professions_path, notice: "Se pare că această profesie are extra-vieți! Mai încearcă încă o dată ștergerea!"
     end
   end
 
