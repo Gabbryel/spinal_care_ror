@@ -1,5 +1,5 @@
-<div class="container-fluid">
-
+<div class="section-main">
+  <h1>Echipa Spinal Care</h1>
   <div class="personal-form">
     <%= render partial: 'members/modal', locals: { new: true, modal_id: 'newMemberModal', member: @member } %>
   </div>
@@ -10,7 +10,7 @@
 
   <% @professions.each do |p| %>
       <div class="personal-profession">
-        <h3><%= p.name %> <%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newMemberModal" } do %><i class="fas fa-user-plus"></i><% end %></h3>
+        <h2><%= p.name %> <%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newMemberModal" } do %><i class="fas fa-user-plus"></i><% end %></h2>
         <div class="personal-index">
               <% @members.select { |member| member.profession == p}.each do |member| %>
                 <div class="personal-member">
@@ -31,6 +31,5 @@
               <% end %>
             </div>
       </div>
-      <hr>
   <% end %>
 </div>

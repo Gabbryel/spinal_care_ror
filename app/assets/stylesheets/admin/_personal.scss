@@ -42,10 +42,7 @@
     gap: 10px;
     align-items: center;
   }
-  .fas, .far {
-    font-size: 14px;
-    line-height: 2.3;
-  }
+  
 }
 .personal-member {
   position: relative;
@@ -68,5 +65,30 @@
     display: flex;
     justify-content: flex-start;
     gap: 0 10px;
+    .fa-link {
+      &:hover {
+        &:after {
+          @include hover-the-icons;
+          content: 'link către pagina personală';
+        }
+      }
+    }
+    .fa-edit {
+      &:hover {
+        &:after {
+          @include hover-the-icons;
+          content: 'formular de editare';
+        }
+      }
+    }
+    .fa-trash-alt {
+      &:hover {
+        color: red;
+        &:after {
+          @include hover-the-icons;
+          content: '⚠️ link ștergere date!!!';
+        }
+      }
+    }
   }
 }

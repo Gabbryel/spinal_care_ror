@@ -17,6 +17,23 @@
     a {
       font-size: 12px;
     }
+    .fa-edit{
+      &:hover {
+        &:after {
+          @include hover-the-icons;
+          content: 'editează serviciul medical';
+        }
+      }
+    }
+    .fa-trash-alt {
+      &:hover {
+        color: red;
+        &:after {
+          @include hover-the-icons;
+          content: '⚠️ link ștergere date!!!';
+        }
+      }
+    }
   }
 }
 .medical-service__body {
@@ -79,12 +96,13 @@
   p {
     position: absolute;
     left: 0;
-    background: #000;
-    color: #fff;
-    padding: 10px;
+    background: $color-1;
+    color: $color-5;
+    padding: 3px 10px;
     display: none;
     font-size: 12px;
     max-width: 250px;
+    font-weight: 500;
   }
   &:hover {
     p {

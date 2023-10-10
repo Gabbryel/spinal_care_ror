@@ -15,10 +15,13 @@ class AdminController < ApplicationController
     @professions = Profession.all.order(order: :asc)
     @specialties = Specialty.all.order(name: :asc)
   end
-
-  def admin_content
+  
+  def professions
     @profession = Profession.new()
     @professions = Profession.all.order(name: :asc)
+  end
+  
+  def specialties
     @specialty = Specialty.new()
     @specialties = Specialty.all.order(name: :asc)
   end
@@ -32,5 +35,12 @@ class AdminController < ApplicationController
 
   def info_pacient
     @information = Information.new()
+  end
+
+  def test
+    @profession = Profession.new()
+    @professions = Profession.all.order(name: :asc)
+    @specialty = Specialty.new()
+    @specialties = Specialty.all.order(name: :asc)
   end
 end

@@ -20,7 +20,7 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   </head>
 
-  <body data-controller="vh sidemenu-toggle toggleAdminPanel <%= dashboard_page_helper ? nil : 'contact' %>" data-action="scroll@window->sidemenu-toggle#close keydown.a->toggleAdminPanel#showItWorks" tabindex="0">
+  <body data-controller="vh sidemenu-toggle toggleAdminPanel contact" data-action="scroll@window->sidemenu-toggle#close keydown.a->toggleAdminPanel#showItWorks" tabindex="0">
       <%= render "shared/navbar" %>
       <%= render "shared/sidemenu" %>
       <%= render "shared/sidecover" %>

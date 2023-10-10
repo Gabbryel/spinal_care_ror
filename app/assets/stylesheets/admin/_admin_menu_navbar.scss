@@ -13,6 +13,7 @@
       @media (orientation: landscape) {
         width: calc(100% - 200px);
         margin-left: 200px;
+        min-height: calc(var(--vh) * 100);
       }
         .users-container {
           width: 100%;
@@ -39,11 +40,14 @@
   }
   p {
     color: $color-1;
-    margin: 0;
+    margin-left: 0;
   }
   @media(min-width: 768px) {
     width: 100%;
     justify-content: flex-start;
+    position: fixed;
+    top: 0;
+    z-index: 1;
     p {
       margin-left: 30px;
     }
@@ -52,9 +56,10 @@
 
 .admin_navbar.active {
   @media(min-width: 768px) {
-    width: calc(100% - 150px);
+    
     p {
-      margin-left: 30px;
+      transition: 1s;
+      margin-left: 180px;
     }
   }
 }
@@ -70,11 +75,11 @@
   width: 150px;
   top: 0;
   left: 0;
-  background: #000;
+  background: $color-3;
   z-index: 1;
   padding: 30px 0;
   text-align: center;
-  color: $color-2;
+  color: $color-5;
   transform: translateX(-200px);
   opacity: 0;
   p#admin-menu-title {
@@ -84,6 +89,8 @@
     width: 200px;
     transform: none;
     opacity: 1;
+    height: calc(var(--vh) * 93);
+    top: calc(var(--vh) * 7);
   }
 }
 
@@ -101,8 +108,11 @@
   p {
     margin: 0;
     padding: 10px;
+    &:hover {
+      background-color: $color-1;
+    }
   }
   a {
-    color: $color-2;
+    color: inherit;
   }
 }
