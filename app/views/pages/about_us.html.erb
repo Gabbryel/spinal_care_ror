@@ -1,0 +1,39 @@
+<%= content_for :meta_title, 'Informări pentru pacient Spinal Care Bacău' %>
+<%= content_for :meta_keywords, @facts.pluck(:name).sample(4).join(', ') %>
+<div class="pacient-section">
+  <h1>Spinal Care Bacău</h1>
+  <h2>Clinică medicală</h2>
+  <h3>Mâinile care te pun pe picioare!</h3>
+  <section class="about-spinal-care">
+    <p>Clinica Spinal Care este una din puținele clinici de recuperare din România care are specialiști recunoscuți internațional în Terapia Schroth, terapie care este considerată la nivel internațional ca fiind una din cele mai bune și eficiente metode de tratare a deviațiilor de coloană și torace.</p>
+    <br>
+    <p>În cadrul clinicii medicale Spinal Care regăsiți și următoarele specialități medicale: <br>
+      <% @specialties.each_with_index do |s, i| %>
+      <%= link_to "specialitati-medicale/#{s.slug}", class: "info-pacient-index__specialty" do %>
+        <span><%= s.name %><%= i == @specialties.count - 1 ? nil : ',' %></span>
+      <% end %>
+      <% end %>
+    </p>
+    <p>Toate aceste specialități medicale acoperă o gamă largă de servicii și investigații precum:
+      <% @medical_services.each_with_index do |ms, i| %>
+        <span><%= ms.name.downcase %><%= i == @medical_services.count - 1 ? nil : ',' %></span>
+      <% end %>.
+    </p>
+    <p>Clinica medicală Spinal Care colaborează cu cei mai buni medici din regiune și nu numai. Echipa medicală este compusă din:
+      <% @medics.each_with_index do |ms, i| %>
+      <%= link_to colectiv_path(ms.slug) do %>
+        <span><%= ms.academic_title %> 
+              <%= ms.name %> 
+              <%= ms.profession.name %> 
+              <%= ms.doctor_grade %> 
+              <%= ms.specialty.name %> 
+              <%= i == @medics.count - 1 ? nil : ',' %>
+        </span>
+      <% end %>
+    <% end %>.
+    </p>
+  </section>
+  <% @facts.each do |f| %>
+    <h4><%= link_to f.name, "info-pacient/#{f.slug}" %></h4>
+  <% end %>
+</div>

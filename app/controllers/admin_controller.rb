@@ -34,7 +34,8 @@ class AdminController < ApplicationController
   end
 
   def info_pacient
-    @information = Information.new()
+    @fact = Fact.new()
+    @facts = Fact.all
   end
 
   def test

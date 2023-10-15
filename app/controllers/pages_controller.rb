@@ -19,6 +19,10 @@ class PagesController < ApplicationController
   end
 
   def pacient_page
-    
+    @fact = Fact.new()
+    @facts = Fact.all
+    @specialties = Specialty.all.order(:name)
+    @medical_services = MedicalService.all.sample(30)
+    @medics = Member.all.select { |m| m.profession.name == 'medic'}
   end
 end
