@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
-  skip_before_action :authenticate_user!, only: %i[ home medical_team ]
+  skip_before_action :authenticate_user!, only: %i[ home medical_team pacient_page ]
 
   def home
     @review = Review.new()
