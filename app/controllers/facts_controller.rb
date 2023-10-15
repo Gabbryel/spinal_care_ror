@@ -1,4 +1,5 @@
 class FactsController < ApplicationController
+  skip_before_action :authenticate_user!, only: %i[ show ]
   before_action :set_fact, only: %i[edit update show about destroy]
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
