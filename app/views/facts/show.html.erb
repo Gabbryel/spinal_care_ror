@@ -1,0 +1,18 @@
+<%= content_for :meta_title, 'Informări pentru pacient Spinal Care Bacău' %>
+<%= content_for :meta_keywords, @facts.pluck(:name).sample(4).join(', ') %>
+<div class="pacient-section__wall-photo" style="background-image: url('<%= cl_image_path(bkg_photos, :quality=>80, :width=>800, :crop=>"scale") %>'); filter: grayscale(1) contrast(4) brightness(.5);"></div>
+<div class="fact-section">
+  <h2>Informare pacient</h2>
+  <div class="btn-group dropdown-center">
+    <button type="button" class="btn-drop dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Selectează informația</button>
+    <ul class="dropdown-menu">
+      <li><%= link_to 'Înapoi la index informări', info_pacient_index_path, class: 'dropdown-item btn-color' %></li>
+      <% @all_facts.each do |fact| %>
+        <li><%= link_to fact.name, "#{fact.slug}", class: 'dropdown-item btn-color' %></li>
+      <% end %>
+    </ul>
+  </div>
+  <div class="fact">
+    <%= @fact.description %>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<div class="form" data-controller="informationForm" id="information">
+  <%= simple_form_for(fact, id: (fact.id ? dom_id(fact, :edit) : dom_id(Fact.new))) do |f|%>
+    <% if fact.errors.any? %>
+    <div class="error-message">
+      <%= fact.errors.full_messages.to_sentence.capitalize %>
+    </div>
+    <% end %>
+    <%= f.input :name, label: false, placeholder: 'titlul informării' %>
+    <%= f.rich_text_area :description, placeholder: 'textul informării' %>
+    <%= f.hidden_field :created_by, value: current_user.email if fact.created_by.nil? %>
+    <%= f.hidden_field :modified_by, value: current_user.email %>
+    <br>
+    <%= f.submit 'Salvează' %>
+  <% end %>
+</div>

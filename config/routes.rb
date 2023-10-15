@@ -9,7 +9,9 @@ Rails.application.routes.draw do
   get 'dashboard/info-pacient', to: 'admin#info_pacient'
 
 
-  resources :informations
+  resources :facts, except: %i[show]
+  get 'info-pacient/:id', to: 'facts#show'
+
   resources :users, only: %i[edit update]
   root to: "pages#home"
   devise_for :users
@@ -17,7 +19,7 @@ Rails.application.routes.draw do
   resources :members, except: %i[show]
   resources :professions
   resources :specialties
-  get 'informatii-pacient', to: 'pages#pacient_page'
+  get 'info-pacient-index', to: 'pages#pacient_page'
   get 'specialitati-medicale', to: 'specialties#all_specialties'
   get 'specialitati-medicale/:id', to: 'specialties#about'
   get '/echipa', to: 'pages#medical_team'

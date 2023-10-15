@@ -1,4 +1,4 @@
-class InformationPolicy < ApplicationPolicy
+class FactPolicy < ApplicationPolicy
   def new?
     user.admin
   end
@@ -15,6 +15,9 @@ class InformationPolicy < ApplicationPolicy
     true
   end
   def show?
+    true
+  end
+  def about?
     true
   end
   def destroy?

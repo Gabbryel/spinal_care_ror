@@ -1,0 +1,2 @@
+<%= turbo_stream.replace 'new_information', partial: 'informations/form', locals: { information: @information } %>
+<%= turbo_stream.append 'flash', partial: 'shared/flashes', locals: { notice: notice, alert: alert, message: 'Informare client adăugată' } %>

@@ -1,0 +1,25 @@
+<%= content_for :meta_title, 'Informări pentru pacient Spinal Care Bacău' %>
+<%= content_for :meta_keywords, @facts.pluck(:name).sample(4).join(', ') %>
+<div class="pacient-section__wall-photo" style="background-image: url('<%= cl_image_path("www.sysphotodesign.ro_10_w9nw5g.webp", :quality=>80, :fetch_format=>:webp, :width=>1000) %>');"></div>
+<div class="pacient-section">
+  <h1>Spinal Care Bacău</h1>
+  <h2>Clinică medicală</h2>
+  <h3>Mâinile care te pun pe picioare!</h3>
+  <div class="pacient-section__info">
+    <h2>Informații pentru pacient</h2>
+    <div class="pacient-section__info-index">
+      <% @facts.sort{|x,y| x.created_at <=> y.created_at }.each do |f| %>
+        <h4><%= link_to f.name, "info-pacient/#{f.slug}", class: 'pacient-section__info-index_fact' %></h4>
+      <% end %>
+    </div>
+    <div class="pacient-section__info-partners">
+      <h2>Parteneriate</h2>
+      <div class="pacient-section__info-partners-index">
+        <%= cl_image_tag("cnas_large_h4m1m7.webp", :quality=>"auto:good", :width=>150) %>
+        <%= cl_image_tag("medicover_n0pidy.webp", :quality=>"auto:good", :width=>150) %>
+        <%= cl_image_tag("signal-iduna_rg0bxw.webp", :quality=>"auto:good", :width=>150) %>
+        
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,6 +3,7 @@
   background: $color-1;
   height: calc(var(--vh) * 9);
   min-height: 70px;
+  z-index: 1002;
 }
 
 .navbar-lewagon .navbar-collapse {
