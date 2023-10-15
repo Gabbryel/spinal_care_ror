@@ -3,9 +3,10 @@
   grid-area: 1 / 1 / -1  / -1;
   padding: 100px 20px;
   color: $color-1;
+  background-color: $color-5-90;
   @media(orientation: landscape) {
     max-width: 1400px;
-    margin: 100px auto 0;
+    margin: 100px auto;
     padding: 50px;
   }
   .dropdown-center {
