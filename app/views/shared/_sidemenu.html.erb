@@ -9,9 +9,9 @@
       <li><%= link_to 'Echipa medicală', echipa_path %></li>
       <li><%= link_to 'Specialități medicale', specialitati_medicale_path %></li>
       <li><%= link_to 'Prețuri servicii medicale', servicii_medicale_path %></li>
-      <li><%= link_to 'Aparatura medicală' %></li>
+      <!-- <li><%#= link_to 'Aparatura medicală' %></li> -->
       <li><%= link_to 'Pacient', info_pacient_index_path %></li>
-      <li><%= link_to 'Despre noi' %></li>
+      <!-- <li><%#= link_to 'Despre noi' %></li> -->
       <% if current_user %>
         <li id="exitLink">
           <%= link_to 'Ieșire', destroy_user_session_path, data: {turbo_method: :delete} %>
