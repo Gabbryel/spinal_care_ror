@@ -2,4 +2,4 @@ meta_product_name: "Spinal Care Bacău"
 meta_title: "Spinal Care Bacău - mâinile care te pun pe picioare"
 meta_description: "Spinal Care Bacau este o clinica specializata pe recuperare medicala, dar cuprinde și: cardiologie,dexa,endocrinologie,fizioterapie,ginecologie,neurologie,ortopedie..."
 meta_keywords: "romania, bacau, spinal, care, kinetoterapie, kinetoterapeut, medic, asistent, recuperare, neurologie, endocrinologie, medicina, interna, ecografie, sportiva, BFT, kinetoterapie, regenerativă, Terapia, PRP, ingrijiri, contract, CAS, ortopedie, reumatologie, medicina generala, medicina muncii, nutritie, nefrologie, osteodensitometria, DEXA, Terapia Schroth, schroth, cardiologie"
-meta_image: "logo2-color.png" # should exist in `app/assets/images/`
+meta_image: "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto,w_1000/v1697217671/www.sysphotodesign.ro_10_w9nw5g.webp" # should exist in `app/assets/images/`
