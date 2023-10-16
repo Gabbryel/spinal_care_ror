@@ -1,4 +1,5 @@
 class ErrorsController < ApplicationController
+  skip_before_action :authenticate_user!
   before_action :skip_authorization
   def not_found
     redirect_to root_path
