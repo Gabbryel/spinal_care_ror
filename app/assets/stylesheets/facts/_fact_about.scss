@@ -11,9 +11,16 @@
   }
   .dropdown-center {
     @include drop-down-custom;
-    font-size: clamp(18px, 3vw, 30px);
+    font-size: clamp(18px, 3vw, 24px);
+    .btn-drop {
+      background: $color-2;
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin: 50px 0;
+    }
     .dropdown-menu {
-      font-size: inherit;
+      font-size: 1.2rem;
+      transform: translate(60%, 55%);
       .dropdown-item {
         white-space: unset;
       }
