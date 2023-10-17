@@ -28,12 +28,13 @@
           <%= f.input :alias, label: false, placeholder: "Adaugă un alias pentru utlizator" %>
           <% if access && god_mode %>
             <%= f.submit 'Actualizează', class: 'btn-custom btn-green' %>
+            <div style="margin-top: 20px;">
+              <%= link_to "Șterge", user_path(u), data: { turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să-l ștergi pe #{u.email}?"}, class: 'btn-custom btn-red' %>
+            </div>
           <% end %>
         <% end %>
-
       </div>
       <% end %>
     </div>
-
   </div>
 </div>

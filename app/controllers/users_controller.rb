@@ -16,6 +16,16 @@ class UsersController < ApplicationController
     end
   end
 
+  def destroy
+    if @user.destroy
+      respond_to do |format|
+        format.html { redirect_to admin_specialties_path, notice: "User șters!" }
+      end
+      else
+        redirect_to admin_specialties_path, notice: "Se pare că acest user are extra-vieți! Mai încearcă încă o dată ștergerea!"
+    end
+  end
+
   private
 
   def set_user
