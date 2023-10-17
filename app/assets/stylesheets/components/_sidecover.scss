@@ -3,11 +3,11 @@
   height: calc(var(--vh) * 100);
   width: calc(100% - 300px);
   top: 0;
-  transform: translateX(100px);
+  transform: translateX(-100px);
   @media(min-width: 768px) {
-    transform: translateX(200px);
+    transform: translateX(-200px);
   }
-  right: 0;
+  left: 0;
   background-color: $color-1-90;
   opacity: 0;
   z-index: 0;
