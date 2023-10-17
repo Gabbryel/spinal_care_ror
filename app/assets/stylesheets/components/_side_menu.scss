@@ -3,10 +3,12 @@
   height: calc(var(--vh) * 100);
   width: 300px;
   top: 0;
-  transform: translateX(-300px);
-  left: 0;
+  // transform: translateX(-300px);
+  // left: 0;
+  right: 0;
+  transform: translateX(300px);
   background-color: $color-1;
-  z-index: 1002;
+  z-index: 1001;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: 20px repeat(11, 1fr);
