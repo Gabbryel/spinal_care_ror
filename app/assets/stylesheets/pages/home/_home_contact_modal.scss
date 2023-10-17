@@ -1,14 +1,8 @@
-#contact-modal {
-  display: none;
-  background-color: $color-3-90;
-}
-
 .modal-contact-custom {
-  background: #29332b;
+  background: $color-3;
   padding: 30px;
-  filter: drop-shadow(5px 5px 5px #4a5b5cdd);
   border-radius: 6px;
-  color: #bcb285;
+  color: #fff6d3;
   font-size: 14px;
   letter-spacing: -0.04em;
   .contact-cards {
@@ -24,4 +18,8 @@
     text-align: end;
     cursor: pointer;
   }
+}
+
+.modal-custom {
+  backdrop-filter: blur(7px);
 }

@@ -15,7 +15,7 @@
         <% if c[:type] == 'link_to' %>
           <%= link_to c[:link_text], c[:link] %>
         <% elsif c[:type] == 'button_tag' %>
-          <%= button_tag c[:link_text], class: 'btn-nude', data: {action: "click->contact#contact"} %>
+          <%= button_tag c[:link_text], class: 'btn-nude', data: { bs_toggle: "modal", bs_target: "#contactModal"} %>
         <% end %>
       </div>
     <% end %>

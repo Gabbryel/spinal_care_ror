@@ -36,4 +36,8 @@ module ApplicationHelper
     replacements = {'<div>' => '', '</div' => '', '<br>' => '', '<strong>' => '', '</strong>' => '', '>' => '', '<li>' => '', '</li>' => '', '<ul>' => '', '</ul>' => '', '<div class="trix-content"' => ''}
     description.gsub(/#{Regexp.union(replacements.keys)}/, replacements).strip
   end
+
+  def action_btn
+    button_tag "Programează-te acum!", class: 'btn-nude btn-action btn-custom', data: { bs_toggle: "modal", bs_target: "#contactModal"}
+  end
 end
