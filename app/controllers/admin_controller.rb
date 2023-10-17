@@ -35,7 +35,7 @@ class AdminController < ApplicationController
 
   def info_pacient
     @fact = Fact.new()
-    @facts = Fact.all
+    @facts = Fact.all.sort {|x, y| y.updated_at <=> x.updated_at}
   end
 
   def test
