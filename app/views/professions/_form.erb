@@ -7,8 +7,5 @@
   <%= f.input :name, label: false, placeholder: 'profesie', input_html: { autofocus: true } %>
   <%= f.input :order, hint: 'poziția în pagina index cu echipa medicală', label: false, collection: 1...Profession.count + 1, prompt: 'alegerea ordinea afișării în pagină' %>
   <%= f.input :has_specialty, label: 'are specialitate medicală?' %>
-  <button class="btn-custom btn-green btn-crud"><i class="far fa-paper-plane"></i></button>
-  <%= link_to admin_professions_path, class: 'btn-custom btn-red btn-crud' do %>
-    <i class="fas fa-ban"></i>
-  <% end %>
+  <button class="btn-custom btn-green btn-crud">Salvează</button>
 <% end %>

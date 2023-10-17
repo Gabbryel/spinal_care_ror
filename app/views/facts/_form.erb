@@ -10,6 +10,6 @@
     <%= f.hidden_field :created_by, value: current_user.email if fact.created_by.nil? %>
     <%= f.hidden_field :modified_by, value: current_user.email %>
     <br>
-    <%= f.submit 'Salvează' %>
+    <%= f.submit 'Salvează', class: "btn-custom btn-green" %>
   <% end %>
 </div>

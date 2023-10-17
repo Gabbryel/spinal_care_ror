@@ -14,6 +14,6 @@
     <%= f.association :specialty, label: false, input_html: { data: {memberFormSpecialty_target: 'specialty'}}, prompt: 'Alege specialitatea' %>
     <%= f.rich_text_area :description, placeholder: 'Bio sau alte info despre membrul echipei Spinal Care' %>
     <br>
-    <%= f.submit 'Salvează' %>
+    <%= f.submit 'Salvează', class: 'btn-custom btn-green' %>
   <% end %>
 </div>
