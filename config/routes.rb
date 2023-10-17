@@ -11,10 +11,11 @@ Rails.application.routes.draw do
 
   resources :facts, except: %i[show]
   get 'info-pacient/:id', to: 'facts#show'
+  
+  devise_for :users
 
   resources :users, only: %i[edit update destroy]
   root to: "pages#home"
-  devise_for :users
   resources :reviews
   resources :members, except: %i[show]
   resources :professions
