@@ -17,7 +17,7 @@ export default class extends Controller {
         el.classList.toggle('active');
       });
       this.hamburger.classList.toggle("closed");
-      document.getElementById('navbar').style.zIndex = 'unset'
+      document.getElementById('navbar').style.zIndex = 'unset';
   if (this.hamburger.classList.contains("closed")) {
     this.elements.forEach((el) => el.classList.add("trigger"));
     setTimeout(() => {

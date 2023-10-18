@@ -16,7 +16,7 @@
     <h1><%= @specialty.name %></h1>
     <div class="about-specialty-container__specialty"><%= @specialty.description %></div>
     <div class="about-specialty-container__specialists">
-      <%= action_btn %>
+      <%= action_btn("Programează-te!", "btn-custom", "btn-action") %>
       <!-- <h2>Medici <%= @specialty.name.downcase %> </h2> -->
       <div class="about-specialty-container__specialists-index">
         <% @specialty.members_belonging_to_specialty.each_with_index do |member| %>

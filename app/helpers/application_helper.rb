@@ -37,7 +37,7 @@ module ApplicationHelper
     description.gsub(/#{Regexp.union(replacements.keys)}/, replacements).strip
   end
 
-  def action_btn
-    button_tag "Programează-te acum!", class: 'btn-nude btn-action btn-custom', data: { bs_toggle: "modal", bs_target: "#contactModal"}
+  def action_btn(text, x, y)
+    button_tag text, class:"btn-nude #{x} #{y}", data: { bs_toggle: "modal", bs_target: "#contactModal"}
   end
 end
