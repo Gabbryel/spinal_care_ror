@@ -3,6 +3,10 @@ module ApplicationHelper
     request.path.split('/')[1].to_s
   end
 
+  def path_for_id
+    request.path.split('/').join('-')
+  end
+
   def access
     current_user && current_user.admin
   end
