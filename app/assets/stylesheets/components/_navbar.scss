@@ -19,8 +19,12 @@
 }
 
 .navbar-brand-img {
-  height: calc(var(--vh) * 6);
-  width: calc(var(--vh) * 6) / 3.2257;
+  width: 100px;
+  height: 31.001px;
+  min-height: calc(var(--vh) * 6);
+  max-height: calc(var(--vh) * 6);
+  min-width: calc(var(--vh) * 6 * 3.2257);
+  max-width: calc(var(--vh) * 6 * 3.2257);
   opacity: 1;
   @media(min-width: 576px) {
     height: calc(var(--vh) * 7);
