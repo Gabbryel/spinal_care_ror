@@ -20,6 +20,7 @@
 
 .navbar-brand-img {
   height: calc(var(--vh) * 6);
+  width: calc(var(--vh) * 6) / 3.2257;
   opacity: 1;
   @media(min-width: 576px) {
     height: calc(var(--vh) * 7);
