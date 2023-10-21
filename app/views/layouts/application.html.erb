@@ -29,10 +29,10 @@
     <meta name="twitter:image:src" content="<%= meta_image %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
   </head>
 
   <body data-controller="vh sidemenu-toggle toggleAdminPanel contact" data-action="scroll@window->sidemenu-toggle#close keydown.a->toggleAdminPanel#showItWorks" tabindex="0">

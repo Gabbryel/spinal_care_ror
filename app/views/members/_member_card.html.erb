@@ -3,7 +3,7 @@
   data-controller="animation"
   data-action="scroll@window->animation#svgscroll"
   data-identity="<%= full_name(m) %>" data-profession="<%= m.profession.name %>" data-specialty="<%= m.specialty.name if m.specialty %>">
-  <a href="echipa/<%= m.slug %>" id="<%= m.slug %><%= path_for_id %>" name="<%= m.slug %><%= path_for_id %>">
+  <a href="../echipa/<%= m.slug %>" id="<%= m.slug %><%= path_for_id %>" name="<%= m.slug %><%= path_for_id %>" aria-label="<%= m.slug %><%= path_for_id %>">
     <%= render 'members/member_card_info', m: m %>
   </a>
 </div>
