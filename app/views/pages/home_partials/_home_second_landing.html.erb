@@ -2,7 +2,7 @@
   <%= image_tag('shape-svg-1.svg', id: 'shape-svg-1', data: { controller: 'animation', action: 'scroll@window->animation#svgscroll'}, alt: 'terapie compex elongatie spinal care') %>
   <%= image_tag('shape-svg-2.svg', id: 'shape-svg-2', data: { controller: 'animation', action: 'scroll@window->animation#svgscroll'}, alt: 'terapie compex elongatie spinal care') %>
   <div id="main-image" class="second-image" data-controller="animation" data-action="scroll@window->animation#svgscroll">
-    <%= cl_image_tag("production/lsi0bsosati7amafn8d75qgyqg5h.webp", :gravity=>"center", :quality=>"auto", :width=>999, :crop=>"fill", alt: 'terapie compex elongatie spinal care') %>
+    <%= cl_image_tag("production/lsi0bsosati7amafn8d75qgyqg5h.webp", :gravity=>"center", :quality=>60, :width=>800, :crop=>"fill", alt: 'terapie compex elongatie spinal care') %>
   </div>
   <div id="main-motto" data-controller="animation" data-action="scroll@window->animation#svgscroll">
     <p>"Fiecare pacient <span>care pleacă cu</span> zâmbetul pe buze <span>ne face să ne simțim</span> <span>împliniți"</span><br><span id="signature"><%= full_name(@kineto_signature) %>, <%= @kineto_signature.profession.name %></span></p>
