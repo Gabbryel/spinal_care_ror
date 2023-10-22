@@ -1,6 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
+  connect() {
+    console.log('navbarFixed connecting...')
+  }
   navbarFixed() {
     window.onscroll = () => {
       console.log('window scrolling')
