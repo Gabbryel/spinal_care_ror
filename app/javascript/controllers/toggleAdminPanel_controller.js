@@ -1,16 +1,30 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  showAdminLink() {
-    let sideMenu = document.getElementById("side-menu-options");
-    let exitLink = document.getElementById("exitLink");
+  createAdminLink() {
     let adminLinkContainer = document.createElement("li");
     let adminLink = document.createElement("a");
     adminLink.setAttribute("href", "/dashboard/users");
     adminLink.setAttribute("id", "adminLink");
     adminLink.innerText = "Admin";
-    sideMenu.insertBefore(adminLinkContainer, exitLink);
     adminLinkContainer.appendChild(adminLink);
+    return adminLinkContainer
+  }
+
+  showAdminLink() {
+    if (screen.width < 1024) {
+      let sideMenu = document.getElementById("side-menu-options");
+      let exitLink = document.getElementById("exitLink");
+      sideMenu.insertBefore(this.createAdminLink(), exitLink);
+    } else if (screen.width >=1024) {
+      let navbarMenu = document.getElementById("team");
+      let navbarExitLink = document.getElementById("nav-bar-exit-link");
+      let div = document.createElement("div")
+      let createAdminLink = this.createAdminLink();
+      createAdminLink.setAttribute("class", "active-menu-item")
+      createAdminLink.append(div)
+      navbarMenu.insertBefore(createAdminLink, navbarExitLink);
+    }
   }
   connect() {
     let body = document.getElementsByTagName("body")[0];
@@ -30,9 +44,20 @@ export default class extends Controller {
     if (document.getElementById('exitLink')) {
       this.showAdminLink()
     }
-
+    window.onscroll = () => {
+      let navbar = document.getElementById('navbar');
+      let navbarMenu = document.getElementById('navbar-menu');
+      let navbarDistToTop = navbar.getBoundingClientRect().bottom
+      if (navbarDistToTop < 73 ) {
+        navbarMenu.style.position = 'fixed';
+        navbarMenu.style.width = '100vw';
+        navbarMenu.style.top = '0';
+      } else if (navbarDistToTop >= 73 ) {
+        navbarMenu.style.position = 'relative';
+        navbarMenu.style.width = 'max-content';
+        navbarMenu.style.top = 'unset';
+      }
+    }
   }
 }
 
-// create a function for admin link to be created on spot
-// <a id="adminLink" href="/dashboard">Admin</a>

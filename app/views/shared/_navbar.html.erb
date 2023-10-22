@@ -1,13 +1,23 @@
 <div class="navbar navbar-expand-sm navbar-light navbar-lewagon" id="navbar">
-  <div class="container-fluid">
+  <div class="navbar-content">
     <%= link_to root_path, class: "navbar-brand" do %>
       <%= image_tag "logo2-color.png", class: 'navbar-brand-img', data: {sidemenu_toggle_target: 'toggle'}, alt: 'logo spinal care' %>
     <% end %>
-      <div id="hamburger" class="hamburger" data-sidemenu-toggle-target="hamburger" data-action="click->sidemenu-toggle#toggle">
-        <div class="short-line" data-sidemenu-toggle-target="shortline"></div>
-        <div id="long-line" class="long-line" data-sidemenu-toggle-target="longline"></div>
-        <div id="long-line-2" class="long-line long-line-2" data-sidemenu-toggle-target="longline2"></div>
-        <div class="short-line" data-sidemenu-toggle-target="shortline"></div>
-      </div>
+    <div class="navbar-menu" id="navbar-menu">
+        <ul class="team" id="team">
+          <li class="<%= path_helper == '' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Acasă', root_path %><div></div></li>
+          <li class="<%= path_helper == 'echipa' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Echipa medicală', echipa_path %><div></div></li>
+          <li class="<%= path_helper == 'specialitati-medicale' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Specialități medicale', specialitati_medicale_path %><div></div></li>
+          <li class="<%= path_helper == 'servicii-medicale' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Servicii medicale', servicii_medicale_path %><div></div></li>
+          <li class="<%= path_helper == 'info-pacient-index' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Info pacient', info_pacient_index_path %><div></div></li>
+          <% if current_user %>
+            <li class="active-menu-item" id="nav-bar-exit-link">
+              <%= link_to 'Ieșire', destroy_user_session_path, data: {turbo_method: :delete} %>
+              <div></div>
+            </li>
+          <% end %>
+        </ul>
+    </div>
+      <%= render partial: "shared/navbar/hamburger" %>
   </div>
 </div>
