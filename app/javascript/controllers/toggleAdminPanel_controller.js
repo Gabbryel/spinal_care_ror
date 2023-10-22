@@ -44,7 +44,7 @@ export default class extends Controller {
     if (document.getElementById('exitLink')) {
       this.showAdminLink()
     }
-    window.onscroll = () => {
+    body.onscroll = () => {
       let navbar = document.getElementById('navbar');
       let navbarMenu = document.getElementById('navbar-menu');
       let navbarDistToTop = navbar.getBoundingClientRect().bottom
