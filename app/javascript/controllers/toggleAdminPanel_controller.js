@@ -44,17 +44,16 @@ export default class extends Controller {
     if (document.getElementById('exitLink')) {
       this.showAdminLink()
     }
-    body.onscroll = () => {
+    window.onscroll = () => {
+      console.log('window scrolling')
       let navbar = document.getElementById('navbar');
       let navbarMenu = document.getElementById('navbar-menu');
       let navbarDistToTop = navbar.getBoundingClientRect().bottom
       if (navbarDistToTop < 73 ) {
-        console.log('working if')
         navbarMenu.style.position = 'fixed';
         navbarMenu.style.width = '100vw';
         navbarMenu.style.top = '0';
       } else if (navbarDistToTop >= 73 ) {
-        console.log('working if else')
         navbarMenu.style.position = 'relative';
         navbarMenu.style.width = 'max-content';
         navbarMenu.style.top = 'unset';
