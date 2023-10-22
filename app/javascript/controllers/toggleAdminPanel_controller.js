@@ -1,4 +1,4 @@
-import { Controller } from "stimulus";
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   createAdminLink() {
@@ -12,11 +12,7 @@ export default class extends Controller {
   }
 
   showAdminLink() {
-    if (window.innerWidth < 1024) {
-      let sideMenu = document.getElementById("side-menu-options");
-      let exitLink = document.getElementById("exitLink");
-      sideMenu.insertBefore(this.createAdminLink(), exitLink);
-    } else if (window.innerWidth >=1024) {
+    
       let navbarMenu = document.getElementById("team");
       let navbarExitLink = document.getElementById("nav-bar-exit-link");
       let div = document.createElement("div")
@@ -24,7 +20,6 @@ export default class extends Controller {
       createAdminLink.setAttribute("class", "active-menu-item")
       createAdminLink.append(div)
       navbarMenu.insertBefore(createAdminLink, navbarExitLink);
-    }
   }
   connect() {
     console.log('connect working')
