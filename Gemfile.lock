@@ -337,7 +337,7 @@ DEPENDENCIES
   mini_magick (~> 4.5, >= 4.5.1)
   pg (~> 1.1)
   pry (~> 0.14.2)
-  puma (~> 5.0)
+  puma
   pundit (~> 2.2)
   rack-cors
   rails (~> 7.0.3, >= 7.0.6)
