@@ -27,7 +27,6 @@ export default class extends Controller {
     }
   }
   connect() {
-    console.log(this.element)
     let body = document.getElementsByTagName("body")[0];
     body.addEventListener("keydown", (e) => {
       if (e.key === "a") {
