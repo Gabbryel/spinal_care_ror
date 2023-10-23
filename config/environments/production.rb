@@ -28,7 +28,7 @@ Rails.application.configure do
   config.assets.css_compressor = :sass
 
   # config.assets.js_compressor = Uglifier.new(harmony: true)
-  RAILS_ENV=production rake assets:precompile
+  # RAILS_ENV=production rake assets:precompile
   config.assets.digest = true
 
 
