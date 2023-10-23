@@ -6,7 +6,6 @@ export default class extends Controller {
   }
   navbarFixed() {
     window.onscroll = () => {
-      console.log('window scrolling')
       let navbar = document.getElementById('navbar');
       let navbarMenu = document.getElementById('navbar-menu');
       let navbarDistToTop = navbar.getBoundingClientRect().bottom
