@@ -18,7 +18,7 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   </head>
-<body data-controller="vh sidemenu-toggle toggleAdminPanel" data-action="scroll@window->sidemenu-toggle#close keydown.a->toggleAdminPanel#showItWorks" tabindex="0">
+<body data-controller="vh sidemenu-toggle toggleAdminLink" data-action="scroll@window->sidemenu-toggle#close tabindex="0">
   <%= render "shared/admin_navbar" %>
   <%= render "shared/flashes" %>
   <div class="admin_container">
