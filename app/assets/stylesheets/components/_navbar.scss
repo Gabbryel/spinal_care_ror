@@ -30,6 +30,7 @@
   max-width: 250px;
   min-width: 150px;
   opacity: 1;
+  margin-left: 20px;
 }
 .navbar-brand-img.trigger {
   transition: 1s;
@@ -60,7 +61,7 @@
   display: none;
   @media(min-width: 1024px) {
     position: relative;
-    background-color: $color-1;
+    background-color: $color-1-90;
     padding: 10px 40px;
     width: max-content;
     max-width: 100vw;

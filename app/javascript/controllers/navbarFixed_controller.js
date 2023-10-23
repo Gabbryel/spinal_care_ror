@@ -14,12 +14,10 @@ export default class extends Controller {
         navbarMenu.style.position = 'fixed';
         navbarMenu.style.width = '100vw';
         navbarMenu.style.top = '0';
-        navbar.style.padding = '0'
       } else if (navbarDistToTop >= 73 ) {
         navbarMenu.style.position = 'relative';
         navbarMenu.style.width = 'max-content';
         navbarMenu.style.top = 'unset';
-        navbar.style.padding = '0 20px';
       }
     }
   }
