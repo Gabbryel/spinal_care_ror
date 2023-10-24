@@ -5,6 +5,6 @@
     <%= cl_image_tag("production/lsi0bsosati7amafn8d75qgyqg5h.webp", :gravity=>"center", :quality=>60, :width=>800, :crop=>"fill", alt: 'terapie compex elongatie spinal care') %>
   </div>
   <div id="main-motto" data-controller="animation" data-action="scroll@window->animation#svgscroll">
-    <p>"Fiecare pacient care pleacă cu zâmbetul pe buze ne face să ne simțim împliniți"<br><span id="signature"><%= full_name(@kineto_signature) %>, <%= @kineto_signature.profession.name %></span></p>
+    <p>"Fiecare pacient care pleacă cu zâmbetul pe buze ne face să ne simțim împliniți"<br><span id="signature"><%= full_name(@kineto_signature) %>, <%= @kineto_signature.profession.name if @kineto_signature %></span></p>
   </div>
 </div>

@@ -28,7 +28,7 @@ module ApplicationHelper
   end
 
   def full_name(member)
-    "#{member.first_name} #{member.last_name}"
+    "#{member.first_name} #{member.last_name}" if member
   end
 # helper for medical_service dots
   def m_s_helper(ms)
