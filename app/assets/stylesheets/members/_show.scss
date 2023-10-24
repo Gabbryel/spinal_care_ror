@@ -110,9 +110,6 @@
     background-position: 50% -40%;
     background-repeat: no-repeat;
     border-radius: 3px;
-    &:hover {
-      filter: drop-shadow(2px 2px 1px $color-1);
-    }
   }
   .member-card-info {
     position: relative;
