@@ -6489,9 +6489,9 @@
     default: () => navbarFixed_controller_default
   });
   var navbarFixed_controller_default = class extends Controller {
-    connect() {
-      console.log("navbarFixed connecting...now");
-    }
+    // connect() {
+    //   console.log('navbarFixed connecting...now')
+    // }
     navbarFixed() {
       window.onscroll = () => {
         let navbar = document.getElementById("navbar");

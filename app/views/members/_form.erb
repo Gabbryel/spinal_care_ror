@@ -12,6 +12,7 @@
     <%= f.association :profession, input_html: { data: { memberFormSpecialty_target: 'profession', action: 'change->memberFormSpecialty#change'}}, label: false, prompt: 'Alege profesia' %>
     <%= f.input :doctor_grade, collection: ['generalist', 'rezident', 'primar', 'specialist'], label: false, prompt: 'alege gradul profesional', input_html: { data: {memberFormSpecialty_target: 'grade'}}%>
     <%= f.association :specialty, label: false, input_html: { data: {memberFormSpecialty_target: 'specialty'}}, prompt: 'Alege specialitatea' %>
+    <%= f.input :has_own_page, label: "Are pagină dedicată?" %>
     <%= f.rich_text_area :description, placeholder: 'Bio sau alte info despre membrul echipei Spinal Care' %>
     <br>
     <%= f.submit 'Salvează', class: 'btn-custom btn-green' %>

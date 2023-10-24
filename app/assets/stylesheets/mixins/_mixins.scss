@@ -126,3 +126,25 @@
         }
       }
 }
+
+@mixin underline-selected($color, $height) {
+  div {
+    position: relative;
+    width: 0px;
+    border-bottom: $height solid $color;
+  }
+  &:hover {
+    div {
+      animation: add-border 500ms;
+      width: 100%;
+    }
+  }
+  @keyframes add-border {
+    0% {
+      width: 0px;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+}
