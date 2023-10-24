@@ -79,25 +79,7 @@
       color: $color-2;
       font-size: clamp(14px, .95vw, 20px);
       .active-menu-item {
-        div {
-          position: relative;
-          width: 0px;
-          border-bottom: 2px solid $color-5; 
-        }
-        &:hover {
-          div {
-            animation: add-border 500ms;
-            width: 100%;
-          }
-        }
-        @keyframes add-border {
-          0% {
-            width: 0px;
-          }
-          100% {
-            width: 100%;
-          }
-        }
+       @include underline-selected($color-5, 2px)
       }
 
       a {

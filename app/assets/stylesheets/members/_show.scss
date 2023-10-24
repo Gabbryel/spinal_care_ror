@@ -141,8 +141,18 @@
         font-size: .6rem;
       }
     }
+    .underline {
+      text-decoration: underline;
+    }
   }
 }
+
+.member-card_shadow {
+  &:hover {
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  }
+}
+
 .member-card-info__profession {
   position: relative;
   font-size: 0.76em;
@@ -151,9 +161,10 @@
   text-transform: uppercase;
   font-weight: 300;
   letter-spacing: -.07em;
-  p {
+  .member-card__specialty-name {
     font-size: inherit;
     color: inherit;
+    @include underline-selected($color-1, 1px)
   }
 }
 
