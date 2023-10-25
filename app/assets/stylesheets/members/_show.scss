@@ -137,19 +137,13 @@
       text-transform: uppercase;
       letter-spacing: -.05em;
       white-space: nowrap;
+      .fa-folder-open {
+        font-size: .7rem;
+      }
       span {
         font-size: .6rem;
       }
     }
-    .underline {
-      text-decoration: underline;
-    }
-  }
-}
-
-.member-card_shadow {
-  &:hover {
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   }
 }
 
