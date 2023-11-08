@@ -6308,7 +6308,7 @@
         let exitLink = document.getElementById("exitLink");
         sideMenu.insertBefore(this.createAdminLink(), exitLink);
       } else if (screen.width >= 1024) {
-        let navbarMenu = document.getElementById("team");
+        let navbarMenu = document.getElementById("navbar-items");
         let navbarExitLink = document.getElementById("nav-bar-exit-link");
         let div = document.createElement("div");
         let createAdminLink = this.createAdminLink();
@@ -6765,17 +6765,6 @@
       setTimeout(() => {
         this.hamburger.classList.remove("active");
       }, 780);
-    }
-  };
-
-  // controllers/test_controller.js
-  var test_controller_exports = {};
-  __export(test_controller_exports, {
-    default: () => test_controller_default
-  });
-  var test_controller_default = class extends Controller {
-    connect() {
-      console.log("this is the test controller teste");
     }
   };
 
@@ -7329,7 +7318,7 @@
   };
 
   // rails:/Users/aquaman/Code/Projects/spinal_care_ror/app/javascript/controllers/**/*_controller.js
-  var modules = [{ name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "test", module: test_controller_exports, filename: "test_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
+  var modules = [{ name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
   var controller_default = modules;
 
   // controllers/index.js
