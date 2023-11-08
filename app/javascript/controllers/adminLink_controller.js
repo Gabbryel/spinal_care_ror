@@ -17,7 +17,7 @@ export default class extends Controller {
       let exitLink = document.getElementById("exitLink");
       sideMenu.insertBefore(this.createAdminLink(), exitLink);
     } else if (screen.width >=1024) {
-      let navbarMenu = document.getElementById("team");
+      let navbarMenu = document.getElementById("navbar-items");
       let navbarExitLink = document.getElementById("nav-bar-exit-link");
       let div = document.createElement("div")
       let createAdminLink = this.createAdminLink();
