@@ -1,23 +1,27 @@
-<div class="specialties-main section-main">
-  <h1>Informări pentru client</h1>
-  <div class="information-form">
-    <%= render partial: 'facts/modal', locals: { new: true, modal_id: 'newFactModal', fact: @fact } %>
-  </div>
-  <h3><%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newFactModal" } do %><i class="fa-solid fa-plus"></i> <i class="fa-solid fa-circle-info"></i><% end %></h3>
-  <div class="facts-index">
-    <% @facts.each do |fact| %>
-    <div class="fact">
-      <h2><%= fact.name %>, creată la <%= date_ro_with_hour(fact.created_at) %> de <%= fact.created_by %>, ultima editare <%= date_ro_with_hour(fact.updated_at) %> de <%= fact.modified_by %></h2>
-      <div class="fact-crud">
-        <%= link_to "#", data: {bs_toggle: "modal", bs_target: "#editFact#{fact.id}Modal"} do %>
-          <i class="fas fa-edit"></i>
-        <% end %>
-        <%= render partial: "facts/modal", locals: {new: false, modal_id: "editFact#{fact.id}Modal", fact: fact} %>
-        <%= link_to fact_path(fact), data: { turbo_method: :delete, turbo_confirm: "Sigur ștergi informarea #{fact.slug}?"} do %>
-          <i class="fas fa-trash-alt"></i>
-        <% end %>
-      </div>
+<% if access %>
+  <div class="specialties-main section-main">
+    <h1>Informări pentru client</h1>
+    <div class="information-form">
+      <%= render partial: 'facts/modal', locals: { new: true, modal_id: 'newFactModal', fact: @fact } %>
     </div>
-    <% end %>
+    <h3><%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newFactModal" } do %><i class="fa-solid fa-plus"></i> <i class="fa-solid fa-circle-info"></i><% end %></h3>
+    <div class="facts-index">
+      <% @facts.each do |fact| %>
+      <div class="fact">
+        <h2><%= fact.name %>, creată la <%= date_ro_with_hour(fact.created_at) %> de <%= fact.created_by %>, ultima editare <%= date_ro_with_hour(fact.updated_at) %> de <%= fact.modified_by %></h2>
+        <div class="fact-crud">
+          <%= link_to "#", data: {bs_toggle: "modal", bs_target: "#editFact#{fact.id}Modal"} do %>
+            <i class="fas fa-edit"></i>
+          <% end %>
+          <%= render partial: "facts/modal", locals: {new: false, modal_id: "editFact#{fact.id}Modal", fact: fact} %>
+          <%= link_to fact_path(fact), data: { turbo_method: :delete, turbo_confirm: "Sigur ștergi informarea #{fact.slug}?"} do %>
+            <i class="fas fa-trash-alt"></i>
+          <% end %>
+        </div>
+      </div>
+      <% end %>
+    </div>
   </div>
-</div>
+<% else %>
+    <%= no_access %>
+<% end %>

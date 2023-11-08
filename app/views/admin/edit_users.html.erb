@@ -1,40 +1,45 @@
-<div class="users-container">
-  <div class="users-main">
-    <h1>Utilizatori</h1>
-    <div class="users-index">
-      <% @users.each do |u| %>
-      <div class="user">
-        <p><%= u.alias ? u.alias : 'Fără alias' %> (<%= u.email %>) <%= u.admin ? "are drepturi de admin" : "nu are drepturi de admin" %> <%= u.god_mode ? 'și de editare configurări sensibile' : nil %></p>
-        <div>
+<% if access %>
+  <div class="users-container">
+    <div class="users-main">
+      <h1>Utilizatori</h1>
+      <div class="users-index">
+        <% @users.each do |u| %>
+        <div class="user">
+          <p><%= u.alias ? u.alias : 'Fără alias' %> (<%= u.email %>) <%= u.admin ? "are drepturi de admin" : "nu are drepturi de admin" %> <%= u.god_mode ? 'și de editare configurări sensibile' : nil %></p>
+          <div>
+            <%= simple_form_for u do |f| %>
+              <%= f.hidden_field :admin, value: u.admin ? false : true %>
+              <% if access && god_mode %>
+                <%= f.submit "#{u.admin ? 'Ia-i drepturile de admin' : 'Acordă-i drepturi de admin'}", class: "btn-custom #{btn_color(u)}"  %>
+              <% end %>
+            <% end %>
+          </div>
+          <br>
+          <div>
+            <%= simple_form_for u do |f| %>
+              <%= f.hidden_field :god_mode, value: u.god_mode ? false : true %>
+              <% if access && god_mode %>
+                <%= f.submit "#{u.god_mode ? 'Take super power' : 'Give super powers'}", class: "btn-custom #{btn_color_god(u)}" %>
+                <% end %>
+            <% end %>
+          </div>
+          <br>
+          <p>Adaugă alias</p>
           <%= simple_form_for u do |f| %>
-            <%= f.hidden_field :admin, value: u.admin ? false : true %>
+            <%= f.input :alias, label: false, placeholder: "Adaugă un alias pentru utlizator" %>
             <% if access && god_mode %>
-              <%= f.submit "#{u.admin ? 'Ia-i drepturile de admin' : 'Acordă-i drepturi de admin'}", class: "btn-custom #{btn_color(u)}"  %>
+              <%= f.submit 'Actualizează', class: 'btn-custom btn-green' %>
+              <div style="margin-top: 20px;">
+                <%= link_to "Șterge", user_path(u), data: { turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să-l ștergi pe #{u.email}?"}, class: 'btn-custom btn-red' %>
+              </div>
             <% end %>
           <% end %>
         </div>
-        <br>
-        <div>
-          <%= simple_form_for u do |f| %>
-            <%= f.hidden_field :god_mode, value: u.god_mode ? false : true %>
-            <% if access && god_mode %>
-              <%= f.submit "#{u.god_mode ? 'Take super power' : 'Give super powers'}", class: "btn-custom #{btn_color_god(u)}" %>
-              <% end %>
-          <% end %>
-        </div>
-        <br>
-        <p>Adaugă alias</p>
-        <%= simple_form_for u do |f| %>
-          <%= f.input :alias, label: false, placeholder: "Adaugă un alias pentru utlizator" %>
-          <% if access && god_mode %>
-            <%= f.submit 'Actualizează', class: 'btn-custom btn-green' %>
-            <div style="margin-top: 20px;">
-              <%= link_to "Șterge", user_path(u), data: { turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să-l ștergi pe #{u.email}?"}, class: 'btn-custom btn-red' %>
-            </div>
-          <% end %>
         <% end %>
       </div>
-      <% end %>
     </div>
   </div>
-</div>
+
+<% else %>
+    <%= no_access %>
+<% end %>
