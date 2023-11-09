@@ -40,7 +40,7 @@ class MedicalServicesController < ApplicationController
   end
 
   def index
-    @medical_services = policy_scope(MedicalService).all
+    @medical_services = policy_scope(MedicalService).all.order(name: :asc)
     @specialties = Specialty.all.order(name: :asc)
   end
 
