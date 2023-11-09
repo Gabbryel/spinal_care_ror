@@ -127,8 +127,8 @@
 
 
 .no-access {
-  // background-image: url(http://localhost:3001/assets/no-access-b438b54….png);
-  height: calc(var(--vh) * 93);
+  height: calc(var(--vh) * 100);
+  width: 100%;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_10_24_144746) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_09_130545) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -85,6 +85,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_10_24_144746) do
     t.string "academic_title"
     t.string "doctor_grade", default: ""
     t.boolean "has_own_page", default: false
+    t.boolean "has_prices", default: false
     t.index ["profession_id"], name: "index_members_on_profession_id"
     t.index ["specialty_id"], name: "index_members_on_specialty_id"
   end
