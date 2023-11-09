@@ -2,13 +2,13 @@
   <% @specialties.select { |sp| sp.medical_services.count > 0 }.each do |sp| %>
     <div class="medical-services-list__specialty">
       <h4><%= link_to sp.name, "specialitati-medicale/#{sp.slug}" %></h4>
-      <% sp.medical_services.select { |ms| ms.member == nil}.each do |ms| %>
+      <% sp.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
         <%= render ms %>
       <% end %>
       <% sp.members.select { |m| m.medical_services.count > 0 }.each do |m| %>
         <div class="medical-services-list__specialist">
           <h5><%= link_to "dr. #{m.name}", "echipa/#{m.slug}" %></h5>
-          <% m.medical_services.each do |ms| %>
+          <% m.medical_services.sort {|a, b| a.name <=> b.name}.each do |ms| %>
             <%= render ms %>
           <% end %>
         </div>

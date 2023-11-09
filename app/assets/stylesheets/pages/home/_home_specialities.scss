@@ -28,7 +28,8 @@
     max-width: 870px;
     margin: 0 auto;
     @media(min-width: 1360px) {
-      max-width: 80%;
+      width: 70%;
+      max-width: 1400px;
     }
     a {
       justify-self: center;
