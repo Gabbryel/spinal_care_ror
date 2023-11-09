@@ -10,7 +10,7 @@
           <li class="<%= path_helper == 'specialitati-medicale' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Specialități medicale', specialitati_medicale_path %><div></div></li>
           <li class="<%= path_helper == 'servicii-medicale' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Servicii medicale', servicii_medicale_path %><div></div></li>
           <li class="<%= path_helper == 'info-pacient-index' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Info pacient', info_pacient_index_path %><div></div></li>
-          <% if current_user %>
+          <% if access %>
             <li class="active-menu-item">
               <button type="button" class="btn-nude" data-bs-toggle="modal" data-bs-target="#promoModal">
                 Promo %
