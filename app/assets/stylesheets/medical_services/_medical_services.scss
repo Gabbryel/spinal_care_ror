@@ -5,6 +5,7 @@
   box-shadow: none;
   h2, h4, h5 {
     color: inherit;
+    margin-top: 20px;
     font: {
       family: $font-mont;
       weight: 700;
@@ -46,8 +47,8 @@
 
 .medical-services-list__specialist {
   position: relative;
-  margin: 20px 0 10px;
-  padding: 10px 0;
+  margin: 0 0 10px;
+  // padding: 10px 0;
   width: 100%;
   h2 {
     margin: 30px 0;
