@@ -5,13 +5,14 @@
       <% sp.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
         <%= render ms %>
       <% end %>
-      <% sp.medical_services.select { |ms| ms.member != nil }.sort {|a, b| a.member <=> b.member}.each_with_index do |ms, i| %>
-      <div class="medical-services-list__specialist">
-        <% if i==0 %>
-          <h5><%= link_to "dr. #{ms.member.name}", "echipa/#{ms.member.slug}" %></h5>
-        <% end %>
-        <%= render ms %>
-      </div>
+      <% selected_and_sorted_medical_services = sp.medical_services.select { |ms| ms.member != nil }.sort {|a, b| a.member <=> b.member} %>
+      <% selected_and_sorted_medical_services.each_with_index do |ms, i| %>
+        <div class="medical-services-list__specialist">
+          <% if i == 0 || ms.member != selected_and_sorted_medical_services[i-1].member %>
+            <h5><%= link_to "dr. #{ms.member.name}", "echipa/#{ms.member.slug}" %></h5>
+          <% end %>
+          <%= render ms %>
+        </div>
       <% end %>
     </div>
     <% end %>
