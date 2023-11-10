@@ -9,7 +9,7 @@
       <% selected_and_sorted_medical_services.each_with_index do |ms, i| %>
         <div class="medical-services-list__specialist">
           <% if i == 0 || ms.member != selected_and_sorted_medical_services[i-1].member %>
-            <h5><%= link_to "dr. #{ms.member.name}", "echipa/#{ms.member.slug}" %></h5>
+            <h5><%= link_to "#{ms.member.academic_title} #{ms.member.name}", "echipa/#{ms.member.slug}" %></h5>
           <% end %>
           <%= render ms %>
         </div>
