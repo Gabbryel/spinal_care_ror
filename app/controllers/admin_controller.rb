@@ -44,4 +44,5 @@ class AdminController < ApplicationController
     @specialty = Specialty.new()
     @specialties = Specialty.all.order(name: :asc)
   end
+
 end

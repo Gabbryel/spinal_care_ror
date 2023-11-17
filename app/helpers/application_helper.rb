@@ -48,4 +48,7 @@ module ApplicationHelper
   def see_the_team
     link_to 'VEZI TOATĂ ECHIPA', echipa_path, class: 'btn btn-action'
   end
+  def selected_and_sorted_medical_services(specialty)
+    specialty.medical_services.select { |ms| ms.member != nil }.sort {|a, b| a.member <=> b.member}
+  end
 end
