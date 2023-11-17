@@ -48,8 +48,8 @@
 .medical-services-list__specialist {
   position: relative;
   margin: 0 0 10px;
-  // padding: 10px 0;
   width: 100%;
+  z-index: 1;
   h2 {
     margin: 30px 0;
     a {
