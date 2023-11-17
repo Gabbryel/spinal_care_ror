@@ -24,23 +24,23 @@
         <% end %>
       </div>
     </div>
-    <div data-controller="tooltip" class="about-medical-prices">
-      <!-- <h3>Prețuri servicii medicale de <%= "#{@specialty.name.downcase}" %></h3> -->
-      <div class="medical-services-general">
-      <% @specialty.medical_services.select { |ms| ms.member == nil}.each do |ms| %>
-        <%= render ms %>
+    <div data-controller="tooltip" class="about-medical-prices admin-elements services-main section-main">
+      <!-- <h3>Tarife practicate <%= "#{@specialty.name.downcase}" %></h3> -->
+      
+      <div class="medical-services-list__specialty">
+        <% selected_and_sorted_medical_services(@specialty).each_with_index do |ms, i| %>
+          <div class="medical-services-list__specialist">
+            <% if i == 0 || ms.member != selected_and_sorted_medical_services(@specialty)[i-1].member %>
+              <h5><%= link_to "#{ms.member.academic_title} #{ms.member.name}", "../echipa/#{ms.member.slug}" %></h5>
+            <% end %>
+            <%= render ms %>
+          </div>
         <% end %>
       </div>
-      <div class="medical-services-specialist">
-        <% @specialty.members.select { |m| m.medical_services.count > 0 }.shuffle.each do |m| %>
-          <div class="medical-services-list__specialist">
-            <h2><%= link_to "#{m.academic_title} #{m.name}", "echipa/#{m.slug}" %></h2>
-            <div class="medical-services-general">
-              <% m.medical_services.each do |ms| %>
-                <%= render ms %>
-              <% end %>
-            </div>
-          </div>
+      <div class="medical-services-list__specialty">
+        <h5>Tarife generale</h5>
+        <% @specialty.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
+          <%= render ms %>
         <% end %>
       </div>
     </div>
