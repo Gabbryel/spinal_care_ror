@@ -51,4 +51,12 @@ module ApplicationHelper
   def selected_and_sorted_medical_services(specialty)
     specialty.medical_services.select { |ms| ms.member != nil }.sort {|a, b| a.member <=> b.member}
   end
+
+  def specialty_specialists(specialty)
+    specialists = []
+    specialty.medical_services.select { |ms| ms.member != nil }.each do |ms|
+      specialists.push(ms.member) unless specialists.include?(ms.member)
+    end
+    specialists
+  end
 end

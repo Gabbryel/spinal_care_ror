@@ -19,24 +19,22 @@
       <%= action_btn("Programează-te!", "btn-custom", "btn-action") %>
       <!-- <h2>Medici <%= @specialty.name.downcase %> </h2> -->
       <div class="about-specialty-container__specialists-index">
-        <% @specialty.members_belonging_to_specialty.each_with_index do |member| %>
+        <% @specialty.members_belonging_to_specialty.concat(specialty_specialists(@specialty)).uniq.each_with_index do |member| %>
           <%= render partial: 'members/member_card', locals: {m: member, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
         <% end %>
       </div>
     </div>
     <div data-controller="tooltip" class="about-medical-prices admin-elements services-main section-main">
-      <!-- <h3>Tarife practicate <%= "#{@specialty.name.downcase}" %></h3> -->
-      
-      <div class="medical-services-list__specialty">
-        <% selected_and_sorted_medical_services(@specialty).each_with_index do |ms, i| %>
-          <div class="medical-services-list__specialist">
-            <% if i == 0 || ms.member != selected_and_sorted_medical_services(@specialty)[i-1].member %>
-              <h5><%= link_to "#{ms.member.academic_title} #{ms.member.name}", "../echipa/#{ms.member.slug}" %></h5>
-            <% end %>
-            <%= render ms %>
-          </div>
+      <% specialty_specialists(@specialty).each_with_index do |s, i| %>
+        <div class="medical-services-list__specialty">
+          <h5><%= link_to "#{s.academic_title} #{full_name(s)}", "../echipa/#{s.slug}" %></h5>
+          <% s.medical_services.select { |ms| ms.specialty_id == @specialty.id}.sort_by {|ms| ms.name }.each  do |ms| %>
+            <div class="medical-services-list__specialist">
+              <%= render ms %>
+            </div>
+          <% end %>
+        </div>
         <% end %>
-      </div>
       <div class="medical-services-list__specialty">
         <h5>Tarife generale</h5>
         <% @specialty.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
