@@ -26,7 +26,7 @@ class Member < ApplicationRecord
   end
 
   def specialty_name
-    "#{Specialty.find(self.specialty_id).name}" if self.specialty_id
+    self.specialty_id ? "#{Specialty.find(self.specialty_id).name}" : ''
   end
 
   private
