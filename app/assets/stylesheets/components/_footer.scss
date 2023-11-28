@@ -19,6 +19,12 @@ footer {
 .footer-up {
   position: relative;
   text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  justify-content: space-around;
   img {
     margin-top: 40px;
     width: 250px;
