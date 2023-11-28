@@ -1,7 +1,10 @@
 <footer>
   <div class="footer-up">
-    <%= image_tag('logo2-color.png', alt: 'logo spinal care') %>
-    <p>&copy; 2016-<%= Time.now.year %></p>
+    <div>
+      <%= image_tag('logo2-color.png', alt: 'logo spinal care') %>
+      <p>&copy; 2016-<%= Time.now.year %></p>
+    </div>
+    <%= cl_image_tag("kzaelg1jvfchktxo5eht.png") %>
   </div>
   <%= render "shared/footer/contact_cards" %>
 </footer>
