@@ -1,17 +1,24 @@
+
+
+
 <div class="member-card__main" title="<%= m.academic_title %> <%= full_name(m) %>">
   <div class="member-card__photo-holder" style="background-image: url('<%= cl_image_path(m.photo.key, :quality=>80, :fetch_format=>:webp, :width=>500) if m.photo.key.present? %>');">
+    <% if m.has_own_page %>
+      <i class="fa-solid fa-user-doctor"></i>
+    <% end %>
   </div>
   <div class="member-card-info">
     
     <h1 class="member-card-info__name <%= m.has_own_page ? 'underline' : nil %>">
        <span><%= m.academic_title if m.academic_title != '-' %></span> <%= full_name(m) %>
     </h1>
+    <p><%= m.profession.name %> <%= m.doctor_grade %></p>
+  </div>
     <div class="member-card-info__profession">
       <object>
         <%= link_to "../specialitati-medicale/#{m.specialty.slug unless m.specialty.nil? }", aria_label: "#{full_name(m)}" do %>
-          <span class="member-card__specialty-name"><%= m.profession.name %> <%= m.doctor_grade %> <%= m.specialty.name unless m.specialty.nil? %><div></div></span>
-        <% end %>
-      </object>
+          <span class="member-card__specialty-name"> <%= m.specialty.name unless m.specialty.nil? %><div></div></span>
+          <% end %>
+        </object>
     </div>
-  </div>
 </div>
