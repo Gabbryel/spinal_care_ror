@@ -50,6 +50,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    button {
+      margin-top: 4rem;
+    }
   }
   .member-bio {
     position: relative;
@@ -195,7 +198,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        font-family: $font-mont;
+        font-family: $font-poppins;
         font-size: clamp(16px, 1rem, 18px);
         h1 {
           font-family: inherit;
