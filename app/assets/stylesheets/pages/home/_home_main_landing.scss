@@ -13,44 +13,14 @@
 }
 
 .main-landing {
-  height: calc(var(--vh) * 91);
+  // height: calc(var(--vh) * 91);
   grid-area: 1 / 1 / 2 / -1;
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 70% 30%;
-  padding: calc(var(--vh) * 5) 5vw;
-  @media (min-width: 720px) {
-    padding: calc(var(--vh) * 5) 5vw;
-  }
-  #shape-svg-1, #shape-svg-2 {
-    @include shape-svg;
-  }
-  #shape-svg-1 {
-    animation: anim-shape-svg-1 2s;
-  }
-  #shape-svg-2 {
-    animation: anim-shape-svg-2 2s;
-  }
 
-  #shape-svg-1.inactive,
-  #shape-svg-2.inactive {
-    opacity: 0;
-  }
-
-  #shape-svg-1.inactive {
-    transform: translateY(-100px);
-  }
-  #shape-svg-2.inactive {
-    transform: translateX(-100px);
-  }
-
-  #shape-svg-1.active-svg,
-  #shape-svg-2.active-svg {
-    transform: translate(0);
-  }
-
-  @keyframes anim-shape-svg-1 {
+  /*@keyframes anim-shape-svg-1 {
     from {
       opacity: 0;
       transform: translateY(-100px);
@@ -69,6 +39,7 @@
       transform: translate(0);
     }
   }
+  */
 
 // MAIN IMAGE
 
@@ -76,35 +47,36 @@
     position: relative;
     grid-area: 1 / 1 / 2 / 3;
     background-color: $color-contrast;
-    border-radius: 50%;
+    // border-radius: 50%;
     overflow: hidden;
     aspect-ratio: 1 / 1;
     animation: anim-main-image 2s;
     align-self: center;
-    max-width: 90% !important;
+    // max-width: 90% !important;
     justify-self: center;
-    max-height: 90%;
+    // max-height: 90%;
     img {
       // min-height: 100%;
       // width: 100%;
-      width: 800px;
+      /*width: 800px;
       height: 800px;
       min-width: 100%;
       min-height: 100%;
       max-height: 100%;
       max-width: 100%;
-      object-fit: cover;
+      object-fit: cover;*/
+      width: 100%;
     }
     @media (orientation: landscape) {
       grid-area: 1 / 2 / 3 / 3;
-      width: auto;
-      min-width: auto;
+      /*width: auto;
+      min-width: auto;*/
     }
     @media (min-width: 1025px) and (orientation: landscape) {
       grid-area: 1 / 2 / 4 / 3;
-      max-height: 90%;
+      /* max-height: 90%;
       width: auto;
-      max-width: 90%;
+      max-width: 90%;*/
     }
 
   }
@@ -114,13 +86,13 @@
   }
   #main-image.inactive {
     opacity: 0;
-    transform: translateY(100px);
+    transform: translateX(100px);
   }
   @keyframes anim-main-image {
     from {
       display: none;
       opacity: 0;
-      transform: translateY(100px);
+      transform: translateX(100px);
     } to {
       display: block;
       opacity: 1;
