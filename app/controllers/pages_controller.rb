@@ -11,6 +11,7 @@ class PagesController < ApplicationController
     kinetos_to_show_last_names = ['Dobreci', 'Caramalău', 'Zediu', 'Cătău']
     @kinetos_to_show = @kinetos.select { |k| kinetos_to_show_last_names.include?(k.last_name)}.sort_by { |k| k.id}.reverse
     @schroths = @kinetos.select {|s| s.specialty_id == 18 }
+    @beauties = Member.select { |s| s.specialty_id == 13 }
   end
 
   def medical_team
