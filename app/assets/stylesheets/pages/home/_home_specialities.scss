@@ -22,7 +22,7 @@
     position: relative;
     display: grid;
     justify-content: center;
-    // padding: 100px 30px;
+    padding-bottom: 10em;
     grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
     gap: 30px;
     max-width: 870px;
