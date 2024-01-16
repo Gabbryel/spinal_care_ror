@@ -1,11 +1,5 @@
 <section class="schroth">
-  <div class="section-title">
-    <div class="section-title-blue">
-    </div>
-    <div class="section-title-text">
-      <h3>Terapia Schroth</h3>
-    </div>
-  </div>
+  <%= title('Terapia Schroth', nil, nil) %>
   <div class="main-landing schroth-main">
     <div class="main-image">
       <%= cl_image_tag("cabinets/www.sysphotodesign.ro_181_zv23ju.webp", :quality=>60, :width=>1000, :crop=>"scale")  %>
@@ -24,4 +18,23 @@
           <%= render partial: "members/member_card", locals: {m: m, i: i, not_animated: nil, no_grid_area: 'no_grid_area'} %>
         <% end %>
   </article>
+  <div class="main-landing schroth-main">
+    <div class="main-image main-image-reverse">
+      <%= cl_image_tag("cabinets/www.sysphotodesign.ro_112_knyp6k.webp", :quality=>60, :width=>1000, :crop=>"scale")  %>
+    </div>
+    <div class="main-motto main-motto-reverse">
+      <ul>
+        <li><section class="spinal-care-description schroth-description">
+          <p>Specialiștii noștri sunt ajutați în munca lor de aparatură medicală performantă de ultimă generație care accelerează repararea și regenerarea organismului.</p>
+        </section></li>
+      </ul>
+    </div>
+  </div>
+  <div class="schroth-title"><h3>Specialiștii în recuperare medicală</h3></div>
+  <article class="landing-schroths l-s-extended">
+    <% @kinetos_to_show.each_with_index do |m, i| %>
+          <%= render partial: "members/member_card", locals: {m: m, i: i, not_animated: nil, no_grid_area: 'no_grid_area'} %>
+        <% end %>
+  </article>
+  <%= see_the_team %>
 </section>

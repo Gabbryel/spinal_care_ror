@@ -5,7 +5,7 @@ class PagesController < ApplicationController
     @review = Review.new()
     @reviews = Review.all.shuffle || []
     @specialties = Specialty.all.order(name: :asc) || []
-    @medics = Member.where(profession_id: Profession.find_by(name: 'medic')).sample(4)
+    @medics = Member.where(profession_id: Profession.find_by(name: 'medic')).sample(8)
     @kinetos = (Member.where(profession_id: Profession.find_by(name: 'fiziokinetoterapeut' || 'asistent medical BFKT')) + Member.where(profession_id: Profession.find_by(name: 'asistent medical BFKT')))
     @kineto_signature = @kinetos.sample(1)[0]
     kinetos_to_show_last_names = ['Dobreci', 'Caramalău', 'Zediu', 'Cătău']

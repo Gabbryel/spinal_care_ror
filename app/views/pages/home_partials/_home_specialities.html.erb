@@ -1,8 +1,6 @@
 <div class="main-specialities">
 <% if current_page?(controller: 'pages', action: 'home') %>
-  <div class="main-specialities-intro">
-    <p><span>Specialități medicale</span><br> în cadrul <span>clinicii Spinal Care</span></p>
-  </div>
+<%= title('Specialități medicale', 'section-title-blue__reverse', 'section-title-text__reverse') %>
 <% end %>
 
   <div class="main-specialities-index">
@@ -18,4 +16,18 @@
       <% end %>
     <% end %>
   </div>
+  <% if current_page?(controller: 'pages', action: 'home') %>
+  <div class="main-landing schroth-main">
+    <div class="main-image">
+      <%= cl_image_tag("cabinets/www.sysphotodesign.ro_148_qun3b7.webp", :quality=>60, :width=>1000, :crop=>"scale")  %>
+    </div>
+    <div class="main-motto">
+      <ul>
+        <li><section class="spinal-care-description schroth-description">
+          <p>În cadrul clinicii medici experimentați sunt asistați de tehnologii avansate pentru a stabili un diagnostic cât mai exact cât și pentru a realiza un tratament cât mai eficient.</p>
+        </section></li>
+      </ul>
+    </div>
+  </div>
+  <% end %>
 </div>

@@ -63,4 +63,12 @@ module ApplicationHelper
   def motto(text, class_name)
     content_tag(:div, content_tag(:p, text), class: class_name)
   end
+
+  def title(text, class_reverse_blue, class_reverse_text)
+    content_tag :div, class: "section-title" do
+      (content_tag :div, nil, class: "section-title-blue #{class_reverse_blue}").concat(
+        content_tag :div, text, class: "section-title-text #{class_reverse_text}"
+      )
+    end
+  end
 end
