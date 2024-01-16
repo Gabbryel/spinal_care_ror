@@ -1,0 +1,32 @@
+.schroth {
+  position: relative;
+  grid-area: 3 / 1 / 4 / -1;
+  padding: 10em 0 0;
+  .kinetos {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    width: 80%;
+    justify-content: space-evenly;
+    margin: 10em auto;
+    gap: 1em;
+  }
+}
+
+.schroth-main {
+  padding: 0;
+  max-height: 600px;
+  .main-motto {
+    padding: 0;
+  }
+  .schroth-description {
+    font-size: 0.6em !important;
+    text-align: center !important;
+    margin: 0 !important;
+    @media (min-width: 576px) {
+      font-size: 0.5em !important;
+      width: 80% !important;
+      margin: 0 auto !important;
+    }
+  }
+}

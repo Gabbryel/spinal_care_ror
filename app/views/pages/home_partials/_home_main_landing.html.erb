@@ -1,10 +1,8 @@
 <div class="main-landing">
-  <%#= image_tag('shape-svg-1.svg', id: 'shape-svg-1', data: { controller: "animation", action: 'scroll@window->animation#svgscroll' }, alt: "spinal care") %>
-  <%#= image_tag('shape-svg-2.svg', id: 'shape-svg-2', data: { controller: "animation", action: 'scroll@window->animation#svgscroll' }, alt: "spinal care") %>
-  <div id="main-image", data-controller="animation" ption="scroll@window->animation#svgscroll">
+  <div class="main-image", data-controller="animation" action="scroll@window->animation#svgscroll">
     <%= cl_image_tag("l_dpng_Large_skikl2.webp", :quality=>"60", alt: "spinal care", :width=>400)  %>
   </div>
-  <div id="main-motto" data-controller="animation" data-action="scroll@window->animation#svgscroll">
+  <div class="main-motto" data-controller="animation" data-action="scroll@window->animation#svgscroll">
     <ul>
       <li><h1 class="h1-spinal-care">
         <span class='spinal-span-1'>Spinal</span> <span class='spinal-span-2'>Care</span></h1>

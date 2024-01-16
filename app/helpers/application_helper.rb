@@ -59,4 +59,8 @@ module ApplicationHelper
     end
     specialists
   end
+
+  def motto(text, class_name)
+    content_tag(:div, content_tag(:p, text), class: class_name)
+  end
 end
