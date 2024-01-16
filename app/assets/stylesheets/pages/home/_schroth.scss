@@ -1,21 +1,40 @@
 .schroth {
   position: relative;
   grid-area: 3 / 1 / 4 / -1;
-  padding: 10em 0 0;
-  .kinetos {
+  padding: 3em 0 0;
+  @media(min-width: 576px) {
+    padding: 5em 0 0;
+  }
+  .landing-schroths {
     position: relative;
     display: flex;
     flex-wrap: wrap;
-    width: 80%;
     justify-content: space-evenly;
-    margin: 10em auto;
+    margin: 2dvw auto 6dvw;
     gap: 1em;
+    max-width: 700px;
+  }
+}
+
+.schroth-title {
+  position: relative;
+  h3 {
+    text-align: center;
+    font-size: clamp(25px, calc((0.5dvh + 0.5dvw) * 4), 50px);
+    color: $color-3;
+    padding: 0 0 2em;
+    font-family: $font-poppins;
   }
 }
 
 .schroth-main {
   padding: 0;
-  max-height: 600px;
+  background-color: $color-2;
+  margin: 3em 0;
+  @media (min-width: 576px) {
+    margin: 5em 0;
+    max-height: 50dvh;
+  }
   .main-motto {
     padding: 0;
   }
@@ -24,7 +43,7 @@
     text-align: center !important;
     margin: 0 !important;
     @media (min-width: 576px) {
-      font-size: 0.5em !important;
+      font-size: 0.48em !important;
       width: 80% !important;
       margin: 0 auto !important;
     }
