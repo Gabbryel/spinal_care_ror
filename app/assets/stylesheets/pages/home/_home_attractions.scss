@@ -9,7 +9,7 @@
   justify-content: center;
   // height: clamp(130px, 20vw, 20vh);
   align-items: center;
-  font-size: clamp(24px, 4vw, 48px);
+  font-size: clamp(20px, 3vw, 48px);
   font-weight: 700;
   padding: 1em 2em;
   p {
@@ -25,11 +25,13 @@
 
 .page-motto-second {
   grid-area: 4 / 1 / 5 / -1;
-  grid-area: 8 / 1 / 9 / -1;
 }
 
 .page-motto-third {
-  grid-area: 8 / 1 / 9 / -1;
+  grid-area: 7 / 1 / 8 / -1;
+}
+.page-motto-fourth {
+  grid-area: 9 / 1 / 10 / -1;
 }
 .main-attractions {
   position: relative;

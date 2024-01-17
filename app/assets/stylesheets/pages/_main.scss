@@ -4,15 +4,22 @@
 	word-wrap: break-word;
 }
 
-html {
-	position: relative;
-	margin: 0 auto;
-}
 
 html, body {
 	overflow-x: hidden;
 	background-color: $color-5;
 	font-family: 'Montserrat', sans-serif;
+}
+
+html {
+	position: relative;
+	margin: 0 auto;
+	background-color: $html-color;
+}
+
+body {
+	max-width: 2600px;
+  margin: 0 auto;
 }
 
 

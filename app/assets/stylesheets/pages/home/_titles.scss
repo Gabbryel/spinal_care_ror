@@ -2,10 +2,10 @@
   position: relative;
   display: grid;
   grid-template-columns: 10% 40% 40% 10%;
-  grid-template-rows: 4dvh 5dvh 5dvh 4dvh;
+  grid-template-rows: repeat(4, 5dvh);
   padding: 5dvh;
   flex-basis: 100%;
-  max-width: 1400px;
+  max-width: 1800px;
   margin: 0 auto;
 
   .section-title-blue {
@@ -26,7 +26,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(26px, calc(((0.5dvh + 0.5dvw) * 3)), 100px);
+    font-size: clamp(26px, calc(((0.5dvh + 0.5dvw) * 3)), 75px);
     h3 {
       font-family: inherit;
     }
@@ -35,7 +35,6 @@
     grid-area: 2/1/4/4;
   }
   @media (orientation: landscape) {
-    grid-template-rows: repeat(4, 7dvh);
     padding: 10dvh;
     width: 80%;
   }
