@@ -9,161 +9,136 @@
   min-height: calc(var(--vh) * 93);
   width: 100%;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: calc(var(--vh) * 93), 200px, min-content, min-content, min-content, min-content, min-content;
+  grid-template-rows: calc(1dvh * 93), 200px, min-content, min-content, min-content, min-content, min-content;
 }
 
 .main-landing {
-  height: calc(var(--vh) * 91);
   grid-area: 1 / 1 / 2 / -1;
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 70% 30%;
-  padding: calc(var(--vh) * 5) 5vw;
-  @media (min-width: 720px) {
-    padding: calc(var(--vh) * 5) 5vw;
+  grid-template-rows: 50% 50%;
+  padding-top: 4rem;
+  ul {
+    list-style: none;
+    font-family: $font-poppins;
   }
-  #shape-svg-1, #shape-svg-2 {
-    @include shape-svg;
-  }
-  #shape-svg-1 {
-    animation: anim-shape-svg-1 2s;
-  }
-  #shape-svg-2 {
-    animation: anim-shape-svg-2 2s;
+  @media (min-width: 576px) {
+    padding: 0;
   }
 
-  #shape-svg-1.inactive,
-  #shape-svg-2.inactive {
-    opacity: 0;
-  }
-
-  #shape-svg-1.inactive {
-    transform: translateY(-100px);
-  }
-  #shape-svg-2.inactive {
-    transform: translateX(-100px);
-  }
-
-  #shape-svg-1.active-svg,
-  #shape-svg-2.active-svg {
-    transform: translate(0);
-  }
-
-  @keyframes anim-shape-svg-1 {
-    from {
-      opacity: 0;
-      transform: translateY(-100px);
-    } to {
-      opacity: 1;
-      transform: translate(0);
-    }
-  }
-
-  @keyframes anim-shape-svg-2 {
-    from {
-      opacity: 0;
-      transform: translateX(-100px);
-    } to {
-      opacity: 1;
-      transform: translate(0);
-    }
-  }
-
-// MAIN IMAGE
-
-  #main-image {
+  .main-image {
     position: relative;
-    grid-area: 1 / 1 / 2 / 3;
+    grid-area: 2 / 1 / 3 / 3;
     background-color: $color-contrast;
-    border-radius: 50%;
     overflow: hidden;
     aspect-ratio: 1 / 1;
-    animation: anim-main-image 2s;
     align-self: center;
-    max-width: 90% !important;
     justify-self: center;
-    max-height: 90%;
+    height: 100%;
+    width: 100%;
     img {
-      // min-height: 100%;
-      // width: 100%;
-      width: 800px;
-      height: 800px;
-      min-width: 100%;
-      min-height: 100%;
-      max-height: 100%;
-      max-width: 100%;
+      height: 100%;
+      width: 100%;
       object-fit: cover;
+    }
+    @media (min-width: 576px) and (orientation: portrait) {
+      grid-area: 1 / 2 / 3 / 3;
     }
     @media (orientation: landscape) {
       grid-area: 1 / 2 / 3 / 3;
-      width: auto;
-      min-width: auto;
     }
     @media (min-width: 1025px) and (orientation: landscape) {
       grid-area: 1 / 2 / 4 / 3;
-      max-height: 90%;
-      width: auto;
-      max-width: 90%;
-    }
-
-  }
-  #main-image.active-svg {
-    opacity: 1;
-    transform: translate(0);
-  }
-  #main-image.inactive {
-    opacity: 0;
-    transform: translateY(100px);
-  }
-  @keyframes anim-main-image {
-    from {
-      display: none;
-      opacity: 0;
-      transform: translateY(100px);
-    } to {
-      display: block;
-      opacity: 1;
-      transform: translate(0);
     }
   }
-// MAIN IMAGE
 
-// MAIN MOTTO
-
-  .main-motto-dark {
-    background-color: $color-1;
-  }
-
-  #main-motto {
+  .main-motto {
     @include mottos;
-    #signature {
-      font-size: clamp(14px, 1.8vw, 20px);
-      font-weight: 500;
-      color: $color-1;
-      letter-spacing: -0.06em;
-    }
+    ul {
+      list-style: none;
+      font-family: $font-poppins;
+      text-align: center;
+      padding: 0;
+  @media (min-width: 768px) {
+    text-align: left;
   }
-
-  @keyframes main-motto {
-    0% {
-      position: absolute;
-      opacity: 0;
-      transform: translateX(-100px);
     }
-    100% {
+    .h1-spinal-care {
+      font-size: 1.3em;
+      text-transform: uppercase;
+      font-family: $font-mont;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      .spinal-span-1 {
+        color: $color-2;
+      }
+      .spinal-span-2 {
+        color: $color-3;
+      }
+      @media (min-width: 576px) {
+        font-size: 1em;
+      }
+    }
+    .spinal-care-description {
+      font-size: 0.32em;
+      margin-top: 2rem;
+      text-align: left;
+      color: $color-3;
+      i {
+        font-size: inherit;
+      }
+      @media (min-width: 768px) {
+        text-align: unset;
+      }
+    }
+    .h2-founder, .h2-clinic {
       position: relative;
-      opacity: 1;
-      transform: translate(0);
+      bottom: anchor(h1-spinal-care);
+      font-family: inherit;
+      font-size: 0.32em;
+      letter-spacing: 0.18em;
+      font-weight: 400;
+      color: $color-1;
+      @media (min-width: 576px) {
+        font-size: 0.25em;
+      }
+    }
+    .h2-clinic {
+      letter-spacing: 0.05em;
+      font-size: 0.335em;
+      margin-top: -7px;
+      @media (min-width: 576px) {
+        font-size: 0.26em;
+      }
+    }
+    button {
+      margin-top: 3rem;
+    padding: 1rem 2rem;
+    border-radius: 0.4rem;
     }
   }
-  #main-motto.inactive {
-    position: absolute;
-    transform: translateX(-100px);
-    opacity: 0;
-  }
-  #main-motto.active-svg {
-    opacity: 1;
-    transform: translate(0);
+  #main-attractions-motto {
+    position: relative;
+    grid-area: 1 / 1 / 2 / -1;
+    background-color: $color-3;
+    color: $color-contrast;
+    overflow: hidden;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: clamp(130px, 20vw, 20vh);
+    align-items: center;
+    font-size: clamp(24px, 4vw, 48px);
+    font-weight: 700;
+    p {
+      margin: 0;
+      text-align: center;
+      font-family: $font-mont;
+      width: 70%;
+      min-width: 300px;
+      max-width: 1400px;
+      color: $color-5;
+    }
   }
 }

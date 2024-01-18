@@ -45,8 +45,8 @@ module ApplicationHelper
     button_tag text, class:"btn-nude #{x} #{y}", data: { bs_toggle: "modal", bs_target: "#contactModal"}
   end
 
-  def see_the_team
-    link_to 'VEZI TOATĂ ECHIPA', echipa_path, class: 'btn btn-action'
+  def see_the_team(anchor)
+    button_to 'VEZI TOATĂ ECHIPA', echipa_path.concat("##{anchor}"), class: 'btn btn-action', method: :get, data: {turbo: false}, type: :action
   end
   def selected_and_sorted_medical_services(specialty)
     specialty.medical_services.select { |ms| ms.member != nil }.sort {|a, b| a.member <=> b.member}
@@ -58,5 +58,17 @@ module ApplicationHelper
       specialists.push(ms.member) unless specialists.include?(ms.member)
     end
     specialists
+  end
+
+  def motto(text, class_name)
+    content_tag(:div, content_tag(:p, text), class: class_name)
+  end
+
+  def title(text, class_reverse_blue, class_reverse_text)
+    content_tag :div, class: "section-title" do
+      (content_tag :div, nil, class: "section-title-blue #{class_reverse_blue}").concat(
+        content_tag :div, text, class: "section-title-text #{class_reverse_text}"
+      )
+    end
   end
 end

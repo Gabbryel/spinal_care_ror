@@ -1,0 +1,69 @@
+.schroth {
+  position: relative;
+  grid-area: 3 / 1 / 4 / -1;
+  padding: 3em 0;
+  text-align: center;
+  @media(min-width: 576px) {
+    padding: 5em 0;
+  }
+  .landing-schroths {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    margin: 2dvw auto 6dvw;
+    gap: 1em;
+    max-width: 700px;
+  }
+  .l-s-extended {
+    max-width: 1400px;
+    width: 90%;
+  }
+}
+
+.schroth-title {
+  position: relative;
+  h3 {
+    text-align: center;
+    font-size: clamp(25px, calc((0.5dvh + 0.5dvw) * 4), 50px);
+    color: $color-3;
+    padding: 2em 0;
+    font-family: $font-poppins;
+    width: 80%;
+    margin: 0 auto;
+    max-width: 1400px;
+  }
+}
+
+.schroth-main {
+  padding: 0;
+  background-color: $color-2;
+  margin: 3em 0 0;
+  @media (min-width: 576px) {
+    margin: 5em 0 0;
+    max-height: 50dvh;
+  }
+  .main-motto {
+    padding: 0;
+  }
+  .schroth-description {
+    font-size: 0.6em !important;
+    text-align: center !important;
+    margin: 0 !important;
+    @media (min-width: 576px) {
+      font-size: 0.48em !important;
+      width: 80% !important;
+      margin: 0 auto !important;
+    }
+  }
+  .main-image-reverse {
+    @media (min-width: 576px) {
+      grid-area: 1 / 1 / 3 / 2;
+    }
+  }
+  .main-motto-reverse {
+    @media (min-width: 576px) {
+      grid-area: 1 / 2 / 3 / 3;
+    }
+  }
+}

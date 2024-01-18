@@ -1,5 +1,5 @@
 <%= content_for :meta_title, "#{@member.academic_title} #{@member.last_name} #{@member.profession_name} #{@member.doctor_grade}  #{@member.specialty.name.downcase if @member.specialty} Spinal Care" %>
-<%= content_for :meta_description, "#{@member.profession.name} #{@member.doctor_grade} #{full_name(@member)} - #{@member.specialty.name.downcase if @member.specialty}  #{description_gsub(@member) unless @member.description.body.empty?}" %>
+<%= content_for :meta_description, "#{@member.profession.name} #{@member.doctor_grade} #{full_name(@member)} #{@member.specialty.name.downcase if @member.specialty}  Spinal Care Bacău" %>
 <%= content_for :meta_image, cl_image_path(@member.photo.key), :quality=>60, :fetch_format=>:webp, :width=>100 %>
 <div class="member-container">
   <div class="member-container__main" data-controller="bio">

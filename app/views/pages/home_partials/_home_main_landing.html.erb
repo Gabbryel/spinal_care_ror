@@ -1,10 +1,24 @@
 <div class="main-landing">
-  <%= image_tag('shape-svg-1.svg', id: 'shape-svg-1', data: { controller: "animation", action: 'scroll@window->animation#svgscroll' }, alt: "spinal care") %>
-  <%= image_tag('shape-svg-2.svg', id: 'shape-svg-2', data: { controller: "animation", action: 'scroll@window->animation#svgscroll' }, alt: "spinal care") %>
-  <div id="main-image", data-controller="animation" ption="scroll@window->animation#svgscroll">
+  <div class="main-image", data-controller="animation" action="scroll@window->animation#svgscroll">
     <%= cl_image_tag("l_dpng_Large_skikl2.webp", :quality=>"60", alt: "spinal care", :width=>400)  %>
   </div>
-  <div id="main-motto" data-controller="animation" data-action="scroll@window->animation#svgscroll">
-    <p>"Spinal Care este împlinirea visului unui tânăr care și-a dorit o lume fără durere"<br><span id="signature">conf. univ. dr. kt. Lucian Dobreci, fondator</p>
+  <div class="main-motto" data-controller="animation" data-action="scroll@window->animation#svgscroll">
+    <ul>
+      <li><h1 class="h1-spinal-care">
+        <span class='spinal-span-1'>Spinal</span> <span class='spinal-span-2'>Care</span></h1>
+      </li>
+      <li><h2 class="h2-clinic" anchor="h1-spinal-care">clinică de recuperare medicală multidisciplinară</h2></li>
+      <li><h2 class="h2-founder">fondată de conf.univ.dr.kt. Lucian Dobreci</h2></li>
+      <li><section class="spinal-care-description">
+        <p><i class="fa-solid fa-square-check"></i> terapia Schroth</p>
+        <p><i class="fa-solid fa-square-check"></i> medici cu experiență</p>
+        <p><i class="fa-solid fa-square-check"></i> kinetoterapeuți dedicați</p>
+        <p><i class="fa-solid fa-square-check"></i> aparatură medicală performantă</p>
+        <p><i class="fa-solid fa-square-check"></i> mii de pacienți fericiți</p>
+        <p><i class="fa-solid fa-square-check"></i> terapii "Beauty" neinvazive</p>
+      </section></li>
+      <li><%= action_btn('Ai nevoie de un sfat?', 'btn-action btn-long', 'btn-action__reverse') %></li>
+      
+    </ul>
   </div>
 </div>

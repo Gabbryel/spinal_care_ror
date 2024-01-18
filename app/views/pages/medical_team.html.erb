@@ -34,7 +34,7 @@
 
   <% @professions.each do |p| %>
     <% if p.members.count > 0 %>
-      <div class="profession-div" id="profession-div__custom">
+      <div class="profession-div" id="<%= p.slug %>">
           <% p.members.order(:last_name).each do |m| %>
             <%= render partial: "members/member_card", locals: {m: m, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
           <% end %>
