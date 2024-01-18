@@ -78,13 +78,18 @@
       }
       @media (min-width: 576px) {
         font-size: 1em;
+        font-size: 1.2em;
+        letter-spacing: -0.06em;
       }
     }
     .spinal-care-description {
-      font-size: 0.32em;
+      font-size: 0.45em;
       margin-top: 2rem;
       text-align: left;
       color: $color-3;
+      p {
+        margin: -1rem 0;
+      }
       i {
         font-size: inherit;
       }
@@ -94,14 +99,13 @@
     }
     .h2-founder, .h2-clinic {
       position: relative;
-      bottom: anchor(h1-spinal-care);
       font-family: inherit;
       font-size: 0.32em;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.15em;
       font-weight: 400;
       color: $color-1;
       @media (min-width: 576px) {
-        font-size: 0.25em;
+        font-size: 0.297em;
       }
     }
     .h2-clinic {
@@ -109,7 +113,7 @@
       font-size: 0.335em;
       margin-top: -7px;
       @media (min-width: 576px) {
-        font-size: 0.26em;
+        font-size: 0.297em;
       }
     }
     button {
