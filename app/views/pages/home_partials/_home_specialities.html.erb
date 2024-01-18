@@ -1,12 +1,12 @@
 <div class="main-specialities">
 <% if current_page?(controller: 'pages', action: 'home') %>
-<%= title('Specialități medicale', 'section-title-blue__reverse', 'section-title-text__reverse') %>
+<%= title('Specialități', 'section-title-blue__reverse', 'section-title-text__reverse') %>
 <% end %>
 
   <div class="main-specialities-index">
     <% @specialties.each_with_index do |sp, i| %>
       <%= link_to "specialitati-medicale/#{sp.slug}" do %>
-        <div class="speciality-card">
+        <div class="specialty-card">
           <div class="specialty-card__cover-name">
             <% sp[:name].split(Regexp.union([' ', '-']), 3).each do |w| %>
               <%= tag.p(w) %>

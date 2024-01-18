@@ -45,8 +45,8 @@ module ApplicationHelper
     button_tag text, class:"btn-nude #{x} #{y}", data: { bs_toggle: "modal", bs_target: "#contactModal"}
   end
 
-  def see_the_team
-    link_to 'VEZI TOATĂ ECHIPA', echipa_path, class: 'btn btn-action'
+  def see_the_team(anchor)
+    button_to 'VEZI TOATĂ ECHIPA', echipa_path.concat("##{anchor}"), class: 'btn btn-action', method: :get, data: {turbo: false}, type: :action
   end
   def selected_and_sorted_medical_services(specialty)
     specialty.medical_services.select { |ms| ms.member != nil }.sort {|a, b| a.member <=> b.member}

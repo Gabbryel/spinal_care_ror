@@ -1,0 +1,23 @@
+.before-nav {
+  position: relative;
+  background: $color-5;
+  color: $color-1;
+  font-size: 14px;
+  padding: 0.35rem 1rem;
+  text-align: center;
+  z-index: 1;
+  font-weight: 600;
+  @media (orientation: landscape) {
+    text-align: left;
+  }
+  a {
+    color: inherit;
+    position: relative;
+  }
+  a:hover {
+    font-weight: 600;
+  }
+  a:active {
+    color: #fff6d3;
+  }
+}
