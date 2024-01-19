@@ -78,7 +78,7 @@
       }
       @media (min-width: 576px) {
         font-size: 1em;
-        font-size: 1.2em;
+        font-size: 1.15em;
         letter-spacing: -0.06em;
       }
     }
@@ -100,20 +100,20 @@
     .h2-founder, .h2-clinic {
       position: relative;
       font-family: inherit;
-      font-size: 0.27em;
+      font-size: 0.34em;
       letter-spacing: 0.13em;
       font-weight: 400;
       color: $color-1;
       @media (min-width: 576px) {
-        font-size: 0.297em;
+        font-size: 0.283em;
       }
     }
     .h2-clinic {
       letter-spacing: 0.05em;
-      font-size: 0.27em;
+      font-size: 0.33em;
       margin-top: -7px;
       @media (min-width: 576px) {
-        font-size: 0.297em;
+        font-size: 0.293em;
       }
     }
     button {
