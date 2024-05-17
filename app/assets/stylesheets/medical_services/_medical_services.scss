@@ -3,6 +3,7 @@
   font-family: $font-nuni;
   color: $color-1;
   box-shadow: none;
+  max-width: 95vw;
   h2, h4, h5 {
     color: inherit;
     margin-top: 20px;
@@ -43,6 +44,7 @@
   flex-flow: column;
   align-items: center;
   justify-self: center;
+  height: max-content;
 }
 
 .medical-services-list__specialist {

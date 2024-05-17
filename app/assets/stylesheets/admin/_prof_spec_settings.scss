@@ -37,8 +37,8 @@
   // gap: 30px 15px;
   // justify-content: space-between;
   display: grid;
-  gap: 30px 15px;
-  grid-template-columns: repeat(auto-fit, minmax(305px, 1fr));
+  gap: 4vw;
+  grid-template-columns: repeat(auto-fit, minmax(305px, 20%));
   justify-content: center;
 }
 
