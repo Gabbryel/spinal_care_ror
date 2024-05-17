@@ -6420,6 +6420,33 @@
     }
   };
 
+  // controllers/masonry_controller.js
+  var masonry_controller_exports = {};
+  __export(masonry_controller_exports, {
+    default: () => masonry_controller_default
+  });
+  var masonry_controller_default = class extends Controller {
+    connect() {
+      function resizeGridItem(item) {
+        let grid = document.getElementsByClassName("grid-masonry")[0];
+        grid.style.setProperty("row-gap", `${Number(5) + window.innerHeight / 100}px`);
+        grid.style.setProperty("column-gap", `3rem`);
+        let rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-auto-rows"));
+        let rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-row-gap"));
+        let rowSpan = Math.ceil((item.querySelector(".specialty-content").getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
+        item.style.gridRowEnd = "span " + rowSpan;
+      }
+      function resizeAllGridItems() {
+        let allItems = document.getElementsByClassName("medical-services-list__specialty");
+        for (let x = 0; x < allItems.length; x++) {
+          resizeGridItem(allItems[x]);
+        }
+      }
+      window.onload = resizeAllGridItems();
+      window.onresize = resizeAllGridItems();
+    }
+  };
+
   // controllers/memberFormSpecialty_controller.js
   var memberFormSpecialty_controller_exports = {};
   __export(memberFormSpecialty_controller_exports, {
@@ -7318,7 +7345,7 @@
   };
 
   // rails:/Users/aquaman/Code/Projects/spinal_care_ror/app/javascript/controllers/**/*_controller.js
-  var modules = [{ name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
+  var modules = [{ name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
   var controller_default = modules;
 
   // controllers/index.js
