@@ -38,4 +38,7 @@
     padding: 10dvh;
     width: 80%;
   }
+  @media (orientation: landscape) and (max-height: 500px) {
+    grid-template-rows: repeat(4, 2rem);
+  }
 }
