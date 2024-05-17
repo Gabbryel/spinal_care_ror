@@ -24,7 +24,8 @@
         <% end %>
       </div>
     </div>
-    <div data-controller="tooltip" class="about-medical-prices admin-elements services-main section-main">
+
+    <!-- <div data-controller="tooltip" class="about-medical-prices admin-elements services-main section-main">
       <% specialty_specialists(@specialty).each_with_index do |s, i| %>
         <div class="medical-services-list__specialty">
           <h5><%= link_to "#{s.academic_title} #{full_name(s)}", "../echipa/#{s.slug}" %></h5>
@@ -41,7 +42,7 @@
           <%= render ms %>
         <% end %>
       </div>
-    </div>
+    </div> -->
     <%= image_tag('wave-home-page.svg', id: 'about-specialty-container__specialty__wave', alt: 'spinal care wave') %>
   </div>
 </div>
