@@ -37,9 +37,13 @@
   // gap: 30px 15px;
   // justify-content: space-between;
   display: grid;
-  gap: 4vw;
+  gap: 2vw;
   grid-template-columns: repeat(auto-fit, minmax(305px, 20%));
   justify-content: center;
+  grid-auto-rows: 0;
+}
+.grid-masonry {
+  position: relative;
 }
 
 .admin-element, .profession, .specialty, .user {

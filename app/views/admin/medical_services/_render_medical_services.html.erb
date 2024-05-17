@@ -1,18 +1,20 @@
-<div class="admin-elements services-index">
+<div class="admin-elements services-index grid-masonry">
   <% @specialties.select { |sp| sp.medical_services.count > 0 }.each do |sp| %>
     <div class="medical-services-list__specialty">
-      <h4><%= link_to sp.name, "specialitati-medicale/#{sp.slug}" %></h4>
-      <% sp.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
-        <%= render ms %>
-      <% end %>
-      <% selected_and_sorted_medical_services(sp).each_with_index do |ms, i| %>
-        <div class="medical-services-list__specialist">
-          <% if i == 0 || ms.member != selected_and_sorted_medical_services(sp)[i-1].member %>
-            <h5><%= link_to "#{ms.member.academic_title} #{ms.member.name}", "echipa/#{ms.member.slug}" %></h5>
-          <% end %>
+      <div class="specialty-content">
+        <h4><%= link_to sp.name, "specialitati-medicale/#{sp.slug}" %></h4>
+        <% sp.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
           <%= render ms %>
-        </div>
-      <% end %>
+        <% end %>
+        <% selected_and_sorted_medical_services(sp).each_with_index do |ms, i| %>
+          <div class="medical-services-list__specialist">
+            <% if i == 0 || ms.member != selected_and_sorted_medical_services(sp)[i-1].member %>
+              <h5><%= link_to "#{ms.member.academic_title} #{ms.member.name}", "echipa/#{ms.member.slug}" %></h5>
+            <% end %>
+            <%= render ms %>
+          </div>
+        <% end %>
+      </div>
     </div>
     <% end %>
   </div>

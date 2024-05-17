@@ -39,12 +39,15 @@
   margin: 20px 0;
   padding: 20px 0;
   border-top: 3px solid #00000040;
-  border-bottom: 3px solid #00000040;
+  // border-bottom: 3px solid #00000040;
   display: flex;
   flex-flow: column;
   align-items: center;
   justify-self: center;
   height: max-content;
+  .specialty-content {
+    position: relative;
+  }
 }
 
 .medical-services-list__specialist {
