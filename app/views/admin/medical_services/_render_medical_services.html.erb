@@ -1,7 +1,7 @@
-<div class="admin-elements services-index grid-masonry">
+<div class="admin-elements services-index grid-masonry" data-controller="masonry">
   <% @specialties.select { |sp| sp.medical_services.count > 0 }.each do |sp| %>
-    <div class="medical-services-list__specialty">
-      <div class="specialty-content">
+    <div class="medical-services-list__specialty grid-masonry-list">
+      <div class="grid-masonry-content">
         <h4><%= link_to sp.name, "specialitati-medicale/#{sp.slug}" %></h4>
         <% sp.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
           <%= render ms %>

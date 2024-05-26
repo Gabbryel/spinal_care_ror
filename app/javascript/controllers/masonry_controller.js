@@ -8,11 +8,11 @@ export default class extends Controller {
       grid.style.setProperty('column-gap', `3rem`);
       let rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
       let rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-row-gap'));
-      let rowSpan = Math.ceil((item.querySelector('.specialty-content').getBoundingClientRect().height+rowGap)/(rowHeight+rowGap));
+      let rowSpan = Math.ceil((item.querySelector('.grid-masonry-content').getBoundingClientRect().height+rowGap)/(rowHeight+rowGap));
       item.style.gridRowEnd = "span " + rowSpan;
     }
     function resizeAllGridItems(){
-      let allItems = document.getElementsByClassName("medical-services-list__specialty");
+      let allItems = document.getElementsByClassName("grid-masonry-list");
       for(let x=0; x<allItems.length; x++){
          resizeGridItem(allItems[x]);
       }
