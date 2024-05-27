@@ -6433,11 +6433,11 @@
         grid.style.setProperty("column-gap", `3rem`);
         let rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-auto-rows"));
         let rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-row-gap"));
-        let rowSpan = Math.ceil((item.querySelector(".specialty-content").getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
+        let rowSpan = Math.ceil((item.querySelector(".grid-masonry-content").getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
         item.style.gridRowEnd = "span " + rowSpan;
       }
       function resizeAllGridItems() {
-        let allItems = document.getElementsByClassName("medical-services-list__specialty");
+        let allItems = document.getElementsByClassName("grid-masonry-list");
         for (let x = 0; x < allItems.length; x++) {
           resizeGridItem(allItems[x]);
         }
@@ -6521,8 +6521,10 @@
     // }
     navbarFixed() {
       window.onscroll = () => {
-        let navbar = document.getElementById("navbar");
-        let navbarMenu = document.getElementById("navbar-menu");
+        let navbar;
+        document.getElementById("navbar-toggle") ? navbar = document.getElementById("navbar-toggle") : void 0;
+        let navbarMenu;
+        document.getElementById("navbar-menu") ? navbarMenu = document.getElementById("navbar-menu") : void 0;
         let navbarDistToTop = navbar.getBoundingClientRect().bottom;
         if (navbarDistToTop < window.innerHeight * (6 / 100)) {
           navbarMenu.style.position = "fixed";
@@ -6722,7 +6724,16 @@
         el.classList.toggle("active");
       });
       this.hamburger.classList.toggle("closed");
-      document.getElementById("navbar").style.zIndex = "unset";
+      if (document.getElementById("navbar-toggle")) {
+        var navbar = document.getElementById("navbar-toggle");
+      } else if (document.getElementById("admin-navbar-toggle")) {
+        var adminNavbar = document.getElementById("admin-navbar-toggle");
+      }
+      if (navbar) {
+        navbar.style.zIndex = "unset";
+      } else if (adminNavbar) {
+        adminNavbar.style.zIndex = "1";
+      }
       if (this.hamburger.classList.contains("closed")) {
         this.elements.forEach((el) => el.classList.add("trigger"));
         setTimeout(() => {
@@ -6745,7 +6756,11 @@
           this.longLine2.classList.add("active-long-line-2");
         }, 690);
       } else if (!this.hamburger.classList.contains("closed")) {
-        document.getElementById("navbar").style.zIndex = "1002";
+        if (navbar) {
+          navbar.style.zIndex = "1002";
+        } else if (adminNavbar) {
+          adminNavbar.style.zIndex = "1002";
+        }
         setTimeout(() => {
           this.longLine2.classList.remove("active-long-line-2");
         }, 10);
@@ -6768,11 +6783,20 @@
       }
     }
     close() {
+      if (document.getElementById("navbar-toggle")) {
+        var navbar = document.getElementById("navbar-toggle");
+      } else if (document.getElementById("admin-navbar-toggle")) {
+        var adminNavbar = document.getElementById("admin-navbar-toggle");
+      }
       this.hamburger.classList.remove("closed");
       this.toggleTargets.forEach((el) => {
         el.classList.remove("active");
       });
-      document.getElementById("navbar").style.zIndex = "1002";
+      if (navbar) {
+        navbar.style.zIndex = "1002";
+      } else if (adminNavbar) {
+        adminNavbar.style.zIndex = "1002";
+      }
       setTimeout(() => {
         this.longLine2.classList.remove("active-long-line-2");
       }, 10);

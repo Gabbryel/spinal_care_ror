@@ -6,9 +6,11 @@ export default class extends Controller {
   // }
   navbarFixed() {
     window.onscroll = () => {
-      let navbar = document.getElementById('navbar');
-      let navbarMenu = document.getElementById('navbar-menu');
-      let navbarDistToTop = navbar.getBoundingClientRect().bottom
+      let navbar
+      document.getElementById('navbar-toggle') ? (navbar = document.getElementById('navbar-toggle')) : undefined;
+      let navbarMenu
+      document.getElementById('navbar-menu') ? (navbarMenu = document.getElementById('navbar-menu')) : undefined;
+      let navbarDistToTop = navbar.getBoundingClientRect().bottom;
 
       if (navbarDistToTop < window.innerHeight * (6 / 100) ) {
         navbarMenu.style.position = 'fixed';

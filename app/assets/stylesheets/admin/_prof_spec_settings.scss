@@ -5,6 +5,19 @@
   grid-template-rows: 50px max-content max-content;
 }
 
+.default-container {
+  width: 100%;
+}
+
+.default-grid {
+  display: grid;
+  gap: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.specialties-index {
+  grid-auto-rows: max-content !important;
+}
 .section-main, .users-main {
   position: relative;
   display: flex;
@@ -49,7 +62,7 @@
 .admin-element, .profession, .specialty, .user {
   position: relative;
   box-shadow: 0 0 5px $color-1-40;
-  padding: 25px 15px;
+  padding: 15px;
   border-radius: 10px;
   font-size: 14px;
   color: $color-1;

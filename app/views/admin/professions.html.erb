@@ -1,13 +1,22 @@
 <% if access %>
-  <div class="professions-main section-main">
-    <h1>Profesii</h1>
+  <div class="user-container default-container data-controller="masonry">
+    <div class="users-main grid-masonry">
+
+      <h1>Profesii</h1>
       <%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newProfessionModal"  }, aria_label: 'Activează formularul pentru o profesie nouă', class: 'btn-nude btn-action btn-custom mb-5'  do %>
-        <p style="text-align: center;">Adaugă profesie nouă</p>
+      <p style="text-align: center;">Adaugă profesie nouă</p>
       <% end %>
-    <%= render partial: "professions/modal", locals: {new: true, modal_id: 'newProfessionModal', profession: @profession} %>
-    <div class="professions-index admin-elements">
-      <%= render Profession.order(order: :asc) %>
+      <%= render partial: "professions/modal", locals: {new: true, modal_id: 'newProfessionModal', profession: @profession} %>
+      
+      <div class="grid-masonry-list default-grid">
+        <% @professions.each do |p| %>
+        <div class="grid-masonry-content">
+          <%= render partial: "professions/profession", locals: {profession: p} %>
+        </div>
+        <% end %>
+      </div>
     </div>
+
   </div>
 <% else %>
     <%= no_access %>
