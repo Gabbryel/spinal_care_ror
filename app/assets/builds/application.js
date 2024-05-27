@@ -6521,9 +6521,9 @@
     // }
     navbarFixed() {
       window.onscroll = () => {
-        let navbar = document.getElementById("navbar");
+        let navbar2 = document.getElementById("navbar");
         let navbarMenu = document.getElementById("navbar-menu");
-        let navbarDistToTop = navbar.getBoundingClientRect().bottom;
+        let navbarDistToTop = navbar2.getBoundingClientRect().bottom;
         if (navbarDistToTop < window.innerHeight * (6 / 100)) {
           navbarMenu.style.position = "fixed";
           navbarMenu.style.width = "100vw";
@@ -6698,6 +6698,117 @@
         }
         validAnswer();
       }
+    }
+  };
+
+  // controllers/sidemenu_toggle_controller.js
+  var sidemenu_toggle_controller_exports = {};
+  __export(sidemenu_toggle_controller_exports, {
+    default: () => sidemenu_toggle_controller_default
+  });
+  var sidemenu_toggle_controller_default = class extends Controller {
+    static targets = ["toggle", "hamburger", "shortline", "longline", "longline2"];
+    constructor(context) {
+      super(context);
+      this.hamburger = this.hamburgerTarget;
+      this.longLine = this.longlineTarget;
+      this.longLine2 = this.longline2Target;
+      this.shortLines = this.shortlineTargets;
+      this.elements = [this.hamburger, this.longLine, this.longLine2, this.shortLines].flat();
+    }
+    toggle() {
+      this.toggleTargets.forEach((el) => {
+        el.classList.add("trigger");
+        el.classList.toggle("active");
+      });
+      this.hamburger.classList.toggle("closed");
+      if (document.getElementById("navbar-toggle")) {
+        var navbar2 = document.getElementById("navbar-toggle");
+      } else if (document.getElementById("admin-navbar-toggle")) {
+        var adminNavbar2 = document.getElementById("admin-navbar-toggle");
+      }
+      if (navbar2) {
+        navbar2.style.zIndex = "unset";
+      } else if (adminNavbar2) {
+        adminNavbar2.style.zIndex = "1";
+      }
+      if (this.hamburger.classList.contains("closed")) {
+        this.elements.forEach((el) => el.classList.add("trigger"));
+        setTimeout(() => {
+          this.hamburger.classList.add("active");
+        }, 10);
+        setTimeout(() => {
+          this.shortLines.forEach((el) => {
+            el.classList.add("active");
+          });
+        }, 40);
+        setTimeout(() => {
+          this.shortLines.forEach((el) => {
+            el.classList.add("hidden");
+          });
+        }, 640);
+        setTimeout(() => {
+          this.longLine.classList.add("active-long-line-1");
+        }, 670);
+        setTimeout(() => {
+          this.longLine2.classList.add("active-long-line-2");
+        }, 690);
+      } else if (!this.hamburger.classList.contains("closed")) {
+        if (navbar2) {
+          navbar2.style.zIndex = "1002";
+        } else if (adminNavbar2) {
+          adminNavbar2.style.zIndex = "1002";
+        }
+        setTimeout(() => {
+          this.longLine2.classList.remove("active-long-line-2");
+        }, 10);
+        setTimeout(() => {
+          this.longLine.classList.remove("active-long-line-1");
+        }, 30);
+        setTimeout(() => {
+          this.shortLines.forEach((el) => {
+            el.classList.remove("hidden");
+          });
+        }, 640);
+        setTimeout(() => {
+          this.shortLines.forEach((el) => {
+            el.classList.remove("active");
+          });
+        }, 740);
+        setTimeout(() => {
+          this.hamburger.classList.remove("active");
+        }, 780);
+      }
+    }
+    close() {
+      this.hamburger.classList.remove("closed");
+      this.toggleTargets.forEach((el) => {
+        el.classList.remove("active");
+      });
+      if (navbar) {
+        navbar.style.zIndex = "1002";
+      } else if (adminNavbar) {
+        adminNavbar.style.zIndex = "1002";
+      }
+      setTimeout(() => {
+        this.longLine2.classList.remove("active-long-line-2");
+      }, 10);
+      setTimeout(() => {
+        this.longLine.classList.remove("active-long-line-1");
+      }, 30);
+      setTimeout(() => {
+        this.shortLines.forEach((el) => {
+          el.classList.remove("hidden");
+        });
+      }, 640);
+      setTimeout(() => {
+        this.shortLines.forEach((el) => {
+          el.classList.remove("active");
+        });
+      }, 740);
+      setTimeout(() => {
+        this.hamburger.classList.remove("active");
+      }, 780);
     }
   };
 
@@ -7251,7 +7362,7 @@
   };
 
   // rails:/Users/aquaman/Code/Projects/spinal_care_ror/app/javascript/controllers/**/*_controller.js
-  var modules = [{ name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
+  var modules = [{ name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
   var controller_default = modules;
 
   // controllers/index.js
