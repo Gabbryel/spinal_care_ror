@@ -6521,9 +6521,11 @@
     // }
     navbarFixed() {
       window.onscroll = () => {
-        let navbar2 = document.getElementById("navbar");
-        let navbarMenu = document.getElementById("navbar-menu");
-        let navbarDistToTop = navbar2.getBoundingClientRect().bottom;
+        let navbar;
+        document.getElementById("navbar-toggle") ? navbar = document.getElementById("navbar-toggle") : void 0;
+        let navbarMenu;
+        document.getElementById("navbar-menu") ? navbarMenu = document.getElementById("navbar-menu") : void 0;
+        let navbarDistToTop = navbar.getBoundingClientRect().bottom;
         if (navbarDistToTop < window.innerHeight * (6 / 100)) {
           navbarMenu.style.position = "fixed";
           navbarMenu.style.width = "100vw";
@@ -6723,14 +6725,14 @@
       });
       this.hamburger.classList.toggle("closed");
       if (document.getElementById("navbar-toggle")) {
-        var navbar2 = document.getElementById("navbar-toggle");
+        var navbar = document.getElementById("navbar-toggle");
       } else if (document.getElementById("admin-navbar-toggle")) {
-        var adminNavbar2 = document.getElementById("admin-navbar-toggle");
+        var adminNavbar = document.getElementById("admin-navbar-toggle");
       }
-      if (navbar2) {
-        navbar2.style.zIndex = "unset";
-      } else if (adminNavbar2) {
-        adminNavbar2.style.zIndex = "1";
+      if (navbar) {
+        navbar.style.zIndex = "unset";
+      } else if (adminNavbar) {
+        adminNavbar.style.zIndex = "1";
       }
       if (this.hamburger.classList.contains("closed")) {
         this.elements.forEach((el) => el.classList.add("trigger"));
@@ -6754,10 +6756,10 @@
           this.longLine2.classList.add("active-long-line-2");
         }, 690);
       } else if (!this.hamburger.classList.contains("closed")) {
-        if (navbar2) {
-          navbar2.style.zIndex = "1002";
-        } else if (adminNavbar2) {
-          adminNavbar2.style.zIndex = "1002";
+        if (navbar) {
+          navbar.style.zIndex = "1002";
+        } else if (adminNavbar) {
+          adminNavbar.style.zIndex = "1002";
         }
         setTimeout(() => {
           this.longLine2.classList.remove("active-long-line-2");
@@ -6781,6 +6783,11 @@
       }
     }
     close() {
+      if (document.getElementById("navbar-toggle")) {
+        var navbar = document.getElementById("navbar-toggle");
+      } else if (document.getElementById("admin-navbar-toggle")) {
+        var adminNavbar = document.getElementById("admin-navbar-toggle");
+      }
       this.hamburger.classList.remove("closed");
       this.toggleTargets.forEach((el) => {
         el.classList.remove("active");

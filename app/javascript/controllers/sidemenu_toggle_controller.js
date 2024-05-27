@@ -76,6 +76,11 @@ export default class extends Controller {
   }}
 
   close() {
+    if (document.getElementById('navbar-toggle')) {
+      var navbar = document.getElementById('navbar-toggle');
+    } else if (document.getElementById('admin-navbar-toggle')) {
+      var adminNavbar = document.getElementById('admin-navbar-toggle');
+    }
     this.hamburger.classList.remove("closed");
     this.toggleTargets.forEach(el => {
       el.classList.remove('active')

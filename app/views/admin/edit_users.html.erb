@@ -1,10 +1,9 @@
 <% if access %>
-  <div class="users-container" data-controller="masonry">
-    <div class="users-main grid-masonry">
+  <div class="users-container">
+    <div class="users-main">
       <h1>Utilizatori</h1>
-      <div class="users-index grid-masonry-list" >
+      <div class="users-index" style="grid-auto-rows: max-content;">
         <% @users.each do |u| %>
-        <div class="grid-masonry-content">
           <div class="user">
             <p><%= u.alias ? u.alias : 'Fără alias' %> (<%= u.email %>) <%= u.admin ? "are drepturi de admin" : "nu are drepturi de admin" %> <%= u.god_mode ? 'și de editare configurări sensibile' : nil %></p>
             <div>
@@ -36,7 +35,6 @@
               <% end %>
             <% end %>
           </div>
-        </div>
 
         <% end %>
       </div>
