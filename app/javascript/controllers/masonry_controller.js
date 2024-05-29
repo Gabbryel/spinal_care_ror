@@ -9,7 +9,8 @@ export default class extends Controller {
       let rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
       let rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-row-gap'));
       let rowSpan = Math.ceil((item.querySelector('.grid-masonry-content').getBoundingClientRect().height+rowGap)/(rowHeight+rowGap));
-      item.style.gridRowEnd = "span " + rowSpan;
+      // item.style.gridRowEnd = "span " + rowSpan;
+      item.style.gridRowEnd = `span ${rowSpan + Math.floor((Number(window.innerWidth)) / 100 * 0.25)}`;
     }
     function resizeAllGridItems(){
       let allItems = document.getElementsByClassName("grid-masonry-list");
