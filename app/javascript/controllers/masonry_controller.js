@@ -13,7 +13,7 @@ export default class extends Controller {
     }
     function resizeAllGridItems(){
       let allItems = document.getElementsByClassName("grid-masonry-list");
-      for(let x=0; x<allItems.length; x++){
+      for(let x = 0; x < allItems.length; x++ ){
          resizeGridItem(allItems[x]);
       }
    }
