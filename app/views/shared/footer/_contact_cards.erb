@@ -2,6 +2,7 @@
   <% contact_cards.each do |cc| %>
     <div class="contact-card">
       <i class="fas fa-hospital-symbol"></i>
+      <p><%= cc[:name] %></p>
       <p><%= cc[:address] %></p>
       <a href="tel:<%=cc[:tel_fix]%>" title="Contact telefonic"><i class="fas fa-phone"></i> <%=cc[:tel_fix]%></a>
       <% if cc[:tel_mob] %>

@@ -1,14 +1,14 @@
 module ContactCardsHelper
   def contact_cards
     [{
+      name: 'Ambulatoriu de specialitate',
       address: 'Str. Mihai Eminescu, nr. 1bis, Bacău',
-      tel_fix: '0334405492',
-      tel_mob: '0774649289',
+      tel_fix: '0374554344',
     },
     {
+      name: 'Spitalizare de zi',
       address: 'Str. Nicolae Titulescu nr. 31, Bacău',
-      tel_fix: '0334405676',
-      tel_mob: '0745155053',
+      tel_fix: '0374554344',
     }
   ]
   end
