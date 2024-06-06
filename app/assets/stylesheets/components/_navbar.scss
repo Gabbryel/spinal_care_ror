@@ -129,7 +129,7 @@
   }
   .long-line,
   .short-line {
-    position: abs($number: 0);
+    position: relative;
     width: 40px;
     border: 1.5px solid $color-2;
     border-radius: 20px;
