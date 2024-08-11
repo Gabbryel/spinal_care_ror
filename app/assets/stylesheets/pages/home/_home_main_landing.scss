@@ -1,7 +1,3 @@
-.trigger {
-  transition: 1s;
-}
-
 .main {
   position: relative;
   margin: 0 auto;
@@ -18,104 +14,65 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 50% 50%;
-  padding-top: 4rem;
-  ul {
-    list-style: none;
-    font-family: $font-poppins;
-  }
-  @media (min-width: 576px) {
-    padding: 0;
+  min-height: 90dvh;
+  @media(min-width: 576px) {
+    min-height: 80dvh;
   }
 
-  .main-image {
+  .landing-image {
     position: relative;
-    grid-area: 2 / 1 / 3 / 3;
-    background-color: $color-contrast;
-    overflow: hidden;
-    aspect-ratio: 1 / 1;
-    align-self: center;
-    justify-self: center;
+    grid-area: 1 / 1 / 4 / 4;
     height: 100%;
     width: 100%;
-    img {
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-    }
-    @media (min-width: 576px) and (orientation: portrait) {
-      grid-area: 1 / 2 / 3 / 3;
-    }
-    @media (orientation: landscape) {
-      grid-area: 1 / 2 / 3 / 3;
-    }
-    @media (min-width: 1025px) and (orientation: landscape) {
-      grid-area: 1 / 2 / 4 / 3;
-    }
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 40%;
+    opacity: 1;
   }
 
-  .main-motto {
-    @include mottos;
+  .landing-motto {
+    position: relative;
+    grid-area: 2 / 1 / 4 / 4;
+    font-size: clamp(38px, calc(((0.5dvh + 0.5dvw) * 4) + 1dvw), 100px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-height: 80%;
+    align-self: center;
+    max-width: 90%;
+    justify-self: center;
+    padding-bottom: 2rem;
     ul {
       list-style: none;
-      font-family: $font-poppins;
+      font-family: $font-mont;
       text-align: center;
       padding: 0;
-  @media (min-width: 768px) {
-    text-align: left;
-  }
-    }
-    .h1-spinal-care {
-      font-size: 1.3em;
-      text-transform: uppercase;
-      font-family: $font-mont;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      .spinal-span-1 {
-        color: $color-2;
-      }
-      .spinal-span-2 {
-        color: $color-3;
-      }
-      @media (min-width: 576px) {
-        font-size: 1.1em;
-        letter-spacing: -0.06em;
-      }
     }
     .spinal-care-description {
-      font-size: 0.43em;
-      margin-top: 2rem;
-      text-align: left;
-      color: $color-3;
-      p {
-        margin: -1rem 0;
-      }
-      i {
-        font-size: inherit;
-      }
-      @media (min-width: 768px) {
-        text-align: unset;
-      }
-    }
-    .h2-founder, .h2-clinic {
-      position: relative;
-      font-family: inherit;
-      font-size: 0.346em;
-      letter-spacing: 0.13em;
-      font-weight: 400;
-      color: $color-1;
-      @media (min-width: 576px) {
-        font-size: 0.283em;
-        letter-spacing: 0.125em;
+      text-align: center;
+      color: #fff;
+      font-weight: 700;
+      font-family: 'Montserrat';
+      font-size: clamp(16px, calc(2.5rem * 1.4dvw), 90px);
+      transform: scale(1, 1.1);
+      #landing-image-description {
+        opacity: 0;
+        animation: text-opacity-off 4s ease-in-out infinite;
+        animation-iteration-count: infinite;
+        line-height: 0.9;
+        min-height: 120px;
+        @keyframes text-opacity-off {
+          0% {
+            opacity: 0;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+          opacity: 0;
+        }
       }
     }
-    .h2-clinic {
-      letter-spacing: 0.16em;
-      font-size: 0.4em;
-      margin-top: -7px;
-      @media (min-width: 576px) {
-        font-size: 0.293em;
-        letter-spacing: 0.24em;
-      }
     }
     button {
       margin-top: 3rem;
@@ -145,5 +102,101 @@
       max-width: 1400px;
       color: $color-5;
     }
+  }
+}
+
+.main-image {
+  position: relative;
+  grid-area: 2 / 1 / 3 / 3;
+  background-color: $color-contrast;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  align-self: center;
+  justify-self: center;
+  height: 100%;
+  width: 100%;
+  img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+  @media (min-width: 576px) and (orientation: portrait) {
+    grid-area: 1 / 2 / 3 / 3;
+  }
+  @media (orientation: landscape) {
+    grid-area: 1 / 2 / 3 / 3;
+  }
+  @media (min-width: 1025px) and (orientation: landscape) {
+    grid-area: 1 / 2 / 4 / 3;
+  }
+}
+.main-motto {
+  @include mottos;
+  ul {
+    list-style: none;
+    font-family: $font-poppins;
+    text-align: center;
+    padding: 0;
+@media (min-width: 768px) {
+  text-align: left;
+}
+  }
+  .h1-spinal-care {
+    font-size: 1.3em;
+    text-transform: uppercase;
+    font-family: $font-mont;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    .spinal-span-1 {
+      color: $color-2;
+    }
+    .spinal-span-2 {
+      color: $color-3;
+    }
+    @media (min-width: 576px) {
+      font-size: 1.1em;
+      letter-spacing: -0.06em;
+    }
+  }
+  .spinal-care-description {
+    font-size: 0.43em;
+    margin-top: 2rem;
+    text-align: left;
+    color: $color-3;
+    p {
+      margin: -1rem 0;
+    }
+    i {
+      font-size: inherit;
+    }
+    @media (min-width: 768px) {
+      text-align: unset;
+    }
+  }
+  .h2-founder, .h2-clinic {
+    position: relative;
+    font-family: inherit;
+    font-size: 0.346em;
+    letter-spacing: 0.13em;
+    font-weight: 400;
+    color: $color-1;
+    @media (min-width: 576px) {
+      font-size: 0.283em;
+      letter-spacing: 0.125em;
+    }
+  }
+  .h2-clinic {
+    letter-spacing: 0.16em;
+    font-size: 0.4em;
+    margin-top: -7px;
+    @media (min-width: 576px) {
+      font-size: 0.293em;
+      letter-spacing: 0.24em;
+    }
+  }
+  button {
+    margin-top: 3rem;
+  padding: 1rem 2rem;
+  border-radius: 0.4rem;
   }
 }
