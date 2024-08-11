@@ -1,13 +1,15 @@
 <div class="navbar navbar-expand-sm navbar-light navbar-lewagon" id="navbar-toggle" data-controller="navbarFixed" data-action="scroll@window->navbarFixed#navbarFixed">
   <div class="navbar-content">
     <%= link_to root_path, class: "navbar-brand" do %>
-      <%= image_tag "logo2-color.png", class: 'navbar-brand-img', data: {sidemenu_toggle_target: 'toggle'}, alt: 'logo spinal care' %>
+      <%= image_tag "logo-signature-v6.png", class: 'navbar-brand-img', data: {sidemenu_toggle_target: 'toggle'}, alt: 'logo spinal care' %>
       <%= cl_image_tag("kzaelg1jvfchktxo5eht.png", id: 'anmcs') %>
     <% end %>
     <div class="navbar-menu" id="navbar-menu">
         <ul class="navbar-items" id="navbar-items">
           <li class="<%= path_helper == '' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Acasă', root_path %><div></div></li>
-          <li class="<%= path_helper == 'echipa' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Echipa medicală', echipa_path %><div></div></li>
+          <li class="<%= path_helper == 'echipa' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Echipa medicală', echipa_path %>
+            <div></div>
+          </li>
           <li class="<%= path_helper == 'specialitati-medicale' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Specialități medicale', specialitati_medicale_path %><div></div></li>
           <li class="<%= path_helper == 'servicii-medicale' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Servicii medicale', servicii_medicale_path %><div></div></li>
           <li class="<%= path_helper == 'info-pacient-index' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Info pacient', info_pacient_index_path %><div></div></li>
