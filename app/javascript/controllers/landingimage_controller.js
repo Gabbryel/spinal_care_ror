@@ -17,7 +17,7 @@ export default class extends Controller {
     var showImages = () => {
       images.forEach((image, i) => {
         setTimeout(() => {
-          mainContainer.style.transition = "background-image 3970ms";
+          mainContainer.style.transition = "background-image 3999ms";
           console.log(typeof image)
           if (typeof image === "object") {
             console.log(typeof image)
