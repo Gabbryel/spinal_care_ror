@@ -6420,6 +6420,45 @@
     }
   };
 
+  // controllers/landingimage_controller.js
+  var landingimage_controller_exports = {};
+  __export(landingimage_controller_exports, {
+    default: () => landingimage_controller_default
+  });
+  var landingimage_controller_default = class extends Controller {
+    connect() {
+      var mainContainer = document.getElementById("landing-image");
+      var imageText = document.getElementById("landing-image-description");
+      var images = [
+        "https://res.cloudinary.com/www-spinalcare-ro/image/upload/v1653807781/development/0236_cu8xqs.webp",
+        ["https://res.cloudinary.com/www-spinalcare-ro/image/upload/v1654329520/development/btcfrzj088gsc9vxau9n1aeta4g2.webp", "https://res.cloudinary.com/www-spinalcare-ro/image/upload/v1699776716/cabinets/www.sysphotodesign.ro_156_b2vhwx.webp", "https://res.cloudinary.com/www-spinalcare-ro/image/upload/v1699776632/cabinets/www.sysphotodesign.ro_19_bihpcn.jpg"],
+        "https://res.cloudinary.com/www-spinalcare-ro/image/upload/v1654682878/production/zg9bn5picn9m1th7e5narlkjej8u.webp",
+        "https://res.cloudinary.com/www-spinalcare-ro/image/upload/v1699776716/cabinets/www.sysphotodesign.ro_157_gxykxx.webp",
+        "https://res.cloudinary.com/www-spinalcare-ro/image/upload/v1718358055/cabinets/0126_vmwegk.webp",
+        "https://res.cloudinary.com/www-spinalcare-ro/image/upload/v1699776672/cabinets/www.sysphotodesign.ro_91_af55tg.jpg",
+        "https://res.cloudinary.com/www-spinalcare-ro/image/upload/v1723391283/cabinets/eximia-web_v2_lnyhu8.webp"
+      ];
+      var texts = ["clinic\u0103 medical\u0103 multidisciplinar\u0103", "medici experimenta\u021Bi", "kinetoterapeu\u021Bi dedica\u021Bi", "aparatur\u0103 medical\u0103 performant\u0103", "spitalizare de zi", "gratuit 100% prin CAS", "terapii 'Beauty' neinvazive"];
+      var showImages = () => {
+        images.forEach((image, i) => {
+          setTimeout(() => {
+            mainContainer.style.transition = "background-image 3970ms";
+            console.log(typeof image);
+            if (typeof image === "object") {
+              console.log(typeof image);
+              mainContainer.style.backgroundImage = `url(${image[Math.round(Math.random() * 2)]})`;
+            } else {
+              mainContainer.style.backgroundImage = `url(${image})`;
+            }
+            imageText.innerText = texts[i];
+          }, 4e3 * i);
+        });
+      };
+      showImages();
+      setInterval(showImages, 4e3 * texts.length);
+    }
+  };
+
   // controllers/masonry_controller.js
   var masonry_controller_exports = {};
   __export(masonry_controller_exports, {
@@ -7369,7 +7408,7 @@
   };
 
   // rails:/Users/aquaman/Code/Projects/spinal_care_ror/app/javascript/controllers/**/*_controller.js
-  var modules = [{ name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
+  var modules = [{ name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "landingimage", module: landingimage_controller_exports, filename: "landingimage_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
   var controller_default = modules;
 
   // controllers/index.js
