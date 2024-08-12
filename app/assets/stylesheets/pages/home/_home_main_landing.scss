@@ -28,7 +28,8 @@
     background-size: cover;
     background-position: 50% 40%;
     opacity: 1;
-    transition: background-image 3900ms;
+    will-change: transition, background-image;
+    transition: background-image 3990ms;
   }
 
   .landing-motto {
