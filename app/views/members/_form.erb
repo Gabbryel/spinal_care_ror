@@ -14,6 +14,9 @@
     <%= f.association :specialty, label: false, input_html: { data: {memberFormSpecialty_target: 'specialty'}}, prompt: 'Alege specialitatea' %>
     <%= f.input :has_own_page, label: "Are pagină dedicată?" %>
     <%= f.input :has_prices, label: "Are listă de prețuri asociată?" %>
+    <%= f.input :selected, label: "Selectat pentru pagina principală? *kinetoterapeuți" %>
+    <%= f.input :order, collection: 1..4, prompt: 'alege ordinea de afișare în pagina principală', label: false %>
+    <%= f.input :schroth, label: "specialist schroth" %>
     <%= f.rich_text_area :description, placeholder: 'Bio sau alte info despre membrul echipei Spinal Care' %>
     <br>
     <%= f.submit 'Salvează', class: 'btn-custom btn-green' %>

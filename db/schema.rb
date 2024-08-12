@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_09_130545) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_12_120456) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -86,6 +86,9 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_09_130545) do
     t.string "doctor_grade", default: ""
     t.boolean "has_own_page", default: false
     t.boolean "has_prices", default: false
+    t.boolean "selected"
+    t.integer "order"
+    t.boolean "schroth"
     t.index ["profession_id"], name: "index_members_on_profession_id"
     t.index ["specialty_id"], name: "index_members_on_specialty_id"
   end
@@ -97,6 +100,18 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_09_130545) do
     t.string "slug"
     t.boolean "has_specialty", default: false
     t.integer "order"
+  end
+
+  create_table "questionnaires", force: :cascade do |t|
+    t.string "age"
+    t.string "sex"
+    t.string "specialty"
+    t.string "where_you_listened"
+    t.string "who_accompanied_you"
+    t.boolean "where_you_informed_about_rights"
+    t.boolean "where_you_informed_about_diagnostic"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "reviews", force: :cascade do |t|
