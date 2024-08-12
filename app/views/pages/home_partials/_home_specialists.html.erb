@@ -1,5 +1,5 @@
 <div class="main-specialists">
-  <%= title('Medicii Spinal Care', nil, nil) %>
+  <%= title('Medicii Spinal Care', 'section-title-blue__reverse', 'section-title-text__reverse') %>
   <div class="main-specialists-index">
     <% @medics.each_with_index do |m, i| %>
       <%= render partial: "members/member_card", locals: {m: m, i: i, not_animated: nil, no_grid_area: 'no_grid_area'} %>
