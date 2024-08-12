@@ -2,7 +2,7 @@
   position: relative;
   display: grid;
   grid-template-columns: 10% 40% 40% 10%;
-  grid-template-rows: repeat(4, 5dvh);
+  grid-template-rows: repeat(4, calc(2dvh + 2dvw));
   padding: 5dvh;
   flex-basis: 100%;
   max-width: 1800px;

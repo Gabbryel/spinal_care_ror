@@ -8,16 +8,14 @@
   grid-template-rows: calc(1dvh * 93), 200px, min-content, min-content, min-content, min-content, min-content;
 }
 
+
 .main-landing {
   grid-area: 1 / 1 / 2 / -1;
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 50% 50%;
-  min-height: 90dvh;
-  @media(min-width: 576px) {
-    min-height: 80dvh;
-  }
+  min-height: 50dvh;
 
   .landing-image {
     position: relative;
@@ -106,10 +104,12 @@
     }
   }
 }
-
+.landing-section {
+  min-height: 80dvh;
+}
 .main-image {
   position: relative;
-  grid-area: 2 / 1 / 3 / 3;
+  grid-area: 1 / 1 / 2 / 3;
   background-color: $color-contrast;
   overflow: hidden;
   aspect-ratio: 1 / 1;
@@ -122,13 +122,8 @@
     width: 100%;
     object-fit: cover;
   }
-  @media (min-width: 576px) and (orientation: portrait) {
-    grid-area: 1 / 2 / 3 / 3;
-  }
-  @media (orientation: landscape) {
-    grid-area: 1 / 2 / 3 / 3;
-  }
-  @media (min-width: 1025px) and (orientation: landscape) {
+
+  @media (min-width: 1000px) {
     grid-area: 1 / 2 / 4 / 3;
   }
 }
