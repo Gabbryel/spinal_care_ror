@@ -71,8 +71,8 @@
       display: flex;
       position: relative;
       gap: 12px;
-      color: $color-2;
-      font-size: clamp(13px, 1.05vw, 20px);
+      color: $color-5;
+      font-size: clamp(13px, calc(0.75dvw + 0.75dvh), 24px);
       .active-menu-item {
        @include underline-selected($color-5, 2px)
       }
@@ -90,7 +90,7 @@
     div {
       position: relative;
       width: 100%;
-      border-bottom: 2px solid $color-2;
+      border-bottom: 2px solid $color-5;
     }
   }
 }
