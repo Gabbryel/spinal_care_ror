@@ -5,7 +5,7 @@
   <div class="member-container__main" data-controller="bio">
     <section>
       <%= render partial: "members/member_card", locals: {m: @member, i: nil, not_animated: 'not_animated', no_grid_area: nil} %>
-      <%= action_btn("Programează-te!", "btn-custom", "btn-action") %>
+      <%= book_btn("Programează-te!", "btn-custom btn-action") %>
     </section>
     <% if @member.description.body.empty? %>
       <% nil %>

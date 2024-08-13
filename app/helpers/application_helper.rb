@@ -45,6 +45,10 @@ module ApplicationHelper
     button_tag text, class:"btn-nude #{x} #{y}", data: { bs_toggle: "modal", bs_target: "#contactModal"}
   end
 
+  def book_btn(text, class_name)
+    button_tag text, class:"btn-nude #{class_name}", data: {bs_toggle: "modal", bs_target: "#promoModal"}
+  end
+
   def see_the_team(anchor)
     button_to 'VEZI TOATĂ ECHIPA', echipa_path.concat("##{anchor}"), class: 'btn btn-action', method: :get, data: {turbo: false}, type: :action
   end
