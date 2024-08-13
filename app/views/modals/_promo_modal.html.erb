@@ -1,62 +1,24 @@
-<div class="modal fade" id="promoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="promoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-body">
-        <!-- carousel -->
-        <div id="carouselExampleIndicators" class="carousel carousel-dark slide" >
-          <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2" class="" aria-current="true"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3" class=""></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4" class=""></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4" aria-label="Slide 5" class=""></button>
-          </div>
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <div class="promo-item bd-placeholder-img bd-placeholder-img-lg w-100" width="800" height="400" preserveAspectRatio="xMidYMid slice" focusable="false">
-                <div class="promo-item__photo-container" style="background-image: url('<%= cl_image_path("www.sysphotodesign.ro_220_joqsrn.jpg", :quality=>'auto:best', :width=>600, :crop=>"scale") %>')"></div>
-                <div class="promo-item__text">
-                  <h2>Neurochirurgie</h2>
-                  <div class="promo-item__text_description">
-                    <div class="percentage">
-                      <span>-20%</span>
-                    </div>
-                    <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ac lorem placerat, mattis massa sit amet, sollicitudin est. Sed nibh lorem, varius in tempus eget, sagittis quis leo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis.</span>
-                  </div>
-                  <%= action_btn("Programează-te!", 'btn-action', 'btn-custom') %>
-                  <p class="promo-item__validity">Promoție valabilă în perioada 01-01-2024 - 01-02-2024</p>
-                </div>
-              </div>
-            </div>
-            <div class="carousel-item">
-              <div class="promo-item bd-placeholder-img bd-placeholder-img-lg w-100" width="800" height="400" preserveAspectRatio="xMidYMid slice" focusable="false">
-                <div class="promo-item__photo-container" style="background-image: url('<%= cl_image_path("www.sysphotodesign.ro_220_joqsrn.jpg", :quality=>'auto:best', :width=>600, :crop=>"scale") %>')"></div>
-                <div class="promo-item__text">
-                  <h2>Neurochirurgie</h2>
-                  <div class="promo-item__text_description">
-                    <div class="percentage">
-                      <span>-30%</span>
-                    </div>
-                    <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ac lorem placerat, mattis massa sit amet, sollicitudin est. Sed nibh lorem, varius in tempus eget, sagittis quis leo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis.</span>
-                  </div>
-                  <%= action_btn("Programează-te!", 'btn-action', 'btn-custom') %>
-                  <p class="promo-item__validity">Promoție valabilă în perioada 01-01-2024 - 01-02-2024</p>
-                </div>
-              </div>
-            </div>
-            <div class="carousel-item">
-              <svg class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" width="800" height="400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Third slide" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#555"></rect><text x="50%" y="50%" fill="#333" dy=".3em">Third slide</text></svg>
-            </div>
-            <div class="carousel-item">
-              <svg class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" width="800" height="400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Third slide" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#555"></rect><text x="50%" y="50%" fill="#333" dy=".3em">Third slide</text></svg>
-            </div>
-            <div class="carousel-item">
-              <svg class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" width="800" height="400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Third slide" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#555"></rect><text x="50%" y="50%" fill="#333" dy=".3em">Third slide</text></svg>
-            </div>
-            <button type="button" class="btn-nude btn-close-modal" data-bs-dismiss="modal">&#x2716;</button>
-          </div>
-        </div>
-        <!-- carousel -->
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<div class="modal modal-xl fade" tabindex="-1" id="promoModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Clinica Spinal Care</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <iframe src="https://programari.spinalcare.ro" frameborder="0"></iframe>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Închide</button>
       </div>
     </div>
   </div>
