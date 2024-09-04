@@ -11,12 +11,12 @@
       <li><%= link_to 'Specialități medicale', specialitati_medicale_path %></li>
       <li><%= link_to 'Servicii medicale', servicii_medicale_path %></li>
       <!-- <li><%#= link_to 'Aparatura medicală' %></li> -->
-      <li><%= link_to 'Info pacient', info_pacient_index_path %></li>
       <li>
-        <button type="button" class="btn-nude" data-bs-toggle="modal" data-bs-target="#promoModal">
+        <button type="button" class="btn-nude text-warning" data-bs-toggle="modal" data-bs-target="#promoModal">
           Programări
         </button><div></div>
       </li>
+      <li><%= link_to 'Info pacient', info_pacient_index_path %></li>
       <% if current_user %>
         <li>
           <button type="button" class="btn-nude" data-bs-toggle="modal" data-bs-target="#promoModal">
