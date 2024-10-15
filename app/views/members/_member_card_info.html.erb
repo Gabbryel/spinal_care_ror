@@ -8,6 +8,9 @@
     <% end %>
   </div>
   <div class="member-card-info">
+    <% if m.founder %>
+      <h2 class="fw-bold">Fondator</h2>
+    <% end %>
     <h1 class="member-card-info__name <%= m.has_own_page ? 'underline' : nil %>">
        <span><%= m.academic_title if m.academic_title != '-' %></span> <%= full_name(m) %>
     </h1>

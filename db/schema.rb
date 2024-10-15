@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_12_120456) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_15_180729) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -89,6 +89,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_12_120456) do
     t.boolean "selected"
     t.integer "order"
     t.boolean "schroth"
+    t.boolean "founder", default: false
     t.index ["profession_id"], name: "index_members_on_profession_id"
     t.index ["specialty_id"], name: "index_members_on_specialty_id"
   end
