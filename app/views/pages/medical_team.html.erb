@@ -31,11 +31,15 @@
     </div>
 
 
-
+    <div class="profession-div">
+      <% @team_members.select {|tm| tm.last_name == 'Dobreci' }.each do |m| %>
+        <%= render partial: "members/member_card", locals: {m: m, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
+      <% end %>
+    </div>
   <% @professions.each do |p| %>
     <% if p.members.count > 0 %>
       <div class="profession-div" id="<%= p.slug %>">
-          <% p.members.order(:last_name).each do |m| %>
+          <% p.members.order(:last_name).select {|m| m.last_name != 'Dobreci'}.each do |m| %>
             <%= render partial: "members/member_card", locals: {m: m, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
           <% end %>
       </div>

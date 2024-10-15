@@ -52,7 +52,8 @@ class MembersController < ApplicationController
   end
 
   def index
-    @posts = policy_scope(Member).all
+    @members = policy_scope(Member).all
+    render json: @members
   end
 
   def show
