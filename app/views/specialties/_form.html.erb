@@ -1,6 +1,7 @@
 <%= simple_form_for(specialty, id: (specialty.id ? dom_id(specialty, :edit) : dom_id(Specialty.new))) do |f| %>
 <%= f.input :name, input_html: { autofocus: true } %>
 <%= f.input :photo %>
+<%= f.input :has_day_hospitalization %>
 <%#= f.rich_text_area :description %>
 <div class="spec-crud">
     <button class="btn-custom btn-green">Salvează</button>
