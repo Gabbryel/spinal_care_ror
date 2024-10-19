@@ -5,6 +5,7 @@
     </div>
   <% end %>
   <%= f.input :name, label: false, placeholder: 'numele serviciului medical' %>
+  <%= f.input :has_day_hospitalization, label: 'spitalizare de zi' %>
   <%= f.association :specialty, order: :name, value_method: :id, label: false, prompt: 'specialitate medicală' %>
   <%= f.association :member, collection: Member.all.select {|m| m.has_prices }.sort_by { |m| m.specialty_name}, label_method: :form_label, value_method: :id, label: false, prompt: 'alege specialistul' %>
   <%= f.input :price, label: false, placeholder: 'prețul în lei' %>

@@ -1,7 +1,14 @@
 <div class="medical-service">
   <%= render partial: "admin/medical_services/medical_service_info", locals: { medical_service: medical_service } %>
   <div class="medical-service__body">
-    <span><%= medical_service.name %></span>
+    <span><%= medical_service.name %>
+    <% if medical_service.has_day_hospitalization %>
+      <br>
+      <%= link_to "specialitati-medicale/spitalizare-de-zi" do %>
+        <span class="badge bg-color-1">🏥 spitalizare de zi</span>
+      <% end %>
+    <% end %>
+    </span>
     <span class="text-end"><%= medical_service.price == 0 ? 
     action_btn("📞", nil, nil) :
     "#{medical_service.price} lei" %> </span>

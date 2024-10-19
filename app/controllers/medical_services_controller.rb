@@ -62,6 +62,6 @@ class MedicalServicesController < ApplicationController
   end
 
   def medical_service_params
-    params.require(:medical_service).permit(:name, :description, :price, :slug, :specialty_id, :member_id)
+    params.require(:medical_service).permit(:name, :description, :price, :slug, :specialty_id, :member_id, :has_day_hospitalization )
   end
 end
