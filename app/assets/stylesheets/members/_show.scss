@@ -176,6 +176,15 @@
     grid-template-columns: 1fr;
     grid-template-rows: 320px 80px 70px;
     background: #ffe;
+    .member-card-extras {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      align-content: flex-start;
+      align-items: flex-start;
+      position: absolute;
+      bottom: 34%;
+      }
       .member-card__photo-holder {
         grid-area: 1/1/2/-1;
         background-size: 70%;

@@ -1,11 +1,22 @@
-#member_specialty_id, #member_doctor_grade {
+#medic-form {
   display: none;
 }
-#member_specialty_id.trigger, #member_doctor_grade.trigger {
+#medic-form.trigger {
   display: block;
   opacity: 0;
   transition: 1s;
 }
-#member_specialty_id.active, #member_doctor_grade.active {
+#medic-form.active {
   opacity: 1;
+}
+
+.form-kineto {
+  fieldset {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
 }

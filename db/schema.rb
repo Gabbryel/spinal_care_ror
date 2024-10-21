@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_18_163818) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_20_143105) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
@@ -91,6 +92,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_18_163818) do
     t.integer "order"
     t.boolean "schroth"
     t.boolean "founder", default: false
+    t.boolean "has_day_hospitalization", default: false
     t.index ["profession_id"], name: "index_members_on_profession_id"
     t.index ["specialty_id"], name: "index_members_on_specialty_id"
   end

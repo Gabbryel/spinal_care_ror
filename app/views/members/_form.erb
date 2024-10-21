@@ -5,18 +5,32 @@
       <%= member.errors.full_messages.to_sentence.capitalize %>
     </div>
     <% end %>
-    <%= f.input :academic_title, label: false, placeholder: 'titlu academic' %>
-    <%= f.input :first_name, label: false, placeholder: 'Prenume' %>
-    <%= f.input :last_name, label: false, placeholder: 'Nume' %>
-    <%= f.input :photo, label: false %>
-    <%= f.association :profession, input_html: { data: { memberFormSpecialty_target: 'profession', action: 'change->memberFormSpecialty#change'}}, label: false, prompt: 'Alege profesia' %>
-    <%= f.input :doctor_grade, collection: ['generalist', 'rezident', 'primar', 'specialist'], label: false, prompt: 'alege gradul profesional', input_html: { data: {memberFormSpecialty_target: 'grade'}}%>
-    <%= f.association :specialty, label: false, input_html: { data: {memberFormSpecialty_target: 'specialty'}}, prompt: 'Alege specialitatea' %>
+    <div class="form-general">
+
+      <%= f.input :academic_title, label: false, placeholder: 'titlu academic' %>
+      <%= f.input :first_name, label: false, placeholder: 'Prenume' %>
+      <%= f.input :last_name, label: false, placeholder: 'Nume' %>
+      <%= f.input :photo, label: false %>
+      <%= f.association :profession, input_html: { data: { memberFormSpecialty_target: 'profession', action: 'change->memberFormSpecialty#change'}}, label: false, prompt: 'Alege profesia' %>
+      <!-- medic section -->
+       <div class="bg-light border radius mt-5 mb-5 p-2" id="medic-form" data-memberFormSpecialty-target="medic">
+        <p class="mb-2 fw-bold">Doar pentru medici</p>
+         <%= f.input :doctor_grade, collection: ['generalist', 'rezident', 'primar', 'specialist'], label: false, prompt: 'alege gradul profesional' %>
+         <%= f.association :specialty, label: false, prompt: 'Alege specialitatea' %>
+         <%= f.input :has_day_hospitalization, label: 'Lucrează în regim de spitalizare de zi?' %>
+       </div>
+      <!-- final medic -->
+    </div>
+    
+    <div class="form-kineto bg-light border radius mt-5 mb-5 p-2">
+      <p class="mb-2 fw-bold">Doar pentru kinetoterapie</p>
+      <%= f.input :schroth, label: "Este specialist schroth" %>
+      <%= f.input :selected, label: "Este selectat pentru pagina principală?" %>
+      <%= f.input :order, as: :radio_buttons, collection: 1..4, label: 'Alege ordinea de afișare în pagina principală' %>
+    </div>
     <%= f.input :has_own_page, label: "Are pagină dedicată?" %>
     <%= f.input :has_prices, label: "Are listă de prețuri asociată?" %>
-    <%= f.input :selected, label: "Selectat pentru pagina principală? *kinetoterapeuți" %>
-    <%= f.input :order, collection: 1..4, prompt: 'alege ordinea de afișare în pagina principală', label: false %>
-    <%= f.input :schroth, label: "specialist schroth" %>
+
     <%= f.rich_text_area :description, placeholder: 'Bio sau alte info despre membrul echipei Spinal Care' %>
     <br>
     <%= f.submit 'Salvează', class: 'btn-custom btn-green' %>

@@ -12,15 +12,19 @@
 }
 
 .bg-color-1 {
-  background-color: $color-1;
+  background-color: $color-1 !important;
 }
 
-.bkg-color-2 {
+.bg-color-2 {
   background-color: $color-2;
 }
 
-.bkg-color-3 {
+.bg-color-3 {
   background-color: $color-3;
+}
+
+.bg-color-5 {
+  background-color: $color-5;
 }
 
 $min-height: calc(var(--vh) * 93);
