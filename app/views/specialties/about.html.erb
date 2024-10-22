@@ -14,7 +14,30 @@
       </ul>
     </div>
     <h1><%= @specialty.name %></h1>
-    <div class="about-specialty-container__specialty"><%= @specialty.description %></div>
+    <div class="about-specialty-container__specialty">
+      <%= @specialty.description %>
+
+    <% if @specialty.is_day_hospitalize %>
+    <div class="has-day-hospitalization__specialties">
+      <h2 class="fw-bold fs-3 mt-5 mb-5 text-center">Specialități medicale cu spitalizare de zi</h2>
+      <div class="main-specialities-index">
+        <% @all_specialties.select { |s| s.has_day_hospitalization}.each do |s| %>
+          <%= render partial: 'specialties/specialty_card', locals: {specialty: s} %> 
+        <% end %>
+      </div>
+    </div>
+    <div class="has-day-hospitalization__specialists">
+      <h2 class="fw-bold fs-3 mt-5 mb-5 text-center">Medici care consultă în regim de spitalizare de zi</h2>
+      <% if @specialists.count > 0 %>
+      <div class="profession-div">
+          <% @specialists.each do |s| %>
+            <%= render partial: "members/member_card", locals: {m: s, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
+          <% end %>
+      </div>
+    <% end %>
+    </div>
+    <% end %>
+
     <div class="about-specialty-container__specialists">
       <%= action_btn("Programează-te!", "btn-custom", "btn-action") %>
       <!-- <h2>Medici <%= @specialty.name.downcase %> </h2> -->
@@ -24,25 +47,7 @@
         <% end %>
       </div>
     </div>
-
-    <!-- <div data-controller="tooltip" class="about-medical-prices admin-elements services-main section-main">
-      <% specialty_specialists(@specialty).each_with_index do |s, i| %>
-        <div class="medical-services-list__specialty">
-          <h5><%= link_to "#{s.academic_title} #{full_name(s)}", "../echipa/#{s.slug}" %></h5>
-          <% s.medical_services.select { |ms| ms.specialty_id == @specialty.id}.sort_by {|ms| ms.name }.each  do |ms| %>
-            <div class="medical-services-list__specialist">
-              <%= render ms %>
-            </div>
-          <% end %>
-        </div>
-        <% end %>
-      <div class="medical-services-list__specialty">
-        <h5>Tarife generale</h5>
-        <% @specialty.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
-          <%= render ms %>
-        <% end %>
-      </div>
-    </div> -->
     <%= image_tag('wave-home-page.svg', id: 'about-specialty-container__specialty__wave', alt: 'spinal care wave') %>
   </div>
+</div>
 </div>

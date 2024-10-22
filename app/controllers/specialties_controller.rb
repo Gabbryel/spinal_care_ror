@@ -60,6 +60,7 @@ class SpecialtiesController < ApplicationController
   def about
     @specialties = [@specialty]
     @all_specialties = Specialty.all.order(:name)
+    @specialists = Member.where(has_day_hospitalization: true).order(:last_name)
   end
 
   def destroy
@@ -79,6 +80,6 @@ class SpecialtiesController < ApplicationController
   end
 
   def specialty_params
-    params.require(:specialty).permit(:name, :slug, :description, :photo, :has_day_hospitalization) 
+    params.require(:specialty).permit(:name, :slug, :description, :photo, :has_day_hospitalization, :is_day_hospitalize) 
   end
 end
