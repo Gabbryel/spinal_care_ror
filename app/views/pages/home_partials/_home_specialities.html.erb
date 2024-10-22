@@ -5,16 +5,7 @@
 
   <div class="main-specialities-index">
     <% @specialties.each_with_index do |sp, i| %>
-      <%= link_to "specialitati-medicale/#{sp.slug}" do %>
-        <div class="specialty-card">
-          <div class="specialty-card__cover-name">
-            <%= sp[:name] %>
-            <%# sp[:name].split(Regexp.union([' ', '-']), 3).each do |w| %>
-              <%#= tag.p(w) %>
-            <%# end %>
-          </div>
-        </div>
-      <% end %>
+    <%= render partial: 'specialties/specialty_card', locals: {specialty: sp} %> 
     <% end %>
   </div>
   <% if current_page?(controller: 'pages', action: 'home') %>

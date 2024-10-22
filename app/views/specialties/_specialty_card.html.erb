@@ -1,0 +1,10 @@
+<%= link_to "specialitati-medicale/#{specialty.slug}", class: 'link-to-specialty' do %>
+        <div class="specialty-card">
+          <div class="specialty-card__cover-name">
+            <%= specialty[:name] %>
+            <%# sp[:name].split(Regexp.union([' ', '-']), 3).each do |w| %>
+              <%#= tag.p(w) %>
+            <%# end %>
+          </div>
+        </div>
+<% end %>
