@@ -60,7 +60,7 @@ class SpecialtiesController < ApplicationController
   def about
     @specialties = [@specialty]
     @all_specialties = Specialty.all.order(:name)
-    @specialists = Member.where(has_day_hospitalization: true).order(:last_name)
+    @specialists = Member.where(has_day_hospitalization: true)
   end
 
   def destroy
