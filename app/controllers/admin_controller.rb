@@ -33,6 +33,11 @@ class AdminController < ApplicationController
     @specialties = Specialty.all.order(name: :asc)
   end
 
+  def specialty_admin
+    @medical_service = MedicalService.new()
+    @specialty = Specialty.find_by!(slug: params[:id])
+  end
+
   def info_pacient
     @fact = Fact.new()
     @facts = Fact.all.sort {|x, y| y.updated_at <=> x.updated_at}

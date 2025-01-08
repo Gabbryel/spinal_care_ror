@@ -1,4 +1,4 @@
-<% if policy(medical_service).edit? && policy(medical_service).destroy? && access && current_page?('/dashboard/servicii-medicale') %>
+<% if policy(medical_service).edit? && policy(medical_service).destroy? && access && current_page?("/dashboard/servicii-medicale/#{@specialty.slug}") %>
 <div class="medical-service-crud specialty-crud">
   <%= link_to "#", aria_label: 'Editează serviciul medical', data: {bs_toggle: "modal", bs_target: "#editMedicalService#{medical_service.id}Modal"} do %><i class="far fa-edit"></i><% end %>
   <%= link_to medical_service_path(medical_service), data: {turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să ștergi #{medical_service.name}?"} do %><i class="fas fa-trash-alt"></i><% end %>

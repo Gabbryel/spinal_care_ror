@@ -1,0 +1,31 @@
+<% if current_page?("/dashboard/servicii-medicale/#{@specialty.slug}") %>
+<div class="services-main section-main" data-controller="tooltip">
+  <div class="d-flex flex-menu">
+    <% Specialty.all.sort_by {|s| s[:name]}.each do |s| %>
+      <%= link_to s.name, admin_specialty_path(s), class: 'btn-custom' %>
+    <% end %>
+  </div>
+  <div class="services-form">
+    <%= render partial: 'medical_services/modal', locals: {new: true, modal_id: "newMedicalServiceModal", title: "Adaugă serviciu medical", medical_service: @medical_service} %>
+  </div>
+  <div><%= link_to "#", data: {bs_toggle: "modal", bs_target: "#newMedicalServiceModal"}, class: 'btn-custom' do %>Adaugă serviciu medical<% end %></div>
+  <div class="medical-services-list__specialty grid-masonry-list">
+    <div class="grid-masonry-content">
+      <h4><%= link_to @specialty.name, "specialitati-medicale/#{@specialty.slug}" %></h4>
+      <% @specialty.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
+      <%= render ms %>
+      <% end %>
+      <% selected_and_sorted_medical_services(@specialty).each_with_index do |ms, i| %>
+      <div class="medical-services-list__specialist">
+        <% if i == 0 || ms.member != selected_and_sorted_medical_services(@specialty)[i-1].member %>
+        <h5><%= link_to "#{ms.member.academic_title} #{ms.member.name}", "echipa/#{ms.member.slug}" %></h5>
+        <% end %>
+        <%= render ms %>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+<% else %>
+      <%= no_access %>
+  <% end %>

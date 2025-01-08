@@ -12,7 +12,7 @@ class MedicalServicesController < ApplicationController
     @medical_service.member_id = nil if params[:medical_service][:member_id].nil?
     respond_to do |format|
       if @medical_service.save
-        format.html { redirect_to admin_medical_services_path, notice: 'Serviciu medical adăugat!' }
+        format.html { redirect_to admin_specialty_path(@medical_service.specialty), notice: 'Serviciu medical adăugat!' }
         format.json { render :show, status: :created, location: @medical_service }
       else
         format.turbo_stream
@@ -26,10 +26,11 @@ class MedicalServicesController < ApplicationController
   end
 
   def update
+    @specialty = @medical_service.specialty
     @medical_service.update(medical_service_params)
     respond_to do |format|
       if @medical_service.save
-        format.html { redirect_to admin_medical_services_path, notice: 'Serviciu medical modificat!'}
+        format.html { redirect_to admin_specialty_path(@specialty), notice: 'Serviciu medical modificat!'}
         format.json { render :show, status: :updated, location: @medical_service}
       else
         format.turbo_stream
