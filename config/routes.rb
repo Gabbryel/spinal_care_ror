@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   get 'dashboard/profesii', to: 'admin#professions', as: 'admin_professions'
   get 'dashboard/specialitati', to: 'admin#specialties', as: 'admin_specialties'
   get 'dashboard/servicii-medicale', to: 'admin#medical_services', as: 'admin_medical_services'
+  get 'dashboard/servicii-medicale/:id', to: 'admin#specialty_admin', as: 'admin_specialty'
+
   get 'dashboard/info-pacient', to: 'admin#info_pacient'
 
 
