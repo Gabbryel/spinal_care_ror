@@ -6,6 +6,7 @@
         <% sp.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
           <%= render ms %>
         <% end %>
+
         <% selected_and_sorted_medical_services(sp).each_with_index do |ms, i| %>
           <div class="medical-services-list__specialist">
             <% if i == 0 || ms.member != selected_and_sorted_medical_services(sp)[i-1].member %>
@@ -14,6 +15,8 @@
             <%= render ms %>
           </div>
         <% end %>
+
+        
       </div>
     </div>
     <% end %>
@@ -28,5 +31,5 @@
       <%# m.medical_services.sort {|a, b| a.name <=> b.name}.each do |ms| %>
         <%#= render ms %>
       <%# end %>
-    </div>
+    <!-- </div> -->
   <%# end %>

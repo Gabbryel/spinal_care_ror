@@ -12,7 +12,7 @@
   <div class="medical-services-list__specialty grid-masonry-list">
     <div class="grid-masonry-content">
       <h4><%= link_to @specialty.name, "specialitati-medicale/#{@specialty.slug}" %></h4>
-      <% @specialty.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
+      <% @specialty.medical_services.select { |ms| ms.member == nil}.sort_by {|ms| ms[:name]}.each do |ms| %>
       <%= render ms %>
       <% end %>
       <% selected_and_sorted_medical_services(@specialty).each_with_index do |ms, i| %>
