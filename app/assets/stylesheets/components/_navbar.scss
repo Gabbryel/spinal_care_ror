@@ -67,12 +67,15 @@
     display: none;
     list-style: none;
     margin: unset;
-    @media(orientation: landscape) {
+    @media(orientation: landscape) and (min-width: 1024px) {
       display: flex;
       position: relative;
-      gap: 12px;
-      color: $color-5;
-      font-size: clamp(13px, calc(0.75dvw + 0.75dvh), 24px);
+      gap: 2px 12px;
+      color: #fff6d3;
+      font-size: clamp(14px, calc(0.6dvw + 0.6dvh), 24px);
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
       .active-menu-item {
        @include underline-selected($color-5, 2px)
       }
@@ -109,7 +112,7 @@
     align-items: baseline;
     flex-wrap: wrap;
     align-content: flex-end;
-    @media(orientation: landscape) {
+    @media(orientation: landscape) and (min-width: 1024px) {
       display: none;
     }
   }

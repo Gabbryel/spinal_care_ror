@@ -7,14 +7,14 @@
           <%= render ms %>
         <% end %>
 
+        <div class="medical-services-list__specialist">
         <% selected_and_sorted_medical_services(sp).each_with_index do |ms, i| %>
-          <div class="medical-services-list__specialist">
             <% if i == 0 || ms.member != selected_and_sorted_medical_services(sp)[i-1].member %>
               <h5><%= link_to "#{ms.member.academic_title} #{ms.member.name}", "echipa/#{ms.member.slug}" %></h5>
             <% end %>
             <%= render ms %>
+            <% end %>
           </div>
-        <% end %>
 
         
       </div>
