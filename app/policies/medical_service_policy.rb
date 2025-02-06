@@ -17,6 +17,9 @@ class MedicalServicePolicy < ApplicationPolicy
   def show?
     new?
   end
+  def show_by_specialty?
+    true
+  end
   def destroy?
     new?
   end

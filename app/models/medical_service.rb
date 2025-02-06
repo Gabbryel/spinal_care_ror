@@ -1,5 +1,5 @@
 class MedicalService < ApplicationRecord
-  belongs_to :specialty
+  belongs_to :specialty, counter_cache: true
   belongs_to :member, optional: true
   has_rich_text :description
   include SlugHelper
@@ -13,6 +13,10 @@ class MedicalService < ApplicationRecord
 
   def specialist
     "#{Member.find(self.member_id).name}" if self.member_id
+  end
+
+  def memberId
+    self.member_id ? self.member_id : -1
   end
 
   private

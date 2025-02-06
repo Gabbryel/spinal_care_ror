@@ -1,6 +1,15 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+  config.after_initialize do
+    Bullet.enable        = true
+    Bullet.alert         = false
+    Bullet.bullet_logger = true
+    Bullet.console       = false
+    Bullet.rails_logger  = true
+    Bullet.add_footer    = true
+  end
+
   config.action_mailer.default_url_options = { host: "http://localhost:3002" }
   config.action_mailer.delivery_method = :letter_opener
   # Settings specified here will take precedence over those in config/application.rb.
@@ -10,7 +19,7 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
-  config.hosts << "da3b-2a02-a58-8573-b00-1cdc-d9d2-c763-980e.ngrok-free.app"
+  config.hosts << "xzqtxdpw-3002.euw.devtunnels.ms"
 
   # Do not eager load code on boot.
   config.eager_load = false

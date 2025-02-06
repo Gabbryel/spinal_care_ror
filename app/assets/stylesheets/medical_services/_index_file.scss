@@ -2,3 +2,10 @@
   position: relative;
   grid-area: 1 / 1 / -1 / -1;
 }
+
+.show-by-specialty__menu {
+  max-width: none;
+  h4 {
+    max-width: max-content;
+  }
+}

@@ -52,7 +52,7 @@ class SpecialtiesController < ApplicationController
   end
 
   def all_specialties
-    @specialties = policy_scope(Specialty).all.order(name: :asc)
+    @specialties = policy_scope(Specialty).strict_loading.order(name: :asc)
   end
 
   def show

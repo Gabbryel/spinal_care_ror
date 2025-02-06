@@ -28,8 +28,8 @@ class AdminController < ApplicationController
 
   def medical_services
     @medical_service = MedicalService.new()
-    @medical_services = MedicalService.all.order(name: :asc)
-    @selected_members = Member.all.select { |m| m.medical_services.count > 0}
+    @medical_services = MedicalService.order(name: :asc).to_a
+    @selected_members = Member.includes([:medical_services]).select { |m| m.medical_services.count > 0}.to_a
     @specialties = Specialty.all.order(name: :asc)
   end
 

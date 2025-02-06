@@ -52,7 +52,7 @@ class MembersController < ApplicationController
   end
 
   def index
-    @members = policy_scope(Member).all
+    @members = policy_scope(Member).includes([:profession, :specialty, :photo_attachment]).order(:last_name)
     render json: @members
   end
 

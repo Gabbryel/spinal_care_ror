@@ -1,6 +1,6 @@
 class MedicalServicesController < ApplicationController
-  before_action :skip_authorization, only: %i[index]
-  skip_before_action :authenticate_user!, only: %i[index]
+  before_action :skip_authorization, only: %i[index show_by_specialty]
+  skip_before_action :authenticate_user!, only: %i[index show_by_specialty]
   before_action :set_medical_service, only: %i[edit update destroy]
 
   def new
@@ -41,11 +41,17 @@ class MedicalServicesController < ApplicationController
   end
 
   def index
-    @medical_services = policy_scope(MedicalService).all.order(name: :asc)
-    @specialties = Specialty.all.order(name: :asc)
+    @medical_services = policy_scope(MedicalService).includes([:member, :rich_text_description]).order(name: :asc).to_a
+    @specialties = Specialty.includes(medical_services: :member).select {|sp| sp.medical_services.count > 0}.sort {|a, b| a.name <=> b.name}
+    @members = Member.strict_loading.includes(:medical_services).select {|m| m.medical_services.count > 0}.sort {|a, b| a.name <=> b.name}
   end
 
   def show
+  end
+
+  def show_by_specialty
+    @specialty = Specialty.find_by(slug: params[:id])
+    @specialties = Specialty.all.order(name: :asc)
   end
 
   def destroy

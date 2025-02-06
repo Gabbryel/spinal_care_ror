@@ -5,7 +5,7 @@
   <% elsif access && current_page?('/dashboard/servicii-medicale') %>
     <div class="services-main section-main" data-controller="tooltip">
       <div class="d-flex flex-menu">
-        <% Specialty.all.sort_by {|s| s[:name]}.each do |s| %>
+        <% @specialties.sort_by {|s| s[:name]}.each do |s| %>
           <%= link_to s.name, admin_specialty_path(s), class: 'btn-custom' %>
         <% end %>
       </div>

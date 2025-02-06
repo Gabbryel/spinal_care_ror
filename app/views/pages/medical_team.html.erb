@@ -16,10 +16,10 @@
           </div>
           <div class="modal-body">
             <%= simple_form_for :search, html: {id: 'filter-proffesion-form'}, url: echipa_path, method: 'GET' do |f| %>
-              <%= f.input :profession, collection: ['Toată echipa'].concat(Profession.select{|p| p.members.count > 0}.map {|p| p.name}), as: :radio_buttons, label: false, input_html: { data: {controller: 'searchTeam', action: 'change->searchTeam#filter', bs_dismiss: 'modal'} } %>
+              <%= f.input :profession, collection: ['Toată echipa'].concat(@professions.select{|p| p.members.count > 0}.map {|p| p.name}), as: :radio_buttons, label: false, input_html: { data: {controller: 'searchTeam', action: 'change->searchTeam#filter', bs_dismiss: 'modal'} } %>
             <% end %>
             <%= simple_form_for :search, html: {id: 'filter-specialty-form'},url: echipa_path, method: 'GET' do |f| %>
-              <%= f.input :specialty, collection: ['Toată echipa'].concat(Specialty.select{|s| s.members.count > 0}.map {|p| p.name}), as: :radio_buttons, label: false, input_html: { data: {controller: 'searchTeam', action: 'change->searchTeam#filter', bs_dismiss: 'modal'} } %>
+              <%= f.input :specialty, collection: ['Toată echipa'].concat(@specialties.select{|s| s.members.count > 0}.map {|p| p.name}), as: :radio_buttons, label: false, input_html: { data: {controller: 'searchTeam', action: 'change->searchTeam#filter', bs_dismiss: 'modal'} } %>
             <% end %>
             <%#= simple_form_for :search, html: {id: 'filter-name-form', autofocus: true },url: echipa_path, method: 'GET' do |f| %>
               <%#= f.input :name, label: 'Tastează numele dorit și apasă "enter"', input_html: { data: {type: 'button', controller: 'searchTeam', action: 'beforeinput->searchTeam#search keyup->searchTeam#searchName'} } %>

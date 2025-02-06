@@ -14,8 +14,10 @@
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 50% 50%;
+  grid-template-rows: 1fr 1fr;
   min-height: 50dvh;
+  max-height: 51dvh;
+  overflow: hidden;
 
   .landing-image {
     position: relative;
