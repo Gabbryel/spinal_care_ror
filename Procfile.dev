@@ -2,3 +2,4 @@ rails assets:precompile
 web: bin/rails server -p 3002
 js: yarn build --watch
 sass application.scss
+css: bin/rails tailwindcss:watch

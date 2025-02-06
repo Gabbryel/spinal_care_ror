@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_22_060200) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_13_172407) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
-  enable_extension "plpgsql"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -106,18 +106,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_22_060200) do
     t.integer "order"
   end
 
-  create_table "questionnaires", force: :cascade do |t|
-    t.string "age"
-    t.string "sex"
-    t.string "specialty"
-    t.string "where_you_listened"
-    t.string "who_accompanied_you"
-    t.boolean "where_you_informed_about_rights"
-    t.boolean "where_you_informed_about_diagnostic"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "reviews", force: :cascade do |t|
     t.integer "rating"
     t.string "author"
@@ -135,6 +123,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_22_060200) do
     t.text "description"
     t.boolean "has_day_hospitalization", default: false
     t.boolean "is_day_hospitalize", default: false
+    t.integer "medical_services_count"
   end
 
   create_table "users", force: :cascade do |t|

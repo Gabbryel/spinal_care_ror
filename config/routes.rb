@@ -29,7 +29,7 @@ Rails.application.routes.draw do
   get '/echipa/:id', to: 'members#show', as: 'colectiv'
   resources :medical_services, except: %i[index show]
   get 'servicii-medicale', to: 'medical_services#index'
-  get 'servicii-medicale/:id', to: 'medical_services#show'
+  get 'servicii-medicale/:id', to: 'medical_services#show_by_specialty'
 
 
   get "*any", to: "errors#not_found", via: :all

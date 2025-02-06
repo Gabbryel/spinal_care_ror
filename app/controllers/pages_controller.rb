@@ -2,20 +2,21 @@ class PagesController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[ home medical_team pacient_page ]
 
   def home
-    @review = Review.new()
-    @reviews = Review.all.shuffle || []
-    @specialties = Specialty.all.order(name: :asc) || []
-    @medics = Member.where(profession_id: Profession.find_by(name: 'medic')).sample(8)
-    @kinetos = (Member.where(profession_id: Profession.find_by(name: 'fiziokinetoterapeut' || 'asistent medical BFKT')) + Member.where(profession_id: Profession.find_by(name: 'asistent medical BFKT')))
-    @kinetos_to_show = @kinetos.select { |k| k.selected }.sort_by { |k| k.order}
+    # @review = Review.new()
+    # @reviews = Review.all.shuffle || []
+    @specialties = Specialty.strict_loading.order(name: :asc) || []
+    @members = Member.includes([:profession, :specialty, :photo_attachment]).order(:last_name).to_a || [].to_a
+    @medics = @members.select {|m| m.profession.slug == 'medic'}.sample(8)
+    @kinetos = @members.select { |m| m.profession.slug == 'fiziokinetoterapeut' || 'asistent-medical-bfkt' }
+    @kinetos_to_show = @kinetos.select { |k| k.selected }.sort_by { |k| k.order }
     @schroths = @kinetos.select {|k| k.schroth }
-    @beauties = Member.select { |s| s.specialty_id == 13 }
+    @beauties = @members.select {|m| m.profession.slug == 'tehnician-estetica-medicala'}
   end
 
   def medical_team
-    @team_members = Member.all.order(:last_name)
-    @professions = Profession.all.order(:order)
-    @specialties = Specialty.all.order(:name)
+    @team_members = Member.includes([:specialty, :photo_attachment]).order(:last_name)
+    @professions = Profession.all.order(:order).includes([:members])
+    @specialties = Specialty.all.order(:name).includes([:members])
   end
 
   def pacient_page
