@@ -1,0 +1,33 @@
+<footer class="relative grid grid-cols-1 grid-rows-auto bg-cl-light-blue py-12">
+  <div class="relative grid grid-cols-1 sm:grid-cols-2 grid-rows-3 sm:grid-rows-2 lg:grid-cols-3 lg:grid-rows-2 justify-items-center items-center pb-6 font-poppins">
+      
+    <div title="Spinal Care" class="relative grid grid-cols-8 grid-rows-2 text-center font-poppins col-span-1 sm:col-span-full sm:cols-start-1 lg:col-span-1 lg:col-start-1">
+        <h2 class="text-4xl text-center font-bold font-poppins col-span-5 col-start-1">Clinica Spinal Care</h2>
+        <%= cl_image_tag("kzaelg1jvfchktxo5eht.png", alt: 'spinal care anmcs', width: '100px', class: 'col-span-2 col-start-6') %>
+        <p class="text-2xl col-span-full col-start-1 row-span-1 row-start-2">&copy; 2011-<%= Time.now.year %> </p>
+    </div>
+
+      <a href="tel:0374554344" title="Contact telefonic" class="text-2xl"><i class="fa-solid fa-mobile-screen !text-2xl text-black"></i> 0374554344</a>
+      <div title="contact si adrese Spinal Care" class="sm:grid grid-cols-2 grid-rows-2 gap-4 col-span-1 sm:col-span-full sm:cols-start-1 lg:col-span-2 lg:col-start-2 justify-items-center items-center px-4">
+        <div class="text-center sm:col-span-1 sm:col-start-1">
+          <h3 class="font-bold text-2xl text-center font-poppins">Ambulatoriu de specialitate</h3>
+          <p>Str. Mihai Eminescu, nr. 1bis, Bacău</p>
+        </div>
+        <div class="text-center sm:col-span-1 sm:col-start-2">
+          <h3 class="font-bold text-2xl text-center font-poppins">Spitalizare de zi</h3>
+          <p>Str. Nicolae Titulescu nr. 31, Bacău</p>
+        </div>
+      </div>
+      <div title="Social media Spinal Care" class="grid grid-cols-3">
+        <%= link_to 'https://www.facebook.com/SpinalCareBacau' do %>
+          <i class="fab fa-facebook-square text-black text-6xl"></i>
+        <% end %>
+        <%= link_to 'https://www.instagram.com/spinalcarebacau' do %>
+          <i class="fab fa-instagram-square text-black text-6xl"></i>
+        <% end %>
+      </div>
+      </div>
+    </div>
+  </div>
+  <%#= render "shared/footer/contact_cards" %>
+</footer>

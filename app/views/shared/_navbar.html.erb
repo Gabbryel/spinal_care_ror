@@ -1,4 +1,4 @@
-<div class="navbar navbar-expand-sm navbar-light navbar-lewagon" id="navbar-toggle" data-controller="navbarFixed" data-action="scroll@window->navbarFixed#navbarFixed">
+<nav class="navbar navbar-expand-sm navbar-light navbar-lewagon" id="navbar-toggle" data-controller="navbarFixed" data-action="scroll@window->navbarFixed#navbarFixed click->blurMain#removeBlur">
   <div class="navbar-content">
     <%= link_to root_path, class: "navbar-brand d-flex" do %>
       <%= image_tag "logo-signature-v6.png", class: 'navbar-brand-img', data: {sidemenu_toggle_target: 'toggle'}, alt: 'logo spinal care' %>
@@ -10,10 +10,11 @@
           <li class="<%= path_helper == 'echipa' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Echipa medicală', echipa_path %>
             <div></div>
           </li>
-          <li class="<%= path_helper == 'specialitati-medicale' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Specialități medicale', specialitati_medicale_path %><div></div></li>
+
+          <li class="<%= path_helper == 'specialitati-medicale' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Departamente', specialitati_medicale_path %><div></div></li>
           <li class="<%= path_helper == 'servicii-medicale' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Servicii medicale', servicii_medicale_path %><div></div></li>
-          <li class="active-menu-item">
-            <button type="button" class="btn-nude text-warning" data-bs-toggle="modal" data-bs-target="#promoModal">
+          <li class="">
+            <button type="button" class="btn-nude !bg-orange-600 hover:!bg-orange-700 !text-white px-2 py-1 rounded-md" data-bs-toggle="modal" data-bs-target="#promoModal">
               Programări online
             </button><div></div>
           </li>
@@ -28,4 +29,4 @@
     </div>
       <%= render partial: "shared/navbar/hamburger" %>
   </div>
-</div>
+</nav>

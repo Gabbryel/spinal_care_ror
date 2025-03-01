@@ -1,40 +1,15 @@
-<section class="beauty">
-  <%= title('Beauty Eximia', 'section-title-blue__reverse', 'section-title-text__reverse') %>
-  <div class="main-landing schroth-main">
-    <div class="main-image">
-      <%= cl_image_tag("cabinets/eximia-web_xrvdln.webp", :quality=>60, :width=>1000, :crop=>"scale")  %>
+<section title="estetica medicala" class="beauty">
+  <%#= title('Beauty Eximia', 'section-title-blue__reverse', 'section-title-text__reverse') %>
+<%= render_feature('cabinets/eximia-web_xrvdln.webp', 'Reducerea circumferinței în zona tratată, eliminarea celulitei și a pielii cu aspect de coajă de portocală, stimularea circulației sanguine și a drenajului limfatic, o piele mai fermă și mai tonifiată sunt efectele terapiei Eximia.', true) %>
+
+  <!-- <div class="schroth-title"><h3>Estetică medicală</h3></div> -->
+  <article class="relative <%= "#{div_widths} #{gaps_for_indexes}" %>  my-[10rem] mx-auto grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] justify-center px-3">
+    <div class="relative h-full grid grid-cols-1 grid-rows-1 items-center justify-items-center">
+      <h2 class="text-center text-4xl word-wrap font-bold px-2 py-2 font-poppins max-sm:mb-[4rem]">Estetică medicală</h2>
     </div>
-    <div class="main-motto">
-      <ul>
-        <li><section class="spinal-care-description schroth-description">
-          <p>
-            Reducerea circumferinței în zona tratată,
-            eliminarea celulitei și a pielii cu aspect de coajă de portocală, 
-            stimularea circulației sanguine și a drenajului limfatic,
-            o piele mai fermă și mai tonifiată sunt efectele terapiei Eximia.</p>
-        </section></li>
-      </ul>
-    </div>
-  </div>
-  <div class="schroth-title"><h3>Estetică medicală</h3></div>
-  <article class="beauty-specialists">
-    <% @beauties.each_with_index do |m, i| %>
-          <%= render partial: "members/member_card", locals: {m: m, i: i, not_animated: nil, no_grid_area: 'no_grid_area'} %>
-        <% end %>
+      <% @beauties.each_with_index do |m, i| %>
+        <%= render partial: "members/member_card", locals: {m: m, i: i, not_animated: nil, no_grid_area: 'no_grid_area'} %>
+      <% end %>
   </article>
-  <div class="main-landing schroth-main">
-    <div class="main-image main-image-reverse">
-      <%= cl_image_tag("www.sysphotodesign.ro_219_uwbypj.webp", :quality=>60, :width=>1000, :crop=>"scale")  %>
-    </div>
-    <div class="main-motto main-motto-reverse">
-      <ul>
-        <li><section class="spinal-care-description schroth-description">
-          <p>
-            Visul de a pierde 7 cm în talie devine realitate cu <br>
-EXIMIA HR77 PLATINUM <br>
-Tehnologia noastră de ultimă generație te ajută să obții rezultate uimitoare pentru corpul tău.</p>
-        </section></li>
-      </ul>
-    </div>
-  </div>
+<%= render_feature('www.sysphotodesign.ro_219_uwbypj.webp', 'Visul de a pierde 7 cm în talie devine realitate cu EXIMIA HR77 PLATINUM. Tehnologia noastră de ultimă generație te ajută să obții rezultate uimitoare pentru corpul tău.', false) %>
 </section>

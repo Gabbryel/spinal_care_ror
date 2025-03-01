@@ -4,7 +4,7 @@
   margin: 0 auto;
   grid-area: 1/ 1 / -1 / -1;
   font-family: $font-mont;
-  background-color: $color-5;
+  // background-color: $color-5;
   @media (min-width: 720px) and (orientation: portrait) {
     padding: 60px 0;
   }
@@ -26,7 +26,7 @@
   grid-template-rows: auto;
   margin: 0 auto;
   gap: 80px;
-  background-color: $color-5;
+  // background-color: $color-5;
   opacity: .95;
   padding: 50px 20px;
   @media (min-width: 720px) and (orientation: portrait) {
@@ -166,16 +166,12 @@
 }
 */
 .member-card {
-  position: relative;
-  height: 480px;
-  width: 320px;
-  // justify-self: center;
   .member-card__main {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 320px 80px 70px;
-    background: #ffe;
+    // position: relative;
+    // display: grid;
+    // grid-template-columns: 1fr;
+    // grid-template-rows: 320px 80px 70px;
+    // background: #ffe;
     .member-card-extras {
       display: flex;
       flex-direction: column;
@@ -186,22 +182,22 @@
       bottom: 34%;
       }
       .member-card__photo-holder {
-        grid-area: 1/1/2/-1;
-        background-size: 70%;
-        background-position: 50% -40%;
-        background-repeat: no-repeat;
-        border-radius: 3px;
-        i {
-          font-size: 18px;
-          position: absolute;
-          top: 20px;
-          left: 20px;
-        }
+        // grid-area: 1/1/2/-1;
+        // background-size: 70%;
+        // background-position: 50% -40%;
+        // background-repeat: no-repeat;
+        // border-radius: 3px;
+        // i {
+        //   font-size: 18px;
+        //   position: absolute;
+        //   top: 20px;
+        //   left: 20px;
+        // }
       }
       .member-card-info {
         grid-area: 2/1/3/-1;
         position: relative;
-        background: #bab28a90;
+        background: $cl-light-blue;
         display: flex;
         flex-wrap: wrap;
         flex-direction: column;

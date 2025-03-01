@@ -1,8 +1,22 @@
 
-<%= link_to "specialitati-medicale/#{specialty.slug}", class: 'link-to-specialty' do %>
-        <div class="specialty-card">
-          <div class="specialty-card__cover-name">
+<article title="<%= specialty.name %>">
+  <%= link_to "specialitati-medicale/#{specialty.slug}", class: 'specialty-card relative rounded-2xl w-full h-[20dvw] min-h-[360px] max-h-[420px] justify-self-center grid grid-cols-12 grid-rows-6 bg-cl-light-blue hover:bg-yellow-900 hover:invert hover:text-black' do %>
+          <div class="specialty-icon col-span-12 col-start-1 row-span-3 row-start-2 flex items-center justify-center text-center">
+            <%= cl_image_tag(specialty.photo.key, class: 'relative size-fit object-contain w-[130px] pl-4') %>
+          </div>
+          <div class="specialty-name col-span-full row-span-2 row-start-5 flex items-center justify-center text-center text-2xl word-wrap font-medium self-baseline px-2 pb-2">
             <%= specialty[:name] %>
           </div>
-        </div>
-<% end %>
+  <% end %>
+</article>
+
+<!-- class: 'specialty-card relative border rounded-lg border-feldgrau border-solid border-1 min-w-[320px] w-full max-w-[400px] h-[180px] justify-self-center grid grid-cols-12 grid-rows-6 bg-white' -->
+
+<!-- specialty-icon col-span-2 col-start-1 row-span-3 row-start-1 flex items-center justify-center text-center -->
+
+<!-- relative size-fit object-contain w-[70px] pl-4 -->
+
+<!-- specialty-name col-span-full row-span-full flex items-center justify-center text-center text-2xl word-wrap font-bold self-baseline h-[180px] px-5 -->
+
+
+<!-- background-color: rgb(0 145 201 / 15%) !important; -->

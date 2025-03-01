@@ -13,12 +13,17 @@
     @media(min-width: 768px) {
       transform: translateX(-200px);
     }
+    @media(min-width: 1024px) {
+      display: none;
+    }
+    
   left: 0;
   background-color: $color-1-90;
   opacity: 0;
   z-index: 0;
   .sidecover-green-cover {
     position: absolute;
+    display: inline-block;
     background: #29332b88;
     top: 0;
     left: 0;
@@ -26,6 +31,9 @@
     height: 100vh;
     z-index: 1;
     backdrop-filter: contrast(1.5);
+    @media(min-width: 1024px) {
+      display: none;
+    }
   }
 }
 

@@ -104,12 +104,13 @@ export default class extends Controller {
           pd.style.display = 'none'
           pd.removeAttribute('id', 'profession-div__custom')
         } else if (count > 0 && count < 4) {
-            pd.style.display = 'flex'
-            pd.style.flexWrap = 'wrap'
-            pd.style.justifySelf = 'center'
-            pd.style.justifyContent = 'center'
-        } else {
-          pd.style.gridTemplateColumns = `repeat(auto-fill, minmax(300px, 1fr))`
+          console.log(count)
+          pd.classList.add(`grid`) 
+          pd.classList.add(`!grid-cols-[repeat(${count},minmax(350px,_1fr))]`)
+          // pd.style.gridTemplateColumns = `repeat(auto-fill, minmax(300px, 1fr))`
+        }
+        else {
+          pd.classList.add(`!grid-cols-[auto-fill,minmax(350px,_1fr))]`)
         }
       })
   }
@@ -117,11 +118,16 @@ export default class extends Controller {
   setProfessionDivsDisplayToGrid(professionDivs) {
     Array.from(professionDivs).forEach(pd => {
       pd.style.display = 'grid'
-      pd.style.gridTemplateColumns = `repeat(auto-fill, minmax(300px, 1fr))`
+      if (pd.children.length < 4) {
+        pd.style.gridTemplateColumns = `repeat(${pd.children.length}, minmax(300px, 1fr))`
+      } else {
+        pd.style.gridTemplateColumns = `repeat(auto-fill, minmax(300px, 1fr))`
+      }
       pd.style.maxWidth = 'unset'
       pd.style.justifySelf = 'unset'
       Array.from(pd.children).forEach( chd => {
         chd.style.display = 'unset'
+        chd.style.maxWidth = '350px'
       })
     })
   }

@@ -1,10 +1,23 @@
-<footer>
-  <div class="footer-up">
-    <div>
-      <%= image_tag('logo-signature-v6.png', alt: 'logo spinal care') %>
-      <p>&copy; 2016-<%= Time.now.year %></p>
-    </div>
-    <%= cl_image_tag("kzaelg1jvfchktxo5eht.png") %>
+<footer class="relative bg-cl-navbar text-black p-6 text-center grid grid-cols-1 md:grid-cols-2 grid-rows-auto xl:grid-cols-4 justify-items-center items-center font-poppins gap-2 md:gap-1 text-white">
+  <h3 class="text-2xl font-poppins md:col-span-1 md:col-start-1 xl:justify-self-start xl:col-span-1 xl:col-start-1 w-max">Clinica Multidisciplinara Spinal Care Bacău</h3>
+  <p class="text-xl md:col-span-1 md:col-start-1 xl:col-span-1 xl:col-start-1 xl:justify-self-start">&copy; 2011-<%= Time.now.year %></p>
+  <p class="font-light">Spinal Care este o clinică multidisciplinară </p>
+  <%= cl_image_tag("kzaelg1jvfchktxo5eht.png", alt: 'spinal care anmcs', width: '100px', class: 'md:col-span-1 md:col-start-1 xl:justify-self-start') %>
+  <div class="font-poppins md:col-span-1 md:col-start-2 md:row-span-1 md:row-start-1 xl:row-start-2">
+    <h3 class="font-poppins">Ambulatoriu de specialitate</h3>
+    <p>Str. Mihai Eminescu, nr. 1bis, Bacău</p>
   </div>
-  <%= render "shared/footer/contact_cards" %>
+  <div class="font-poppins md:col-span-1 md:col-start-2 md:row-span-1 md:row-start-2 xl:row-start-2 xl:col-start-3">
+    <h3 class="font-poppins">Spitalizare de zi</h3>
+    <p>Str. Nicolae Titulescu nr. 31, Bacău</p>
+  </div>
+  <div title="Social media Spinal Care" class="md:col-span-1 md:col-start-2 xl:col-start-4 md:row-span-1 md:row-start-3 xl:row-start-2 text-white flex gap-3">
+    <a href="tel:0374554344" title="Contact telefonic" class="text-black font-poppins text-white h-[48px]"><i class="fa-solid fa-mobile-retro !text-5xl"></i></a>
+    <%= link_to 'https://www.facebook.com/SpinalCareBacau' do %>
+      <i class="fab fa-facebook-square text-5xl text-white"></i>
+    <% end %>
+    <%= link_to 'https://www.instagram.com/spinalcarebacau' do %>
+      <i class="fab fa-instagram-square text-5xl text-white"></i>
+    <% end %>
+  </div>
 </footer>

@@ -3,7 +3,7 @@
   grid-area: 1 / 1 / -1  / -1;
   padding: 100px 20px;
   color: $color-1;
-  background-color: $color-5-90;
+  background-color: $light-gray-opacityAA;
   @media(orientation: landscape) {
     max-width: 1400px;
     margin: 100px auto;
@@ -13,7 +13,7 @@
     @include drop-down-custom;
     font-size: clamp(18px, 3vw, 24px);
     .btn-drop {
-      background: $color-2;
+      background: $light-gray;
       border-radius: 10px;
       padding: 10px 20px;
       margin: 50px 0;
