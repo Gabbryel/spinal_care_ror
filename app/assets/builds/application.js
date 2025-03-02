@@ -6438,7 +6438,7 @@
         "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776672/cabinets/www.sysphotodesign.ro_91_af55tg.webp",
         "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1723391283/cabinets/eximia-web_v2_lnyhu8.webp"
       ];
-      var texts = ["clinic\u0103 medical\u0103 multidisciplinar\u0103", "medici experimenta\u021Bi", "kinetoterapeu\u021Bi dedica\u021Bi", "aparatur\u0103 medical\u0103 performant\u0103", "spitalizare de zi", "gratuit 100% prin CAS", "terapii 'Beauty' neinvazive"];
+      var texts = ["clinic\u0103 medical\u0103 multidisciplinar\u0103", "medici experimenta\u021Bi", "kinetoterapeu\u021Bi dedica\u021Bi", "aparatur\u0103 medical\u0103 performant\u0103", "spitalizare de zi", "gratuit 100% prin CAS", "estetic\u0103 medical\u0103"];
       var showImages = () => {
         images.forEach((image, i) => {
           setTimeout(() => {
@@ -6691,23 +6691,27 @@
           pd.style.display = "none";
           pd.removeAttribute("id", "profession-div__custom");
         } else if (count > 0 && count < 4) {
-          pd.style.display = "flex";
-          pd.style.flexWrap = "wrap";
-          pd.style.justifySelf = "center";
-          pd.style.justifyContent = "center";
+          console.log(count);
+          pd.classList.add(`grid`);
+          pd.classList.add(`!grid-cols-[repeat(${count},minmax(350px,_1fr))]`);
         } else {
-          pd.style.gridTemplateColumns = `repeat(auto-fill, minmax(300px, 1fr))`;
+          pd.classList.add(`!grid-cols-[auto-fill,minmax(350px,_1fr))]`);
         }
       });
     }
     setProfessionDivsDisplayToGrid(professionDivs) {
       Array.from(professionDivs).forEach((pd) => {
         pd.style.display = "grid";
-        pd.style.gridTemplateColumns = `repeat(auto-fill, minmax(300px, 1fr))`;
+        if (pd.children.length < 4) {
+          pd.style.gridTemplateColumns = `repeat(${pd.children.length}, minmax(300px, 1fr))`;
+        } else {
+          pd.style.gridTemplateColumns = `repeat(auto-fill, minmax(300px, 1fr))`;
+        }
         pd.style.maxWidth = "unset";
         pd.style.justifySelf = "unset";
         Array.from(pd.children).forEach((chd) => {
           chd.style.display = "unset";
+          chd.style.maxWidth = "350px";
         });
       });
     }

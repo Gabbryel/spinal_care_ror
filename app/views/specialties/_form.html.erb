@@ -1,6 +1,7 @@
 <%= simple_form_for(specialty, id: (specialty.id ? dom_id(specialty, :edit) : dom_id(Specialty.new))) do |f| %>
 <%= f.input :name, input_html: { autofocus: true } %>
 <%= f.input :photo %>
+<%= f.input :is_active, label: 'Specialitate activă' %>
 <%= f.input :has_day_hospitalization, label: 'Este specialitate cu spitalizare de zi?' %>
 <%= f.input :is_day_hospitalize, label: 'Este spitalizare de zi?', hint: 'Nu folosi această opțiune!!!' %>
 <%#= f.rich_text_area :description %>

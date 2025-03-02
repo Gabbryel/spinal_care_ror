@@ -1,8 +1,6 @@
-
-
-
-<div class="member-card"
-  data-identity="<%= full_name(m) %>" data-profession="<%= m.profession.name %>" data-specialty="<%= m.specialty.name if m.specialty %>">
+<article title="<%= m.academic_title if m.academic_title %> <%= full_name(m) %>" data-profession="<%= m.profession.name %>" 
+class="member-card relative h-[450px] w-full rounded-xl <%= 'min-w-[300px]' if extract_slug_from_path == m.slug %> justify-self-center overflow-hidden" data-identity="<%= full_name(m) %>" data-profession="<%= m.profession.name %>" data-specialty="<%= m.specialty.name if m.specialty %>"
+>
   <% if m.has_own_page %>
     <a href="../echipa/<%= m.slug %>" id="<%= m.slug %><%= path_for_id %>" name="<%= m.slug %><%= path_for_id %>" >
       <%= render 'members/member_card_info', m: m %>
@@ -10,4 +8,4 @@
   <% else %>
     <%= render 'members/member_card_info', m: m %>
   <% end %>
-</div>
+</article>

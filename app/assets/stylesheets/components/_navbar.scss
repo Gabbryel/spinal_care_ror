@@ -1,6 +1,6 @@
 .navbar-lewagon {
   justify-content: space-between;
-  background: $color-1;
+  // background: $color-1;
   height: calc(var(--vh) * 9);
   min-height: 70px;
   z-index: 1002;
@@ -58,7 +58,7 @@
     display: flex;
     justify-content: flex-end;
     position: relative;
-    background-color: $color-1;
+    background-color: white;
     padding: 10px 40px;
     width: max-content;
     max-width: 2600px;
@@ -71,20 +71,20 @@
       display: flex;
       position: relative;
       gap: 2px 12px;
-      color: #fff6d3;
+      color: $color-3;
       font-size: clamp(14px, calc(0.6dvw + 0.6dvh), 24px);
       flex-wrap: wrap;
       align-items: center;
       justify-content: flex-start;
       .active-menu-item {
-       @include underline-selected($color-5, 2px)
+       @include underline-selected($color-3, 2px)
       }
 
       a, button {
         color: inherit;
         font-size: inherit;
         &:hover {
-          color: $color-5;
+          color: $color-3;
         }
       }
     }
@@ -93,7 +93,7 @@
     div {
       position: relative;
       width: 100%;
-      border-bottom: 2px solid $color-5;
+      border-bottom: 2px solid $color-3;
     }
   }
 }

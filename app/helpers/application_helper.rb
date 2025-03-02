@@ -7,6 +7,10 @@ module ApplicationHelper
     request.path.split('/').join('-')
   end
 
+  def extract_slug_from_path
+    request.path.split('/').last
+  end
+
   def access
     current_user && current_user.admin
   end
@@ -64,8 +68,8 @@ module ApplicationHelper
     specialists
   end
 
-  def motto(text, class_name)
-    content_tag(:div, content_tag(:p, text), class: class_name)
+  def motto(text, add_classes)
+    content_tag(:p, text, class: "relative mx-auto text-black text-center font-poppins font-bold max-sm:text-2xl sm:text-3xl md:text-4xl lg:text-5xl 2xl:text-6xl !leading-[1.5] max-sm:w-11/12 sm:w-11/12 xl:w-10/12 max-sm:my-[3rem] my-[6rem]  #{add_classes}")
   end
 
   def title(text, class_reverse_blue, class_reverse_text)

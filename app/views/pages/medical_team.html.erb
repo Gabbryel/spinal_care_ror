@@ -2,19 +2,19 @@
 <%= content_for :meta_keywords, @professions.pluck(:name).concat(@team_members.map{|tm| full_name(tm)}).concat(@specialties.pluck(:name)).join(', ') %>
 
 <div class="medical-team" id="medical-team" data-controller="memberIndexFilter">
-    <%= button_tag 'Filtru', class: 'btns-icon fs-5', data: { bs_toggle: 'modal', bs_target: '#filterModal' } do %>
-      <i class="fas fa-search"></i> Căutare
+    <%= button_tag 'Filtru', class: 'btns-icon fs-5 text-black', data: { bs_toggle: 'modal', bs_target: '#filterModal' } do %>
+      <i class="fas fa-search text-black"></i> Căutare
     <% end %>
 
     <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
       <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content bg-white">
           <div class="modal-header">
             <%= button_tag 'Profesie', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
             <%= button_tag 'Specialitate', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
             <%#= button_tag 'Nume', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
           </div>
-          <div class="modal-body">
+          <div class="modal-body bg-white">
             <%= simple_form_for :search, html: {id: 'filter-proffesion-form'}, url: echipa_path, method: 'GET' do |f| %>
               <%= f.input :profession, collection: ['Toată echipa'].concat(@professions.select{|p| p.members.count > 0}.map {|p| p.name}), as: :radio_buttons, label: false, input_html: { data: {controller: 'searchTeam', action: 'change->searchTeam#filter', bs_dismiss: 'modal'} } %>
             <% end %>
@@ -24,7 +24,7 @@
             <%#= simple_form_for :search, html: {id: 'filter-name-form', autofocus: true },url: echipa_path, method: 'GET' do |f| %>
               <%#= f.input :name, label: 'Tastează numele dorit și apasă "enter"', input_html: { data: {type: 'button', controller: 'searchTeam', action: 'beforeinput->searchTeam#search keyup->searchTeam#searchName'} } %>
             <%# end %>
-            <button type="button" class="btns-icon btns-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+            <button type="button" class="btns-icon btns-close text-white " data-bs-dismiss="modal" aria-label="Close">&times;</button>
           </div>
         </div>
       </div>

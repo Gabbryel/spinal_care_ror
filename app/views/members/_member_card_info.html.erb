@@ -1,10 +1,7 @@
-
-
-
-<div class="member-card__main" title="<%= m.academic_title %> <%= full_name(m) %>">
-  <div class="member-card__photo-holder" style="background-image: url('<%= cl_image_path(m.photo.key, :quality=>80, :fetch_format=>:webp, :width=>500) if m.photo.key.present? %>');">
-    <div class="member-card-extras ms-2 mt-2">
-      <% if m.has_own_page %>
+<div class="member-card__main relative h-full grid grid-cols-1 grid-rows-[300px_80px_70px] bg-cl-light-blue hover:bg-[#cedae1]" title="<%= m.academic_title %> <%= full_name(m) %>">
+  <div class="relative row-span-1 row-start-1 col-span-full col-start-1 bg-contain bg-[50%_-40%] bg-no-repeat drop-shadow-none" style="background-image: url('<%= cl_image_path(m.photo.key, :quality=>60, :fetch_format=>:webp, :width=>300) if m.photo.key.present? %>');">
+    <div class="absolute flex flex-column gap-1 content-start items-start bottom-[10px] ms-2 mt-2">
+      <% if m.has_own_page && extract_slug_from_path != m.slug %>
         <span class="badge bg-color-1 rounded fw-light">vezi profil</span>
       <% end %>
       <% if m.has_day_hospitalization %>
@@ -16,9 +13,9 @@
     <% if m.founder %>
       <h2 class="fw-bold">Fondator</h2>
     <% end %>
-    <h1 class="member-card-info__name <%= m.has_own_page ? 'underline' : nil %>">
+    <h3 class="member-card-info__name">
        <span><%= m.academic_title if m.academic_title != '-' %></span> <%= full_name(m) %>
-    </h1>
+    </h3>
     <p><%= m.profession.name %> <%= m.doctor_grade %></p>
   </div>
   <div class="member-card-info__profession">

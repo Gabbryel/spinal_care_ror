@@ -1,25 +1,17 @@
-<div class="main-specialities">
-<% if current_page?(controller: 'pages', action: 'home') %>
+<section title="departamente Spinal Care" class="relative w-full py-[6rem] px-0 max-sm:mt-[3rem] mt-[10rem] 
+row-span-1 row-start-3 col-span-full col-start-1">
+<!-- <% if current_page?(controller: 'pages', action: 'home') %>
 <%= title('Specialități', 'section-title-blue', 'section-title-text') %>
-<% end %>
+<% end %> -->
 
-  <div class="main-specialities-index">
-    <% @specialties.each_with_index do |sp, i| %>
+  <div title="specialitati medicale index" class="relative <%= "#{div_widths} #{gaps_for_indexes}" %>  mt-0 mb-[10rem] mx-auto grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] justify-center px-3">
+    <div class="specialty-card relative rounded-2xl w-full md:w-full h-[360px] justify-self-center grid grid-cols-12 grid-rows-6 bg-white">
+      <div class="specialty-name col-span-full row-span-3 row-start-3 flex items-center justify-center text-center text-4xl word-wrap font-bold self-baseline px-2 py-2">Departamente în cadrul Clinicii Spinal Care
+      </div>
+    </div>
+    <% @specialties.select {|sp| sp.is_active }.each_with_index do |sp, i| %>
       <%= render partial: 'specialties/specialty_card', locals: {specialty: sp} %> 
     <% end %>
   </div>
-  <% if current_page?(controller: 'pages', action: 'home') %>
-  <div class="main-landing schroth-main">
-    <div class="main-image">
-      <%= cl_image_tag("cabinets/www.sysphotodesign.ro_148_qun3b7.webp", :quality=>60, :width=>1000, :crop=>"scale")  %>
-    </div>
-    <div class="main-motto">
-      <ul>
-        <li><section class="spinal-care-description schroth-description">
-          <p>În cadrul clinicii medici experimentați sunt asistați de tehnologii avansate pentru a stabili un diagnostic cât mai exact cât și pentru a realiza un tratament cât mai eficient.</p>
-        </section></li>
-      </ul>
-    </div>
-  </div>
-  <% end %>
-</div>
+  <%= render_feature("cabinets/www.sysphotodesign.ro_148_qun3b7.webp", "În cadrul clinicii medici experimentați sunt asistați de tehnologii avansate pentru a stabili un diagnostic cât mai exact cât și pentru a realiza un tratament cât mai eficient.", false) %>
+</section>

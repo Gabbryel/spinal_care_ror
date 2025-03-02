@@ -1,0 +1,64 @@
+<footer class="relative w-full bg-cl-light-blue pt-3">
+  <div class="relative p-6  text-center font-poppins md:grid md:grid-cols-2 md:gap-4 md:grid-rows-[repeat(5,30px)] lg:flex lg:max-w-[1200px] xl:mx-auto">
+    <!-- >>>>> MAIN <<<<< -->
+    <div class="flex flex-col items-center md:col-span-1 md:col-start-1 md:row-span-5 md:row-start-1 gap-x-2 lg:w-1/3">
+      <div>
+        <div>
+          <h2 class="text-2xl font-poppins xl:col-span-1 xl:col-start-1 tracking-[0.02em]">Clinica Spinal Care</h2>
+          <p class="text-xs">Fondator conf.univ.dr.kt. Lucian Dobreci</p>
+        </div>
+        <div class="flex items-center gap-x-2 justify-center py-3">
+          <p class="text-base xl:col-span-1 xl:col-start-1">&copy; 2011-<%= Time.now.year %></p>
+          <%= cl_image_tag("kzaelg1jvfchktxo5eht.png", alt: 'spinal care anmcs', width: '70px', class: 'md:col-span-1 md:col-start-1') %>
+        </div>
+      </div>
+  
+      <div class="font-poppins mb-3 xl:col-span-1 xl:col-start-2 xl:row-start-1">
+        <p class="text-base ">Ambulatoriu de specialitate</p>
+        <p class="text-sm">Str. Mihai Eminescu, nr. 1bis, Bacău</p>
+      </div>
+      <div class="font-poppins xl:col-span-1 xl:col-start-2 xl:row-start-3">
+        <p class="text-base">Spitalizare de zi</p>
+        <p class="text-sm">Str. Nicolae Titulescu nr. 31, Bacău</p>
+      </div>
+    </div>
+    <hr class="bg-cl-light-blue md:hidden">
+    <!-- links -->
+    <div class="md:col-span-1 md:col-start-2 lg:w-1/5">
+      <h4 class="font-bold font-poppins">Link-uri</h4>
+      <ul class="text-base">
+        <li class=""><%= link_to 'Acasă', root_path %><div></div></li>
+        <li class=""><%= link_to 'Echipa medicală', echipa_path %></li>
+        <li class=""><%= link_to 'Departamente', specialitati_medicale_path %></li>
+        <li class="">
+          <button type="button" class="btn-nude !bg-orange-600 hover:!bg-orange-700 !text-white px-2 py-1 rounded-md" data-bs-toggle="modal" data-bs-target="#promoModal">
+          Programări online
+          </button>
+        </li>
+      </ul>
+     </div>
+     <hr class="bg-cl-light-blue md:hidden">
+     <!-- info -->
+    <div class="md:col-span-1 md:col-start-2 md:row-start-4 text-base lg:w-1/5">
+      <h4 class="font-bold font-poppins">Informații utile</h4>
+      <ul class="">
+        <li><%= link_to 'Info pacient', info_pacient_index_path %></li>
+        <li><a href="tel:0374554344" title="Contact telefonic" class="text-black font-poppins"><i class="fa-solid fa-mobile-retro"></i> 0374554344</a></li>
+      </ul>
+    </div>
+    <hr class="bg-cl-light-blue md:hidden">
+    <!-- social -->
+    <div class="relative mx-auto md:col-span-1 md:col-start-2 md:row-start-6 lg:w-1/5">
+      <h4 class="font-bold font-poppins">Social media</h4>
+      <ul class="grid grid-cols-2 gap-2 mx-auto w-max mt-2">
+          <%= link_to 'https://www.facebook.com/SpinalCareBacau' do %>
+        <i class="fab fa-facebook-square text-2xl text-black"></i>
+      <% end %>
+          <%= link_to 'https://www.instagram.com/spinalcarebacau' do %>
+        <i class="fab fa-instagram-square text-2xl text-black"></i>
+      <% end %>
+      </ul>
+    </div>
+  </div>
+  <p class="text-center font-poppins text-cl-light-blue bg-feldgrau py-2">Designed & built with 🧠 in 🇪🇺 by ZebraLabs </p>
+</footer>

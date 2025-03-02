@@ -1,0 +1,6 @@
+background-image: linear-gradient(to right top, #00aa99, #00aaa1, #00aaa8, #00aaae, #00aab4, #00aab9, #00abbe, #00abc3, #00acc9, #00accf, #00add4, #00adda);
+
+cl-navabar: #4a6775,
+background: #ffffff,
+
+

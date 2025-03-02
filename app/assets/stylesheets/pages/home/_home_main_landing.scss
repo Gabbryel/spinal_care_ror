@@ -17,7 +17,7 @@
   grid-template-rows: 1fr 1fr;
   min-height: 50dvh;
   max-height: 51dvh;
-  overflow: hidden;
+  // overflow: hidden;
 
   .landing-image {
     position: relative;
@@ -123,10 +123,6 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
-  }
-
-  @media (min-width: 1000px) {
-    grid-area: 1 / 2 / 4 / 3;
   }
 }
 .main-motto {
