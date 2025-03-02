@@ -9,7 +9,7 @@ row-span-1 row-start-3 col-span-full col-start-1">
       <div class="specialty-name col-span-full row-span-3 row-start-3 flex items-center justify-center text-center text-4xl word-wrap font-bold self-baseline px-2 py-2">Departamente în cadrul Clinicii Spinal Care
       </div>
     </div>
-    <% @specialties.each_with_index do |sp, i| %>
+    <% @specialties.select {|sp| sp.is_active }.each_with_index do |sp, i| %>
       <%= render partial: 'specialties/specialty_card', locals: {specialty: sp} %> 
     <% end %>
   </div>
