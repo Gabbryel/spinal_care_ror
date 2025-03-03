@@ -11,9 +11,10 @@ export default class extends Controller {
       "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776716/cabinets/www.sysphotodesign.ro_157_gxykxx.webp",
       "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1718358055/cabinets/0126_vmwegk.webp",
       "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776672/cabinets/www.sysphotodesign.ro_91_af55tg.webp",
-      "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1723391283/cabinets/eximia-web_v2_lnyhu8.webp"
+      // "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1723391283/cabinets/eximia-web_v2_lnyhu8.webp"
     ];
-    var texts = ["clinică medicală multidisciplinară", "medici experimentați", "kinetoterapeuți dedicați", "aparatură medicală performantă", "spitalizare de zi", "gratuit 100% prin CAS", "estetică medicală" ];
+    var texts = ["clinică medicală multidisciplinară", "medici experimentați", "kinetoterapeuți dedicați", "aparatură medicală performantă", "spitalizare de zi", "gratuit 100% prin CAS"];
+    // "estetică medicală"
     var showImages = () => {
       images.forEach((image, i) => {
         setTimeout(() => {

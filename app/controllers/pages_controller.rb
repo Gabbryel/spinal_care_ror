@@ -14,6 +14,7 @@ class PagesController < ApplicationController
   end
 
   def medical_team
+    @founder = Member.where(founder: true).first
     @team_members = Member.includes([:specialty, :photo_attachment]).order(:last_name)
     @professions = Profession.all.order(:order).includes([:members])
     @specialties = Specialty.all.order(:name).includes([:members])

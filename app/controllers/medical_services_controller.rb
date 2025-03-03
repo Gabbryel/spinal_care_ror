@@ -41,8 +41,8 @@ class MedicalServicesController < ApplicationController
   end
 
   def index
-    @medical_services = policy_scope(MedicalService).includes([:member, :rich_text_description]).order(name: :asc).to_a
-    @specialties = Specialty.includes(medical_services: :member).select {|sp| sp.medical_services.count > 0}.sort {|a, b| a.name <=> b.name}
+    @medical_services = policy_scope(MedicalService).strict_loading
+    @specialties = Specialty.includes(medical_services: :member).select {|sp| sp.medical_services.count > 0 && sp.is_active }.sort {|a, b| a.name <=> b.name}
     @members = Member.strict_loading.includes(:medical_services).select {|m| m.medical_services.count > 0}.sort {|a, b| a.name <=> b.name}
   end
 

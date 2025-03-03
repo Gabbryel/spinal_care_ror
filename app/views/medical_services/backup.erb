@@ -1,0 +1,9 @@
+
+<div class="grid gap-4 xl:gap-2 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+  <% selected_and_sorted_medical_services(sp).each_with_index do |ms, i| %>
+  <% if i == 0 || ms.member != selected_and_sorted_medical_services(sp)[i-1].member %>
+  <div class="col-span-full text-lg bg-cl-light-blue py-2 px-[2rem] w-[300px] md:w-full max-md:text-center lg:!text-left"><h2><%= link_to "#{ms.member.academic_title} #{ms.member.name}", "echipa/#{ms.member.slug}", class: 'text-black' %></h2></div>
+  <% end %>
+  <div class="relative w-[300px] max-h-[125px] pl-[10px] min-w-min mx-0 my-auto border-b-2 border-gray-300 text-sm"><%= render_medical_service(ms) %></div> 
+  <% end %>
+</div>
