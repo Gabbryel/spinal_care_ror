@@ -34,6 +34,10 @@ module ApplicationHelper
   def full_name(member)
     "#{member.first_name} #{member.last_name}" if member
   end
+
+  def full_name_with_title(member)
+    "#{member.academic_title} #{member.first_name} #{member.last_name}" if member
+  end
 # helper for medical_service dots
   def m_s_helper(ms)
     30 - (ms.name.length + ms.price.to_s.length).to_i

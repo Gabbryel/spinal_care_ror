@@ -6435,10 +6435,10 @@
         "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1654682878/production/zg9bn5picn9m1th7e5narlkjej8u.webp",
         "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776716/cabinets/www.sysphotodesign.ro_157_gxykxx.webp",
         "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1718358055/cabinets/0126_vmwegk.webp",
-        "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776672/cabinets/www.sysphotodesign.ro_91_af55tg.webp",
-        "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1723391283/cabinets/eximia-web_v2_lnyhu8.webp"
+        "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776672/cabinets/www.sysphotodesign.ro_91_af55tg.webp"
+        // "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1723391283/cabinets/eximia-web_v2_lnyhu8.webp"
       ];
-      var texts = ["clinic\u0103 medical\u0103 multidisciplinar\u0103", "medici experimenta\u021Bi", "kinetoterapeu\u021Bi dedica\u021Bi", "aparatur\u0103 medical\u0103 performant\u0103", "spitalizare de zi", "gratuit 100% prin CAS", "estetic\u0103 medical\u0103"];
+      var texts = ["clinic\u0103 medical\u0103 multidisciplinar\u0103", "medici experimenta\u021Bi", "kinetoterapeu\u021Bi dedica\u021Bi", "aparatur\u0103 medical\u0103 performant\u0103", "spitalizare de zi", "gratuit 100% prin CAS"];
       var showImages = () => {
         images.forEach((image, i) => {
           setTimeout(() => {

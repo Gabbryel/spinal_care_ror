@@ -1,5 +1,5 @@
 <%= content_for :meta_title, 'Echipa medicală Spinal Care Bacău' %>
-<%= content_for :meta_keywords, @professions.pluck(:name).concat(@team_members.map{|tm| full_name(tm)}).concat(@specialties.pluck(:name)).join(', ') %>
+<%= content_for :meta_keywords, @team_members.map{|tm| full_name_with_title(tm)}.join(', ') %>
 
 <div class="medical-team" id="medical-team" data-controller="memberIndexFilter">
     <%= button_tag 'Filtru', class: 'btns-icon fs-5 text-black', data: { bs_toggle: 'modal', bs_target: '#filterModal' } do %>
@@ -32,14 +32,12 @@
 
 
     <div class="profession-div">
-      <% @team_members.select {|tm| tm.last_name == 'Dobreci' }.each do |m| %>
-        <%= render partial: "members/member_card", locals: {m: m, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
-      <% end %>
+        <%= render partial: "members/member_card", locals: {m: @founder, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
     </div>
   <% @professions.each do |p| %>
     <% if p.members.count > 0 %>
       <div class="profession-div" id="<%= p.slug %>">
-          <% p.members.order(:last_name).select {|m| m.last_name != 'Dobreci'}.each do |m| %>
+          <% p.members.order(:last_name).select {|m| !m.founder && m.is_active }.each do |m| %>
             <%= render partial: "members/member_card", locals: {m: m, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
           <% end %>
       </div>
