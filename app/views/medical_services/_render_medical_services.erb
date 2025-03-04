@@ -6,9 +6,7 @@
       <div class="grid gap-4 xl:gap-2 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mb-[2rem]">
         <% sp.medical_services.select {|ms| ms.member == nil}.each do |ms| %>
           <div class="relative w-[300px] max-h-[125px] pl-[10px] min-w-min mx-0 my-auto border-b-2 border-gray-300 text-sm">
-            <% cache do %>
               <%= render_medical_service(ms) %>
-            <% end %>
           </div>
         <% end %>
       </div>
