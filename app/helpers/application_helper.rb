@@ -50,7 +50,7 @@ module ApplicationHelper
   end
 
   def action_btn(text, x, y)
-    button_tag text, class:"btn-nude #{x} #{y}", data: { bs_toggle: "modal", bs_target: "#contactModal"}
+    button_tag text, class:"btn-nude #{x} #{y}", data: { bs_toggle: "modal", bs_target: "#promoModal"}
   end
 
   def book_btn(text, class_name)
