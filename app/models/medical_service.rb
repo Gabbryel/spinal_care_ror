@@ -1,5 +1,5 @@
 class MedicalService < ApplicationRecord
-  belongs_to :specialty, counter_cache: true
+  belongs_to :specialty
   belongs_to :member, optional: true
   has_rich_text :description
   include SlugHelper
