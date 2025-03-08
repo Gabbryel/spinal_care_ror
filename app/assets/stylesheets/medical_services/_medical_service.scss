@@ -8,30 +8,32 @@
     word-wrap: unset;
     margin: 0;
   }
-  .medical-service-crud {
-    position: relative;
-    display: flex;
-    align-content: center;
-    align-items: center;
-    gap: 10px;
-    a {
-      font-size: 12px;
-    }
-    .fa-edit{
-      &:hover {
-        &:after {
-          @include hover-the-icons;
-          content: 'editează serviciul medical';
-        }
+}
+.medical-service-crud {
+  position: absolute;
+  display: flex;
+  bottom: 0px;
+  right: 0px;
+  align-content: center;
+  align-items: center;
+  gap: 10px;
+  a {
+    font-size: 12px;
+  }
+  .fa-edit{
+    &:hover {
+      &:after {
+        @include hover-the-icons;
+        content: 'editează serviciul medical';
       }
     }
-    .fa-trash-alt {
-      &:hover {
-        color: red;
-        &:after {
-          @include hover-the-icons;
-          content: '⚠️ link ștergere date!!!';
-        }
+  }
+  .fa-trash-alt {
+    &:hover {
+      color: red;
+      &:after {
+        @include hover-the-icons;
+        content: '⚠️ link ștergere date!!!';
       }
     }
   }

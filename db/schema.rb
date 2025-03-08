@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_03_062215) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_07_064939) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -125,6 +125,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_062215) do
     t.boolean "has_day_hospitalization", default: false
     t.boolean "is_day_hospitalize", default: false
     t.boolean "is_active", default: true
+    t.integer "medical_services_count"
   end
 
   create_table "users", force: :cascade do |t|
