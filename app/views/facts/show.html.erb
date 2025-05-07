@@ -1,6 +1,6 @@
 <%= content_for :meta_title, 'Informări pentru pacient Spinal Care Bacău' %>
 <%= content_for :meta_keywords, @facts.pluck(:name).sample(4).join(', ') %>
-<div class="pacient-section__wall-photo" style="background-image: url('<%= cl_image_path(bkg_photo, :quality=>80, :width=>800, :crop=>"scale") %>'); filter: grayscale(1) contrast(4) brightness(.5);"></div>
+<div class="pacient-section__wall-photo" style="background-image: url('<%#= cl_image_path(bkg_photo, :quality=>80, :width=>800, :crop=>"scale") %>'); filter: grayscale(1) contrast(4) brightness(.5);"></div>
 <div class="fact-section">
   <h2>Informare pacient</h2>
   <div class="btn-group dropdown-center">
@@ -12,7 +12,7 @@
       <% end %>
     </ul>
   </div>
-  <div class="fact">
+  <div class="fact img-w-<%= @fact.custom_width %>">
     <%= @fact.description %>
   </div>
 </div>

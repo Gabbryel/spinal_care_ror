@@ -93,3 +93,5 @@ end
 gem "tailwindcss-ruby", "~> 3.4"
 
 gem "tailwindcss-rails", "~> 3.3"
+
+gem 'ruby-vips', '~> 2.2', '>= 2.2.3'
