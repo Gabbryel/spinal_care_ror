@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_07_064939) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_06_130834) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -60,6 +60,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_064939) do
     t.string "slug", default: ""
     t.string "modified_by"
     t.string "created_by"
+    t.string "custom_width", default: "f"
   end
 
   create_table "medical_services", force: :cascade do |t|

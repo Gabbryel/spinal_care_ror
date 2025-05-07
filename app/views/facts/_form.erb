@@ -7,6 +7,7 @@
     <% end %>
     <%= f.input :name, label: false, placeholder: 'titlul informării' %>
     <%= f.rich_text_area :description, placeholder: 'textul informării' %>
+    <%= f.input :custom_width %>
     <%= f.hidden_field :created_by, value: current_user.email if fact.created_by.nil? %>
     <%= f.hidden_field :modified_by, value: current_user.email %>
     <br>

@@ -28,14 +28,17 @@
 .trix-content action-text-attachment .attachment {
   padding: 0 !important;
   max-width: 100% !important;
-  img {
-    width: 250px;
-  }
+  
 }
 
 trix-editor {
   min-height: 270px;
+}
+
+.img-w-info-pacientcd  {
   img {
-    width: 250px;
+    width: 70dvw;
+    min-width: 400px;
+    max-width: 1000px;
   }
 }

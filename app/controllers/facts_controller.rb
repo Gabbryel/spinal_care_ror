@@ -67,6 +67,6 @@ class FactsController < ApplicationController
   end
 
   def fact_params
-    params.require(:fact).permit(:name, :description, :slug, :created_by, :modified_by)
+    params.require(:fact).permit(:name, :description, :custom_width, :slug, :created_by, :modified_by)
   end
 end
