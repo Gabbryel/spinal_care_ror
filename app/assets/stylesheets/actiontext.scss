@@ -35,7 +35,13 @@ trix-editor {
   min-height: 270px;
 }
 
-.img-w-info-pacientcd  {
+.img-width-70dvw {
+  .attachment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
   img {
     width: 70dvw;
     min-width: 400px;
