@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.3.1"
+ruby "3.3.0"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'rails'
@@ -49,7 +49,8 @@ gem 'sitemap_generator'
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
-gem 'cloudinary'
+gem 'cloudinary', '~> 1.25.0' # Ensure the latest compatible version is specified
+gem 'ruby-vips', '~> 2.2', '>= 2.2.3'
 gem "pundit", "~> 2.2"
 gem "devise"
 gem "autoprefixer-rails"
