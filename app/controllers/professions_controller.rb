@@ -40,7 +40,7 @@ class ProfessionsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to admin_professions_path, notice: "Ai șters profesia cu succes!" }
       end
-      else
+    else
         redirect_to admin_professions_path, notice: "Se pare că această profesie are extra-vieți! Mai încearcă încă o dată ștergerea!"
     end
   end
