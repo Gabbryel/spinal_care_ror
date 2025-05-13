@@ -5,13 +5,13 @@
   <h1>Spinal Care Bacău</h1>
   <h2>Clinică medicală</h2>
   <h3>Mâinile care te pun pe picioare!</h3>
-  <div class="pacient-section__info">
-    <h2>Informații pentru pacient</h2>
-    <div class="pacient-section__info-index">
-      <% @facts.sort{|x,y| x.created_at <=> y.created_at }.each do |f| %>
-        <h4><%= link_to f.name, "info-pacient/#{f.slug}", class: 'pacient-section__info-index_fact' %></h4>
-      <% end %>
-    </div>
+  <div class="pacient-section__info ">
+    <%= link_to "info-pacient/#{@facts[0].slug}" do %>
+      <h3 class="cursor-pointer !bg-orange-600 hover:!bg-orange-700 !text-white p-2 rounded-lg">Informații pentru pacient</h3>
+    <% end %>
+  <div class="mt-5">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2743.033572862404!2d26.90179677747024!3d46.56680140919857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b56fd886e18b1f%3A0xd3e2c4f39a7d4311!2sClinica%20Spinal%20Care%20Bac%C4%83u!5e0!3m2!1sen!2sro!4v1747072735626!5m2!1sen!2sro" width="400" height="300" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="width: 100%; min-width: 360px; height: 30dvh; margin: 0 auto"></iframe>
+  </div>
     <div class="pacient-section__info-partners">
       <h2>Parteneriate</h2>
       <div class="pacient-section__info-partners-index">

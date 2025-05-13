@@ -4,7 +4,7 @@
 <div class="fact-section">
   <h2>Informare pacient</h2>
   <div class="btn-group dropdown-center">
-    <button type="button" class="btn-drop dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Selectează informația</button>
+    <button type="button" class="btn-drop dropdown-toggle !bg-orange-600 hover:!bg-orange-700 !text-white" data-bs-toggle="dropdown" aria-expanded="false">Selectează informația dorită</button>
     <ul class="dropdown-menu">
       <li><%= link_to 'Înapoi la index informări', info_pacient_index_path, class: 'dropdown-item btn-color' %></li>
       <% @all_facts.each do |fact| %>
@@ -13,6 +13,7 @@
     </ul>
   </div>
   <div class="fact img-w-<%= @fact.custom_width %>">
+    <h4 class="fs-3 mb-5 text-center h1"><%= @fact.name %></h4>
     <%= @fact.description %>
   </div>
 </div>
