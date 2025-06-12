@@ -65,8 +65,11 @@
     <!-- info -->
     <div class="md:col-span-1 md:col-start-2 md:row-start-4 text-base lg:w-1/5">
       <h4 class="font-bold font-poppins">Informații utile</h4>
-      <ul class="">
+      <ul>
         <li><%= link_to 'Info pacient', info_pacient_index_path %></li>
+        <li class="dropdown-item disabled"><%= link_to 'Cariere', info_pacient_index_path %></li>
+        <li class="dropdown-item disabled"><%= link_to 'Audiențe', info_pacient_index_path %></li>
+        <li class="dropdown-item disabled"><%= link_to 'Reclamații', info_pacient_index_path %></li>
         <li>
           <a
             href="tel:0374554344"
