@@ -42,7 +42,9 @@
       <%= action_btn("Programează-te!", "btn-custom", "btn-action !bg-orange-600") %>
       <!-- <h2>Medici <%= @specialty.name.downcase %> </h2> -->
       <div class="about-specialty-container__specialists-index">
-        <% @specialty.members_belonging_to_specialty.concat(specialty_specialists(@specialty)).uniq.each_with_index do |member| %>
+        <% @specialty.members_belonging_to_specialty.concat(specialty_specialists(@specialty)).uniq
+        .sort_by { |a| a.specialty_favored ? 0:1 }
+        .each_with_index do |member| %>
           <%= render partial: 'members/member_card', locals: {m: member, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
         <% end %>
       </div>
