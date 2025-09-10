@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_06_130834) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_10_100528) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -51,6 +51,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_130834) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "applications", force: :cascade do |t|
+    t.string "fullname"
+    t.text "address"
+    t.text "email"
+    t.text "phone"
+    t.bigint "career_id", null: false
+    t.string "emplyment"
+    t.text "cv"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["career_id"], name: "index_applications_on_career_id"
+  end
+
+  create_table "careers", force: :cascade do |t|
+    t.bigint "profession_id", null: false
+    t.text "details"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["profession_id"], name: "index_careers_on_profession_id"
   end
 
   create_table "facts", force: :cascade do |t|
@@ -95,6 +116,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_130834) do
     t.boolean "founder", default: false
     t.boolean "has_day_hospitalization", default: false
     t.boolean "is_active", default: true
+    t.boolean "specialty_favored", default: false
     t.index ["profession_id"], name: "index_members_on_profession_id"
     t.index ["specialty_id"], name: "index_members_on_specialty_id"
   end
@@ -146,6 +168,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_130834) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "applications", "careers"
+  add_foreign_key "careers", "professions"
   add_foreign_key "medical_services", "members"
   add_foreign_key "medical_services", "specialties"
   add_foreign_key "members", "professions"
