@@ -1,26 +1,81 @@
 <% if access %>
-  <div class="specialties-main section-main">
-    <h1>Informări pentru client</h1>
-    <div class="information-form">
-      <%= render partial: 'facts/modal', locals: { new: true, modal_id: 'newFactModal', fact: @fact } %>
+  <div class="facts-dashboard">
+    <div class="facts-header">
+      <h1>Informații pentru Pacienți</h1>
+      <button class="facts-add-btn" data-bs-toggle="modal" data-bs-target="#newFactModal">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+        Informație nouă
+      </button>
     </div>
-    <h3><%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newFactModal" } do %><i class="fa-solid fa-plus"></i> <i class="fa-solid fa-circle-info"></i><% end %></h3>
-    <div class="facts-index">
-      <% @facts.each do |fact| %>
-      <div class="fact">
-        <h2><%= fact.name %>, creată la <%= date_ro_with_hour(fact.created_at) %> de <%= fact.created_by %>, ultima editare <%= date_ro_with_hour(fact.updated_at) %> de <%= fact.modified_by %></h2>
-        <div class="fact-crud">
-          <%= link_to "#", data: {bs_toggle: "modal", bs_target: "#editFact#{fact.id}Modal"} do %>
-            <i class="fas fa-edit"></i>
-          <% end %>
-          <%= render partial: "facts/modal", locals: {new: false, modal_id: "editFact#{fact.id}Modal", fact: fact} %>
-          <%= link_to fact_path(fact), data: { turbo_method: :delete, turbo_confirm: "Sigur ștergi informarea #{fact.slug}?"} do %>
-            <i class="fas fa-trash-alt"></i>
-          <% end %>
-        </div>
+
+    <%= render partial: 'facts/modal', locals: { new: true, modal_id: 'newFactModal', fact: @fact } %>
+
+    <% if @facts.empty? %>
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+        </svg>
+        <p>Nicio informație adăugată încă</p>
+        <button class="empty-state-btn" data-bs-toggle="modal" data-bs-target="#newFactModal">Adaugă prima informație</button>
       </div>
-      <% end %>
-    </div>
+    <% else %>
+      <div class="facts-grid">
+        <% @facts.each do |fact| %>
+          <%= render partial: 'facts/modal', locals: {new: false, modal_id: "editFact#{fact.id}Modal", fact: fact} %>
+          <div class="fact-card" id="fact-<%= fact.id %>">
+            <div class="fact-header">
+              <div class="fact-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="fact-title">
+                <h3><%= fact.name %></h3>
+              </div>
+            </div>
+
+            <div class="fact-meta">
+              <div class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span><strong>Creat:</strong> <%= date_ro_with_hour(fact.created_at) %></span>
+              </div>
+              <div class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                <span><%= fact.created_by %></span>
+              </div>
+            </div>
+
+            <div class="fact-updated">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
+              <span>Ultima editare: <%= date_ro_with_hour(fact.updated_at) %> de <%= fact.modified_by %></span>
+            </div>
+
+            <% if access %>
+              <div class="fact-actions">
+                <button class="action-btn edit-btn" data-bs-toggle="modal" data-bs-target="#editFact<%= fact.id %>Modal">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                  </svg>
+                </button>
+                <%= link_to fact_path(fact), data: { turbo_method: :delete, turbo_confirm: "Sigur ștergi informarea #{fact.slug}?"}, class: 'action-btn delete-btn' do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                  </svg>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 <% else %>
     <%= no_access %>

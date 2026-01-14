@@ -1,6 +1,7 @@
 class MedicalServicesController < ApplicationController
   before_action :skip_authorization, only: %i[index show_by_specialty]
   skip_before_action :authenticate_user!, only: %i[index show_by_specialty]
+  skip_after_action :verify_policy_scoped, only: %i[index show_by_specialty]
   before_action :set_medical_service, only: %i[edit update destroy]
 
   def new
@@ -41,10 +42,18 @@ class MedicalServicesController < ApplicationController
   end
 
   def index
-    @medical_services = policy_scope(MedicalService).strict_loading
-    # @specialties = Specialty.includes(medical_services: :member).select {|sp| sp.medical_services.count > 0 && sp.is_active }.sort {|a, b| a.name <=> b.name}
-    @specialties = Specialty.includes(medical_services: :member).where(is_active: true, medical_services_count: 1..).order(name: :asc)
-    # @members = Member.strict_loading.includes(:medical_services).select {|m| m.medical_services.count > 0}.sort {|a, b| a.name <=> b.name}
+    # Optimized query: eager load associations with ordered medical services
+    @specialties = Specialty
+      .includes(medical_services: :member)
+      .where(is_active: true)
+      .where('medical_services_count > 0')
+      .order(name: :asc)
+      .references(:medical_services)
+    
+    # Order medical services by member_id and name in SQL for better performance
+    @specialties.each do |specialty|
+      specialty.association(:medical_services).target.sort_by! { |ms| [ms.member_id ? 0 : 1, ms.member_id || 0, ms.name] }
+    end
   end
 
   def show

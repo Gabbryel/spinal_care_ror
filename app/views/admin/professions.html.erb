@@ -1,24 +1,74 @@
 <% if access %>
-  <div class="user-container default-container data-controller="masonry">
-    <div class="users-main grid-masonry">
-
-      <h1>Profesii</h1>
-      <%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newProfessionModal"  }, aria_label: 'Activează formularul pentru o profesie nouă', class: 'btn-nude btn-action btn-custom mb-5'  do %>
-      <p style="text-align: center;">Adaugă profesie nouă</p>
-      <% end %>
-      <%= render partial: "professions/modal", locals: {new: true, modal_id: 'newProfessionModal', profession: @profession} %>
-      
-      <div class="grid-masonry-list default-grid">
-        <% @professions.each do |p| %>
-        <div class="grid-masonry-content">
-          <%= render partial: "professions/profession", locals: {profession: p} %>
-        </div>
-        <% end %>
+  <div class="professions-dashboard">
+    <div class="dashboard-header">
+      <div class="header-content">
+        <h1 class="dashboard-title">Profesii</h1>
+        <p class="dashboard-subtitle">Gestionează profesiile echipei medicale</p>
       </div>
+      <%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newProfessionModal" }, 
+          aria_label: 'Adaugă profesie nouă', 
+          class: 'btn-add-profession' do %>
+        <svg class="icon-plus" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        <span>Adaugă profesie</span>
+      <% end %>
     </div>
 
+    <%= render partial: "professions/modal", locals: {new: true, modal_id: 'newProfessionModal', profession: @profession} %>
+
+    <% if @professions.any? %>
+      <div class="professions-grid">
+        <% @professions.each do |profession| %>
+          <div class="profession-card">
+            <div class="profession-card-header">
+              <h3 class="profession-name"><%= profession.name %></h3>
+              <div class="profession-actions">
+                <%= link_to "#", 
+                    data: {bs_toggle: "modal", bs_target: "#editProfession#{profession.id}Modal"}, 
+                    class: 'action-btn action-edit',
+                    title: 'Editează' do %>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                  </svg>
+                <% end %>
+                <%= link_to profession_path(profession), 
+                    data: { turbo_method: :delete, turbo_confirm: "Sigur ștergi profesia '#{profession.name}'?" },
+                    class: 'action-btn action-delete',
+                    title: 'Șterge' do %>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                <% end %>
+              </div>
+            </div>
+            <div class="profession-card-body">
+              <div class="profession-detail">
+                <span class="detail-label">Ordine afișare:</span>
+                <span class="detail-value"><%= profession.order || 'N/A' %></span>
+              </div>
+              <div class="profession-detail">
+                <span class="detail-label">Specialitate medicală:</span>
+                <span class="detail-value <%= profession.has_specialty ? 'has-specialty' : 'no-specialty' %>">
+                  <%= profession.has_specialty ? '✓ Da' : '✗ Nu' %>
+                </span>
+              </div>
+            </div>
+          </div>
+          <%= render partial: "professions/modal", locals: {new: false, modal_id: "editProfession#{profession.id}Modal", profession: profession} %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+        </svg>
+        <h3 class="empty-title">Nu există profesii</h3>
+        <p class="empty-description">Începe prin a adăuga prima profesie folosind butonul de mai sus.</p>
+      </div>
+    <% end %>
   </div>
 <% else %>
-    <%= no_access %>
+  <%= no_access %>
 <% end %>
 

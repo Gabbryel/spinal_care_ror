@@ -1,0 +1,74 @@
+<article class="modern-member-card" 
+         data-member-name="<%= full_name(m).downcase %>"
+         data-profession="<%= m.profession.slug %>"
+         data-specialty="<%= m.specialty&.slug || 'none' %>"
+         data-memberindexfilter-target="card">
+  <div class="member-card-inner">
+    <div class="member-photo" <% if m.photo.attached? %>style="background-image: url('<%= cl_image_path(m.photo.key, quality: 70, width: 400, height: 500, crop: :fill, gravity: :face, fetch_format: :auto) %>');"<% end %>>
+      <% unless m.photo.attached? %>
+        <div class="member-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
+          </svg>
+        </div>
+      <% end %>
+      
+      <div class="member-badges">
+        <% if m.has_own_page %>
+          <span class="member-badge profile-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+              <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.186A10.004 10.004 0 0110 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0110 17c-4.257 0-7.893-2.66-9.336-6.41zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+            </svg>
+            Vezi profil
+          </span>
+        <% end %>
+        <% if m.has_day_hospitalization %>
+          <span class="member-badge hospitalization-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M9.661 2.237a.531.531 0 01.678 0 11.947 11.947 0 007.078 2.749.5.5 0 01.479.425c.069.52.104 1.05.104 1.59 0 5.162-3.26 9.563-7.834 11.256a.48.48 0 01-.332 0C5.26 16.564 2 12.163 2 7c0-.538.035-1.069.104-1.589a.5.5 0 01.48-.425 11.947 11.947 0 007.077-2.75zM10 6a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0v-1.5h-1.5a.75.75 0 010-1.5h1.5v-1.5A.75.75 0 0110 6z" clip-rule="evenodd" />
+            </svg>
+            Spitalizare de zi
+          </span>
+        <% end %>
+      </div>
+
+      <div class="member-overlay"></div>
+    </div>
+
+    <div class="member-info">
+      <% if m.founder %>
+        <span class="founder-label">Fondator</span>
+      <% end %>
+      
+      <h3 class="member-name">
+        <% if m.academic_title.present? && m.academic_title != '-' %>
+          <span class="academic-title"><%= m.academic_title %></span>
+        <% end %>
+        <%= full_name(m) %>
+      </h3>
+      
+      <p class="member-profession">
+        <%= m.profession.name %>
+        <% if m.doctor_grade.present? %>
+          · <%= m.doctor_grade %>
+        <% end %>
+      </p>
+
+      <% if m.specialty.present? %>
+        <%= link_to "../specialitati-medicale/#{m.specialty.slug}", class: 'member-specialty' do %>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
+          </svg>
+          <%= m.specialty.name %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <% if m.has_own_page %>
+      <%= link_to "../echipa/#{m.slug}", class: 'member-link' do %>
+        <span class="sr-only">Vezi profilul lui <%= full_name(m) %></span>
+      <% end %>
+    <% end %>
+  </div>
+</article>

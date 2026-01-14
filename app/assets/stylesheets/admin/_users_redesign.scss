@@ -1,0 +1,349 @@
+// ============================================
+// Users Dashboard Redesign Styles
+// ============================================
+
+.users-dashboard {
+  margin-top: calc(var(--vh) * 10);
+  padding: 2rem;
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+
+  // Header Section
+  .users-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #e5e7eb;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 0;
+    }
+
+    .users-count {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #6366f1;
+      background: #eef2ff;
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+    }
+  }
+
+  // Empty State
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: #f9fafb;
+    border-radius: 1rem;
+    border: 2px dashed #d1d5db;
+
+    svg {
+      width: 4rem;
+      height: 4rem;
+      color: #9ca3af;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: #6b7280;
+      margin: 0;
+    }
+  }
+
+  // Users Grid
+  .users-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+
+    @media (min-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: 1400px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  // User Card
+  .user-card {
+    background: white;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+    border: 1px solid #e5e7eb;
+
+    &:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      transform: translateY(-4px);
+      border-color: #6366f1;
+    }
+
+    .user-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+      border-bottom: 1px solid #c7d2fe;
+
+      .user-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+      }
+
+      .user-info {
+        flex: 1;
+        min-width: 0;
+
+        .user-alias {
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #1f2937;
+          margin: 0 0 0.25rem 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .user-email {
+          font-size: 0.85rem;
+          color: #6b7280;
+          margin: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .user-permissions {
+      display: flex;
+      gap: 0.75rem;
+      padding: 1.25rem 1.5rem;
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+
+      .permission-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.875rem;
+        border-radius: 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        flex: 1;
+        justify-content: center;
+
+        svg {
+          width: 1.125rem;
+          height: 1.125rem;
+        }
+
+        &.active {
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+          color: white;
+          box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        }
+
+        &.inactive {
+          background: #e5e7eb;
+          color: #6b7280;
+        }
+      }
+    }
+
+    .user-actions-section {
+      padding: 1.5rem;
+
+      .action-item {
+        margin-bottom: 1rem;
+
+        &:last-of-type {
+          margin-bottom: 1.5rem;
+        }
+
+        .inline-form {
+          width: 100%;
+
+          .btn-action {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &.btn-grant {
+              background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+              color: white;
+              box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+
+              &:hover {
+                background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+                box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+                transform: translateY(-1px);
+              }
+            }
+
+            &.btn-revoke {
+              background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+              color: white;
+              box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+
+              &:hover {
+                background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+                box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+                transform: translateY(-1px);
+              }
+            }
+
+            &:active {
+              transform: translateY(0);
+            }
+          }
+        }
+      }
+
+      .alias-form {
+        padding-top: 1.5rem;
+        border-top: 1px solid #e5e7eb;
+
+        .alias-form-inner {
+          .form-group {
+            margin-bottom: 1rem;
+
+            .form-label {
+              display: block;
+              font-size: 0.9rem;
+              font-weight: 600;
+              color: #374151;
+              margin-bottom: 0.5rem;
+            }
+
+            .form-input-wrapper {
+              input[type="text"] {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid #d1d5db;
+                border-radius: 0.5rem;
+                font-size: 0.95rem;
+                transition: all 0.2s;
+
+                &:focus {
+                  outline: none;
+                  border-color: #6366f1;
+                  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+                }
+              }
+            }
+          }
+
+          .form-actions {
+            display: flex;
+            gap: 0.75rem;
+
+            .btn-action {
+              flex: 1;
+              padding: 0.75rem;
+              border: none;
+              border-radius: 0.5rem;
+              font-weight: 600;
+              font-size: 0.9rem;
+              cursor: pointer;
+              transition: all 0.2s;
+              text-decoration: none;
+              text-align: center;
+
+              &.btn-update {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: white;
+                box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+
+                &:hover {
+                  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+                  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+                  transform: translateY(-1px);
+                }
+              }
+
+              &.btn-delete {
+                background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                color: white;
+                box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+
+                &:hover {
+                  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+                  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+                  transform: translateY(-1px);
+                }
+              }
+
+              &:active {
+                transform: translateY(0);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .users-dashboard {
+    padding: 1rem;
+
+    .users-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .user-card {
+      .user-permissions {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .user-actions-section {
+        .alias-form {
+          .alias-form-inner {
+            .form-actions {
+              flex-direction: column;
+
+              .btn-action {
+                width: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

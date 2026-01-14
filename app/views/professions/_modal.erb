@@ -1,11 +1,29 @@
-<div class="modal fade modal-sm" id="<%= modal_id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel"><%= new ? 'Profesie nouă' : 'Editează profesie' %></h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="modal fade profession-modal" id="<%= modal_id %>" tabindex="-1" aria-labelledby="<%= modal_id %>Label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modern-modal-content">
+      <div class="modal-header modern-modal-header">
+        <div class="modal-title-wrapper">
+          <div class="modal-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="modal-title" id="<%= modal_id %>Label">
+              <%= new ? 'Adaugă profesie nouă' : 'Editează profesie' %>
+            </h1>
+            <p class="modal-subtitle">
+              <%= new ? 'Completează detaliile pentru noua profesie' : 'Modifică informațiile profesiei' %>
+            </p>
+          </div>
+        </div>
+        <button type="button" class="modern-close-btn" data-bs-dismiss="modal" aria-label="Close">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body modern-modal-body">
         <%= render partial: "professions/form", locals: {profession: profession} %>
       </div>
     </div>

@@ -4,11 +4,11 @@ export default class extends Controller {
   createAdminLink() {
     let adminLinkContainer = document.createElement("li");
     let adminLink = document.createElement("a");
-    adminLink.setAttribute("href", "/dashboard/users");
+    adminLink.setAttribute("href", "/dashboard");
     adminLink.setAttribute("id", "adminLink");
     adminLink.innerText = "Admin";
     adminLinkContainer.appendChild(adminLink);
-    return adminLinkContainer
+    return adminLinkContainer;
   }
 
   showAdminLink() {
@@ -16,13 +16,13 @@ export default class extends Controller {
       let sideMenu = document.getElementById("side-menu-options");
       let exitLink = document.getElementById("exitLink");
       sideMenu.insertBefore(this.createAdminLink(), exitLink);
-    } else if (screen.width >=1024) {
+    } else if (screen.width >= 1024) {
       let navbarMenu = document.getElementById("navbar-items");
       let navbarExitLink = document.getElementById("nav-bar-exit-link");
-      let div = document.createElement("div")
+      let div = document.createElement("div");
       let createAdminLink = this.createAdminLink();
-      createAdminLink.setAttribute("class", "active-menu-item")
-      createAdminLink.append(div)
+      createAdminLink.setAttribute("class", "active-menu-item");
+      createAdminLink.append(div);
       navbarMenu.insertBefore(createAdminLink, navbarExitLink);
     }
   }
@@ -34,17 +34,12 @@ export default class extends Controller {
           if (e.key === "d") {
             body.addEventListener("keydown", (e) => {
               if (e.key === "m" && !document.getElementById("adminLink")) {
-                this.showAdminLink()
+                this.showAdminLink();
               }
             });
           }
         });
       }
     });
-    if (document.getElementById('exitLink')) {
-      this.showAdminLink()
-    }
   }
 }
-
-
