@@ -9,7 +9,7 @@
       <h2 class="text-center text-4xl word-wrap font-bold px-2 py-2 font-poppins max-sm:mb-[4rem]">Specialiști în terapia Schroth</h2>
     </div>
     <% @schroths.each_with_index do |m, i| %>
-          <%= render partial: "members/member_card", locals: {m: m, i: i, not_animated: nil, no_grid_area: 'no_grid_area'} %>
+          <%= render partial: "members/modern_member_card", locals: {m: m} %>
         <% end %>
   </section>
 
@@ -20,7 +20,7 @@
       <h2 class="text-center text-3xl word-wrap font-bold px-2 py-2 font-poppins max-sm:mb-[4rem]">Kinetoterapeuți</h2>
     </div>
     <% @kinetos_to_show.each_with_index do |m, i| %>
-          <%= render partial: "members/member_card", locals: {m: m, i: i, not_animated: nil, no_grid_area: 'no_grid_area'} %>
+          <%= render partial: "members/modern_member_card", locals: {m: m} %>
     <% end %>
     <div class="relative h-full grid grid-cols-1 grid-rows-1 items-center justify-items-center max-sm:mt-[3rem] 2xl:col-span-full 2xl:col-start-1 2xl:mt-[3rem]">
       <h2 class="text-center text-4xl word-wrap font-bold px-2 py-2 font-poppins"><%= see_the_team(Profession.find(2).slug) %></h2>

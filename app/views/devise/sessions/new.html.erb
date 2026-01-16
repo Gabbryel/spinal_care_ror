@@ -1,29 +1,62 @@
-<%= content_for :meta_title, 'Cont nou spinalcare.ro' %>
-<div class="form-container">
-  <div class="form-container_a">
-    <h2>Cont de admin</h2>
-    <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), data: { turbo: :false }) do |f| %>
-      <div class="form-inputs">
-        <%= f.input :email,
-                    label: false,
-                    placeholder: 'adresa de email',
-                    required: false,
-                    autofocus: true,
-                    input_html: { autocomplete: "email" } %>
-        <%= f.input :password,
-                    label: false,
-                    placeholder: '*******',
-                    required: false,
-                    input_html: { autocomplete: "current-password" } %>
-        <%= f.input :remember_me, label: 'Recunoaștere automată', as: :boolean if devise_mapping.rememberable? %>
-      </div>
-      <div class="form-actions">
-        <%= f.button :submit, "Intră în cont" %>
-      </div>
-    <% end %>
-    <%= render "devise/shared/links" %>
-    <p>*Contul va fi validat de un admin! După validare vei avea drepturi de acces!</p>
+<%= content_for :meta_title, 'Autentificare - Spinal Care' %>
+
+<div class="modern-auth-page">
+  <div class="auth-hero">
+    <div class="auth-hero-content">
+      <h1>Autentificare</h1>
+      <p>Acces administrator</p>
+    </div>
   </div>
 
+  <div class="auth-content">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <h2>Intră în cont</h2>
+      </div>
+
+      <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), data: { turbo: :false }, html: { class: 'auth-form' }) do |f| %>
+        <div class="form-group">
+          <%= f.input :email,
+                      label: 'Email',
+                      placeholder: 'nume@exemplu.ro',
+                      required: false,
+                      autofocus: true,
+                      input_html: { autocomplete: "email", class: 'auth-input' },
+                      wrapper_html: { class: 'auth-input-wrapper' } %>
+        </div>
+
+        <div class="form-group">
+          <%= f.input :password,
+                      label: 'Parolă',
+                      placeholder: '••••••••',
+                      required: false,
+                      input_html: { autocomplete: "current-password", class: 'auth-input' },
+                      wrapper_html: { class: 'auth-input-wrapper' } %>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <div class="form-group-checkbox">
+            <%= f.input :remember_me, 
+                        label: 'Ține-mă minte', 
+                        as: :boolean,
+                        wrapper_html: { class: 'auth-checkbox-wrapper' },
+                        input_html: { class: 'auth-checkbox' } %>
+          </div>
+        <% end %>
+
+        <div class="form-actions">
+          <%= f.button :submit, "Autentifică-te", class: 'auth-submit-btn' %>
+        </div>
+      <% end %>
+
+      <div class="auth-links">
+        <%= render "devise/shared/links" %>
+      </div>
+
+      <div class="auth-notice">
+        <p>Contul va fi validat de un administrator. După validare vei avea drepturi de acces.</p>
+      </div>
+    </div>
+  </div>
 </div>
 

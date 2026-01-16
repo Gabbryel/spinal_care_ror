@@ -8,7 +8,7 @@
       <h2 class="text-center text-4xl word-wrap font-bold px-2 py-2 font-poppins max-sm:mb-[4rem]">Estetică medicală</h2>
     </div>
       <% @beauties.each_with_index do |m, i| %>
-        <%= render partial: "members/member_card", locals: {m: m, i: i, not_animated: nil, no_grid_area: 'no_grid_area'} %>
+        <%= render partial: "members/modern_member_card", locals: {m: m} %>
       <% end %>
   </article>
 <%= render_feature('www.sysphotodesign.ro_219_uwbypj.webp', 'Visul de a pierde 7 cm în talie devine realitate cu EXIMIA HR77 PLATINUM. Tehnologia noastră de ultimă generație te ajută să obții rezultate uimitoare pentru corpul tău.', false) %>

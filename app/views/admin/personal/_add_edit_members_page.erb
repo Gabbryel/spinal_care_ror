@@ -1,35 +1,104 @@
-<div class="section-main">
-  <h1>Echipa Spinal Care</h1>
-  <div class="personal-form">
-    <%= render partial: 'members/modal', locals: { new: true, modal_id: 'newMemberModal', member: @member } %>
+<div class="personal-dashboard" data-controller="memberFilter">
+  <div class="personal-header">
+    <h1>Echipa Spinal Care</h1>
+    <div class="personal-header-actions">
+      <input type="text" 
+             id="memberNameFilter" 
+             class="member-filter-input" 
+             placeholder="Caută după nume..." 
+             data-action="input->memberFilter#filterByName">
+      <button class="personal-add-btn" data-bs-toggle="modal" data-bs-target="#newMemberModal">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+        Membru nou
+      </button>
+    </div>
   </div>
 
-  <% if @members.empty? %>
-    <h3><%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newMemberModal" } do %><i class="fas fa-user-plus"></i><% end %></h3>
-  <% end %>
+  <%= render partial: 'members/modal', locals: { new: true, modal_id: 'newMemberModal', member: @member } %>
 
-  <% @professions.each do |p| %>
-      <div class="personal-profession">
-        <h2><%= p.name %> <%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newMemberModal" } do %><i class="fas fa-user-plus"></i><% end %></h2>
-        <div class="personal-index">
-              <% @members.select { |member| member.profession == p}.each do |member| %>
-                <div class="personal-member">
-                  <%= cl_image_tag(member.photo.key, width: 50, alt: full_name(member)) if member.photo.key.present? %>
-                  <div class="personal-info">
-                    <span><%= member.academic_title %></span>
-                    <span> <%= full_name(member) %></span>
-                    <span><%= member.profession.name if member.profession %> <%= member.doctor_grade if member.doctor_grade %> </span>
-                    <span><%= member.specialty.name if member.specialty %></span>
-                  </div>
-                  <div class="personal-crud">
-                    <%= link_to "/echipa/#{member.slug}" do %><i class="fas fa-link"></i><% end %>
-                    <%= link_to "#", data: { bs_toggle: "modal", bs_target: "#edit#{member.id}" } do %><i class="far fa-edit"></i><% end %>
-                    <%= render partial: 'members/modal', locals: {new: false, modal_id: "edit#{member.id}", member: member } %>
-                    <%= link_to member_path(member), data: { turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să-l ștergi pe #{full_name(member)}?"} do %><i class="fas fa-trash-alt"></i><% end %>
-                  </div>
+  <% if @members.empty? %>
+    <div class="empty-state">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+      </svg>
+      <p>Niciun membru adăugat încă</p>
+      <button class="empty-state-btn" data-bs-toggle="modal" data-bs-target="#newMemberModal">Adaugă primul membru</button>
+    </div>
+  <% else %>
+    <% @professions.each do |p| %>
+      <% profession_members = @members.select { |member| member.profession == p } %>
+      <% unless profession_members.empty? %>
+        <div class="personal-profession-section" id="profession-<%= p.id %>">
+          <div class="profession-header">
+            <h2><%= pluralize_profession(p.name, profession_members.count) %></h2>
+            <span class="member-count"><%= profession_members.count %> <%= profession_members.count == 1 ? 'membru' : 'membri' %></span>
+          </div>
+          <div class="members-grid">
+            <% profession_members.each do |member| %>
+              <%= render partial: 'members/modal', locals: {new: false, modal_id: "edit#{member.id}", member: member } %>
+              <div class="member-card" 
+                   id="member-<%= member.id %>" 
+                   data-member-name="<%= full_name(member).downcase %>" 
+                   data-memberfilter-target="card">
+                <div class="member-photo">
+                  <% if member.photo.key.present? %>
+                    <%= cl_image_tag member.photo.key, width: 300, height: 120, crop: :fill, gravity: :face, quality: 80, alt: full_name(member) %>
+                  <% else %>
+                    <div class="photo-placeholder">
+                      <%= member.first_name[0]%><%=member.last_name[0] %>
+                    </div>
+                  <% end %>
                 </div>
-              <% end %>
-            </div>
-      </div>
+
+                <div class="member-info">
+                  <div class="member-name">
+                    <% if member.academic_title.present? %>
+                      <span class="academic-title"><%= member.academic_title %></span>
+                    <% end %>
+                    <span class="full-name"><%= full_name(member) %></span>
+                  </div>
+
+                  <div class="member-details">
+                    <% if member.profession %>
+                      <span class="profession-badge"><%= translate_profession(member.profession.name) %></span>
+                    <% end %>
+                    <% if member.specialty %>
+                      <span class="specialty-badge"><%= member.specialty.name %></span>
+                    <% end %>
+                  </div>
+
+                  <% if member.doctor_grade.present? %>
+                    <span class="doctor-grade"><%= member.doctor_grade.capitalize %></span>
+                  <% end %>
+                </div>
+
+                <% if access %>
+                  <div class="member-actions">
+                    <%= link_to "/echipa/#{member.slug}", target: '_blank', class: 'action-btn view-btn' do%>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    <% end %>
+                    <%= link_to "#", class: 'action-btn edit-btn', data: { bs_toggle: "modal", bs_target: "#edit#{member.id}" } do %>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                      </svg>
+                    <% end %>
+                    <%= link_to member_path(member), data: { turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să-l ștergi pe #{full_name(member)}?"}, class: 'action-btn delete-btn' do%>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                      </svg>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
   <% end %>
 </div>

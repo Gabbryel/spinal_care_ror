@@ -1,46 +1,81 @@
 <% if access %>
-  <div class="users-container">
-    <div class="users-main">
+  <div class="users-dashboard">
+    <div class="users-header">
       <h1>Utilizatori</h1>
-      <div class="users-index" style="grid-auto-rows: max-content;">
+      <span class="users-count"><%= @users.count %> <%= @users.count == 1 ? 'utilizator' : 'utilizatori' %></span>
+    </div>
+
+    <% if @users.empty? %>
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+        </svg>
+        <p>Niciun utilizator înregistrat</p>
+      </div>
+    <% else %>
+      <div class="users-grid">
         <% @users.each do |u| %>
-          <div class="user">
-            <p><%= u.alias ? u.alias : 'Fără alias' %> (<%= u.email %>) <%= u.admin ? "are drepturi de admin" : "nu are drepturi de admin" %> <%= u.god_mode ? 'și de editare configurări sensibile' : nil %></p>
-            <div>
-              <%= simple_form_for u do |f| %>
-                <%= f.hidden_field :admin, value: u.admin ? false : true %>
-                <% if access && god_mode %>
-                  <%= f.submit "#{u.admin ? 'Ia-i drepturile de admin' : 'Acordă-i drepturi de admin'}", class: "btn-custom #{btn_color(u)}"  %>
-                <% end %>
-              <% end %>
+          <div class="user-card" id="user-<%= u.id %>">
+            <div class="user-header">
+              <div class="user-avatar">
+                <%= u.email[0].upcase %>
+              </div>
+              <div class="user-info">
+                <h3 class="user-alias"><%= u.alias.present? ? u.alias : 'Fără alias' %></h3>
+                <p class="user-email"><%= u.email %></p>
+              </div>
             </div>
-            <br>
-            <div>
-              <%= simple_form_for u do |f| %>
-                <%= f.hidden_field :god_mode, value: u.god_mode ? false : true %>
-                <% if access && god_mode %>
-                  <%= f.submit "#{u.god_mode ? 'Take super power' : 'Give super powers'}", class: "btn-custom #{btn_color_god(u)}" %>
+
+            <div class="user-permissions">
+              <div class="permission-badge <%= u.admin ? 'active' : 'inactive' %>">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                </svg>
+                <span>Admin</span>
+              </div>
+              <div class="permission-badge <%= u.god_mode ? 'active' : 'inactive' %>">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+                </svg>
+                <span>God Mode</span>
+              </div>
+            </div>
+
+            <% if access && god_mode %>
+              <div class="user-actions-section">
+                <div class="action-item">
+                  <%= simple_form_for u, html: { class: 'inline-form' } do |f| %>
+                    <%= f.hidden_field :admin, value: u.admin ? false : true %>
+                    <%= f.submit "#{u.admin ? 'Revocă admin' : 'Acordă admin'}", class: "btn-action #{u.admin ? 'btn-revoke' : 'btn-grant'}" %>
                   <% end %>
-              <% end %>
-            </div>
-            <br>
-            <p>Adaugă alias</p>
-            <%= simple_form_for u do |f| %>
-              <%= f.input :alias, label: false, placeholder: "Adaugă un alias pentru utlizator" %>
-              <% if access && god_mode %>
-                <%= f.submit 'Actualizează', class: 'btn-custom btn-green' %>
-                <div style="margin-top: 20px;">
-                  <%= link_to "Șterge", user_path(u), data: { turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să-l ștergi pe #{u.email}?"}, class: 'btn-custom btn-red' %>
                 </div>
-              <% end %>
+
+                <div class="action-item">
+                  <%= simple_form_for u, html: { class: 'inline-form' } do |f| %>
+                    <%= f.hidden_field :god_mode, value: u.god_mode ? false : true %>
+                    <%= f.submit "#{u.god_mode ? 'Revocă God Mode' : 'Acordă God Mode'}", class: "btn-action #{u.god_mode ? 'btn-revoke' : 'btn-grant'}" %>
+                  <% end %>
+                </div>
+
+                <div class="alias-form">
+                  <%= simple_form_for u, html: { class: 'alias-form-inner' } do |f| %>
+                    <div class="form-group">
+                      <%= f.label :alias, 'Alias utilizator', class: 'form-label' %>
+                      <%= f.input :alias, label: false, placeholder: "Adaugă un alias pentru acest utilizator", wrapper_html: { class: 'form-input-wrapper' } %>
+                    </div>
+                    <div class="form-actions">
+                      <%= f.submit 'Actualizează alias', class: 'btn-action btn-update' %>
+                      <%= link_to "Șterge utilizator", user_path(u), data: { turbo_method: :delete, turbo_confirm: "Ești sigur că vrei să ștergi utilizatorul #{u.email}?"}, class: 'btn-action btn-delete' %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
             <% end %>
           </div>
-
         <% end %>
       </div>
-    </div>
+    <% end %>
   </div>
-
 <% else %>
-    <%= no_access %>
+  <%= no_access %>
 <% end %>

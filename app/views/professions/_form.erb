@@ -1,11 +1,55 @@
-<%= simple_form_for(profession, id: (profession.id ? dom_id(profession, :edit) : dom_id(Profession.new))) do |f| %>
+<%= simple_form_for(profession, id: (profession.id ? dom_id(profession, :edit) : dom_id(Profession.new)), html: { class: 'modern-form' }) do |f| %>
   <% if profession.errors.any? %>
-  <div class="error-message">
-    <%= profession.errors.full_messages.to_sentence.capitalize %>
-  </div>
+    <div class="form-errors">
+      <div class="error-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <div class="error-content">
+        <p class="error-title">Erori de validare:</p>
+        <ul class="error-list">
+          <% profession.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
   <% end %>
-  <%= f.input :name, label: false, placeholder: 'profesie', input_html: { autofocus: true } %>
-  <%= f.input :order, hint: 'poziția în pagina index cu echipa medicală', label: false, collection: 1...Profession.count + 1, prompt: 'alegerea ordinea afișării în pagină' %>
-  <%= f.input :has_specialty, label: 'are specialitate medicală?' %>
-  <button class="btn-custom btn-green btn-crud">Salvează</button>
+
+  <div class="form-group">
+    <%= f.label :name, 'Nume profesie', class: 'form-label' %>
+    <%= f.input :name, 
+        label: false, 
+        placeholder: 'ex: Medic specialist', 
+        input_html: { autofocus: true, class: 'form-control-modern' },
+        wrapper: false,
+        error: false %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :order, 'Ordine afișare', class: 'form-label' %>
+    <%= f.input :order, 
+        label: false,
+        hint: 'Poziția în care apare în pagina cu echipa medicală',
+        collection: 1...(Profession.count + 2),
+        prompt: 'Selectează poziția',
+        input_html: { class: 'form-control-modern' },
+        wrapper: false,
+        error: false %>
+    <p class="form-hint">Profesiile cu ordine mai mică apar primele în listă</p>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-wrapper">
+      <%= f.check_box :has_specialty, class: 'form-checkbox' %>
+      <%= f.label :has_specialty, 'Are specialitate medicală asociată', class: 'checkbox-label' %>
+    </div>
+    <p class="form-hint">Bifează dacă această profesie poate avea specialități medicale (ex: medic specialist)</p>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" class="btn-cancel" data-bs-dismiss="modal">Anulează</button>
+    <%= f.submit (profession.new_record? ? 'Adaugă profesie' : 'Salvează modificările'), class: 'btn-save' %>
+  </div>
 <% end %>

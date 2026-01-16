@@ -1,31 +1,117 @@
 <% if current_page?("/dashboard/servicii-medicale/#{@specialty.slug}") %>
-<div class="services-main section-main" data-controller="tooltip">
-  <div class="d-flex flex-menu">
-    <% Specialty.all.sort_by {|s| s[:name]}.each do |s| %>
-      <%= link_to s.name, admin_specialty_path(s), class: 'btn-custom' %>
+<div class="specialty-admin-page" data-controller="tooltip">
+  <!-- Header -->
+  <div class="specialty-admin-header">
+    <%= link_to admin_medical_services_path, class: 'back-link' do %>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" d="M7.28 7.72a.75.75 0 010 1.06l-2.47 2.47H21a.75.75 0 010 1.5H4.81l2.47 2.47a.75.75 0 11-1.06 1.06l-3.75-3.75a.75.75 0 010-1.06l3.75-3.75a.75.75 0 011.06 0z" clip-rule="evenodd" />
+      </svg>
+      Înapoi
+    <% end %>
+
+    <div class="specialty-info">
+      <% if @specialty.photo.attached? %>
+        <%= cl_image_tag @specialty.photo.key, width: 48, height: 48, crop: :fill, class: 'specialty-icon' %>
+      <% end %>
+      <div>
+        <h1><%= @specialty.name %></h1>
+        <p><%= @specialty.medical_services.count %> <%= @specialty.medical_services.count == 1 ? 'serviciu' : 'servicii' %></p>
+      </div>
+    </div>
+
+    <button class="btn-add" data-bs-toggle="modal" data-bs-target="#newMedicalServiceModal">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
+      </svg>
+      Serviciu nou
+    </button>
+  </div>
+
+  <%= render partial: 'medical_services/modal', locals: {new: true, modal_id: "newMedicalServiceModal", title: "Adaugă serviciu medical", medical_service: @medical_service} %>
+
+  <!-- Specialty Navigation Tabs -->
+  <div class="specialty-tabs">
+    <% Specialty.all.order(name: :asc).each do |s| %>
+      <%= link_to s.name, admin_specialty_path(s), class: "tab #{s.id == @specialty.id ? 'active' : ''}" %>
     <% end %>
   </div>
-  <div class="services-form">
-    <%= render partial: 'medical_services/modal', locals: {new: true, modal_id: "newMedicalServiceModal", title: "Adaugă serviciu medical", medical_service: @medical_service} %>
-  </div>
-  <div><%= link_to "#", data: {bs_toggle: "modal", bs_target: "#newMedicalServiceModal"}, class: 'btn-custom' do %>Adaugă serviciu medical<% end %></div>
-  <div class="medical-services-list__specialty grid-masonry-list">
-    <div class="grid-masonry-content">
-      <h4><%= link_to @specialty.name, "specialitati-medicale/#{@specialty.slug}" %></h4>
-      <% @specialty.medical_services.select { |ms| ms.member == nil}.sort_by {|ms| ms[:name]}.each do |ms| %>
-      <%= render ms %>
-      <% end %>
-      <% selected_and_sorted_medical_services(@specialty).each_with_index do |ms, i| %>
-      <div class="medical-services-list__specialist">
-        <% if i == 0 || ms.member != selected_and_sorted_medical_services(@specialty)[i-1].member %>
-        <h5><%= link_to "#{ms.member.academic_title} #{ms.member.name}", "echipa/#{ms.member.slug}" %></h5>
+
+  <!-- Services List -->
+  <% if @specialty.medical_services.any? %>
+    <div class="services-container">
+      
+      <!-- Services by Member -->
+      <% if @services_with_member.any? %>
+        <% @services_with_member.group_by(&:member).each do |member, services| %>
+          <div class="member-group">
+            <div class="member-header">
+              <div class="member-info">
+                <% if member.photo.attached? %>
+                  <%= cl_image_tag member.photo.key, width: 40, height: 40, crop: :fill, gravity: :face, class: 'member-photo' %>
+                <% end %>
+                <div>
+                  <h3><%= member.academic_title %> <%= member.first_name %> <%= member.last_name %></h3>
+                  <span><%= services.count %> <%= services.count == 1 ? 'serviciu' : 'servicii' %></span>
+                </div>
+              </div>
+              <%= link_to colectiv_path(member.slug), target: '_blank', class: 'profile-link' do %>
+                Vezi profil
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clip-rule="evenodd" />
+                  <path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 001.06.053L16.5 4.44v2.81a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.553l-9.056 8.194a.75.75 0 00-.053 1.06z" clip-rule="evenodd" />
+                </svg>
+              <% end %>
+            </div>
+            
+            <div class="services-list">
+              <% services.each do |service| %>
+                <%= render partial: 'medical_services/service_item_compact', locals: { medical_service: service } %>
+              <% end %>
+            </div>
+          </div>
         <% end %>
-        <%= render ms %>
-      </div>
       <% end %>
+
+      <!-- General Services -->
+      <% if @services_without_member.any? %>
+        <div class="member-group member-group--general">
+          <div class="member-header">
+            <div class="member-info">
+              <div class="general-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.625 1.5H9a3.75 3.75 0 013.75 3.75v1.875c0 1.036.84 1.875 1.875 1.875H16.5a3.75 3.75 0 013.75 3.75v7.875c0 1.035-.84 1.875-1.875 1.875H5.625a1.875 1.875 0 01-1.875-1.875V3.375c0-1.036.84-1.875 1.875-1.875zm6.905 9.97a.75.75 0 00-1.06 0l-3 3a.75.75 0 101.06 1.06l1.72-1.72V18a.75.75 0 001.5 0v-4.19l1.72 1.72a.75.75 0 101.06-1.06l-3-3z" clip-rule="evenodd" />
+                  <path d="M14.25 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0016.5 7.5h-1.875a.375.375 0 01-.375-.375V5.25z" />
+                </svg>
+              </div>
+              <div>
+                <h3>Servicii generale</h3>
+                <span><%= @services_without_member.count %> <%= @services_without_member.count == 1 ? 'serviciu' : 'servicii' %></span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="services-list">
+            <% @services_without_member.each do |service| %>
+              <%= render partial: 'medical_services/service_item_compact', locals: { medical_service: service } %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+      
     </div>
-  </div>
+  <% else %>
+    <!-- Empty State -->
+    <div class="empty-state">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" d="M5.625 1.5H9a3.75 3.75 0 013.75 3.75v1.875c0 1.036.84 1.875 1.875 1.875H16.5a3.75 3.75 0 013.75 3.75v7.875c0 1.035-.84 1.875-1.875 1.875H5.625a1.875 1.875 0 01-1.875-1.875V3.375c0-1.036.84-1.875 1.875-1.875zm5.845 17.03a.75.75 0 001.06 0l3-3a.75.75 0 10-1.06-1.06l-1.72 1.72V12a.75.75 0 00-1.5 0v4.19l-1.72-1.72a.75.75 0 00-1.06 1.06l3 3z" clip-rule="evenodd" />
+        <path d="M14.25 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0016.5 7.5h-1.875a.375.375 0 01-.375-.375V5.25z" />
+      </svg>
+      <h3>Niciun serviciu medical</h3>
+      <p>Adaugă primul serviciu pentru această specialitate</p>
+      <button data-bs-toggle="modal" data-bs-target="#newMedicalServiceModal">Adaugă serviciu</button>
+    </div>
+  <% end %>
 </div>
 <% else %>
-      <%= no_access %>
-  <% end %>
+  <%= no_access %>
+<% end %>

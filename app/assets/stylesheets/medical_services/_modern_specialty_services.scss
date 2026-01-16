@@ -1,0 +1,182 @@
+// ============================================
+// Modern Specialty Services Page Styles
+// ============================================
+
+.modern-specialty-services-page {
+  grid-column: 1 / -1;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.specialty-services-hero {
+  background: linear-gradient(135deg, #4A6775 0%, #3a5463 100%);
+  padding: 5rem 2rem 3rem;
+  text-align: center;
+  color: white;
+  margin-bottom: 3rem;
+
+  @media (max-width: 768px) {
+    padding: 4rem 1.5rem 2.5rem;
+  }
+}
+
+.specialty-services-hero-content {
+  max-width: 1000px;
+  margin: 0 auto;
+
+  h1 {
+    font-size: 2.75rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+
+  p {
+    font-size: 1.125rem;
+    margin: 0;
+    opacity: 0.95;
+
+    @media (max-width: 768px) {
+      font-size: 1rem;
+    }
+  }
+}
+
+.specialty-services-content {
+  max-width: 1400px;
+  margin: 0 auto 4rem;
+  padding: 0 2rem;
+
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+    margin-bottom: 3rem;
+  }
+}
+
+.services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+
+  @media (max-width: 768px) {
+    gap: 2rem;
+  }
+}
+
+.services-section {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 0 0 1rem 0;
+
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+    }
+
+    &.with-member {
+      .member-info-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+
+        svg {
+          width: 1.75rem;
+          height: 1.75rem;
+          color: #4A6775;
+          flex-shrink: 0;
+        }
+
+        .member-link {
+          text-decoration: none;
+          color: inherit;
+          transition: color 0.2s;
+
+          &:hover {
+            color: #4A6775;
+          }
+
+          h2 {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+.service-card-modern {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #4A6775;
+    box-shadow: 0 4px 12px rgba(74, 103, 117, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .service-card-content {
+    h3, h4, h5 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0 0 0.5rem 0;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #6b7280;
+      margin: 0.5rem 0;
+      line-height: 1.5;
+    }
+
+    .price {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #4A6775;
+      margin-top: 0.75rem;
+    }
+  }
+}
+
+.section-line {
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(135deg, #4A6775 0%, #3a5463 100%);
+  margin: 0 auto;
+  border-radius: 2px;
+}

@@ -10,7 +10,7 @@ row-span-1 row-start-3 col-span-full col-start-1">
       </div>
     </div>
     <% @specialties.select {|sp| sp.is_active }.each_with_index do |sp, i| %>
-      <%= render partial: 'specialties/specialty_card', locals: {specialty: sp} %> 
+      <%= render partial: 'specialties/modern_specialty_card', locals: {specialty: sp} %> 
     <% end %>
   </div>
   <%= render_feature("cabinets/www.sysphotodesign.ro_148_qun3b7.webp", "În cadrul clinicii medici experimentați sunt asistați de tehnologii avansate pentru a stabili un diagnostic cât mai exact cât și pentru a realiza un tratament cât mai eficient.", false) %>

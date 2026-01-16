@@ -1,16 +1,41 @@
-<div class="form" data-controller="informationForm" id="information">
+<div class="facts-form" data-controller="informationForm richTextEditor" id="information">
   <%= simple_form_for(fact, id: (fact.id ? dom_id(fact, :edit) : dom_id(Fact.new))) do |f|%>
     <% if fact.errors.any? %>
-    <div class="error-message">
-      <%= fact.errors.full_messages.to_sentence.capitalize %>
-    </div>
+      <div class="form-error-message">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+        </svg>
+        <%= fact.errors.full_messages.to_sentence.capitalize %>
+      </div>
     <% end %>
-    <%= f.input :name, label: false, placeholder: 'titlul informării' %>
-    <%= f.rich_text_area :description, placeholder: 'textul informării' %>
-    <%= f.input :custom_width %>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Informații generale</h3>
+      
+      <div class="form-group">
+        <%= f.label :name, 'Titlu informație *', class: 'form-label' %>
+        <%= f.input :name, label: false, placeholder: 'Ex: Program funcționare clinica', wrapper_html: { class: 'form-input-wrapper' } %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :custom_width, 'Lățime personalizată', class: 'form-label' %>
+        <%= f.input :custom_width, label: false, wrapper_html: { class: 'form-input-wrapper' } %>
+        <p class="form-hint">Lăsați gol pentru lățime standard</p>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Conținut informație</h3>
+      <%= f.rich_text_area :description, 
+          placeholder: 'Scrie conținutul informației pentru pacienți...' %>
+    </div>
+
     <%= f.hidden_field :created_by, value: current_user.email if fact.created_by.nil? %>
     <%= f.hidden_field :modified_by, value: current_user.email %>
-    <br>
-    <%= f.submit 'Salvează', class: "btn-custom btn-green" %>
+
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" data-bs-dismiss="modal">Anulează</button>
+      <%= f.submit 'Salvează', class: 'btn-submit' %>
+    </div>
   <% end %>
 </div>
