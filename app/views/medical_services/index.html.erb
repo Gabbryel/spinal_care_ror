@@ -1,6 +1,145 @@
 <%= content_for :meta_description, 'Serviciile medicale oferite de Clinica Spinal Care din Bacău: consultații, tratamente, spitalizare de zi' %>
-<div class="medical-services-public" data-controller="masonry">
-  <%#= render partial: "specialty_prices_nav" %>
-  <%#= render partial: "admin/medical_services/medical_services" %>
-  <%= render partial: "render_medical_services", locals: { sps: @specialties} %>
+
+<div class="modern-medical-services-page">
+  <div class="services-hero">
+    <div class="hero-content">
+      <h1>Servicii medicale</h1>
+      <p>Explorează gama completă de servicii medicale oferite de clinica noastră</p>
+    </div>
+  </div>
+
+  <div class="services-container" data-controller="tooltip">
+    <% @specialties.each do |specialty| %>
+      <section class="specialty-section" id="specialty-<%= specialty.id %>">
+        <div class="specialty-header">
+          <div class="specialty-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.7 2.805a.75.75 0 01.6 0A60.65 60.65 0 0122.83 8.72a.75.75 0 01-.231 1.337 49.949 49.949 0 00-9.902 3.912l-.003.002-.34.18a.75.75 0 01-.707 0A50.009 50.009 0 007.5 12.174v-.224c0-.131.067-.248.172-.311a54.614 54.614 0 014.653-2.52.75.75 0 00-.65-1.352 56.129 56.129 0 00-4.78 2.589 1.858 1.858 0 00-.859 1.228 49.803 49.803 0 00-4.634-1.527.75.75 0 01-.231-1.337A60.653 60.653 0 0111.7 2.805z" />
+              <path d="M13.06 15.473a48.45 48.45 0 017.666-3.282c.134 1.414.22 2.843.255 4.285a.75.75 0 01-.46.71 47.878 47.878 0 00-8.105 4.342.75.75 0 01-.832 0 47.877 47.877 0 00-8.104-4.342.75.75 0 01-.461-.71c.035-1.442.121-2.87.255-4.286a48.4 48.4 0 016.844-1.617 6.75 6.75 0 012.328 1.1z" />
+            </svg>
+          </div>
+          <h2><%= specialty.name %></h2>
+          <span class="services-count"><%= specialty.medical_services.size %> servicii</span>
+        </div>
+
+        <div class="services-grid">
+          <% services_with_member = specialty.medical_services.select { |s| s.member.present? } %>
+          <% services_without_member = specialty.medical_services.reject { |s| s.member.present? } %>
+          
+          <%# Services with members - grouped by member %>
+          <% current_member = nil %>
+          <% services_with_member.each do |service| %>
+            <% if current_member != service.member %>
+              <% current_member = service.member %>
+              <div class="member-divider">
+                <div class="member-info">
+                  <% if service.member.photo.attached? %>
+                    <%= cl_image_tag service.member.photo.key, width: 80, height: 80, crop: :fill, gravity: :face, class: 'member-photo-small' %>
+                  <% else %>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                    </svg>
+                  <% end %>
+                  <%= link_to "echipa/#{service.member.slug}" do %>
+                    <span><%= service.member.academic_title %> <%= service.member.name %></span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <div class="service-card has-member">
+              <div class="service-header">
+                <div class="service-name-wrapper">
+                  <h3 class="service-name"><%= service.name %></h3>
+                  <% if service.description.present? %>
+                    <%= tag.span data: { tooltip_target: 'trigger'}, class: 'tooltip-icon' do %>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                      </svg>
+                    <% end %>
+                    <div class="service-description-tooltip" data-tooltip-target="description">
+                      <%= service.description %>
+                    </div>
+                  <% end %>
+                </div>
+                <% if service.has_day_hospitalization %>
+                  <%= link_to 'specialitati-medicale/spitalizare-de-zi', class: 'hospitalization-badge' do %>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z" clip-rule="evenodd" />
+                    </svg>
+                    Spitalizare de zi
+                  <% end %>
+                <% end %>
+              </div>
+              <div class="service-price">
+                <% if service.price == 0 %>
+                  <span class="price-contact">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                    </svg>
+                    Sună pentru preț
+                  </span>
+                <% else %>
+                  <span class="price-amount"><%= service.price %> <span class="currency">lei</span></span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <%# Services without members - separate row %>
+          <% if services_without_member.any? %>
+            <div class="general-services-divider">
+              <div class="general-services-info">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07V19.25a.75.75 0 01-.75.75H2.75a.75.75 0 01-.75-.75V7.07c0-1.321.947-2.489 2.294-2.676A41.047 41.047 0 016 4.193V3.75zm6.5 0v.325a41.622 41.622 0 00-5 0V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25zM10 10a1 1 0 00-1 1v.01a1 1 0 001 1h.01a1 1 0 001-1V11a1 1 0 00-1-1H10z" clip-rule="evenodd" />
+                  <path d="M3 15.055v-.684c.126.053.255.1.39.142 2.092.642 4.313.987 6.61.987 2.297 0 4.518-.345 6.61-.987.135-.041.264-.089.39-.142v.684c0 1.347-.985 2.53-2.363 2.686a41.454 41.454 0 01-9.274 0C3.985 17.585 3 16.402 3 15.055z" />
+                </svg>
+                <span>Servicii generale</span>
+              </div>
+            </div>
+
+            <% services_without_member.each do |service| %>
+              <div class="service-card">
+                <div class="service-header">
+                  <div class="service-name-wrapper">
+                    <h3 class="service-name"><%= service.name %></h3>
+                    <% if service.description.present? %>
+                      <%= tag.span data: { tooltip_target: 'trigger'}, class: 'tooltip-icon' do %>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                        </svg>
+                      <% end %>
+                      <div class="service-description-tooltip" data-tooltip-target="description">
+                        <%= service.description %>
+                      </div>
+                    <% end %>
+                  </div>
+                  <% if service.has_day_hospitalization %>
+                    <%= link_to 'specialitati-medicale/spitalizare-de-zi', class: 'hospitalization-badge' do %>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z" clip-rule="evenodd" />
+                      </svg>
+                      Spitalizare de zi
+                    <% end %>
+                  <% end %>
+                </div>
+                <div class="service-price">
+                  <% if service.price == 0 %>
+                    <span class="price-contact">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                      </svg>
+                      Sună pentru preț
+                    </span>
+                  <% else %>
+                    <span class="price-amount"><%= service.price %> <span class="currency">lei</span></span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  </div>
 </div>

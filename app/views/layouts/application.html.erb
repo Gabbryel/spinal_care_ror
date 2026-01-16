@@ -66,6 +66,14 @@
       fbq('track', 'PageView');
       </script>
       <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=623596673860745&ev=PageView&noscript=1"/></noscript>
+      <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/ahoy.js@0.4.2/dist/ahoy.min.js" %>
+      <script>
+        ahoy.configure({
+          visitsUrl: "/ahoy/visits",
+          eventsUrl: "/ahoy/events"
+        });
+        ahoy.trackView();
+      </script>
   </head>
 
   <body data-controller="vh sidemenu-toggle adminLink contact" data-action="scroll@window->sidemenu-toggle#close">

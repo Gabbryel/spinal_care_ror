@@ -1,45 +1,84 @@
 <%= content_for :meta_title, 'Echipa medicală Spinal Care Bacău' %>
 <%= content_for :meta_keywords, @team_members.map{|tm| full_name_with_title(tm)}.join(', ') %>
 
-<div class="medical-team" id="medical-team" data-controller="memberIndexFilter">
-    <%= button_tag 'Filtru', class: 'btns-icon fs-5 text-black', data: { bs_toggle: 'modal', bs_target: '#filterModal' } do %>
-      <i class="fas fa-search text-black"></i> Căutare
-    <% end %>
+<div class="modern-team-page" data-controller="memberIndexFilter">
+  <!-- Hero Section -->
+  <div class="team-hero">
+    <div class="team-hero-content">
+      <h1>Echipa Medicală</h1>
+      <p>Profesioniști dedicați sănătății dumneavoastră</p>
+    </div>
+  </div>
 
-    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content bg-white">
-          <div class="modal-header">
-            <%= button_tag 'Profesie', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
-            <%= button_tag 'Specialitate', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
-            <%#= button_tag 'Nume', class: 'btns-icon fs-6 position-relative color-1 btns__b-d', data: { controller: 'searchTeam', action: 'click->searchTeam#activateForm' } %>
-          </div>
-          <div class="modal-body bg-white">
-            <%= simple_form_for :search, html: {id: 'filter-proffesion-form'}, url: echipa_path, method: 'GET' do |f| %>
-              <%= f.input :profession, collection: ['Toată echipa'].concat(@professions.select{|p| p.members.count > 0}.map {|p| p.name}), as: :radio_buttons, label: false, input_html: { data: {controller: 'searchTeam', action: 'change->searchTeam#filter', bs_dismiss: 'modal'} } %>
+  <!-- Filter Section -->
+  <div class="team-filters">
+    <div class="filters-container">
+      <div class="filter-search-specialty-row">
+        <input 
+          type="text" 
+          placeholder="Caută după nume..." 
+          class="filter-search-input"
+          data-memberindexfilter-target="nameInput"
+          data-action="input->memberIndexFilter#filterByName"
+        >
+        
+        <div class="filter-specialties">
+          <label class="filter-label">Filtrează după specialitate:</label>
+          <select class="filter-select" data-action="change->memberIndexFilter#filterBySpecialty">
+            <option value="all">Toate specialitățile</option>
+            <% @specialties.select{|s| s.members.where(is_active: true).count > 0}.each do |specialty| %>
+              <option value="<%= specialty.slug %>"><%= specialty.name %></option>
             <% end %>
-            <%= simple_form_for :search, html: {id: 'filter-specialty-form'},url: echipa_path, method: 'GET' do |f| %>
-              <%= f.input :specialty, collection: ['Toată echipa'].concat(@specialties.select{|s| s.members.count > 0}.map {|p| p.name}), as: :radio_buttons, label: false, input_html: { data: {controller: 'searchTeam', action: 'change->searchTeam#filter', bs_dismiss: 'modal'} } %>
-            <% end %>
-            <%#= simple_form_for :search, html: {id: 'filter-name-form', autofocus: true },url: echipa_path, method: 'GET' do |f| %>
-              <%#= f.input :name, label: 'Tastează numele dorit și apasă "enter"', input_html: { data: {type: 'button', controller: 'searchTeam', action: 'beforeinput->searchTeam#search keyup->searchTeam#searchName'} } %>
-            <%# end %>
-            <button type="button" class="btns-icon btns-close text-white " data-bs-dismiss="modal" aria-label="Close">&times;</button>
-          </div>
+          </select>
         </div>
       </div>
+      
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all" data-action="click->memberIndexFilter#filterByProfession">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 9a3 3 0 100-6 3 3 0 000 6zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.49 15.326a.78.78 0 01-.358-.442 3 3 0 014.308-3.516 6.484 6.484 0 00-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 01-2.07-.655zM16.44 15.98a4.97 4.97 0 002.07-.654.78.78 0 00.357-.442 3 3 0 00-4.308-3.517 6.484 6.484 0 011.907 3.96 2.32 2.32 0 01-.026.654zM18 8a2 2 0 11-4 0 2 2 0 014 0zM5.304 16.19a.844.844 0 01-.277-.71 5 5 0 019.947 0 .843.843 0 01-.277.71A6.975 6.975 0 0110 18a6.974 6.974 0 01-4.696-1.81z" />
+          </svg>
+          Toată echipa
+        </button>
+        
+        <% @professions.select{|p| p.members.where(is_active: true).count > 0}.each do |profession| %>
+          <button class="filter-btn" data-filter="<%= profession.slug %>" data-action="click->memberIndexFilter#filterByProfession">
+            <%= profession.name %>
+          </button>
+        <% end %>
+      </div>
     </div>
+  </div>
 
-
-    <div class="profession-div">
-        <%= render partial: "members/member_card", locals: {m: @founder, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
+  <!-- Founder Section -->
+  <% if @founder %>
+    <div class="founder-section" data-memberindexfilter-target="founderSection">
+      <div class="section-header">
+        <h2>Fondator</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="founder-card-container">
+        <%= render partial: "members/modern_member_card", locals: {m: @founder} %>
+      </div>
     </div>
-  <% @professions.each do |p| %>
-    <% if p.members.count > 0 %>
-      <div class="profession-div" id="<%= p.slug %>">
-          <% p.members.order(:last_name).select {|m| !m.founder && m.is_active }.each do |m| %>
-            <%= render partial: "members/member_card", locals: {m: m, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
+  <% end %>
+
+  <!-- Team Members by Profession -->
+  <% @professions.each do |profession| %>
+    <% active_members = profession.members.where(is_active: true).where.not(founder: true).order(:last_name) %>
+    <% if active_members.any? %>
+      <div class="profession-section" data-profession="<%= profession.slug %>" data-memberindexfilter-target="professionSection">
+        <div class="section-header">
+          <h2><%= pluralize_profession(profession.name, active_members.count) %></h2>
+          <span class="member-count"><%= active_members.count %> <%= active_members.count == 1 ? 'membru' : 'membri' %></span>
+          <div class="section-line"></div>
+        </div>
+        
+        <div class="team-grid">
+          <% active_members.each do |member| %>
+            <%= render partial: "members/modern_member_card", locals: {m: member} %>
           <% end %>
+        </div>
       </div>
     <% end %>
   <% end %>

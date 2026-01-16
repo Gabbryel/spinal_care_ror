@@ -38,6 +38,31 @@ module ApplicationHelper
   def full_name_with_title(member)
     "#{member.academic_title} #{member.first_name} #{member.last_name}" if member
   end
+
+  def translate_profession(profession_name)
+    translations = {
+      'medic' => 'Medic',
+      'kinetoterapeut' => 'Kinetoterapeut',
+      'fizioterapeut' => 'Fizioterapeut',
+      'cosmetician' => 'Cosmetician',
+      'asistent medical' => 'Asistent medical',
+      'registrator medical' => 'Registrator medical'
+    }
+    translations[profession_name.to_s.downcase] || profession_name.to_s.capitalize
+  end
+
+  def pluralize_profession(profession_name, count)
+    romanian_plural = {
+      'medic' => count == 1 ? 'Medic' : 'Medici',
+      'kinetoterapeut' => count == 1 ? 'Kinetoterapeut' : 'Kinetoterapeuți',
+      'fizioterapeut' => count == 1 ? 'Fizioterapeut' : 'Fizioterapeuți',
+      'cosmetician' => count == 1 ? 'Cosmetician' : 'Cosmeticieni',
+      'asistent medical' => count == 1 ? 'Asistent medical' : 'Asistenți medicali',
+      'registrator medical' => count == 1 ? 'Registrator medical' : 'Registratori medicali'
+    }
+    romanian_plural[profession_name.to_s.downcase] || translate_profession(profession_name)
+  end
+
 # helper for medical_service dots
   def m_s_helper(ms)
     30 - (ms.name.length + ms.price.to_s.length).to_i

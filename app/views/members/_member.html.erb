@@ -1,21 +1,74 @@
 <%= content_for :meta_title, "#{@member.academic_title} #{full_name(@member)} #{@member.profession_name} #{@member.doctor_grade}  #{@member.specialty.name.downcase if @member.specialty} Spinal Care" %>
-<%= content_for :meta_description, "#{@member.profession.name} #{@member.doctor_grade} #{full_name(@member)} #{@member.specialty.name.downcase if @member.specialty}" %>
+<%= content_for :meta_description, "#{translate_profession(@member.profession.name)} #{@member.doctor_grade} #{full_name(@member)} #{@member.specialty.name.downcase if @member.specialty}" %>
 <%= content_for :meta_image, cl_image_path(@member.photo.key), :quality=>60, :fetch_format=>:webp, :width=>100 %>
-<div class="member-container">
-  <div class="member-container__main" data-controller="bio">
-    <section>
-      <%= render partial: "members/member_card", locals: {m: @member, i: nil, not_animated: 'not_animated', no_grid_area: nil} %>
-      <%= book_btn("Programează-te!", "btn-custom btn-action !bg-orange-700") %>
-    </section>
-    <% if @member.description.body.empty? %>
-      <% nil %>
-    <% else %>
-      <div class="member-bio" data-bio-target="bio">
-        <%= @member.description %>
+
+<div class="modern-member-page">
+  <!-- Hero Section -->
+  <div class="member-hero">
+    <div class="member-hero-content">
+      <div class="member-hero-badges">
+        <% if @member.founder %>
+          <span class="hero-badge founder-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            Fondator
+          </span>
+        <% end %>
+        <% if @member.profession %>
+          <span class="hero-badge profession-badge">
+            <%= translate_profession(@member.profession.name) %>
+          </span>
+        <% end %>
+        <% if @member.specialty %>
+          <span class="hero-badge specialty-badge">
+            <%= @member.specialty.name %>
+          </span>
+        <% end %>
       </div>
-    <% end %>
-    <span id="member-bio__more" data-bio-target="more">⬇</span>
+      <h1><%= full_name_with_title(@member) %></h1>
+      <% if @member.doctor_grade.present? %>
+        <p class="member-grade"><%= @member.doctor_grade %></p>
+      <% end %>
+    </div>
   </div>
-  <%#= image_tag('wave-home-page.svg', class: 'member-page-wave', alt: 'spinal care wave') %>
-  <!-- <h1><%= full_name(@member) %></h1> -->
+
+  <!-- Main Content -->
+  <div class="member-content">
+    <div class="member-content-inner" data-controller="member-height">
+      <!-- Member Card Section -->
+      <div class="member-card-section">
+        <%= render partial: "members/modern_member_card", locals: {m: @member} %>
+        <%= book_btn("Programează-te!", "member-book-btn") %>
+      </div>
+
+      <!-- Biography Section -->
+      <% if @member.description.present? && !@member.description.body.empty? %>
+        <div class="member-bio-section">
+          <div class="bio-header">
+            <h2>Despre</h2>
+            <div class="bio-line"></div>
+          </div>
+          <div class="member-bio-content" data-controller="bio" data-bio-target="bio">
+            <%= @member.description %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Services Section -->
+      <% if @member.medical_services.any? %>
+        <div class="member-services-section">
+          <div class="services-header">
+            <h2>Servicii Medicale</h2>
+            <div class="services-line"></div>
+          </div>
+          <div class="services-grid-modern">
+            <% @member.medical_services.sort_by(&:name).each do |service| %>
+              <%= render partial: 'medical_services/service_card_public', locals: { medical_service: service } %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>

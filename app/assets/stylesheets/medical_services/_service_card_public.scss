@@ -1,0 +1,177 @@
+// Public-facing service card styles for member pages and specialty pages
+.service-card-public {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #4A6775;
+    box-shadow: 0 4px 12px rgba(74, 103, 117, 0.15);
+    transform: translateY(-2px);
+  }
+}
+
+.service-header-public {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+
+  .service-name-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    position: relative;
+
+    .service-name-public {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .info-icon-public {
+      cursor: help;
+      display: inline-flex;
+      color: #9ca3af;
+      flex-shrink: 0;
+      transition: color 0.2s;
+      margin-top: 0.125rem;
+
+      svg {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+
+      &:hover {
+        color: #6b7280;
+
+        + .service-tooltip-public {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0);
+        }
+      }
+    }
+
+    .service-tooltip-public {
+      position: absolute;
+      left: 0;
+      top: calc(100% + 0.5rem);
+      min-width: 250px;
+      max-width: 350px;
+      padding: 0.75rem 1rem;
+      background: #1f2937;
+      color: white;
+      font-size: 0.875rem;
+      font-weight: 400;
+      line-height: 1.6;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-4px);
+      transition: all 0.2s;
+      pointer-events: none;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: 1.5rem;
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-bottom: 5px solid #1f2937;
+      }
+
+      @media (max-width: 768px) {
+        left: -0.5rem;
+        right: -0.5rem;
+        min-width: auto;
+        max-width: calc(100vw - 3rem);
+      }
+    }
+  }
+
+  .hospitalization-badge-public {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: #f0f9ff;
+    color: #0369a1;
+    border-radius: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+    align-self: flex-start;
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+      flex-shrink: 0;
+    }
+
+    &:hover {
+      background: #e0f2fe;
+      color: #075985;
+    }
+  }
+}
+
+.service-price-public {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #4A6775;
+
+  .price-contact-public {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b7280;
+    font-size: 0.95rem;
+
+    svg {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+  }
+
+  .price-amount-public {
+    .currency-public {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #6b7280;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .service-card-public {
+    padding: 1.25rem;
+  }
+
+  .service-header-public {
+    .service-name-wrapper {
+      .service-name-public {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .service-price-public {
+    font-size: 1rem;
+  }
+}

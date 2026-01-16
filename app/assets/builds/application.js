@@ -6287,6 +6287,56 @@
   application.debug = false;
   window.Stimulus = application;
 
+  // controllers/admin-modal_controller.js
+  var admin_modal_controller_exports = {};
+  __export(admin_modal_controller_exports, {
+    default: () => admin_modal_controller_default
+  });
+  var admin_modal_controller_default = class extends Controller {
+    connect() {
+      window.openAdminModal = (modalId) => this.open(modalId);
+    }
+    open(modalId) {
+      const modal = typeof modalId === "string" ? document.getElementById(modalId) : this.element;
+      if (modal) {
+        modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        requestAnimationFrame(() => {
+          const panel = modal.querySelector(".relative");
+          if (panel) {
+            panel.classList.add("animate-slideIn");
+          }
+        });
+      }
+    }
+    close(event) {
+      if (event && event.target.closest(".relative:not(.fixed)")) {
+        return;
+      }
+      const modal = this.element;
+      const panel = modal.querySelector(".relative");
+      if (panel) {
+        panel.classList.add("animate-slideOut");
+        setTimeout(() => {
+          modal.classList.add("hidden");
+          document.body.style.overflow = "";
+          panel.classList.remove("animate-slideIn", "animate-slideOut");
+        }, 200);
+      } else {
+        modal.classList.add("hidden");
+        document.body.style.overflow = "";
+      }
+    }
+    // Open modal from button click
+    openModal(event) {
+      event.preventDefault();
+      const modalId = event.currentTarget.dataset.modalId;
+      if (modalId) {
+        this.open(modalId);
+      }
+    }
+  };
+
   // controllers/adminLink_controller.js
   var adminLink_controller_exports = {};
   __export(adminLink_controller_exports, {
@@ -6296,7 +6346,7 @@
     createAdminLink() {
       let adminLinkContainer = document.createElement("li");
       let adminLink = document.createElement("a");
-      adminLink.setAttribute("href", "/dashboard/users");
+      adminLink.setAttribute("href", "/dashboard");
       adminLink.setAttribute("id", "adminLink");
       adminLink.innerText = "Admin";
       adminLinkContainer.appendChild(adminLink);
@@ -6332,9 +6382,6 @@
           });
         }
       });
-      if (document.getElementById("exitLink")) {
-        this.showAdminLink();
-      }
     }
   };
 
@@ -6427,32 +6474,101 @@
   });
   var landingimage_controller_default = class extends Controller {
     connect() {
-      var mainContainer = document.getElementById("landing-image");
-      var imageText = document.getElementById("landing-image-description");
-      var images = [
+      this.mainContainer = document.getElementById("landing-image");
+      this.imageText = document.getElementById("landing-image-description");
+      this.currentIndex = 0;
+      this.images = [
         "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1653807781/development/0236_cu8xqs.webp",
-        ["https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1654329520/development/btcfrzj088gsc9vxau9n1aeta4g2.webp", "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776716/cabinets/www.sysphotodesign.ro_156_b2vhwx.webp", "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776632/cabinets/www.sysphotodesign.ro_19_bihpcn.webp"],
+        [
+          "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1654329520/development/btcfrzj088gsc9vxau9n1aeta4g2.webp",
+          "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776716/cabinets/www.sysphotodesign.ro_156_b2vhwx.webp",
+          "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776632/cabinets/www.sysphotodesign.ro_19_bihpcn.webp"
+        ],
         "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1654682878/production/zg9bn5picn9m1th7e5narlkjej8u.webp",
         "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776716/cabinets/www.sysphotodesign.ro_157_gxykxx.webp",
         "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1718358055/cabinets/0126_vmwegk.webp",
         "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776672/cabinets/www.sysphotodesign.ro_91_af55tg.webp"
-        // "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1723391283/cabinets/eximia-web_v2_lnyhu8.webp"
       ];
-      var texts = ["clinic\u0103 medical\u0103 multidisciplinar\u0103", "medici experimenta\u021Bi", "kinetoterapeu\u021Bi dedica\u021Bi", "aparatur\u0103 medical\u0103 performant\u0103", "spitalizare de zi", "gratuit 100% prin CAS"];
-      var showImages = () => {
-        images.forEach((image, i) => {
-          setTimeout(() => {
-            if (typeof image === "object") {
-              mainContainer.style.backgroundImage = `url(${image[Math.round(Math.random() * 2)]})`;
-            } else {
-              mainContainer.style.backgroundImage = `url(${image})`;
-            }
-            imageText.innerText = texts[i];
-          }, 4e3 * i);
-        });
+      this.texts = [
+        "clinic\u0103 medical\u0103 multidisciplinar\u0103",
+        "medici experimenta\u021Bi",
+        "kinetoterapeu\u021Bi dedica\u021Bi",
+        "aparatur\u0103 medical\u0103 performant\u0103",
+        "spitalizare de zi",
+        "gratuit 100% prin CAS"
+      ];
+      this.createImageLayers();
+      this.showImage(0);
+      this.intervalId = setInterval(() => this.nextImage(), 4e3);
+    }
+    disconnect() {
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+      }
+    }
+    createImageLayers() {
+      this.mainContainer.innerHTML = "";
+      this.layer1 = document.createElement("div");
+      this.layer1.className = "hero-image-layer";
+      this.layer1.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 1;
+      transition: opacity 1s ease-in-out;
+    `;
+      this.layer2 = document.createElement("div");
+      this.layer2.className = "hero-image-layer";
+      this.layer2.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    `;
+      this.mainContainer.appendChild(this.layer1);
+      this.mainContainer.appendChild(this.layer2);
+      this.activeLayer = this.layer1;
+      this.inactiveLayer = this.layer2;
+    }
+    getImageUrl(image) {
+      if (typeof image === "object") {
+        return image[Math.floor(Math.random() * image.length)];
+      }
+      return image;
+    }
+    showImage(index) {
+      const imageUrl = this.getImageUrl(this.images[index]);
+      this.imageText.style.opacity = "0";
+      const img = new Image();
+      img.src = imageUrl;
+      img.onload = () => {
+        this.inactiveLayer.style.backgroundImage = `url(${imageUrl})`;
+        this.activeLayer.style.opacity = "0";
+        this.inactiveLayer.style.opacity = "1";
+        setTimeout(() => {
+          this.imageText.innerText = this.texts[index];
+          this.imageText.style.opacity = "1";
+        }, 500);
+        [this.activeLayer, this.inactiveLayer] = [
+          this.inactiveLayer,
+          this.activeLayer
+        ];
       };
-      showImages();
-      setInterval(showImages, 4e3 * texts.length);
+    }
+    nextImage() {
+      this.currentIndex = (this.currentIndex + 1) % this.images.length;
+      this.showImage(this.currentIndex);
     }
   };
 
@@ -6480,6 +6596,42 @@
       }
       window.onload = resizeAllGridItems();
       window.onresize = resizeAllGridItems();
+    }
+  };
+
+  // controllers/memberFilter_controller.js
+  var memberFilter_controller_exports = {};
+  __export(memberFilter_controller_exports, {
+    default: () => memberFilter_controller_default
+  });
+  var memberFilter_controller_default = class extends Controller {
+    static targets = ["card"];
+    filterByName(event) {
+      const searchTerm = event.target.value.toLowerCase().trim();
+      this.cardTargets.forEach((card) => {
+        const memberName = card.dataset.memberName;
+        if (searchTerm === "" || memberName.includes(searchTerm)) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+      this.updateProfessionSections();
+    }
+    updateProfessionSections() {
+      const professionSections = document.querySelectorAll(
+        ".personal-profession-section"
+      );
+      professionSections.forEach((section) => {
+        const visibleMembers = section.querySelectorAll(
+          '.modern-member-card:not([style*="display: none"])'
+        );
+        if (visibleMembers.length === 0) {
+          section.style.display = "none";
+        } else {
+          section.style.display = "";
+        }
+      });
     }
   };
 
@@ -6534,8 +6686,110 @@
     default: () => memberIndexFilter_controller_default
   });
   var memberIndexFilter_controller_default = class extends Controller {
-    static targets = ["btnTrigger", "filterForm"];
+    static targets = ["card", "professionSection", "founderSection", "nameInput"];
     connect() {
+      this.currentProfession = "all";
+      this.currentSpecialty = "all";
+      this.currentNameFilter = "";
+    }
+    filterByName(event) {
+      this.currentNameFilter = event.target.value.toLowerCase().trim();
+      this.applyFilters();
+    }
+    filterByProfession(event) {
+      const button = event.currentTarget;
+      const profession = button.dataset.filter;
+      this.element.querySelectorAll(".filter-btn").forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+      this.currentProfession = profession;
+      this.applyFilters();
+    }
+    filterBySpecialty(event) {
+      this.currentSpecialty = event.target.value;
+      this.applyFilters();
+    }
+    applyFilters() {
+      const cards = this.cardTargets;
+      const sections = this.professionSectionTargets;
+      cards.forEach((card) => {
+        const cardName = card.dataset.memberName || "";
+        const cardProfession = card.dataset.profession || "";
+        const cardSpecialty = card.dataset.specialty || "none";
+        const matchesName = !this.currentNameFilter || cardName.includes(this.currentNameFilter);
+        const matchesProfession = this.currentProfession === "all" || cardProfession === this.currentProfession;
+        const matchesSpecialty = this.currentSpecialty === "all" || cardSpecialty === this.currentSpecialty;
+        if (matchesName && matchesProfession && matchesSpecialty) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+      sections.forEach((section) => {
+        const sectionCards = section.querySelectorAll(
+          '[data-memberindexfilter-target="card"]'
+        );
+        const hasVisibleCards = Array.from(sectionCards).some(
+          (card) => card.style.display !== "none"
+        );
+        if (hasVisibleCards) {
+          section.style.display = "";
+        } else {
+          section.style.display = "none";
+        }
+      });
+      if (this.hasFounderSectionTarget) {
+        const founderCard = this.founderSectionTarget.querySelector(
+          '[data-memberindexfilter-target="card"]'
+        );
+        if (founderCard && founderCard.style.display !== "none") {
+          this.founderSectionTarget.style.display = "";
+        } else {
+          this.founderSectionTarget.style.display = "none";
+        }
+      }
+    }
+  };
+
+  // controllers/member_height_controller.js
+  var member_height_controller_exports = {};
+  __export(member_height_controller_exports, {
+    default: () => member_height_controller_default
+  });
+  var member_height_controller_default = class extends Controller {
+    connect() {
+      if (document.readyState === "complete") {
+        this.matchHeights();
+      } else {
+        window.addEventListener("load", () => this.matchHeights());
+      }
+      this.resizeHandler = this.matchHeights.bind(this);
+      window.addEventListener("resize", this.resizeHandler);
+    }
+    disconnect() {
+      window.removeEventListener("resize", this.resizeHandler);
+    }
+    matchHeights() {
+      requestAnimationFrame(() => {
+        if (window.innerWidth >= 992) {
+          const cardSection = document.querySelector(".member-card-section");
+          const bioSection = document.querySelector(".member-bio-section");
+          if (cardSection && bioSection) {
+            const cardHeight = cardSection.offsetHeight;
+            bioSection.style.height = `${cardHeight}px`;
+            console.log(
+              "Card height:",
+              cardHeight,
+              "Bio height set to:",
+              cardHeight
+            );
+          }
+        } else {
+          const bioSection = document.querySelector(".member-bio-section");
+          if (bioSection) {
+            bioSection.style.height = "auto";
+          }
+        }
+      });
     }
   };
 
@@ -6550,10 +6804,10 @@
     // }
     navbarFixed() {
       window.onscroll = () => {
-        let navbar;
-        document.getElementById("navbar-toggle") ? navbar = document.getElementById("navbar-toggle") : void 0;
-        let navbarMenu;
-        document.getElementById("navbar-menu") ? navbarMenu = document.getElementById("navbar-menu") : void 0;
+        const navbar = document.getElementById("navbar-toggle");
+        const navbarMenu = document.getElementById("navbar-menu");
+        if (!navbar || !navbarMenu)
+          return;
         let navbarDistToTop = navbar.getBoundingClientRect().bottom;
         if (navbarDistToTop < window.innerHeight * (6 / 100)) {
           navbarMenu.style.position = "fixed";
@@ -6593,6 +6847,226 @@
     }
   };
 
+  // controllers/richTextEditor_controller.js
+  var richTextEditor_controller_exports = {};
+  __export(richTextEditor_controller_exports, {
+    default: () => richTextEditor_controller_default
+  });
+  var richTextEditor_controller_default = class extends Controller {
+    connect() {
+      this.enhanceTrixEditor();
+    }
+    enhanceTrixEditor() {
+      const editor = this.element.querySelector("trix-editor");
+      if (!editor)
+        return;
+      this.addAlignmentButtons();
+      this.addHeadingControls();
+      this.addColorControls();
+      this.addClearFormattingButton();
+      this.addHorizontalRuleButton();
+      this.addIndentControls();
+    }
+    addAlignmentButtons() {
+      const toolbar = this.element.querySelector("trix-toolbar");
+      if (!toolbar)
+        return;
+      const alignmentGroup = document.createElement("span");
+      alignmentGroup.className = "trix-button-group trix-button-group--alignment";
+      const alignments = [
+        { value: "left", icon: "\u2B05", title: "Aliniere st\xE2nga" },
+        { value: "center", icon: "\u2194", title: "Aliniere centru" },
+        { value: "right", icon: "\u27A1", title: "Aliniere dreapta" },
+        { value: "justify", icon: "\u2B0C", title: "Aliniere justify" }
+      ];
+      alignments.forEach(({ value, icon, title }) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "trix-button trix-button--icon-align-" + value;
+        button.dataset.action = "click->richTextEditor#setAlignment";
+        button.dataset.alignment = value;
+        button.title = title;
+        button.innerHTML = `<span class="alignment-icon">${icon}</span>`;
+        alignmentGroup.appendChild(button);
+      });
+      const buttonRow = toolbar.querySelector(".trix-button-row");
+      if (buttonRow) {
+        buttonRow.appendChild(alignmentGroup);
+      }
+    }
+    addHeadingControls() {
+      const toolbar = this.element.querySelector("trix-toolbar");
+      if (!toolbar)
+        return;
+      const headingGroup = document.createElement("span");
+      headingGroup.className = "trix-button-group trix-button-group--headings";
+      const headingSelect = document.createElement("select");
+      headingSelect.className = "trix-heading-select";
+      headingSelect.innerHTML = `
+      <option value="">Paragraph</option>
+      <option value="heading1">Heading 1</option>
+      <option value="sub-heading">Heading 2</option>
+      <option value="heading3">Heading 3</option>
+    `;
+      headingSelect.addEventListener("change", (e) => {
+        const value = e.target.value;
+        const editor = this.element.querySelector("trix-editor").editor;
+        if (value === "") {
+          editor.deactivateAttribute("heading1");
+          editor.deactivateAttribute("sub-heading");
+          editor.deactivateAttribute("heading3");
+        } else {
+          editor.activateAttribute(value);
+        }
+        e.target.value = "";
+      });
+      headingGroup.appendChild(headingSelect);
+      const buttonRow = toolbar.querySelector(".trix-button-row");
+      if (buttonRow) {
+        buttonRow.insertBefore(headingGroup, buttonRow.firstChild);
+      }
+    }
+    addColorControls() {
+      const toolbar = this.element.querySelector("trix-toolbar");
+      if (!toolbar)
+        return;
+      const colorGroup = document.createElement("span");
+      colorGroup.className = "trix-button-group trix-button-group--colors";
+      const colorButton = document.createElement("button");
+      colorButton.type = "button";
+      colorButton.className = "trix-button trix-button--icon-color";
+      colorButton.title = "Culoare text";
+      colorButton.innerHTML = `<span style="font-weight: bold; color: #3b82f6;">A</span>`;
+      const colorPicker = document.createElement("input");
+      colorPicker.type = "color";
+      colorPicker.className = "trix-color-picker";
+      colorPicker.style.display = "none";
+      colorButton.addEventListener("click", () => {
+        colorPicker.click();
+      });
+      colorPicker.addEventListener("change", (e) => {
+        const color = e.target.value;
+        const editor = this.element.querySelector("trix-editor").editor;
+        const selection = editor.getSelectedRange();
+        if (selection[0] !== selection[1]) {
+          const span = document.createElement("span");
+          span.style.color = color;
+          span.textContent = editor.getDocument().toString().substring(selection[0], selection[1]);
+          editor.setSelectedRange(selection);
+          editor.deleteInDirection("forward");
+          editor.insertHTML(span.outerHTML);
+        }
+      });
+      colorGroup.appendChild(colorButton);
+      colorGroup.appendChild(colorPicker);
+      const buttonRow = toolbar.querySelector(".trix-button-row");
+      if (buttonRow) {
+        buttonRow.appendChild(colorGroup);
+      }
+    }
+    addClearFormattingButton() {
+      const toolbar = this.element.querySelector("trix-toolbar");
+      if (!toolbar)
+        return;
+      const clearGroup = document.createElement("span");
+      clearGroup.className = "trix-button-group trix-button-group--clear";
+      const clearButton = document.createElement("button");
+      clearButton.type = "button";
+      clearButton.className = "trix-button trix-button--icon-clear";
+      clearButton.title = "\u0218terge formatare";
+      clearButton.innerHTML = `<span style="font-weight: bold;">T<sub>x</sub></span>`;
+      clearButton.addEventListener("click", () => {
+        const editor = this.element.querySelector("trix-editor").editor;
+        const selection = editor.getSelectedRange();
+        if (selection[0] !== selection[1]) {
+          const text = editor.getDocument().toString().substring(selection[0], selection[1]);
+          editor.setSelectedRange(selection);
+          editor.deleteInDirection("forward");
+          editor.insertString(text);
+        }
+      });
+      clearGroup.appendChild(clearButton);
+      const buttonRow = toolbar.querySelector(".trix-button-row");
+      if (buttonRow) {
+        buttonRow.appendChild(clearGroup);
+      }
+    }
+    addHorizontalRuleButton() {
+      const toolbar = this.element.querySelector("trix-toolbar");
+      if (!toolbar)
+        return;
+      const hrGroup = document.createElement("span");
+      hrGroup.className = "trix-button-group trix-button-group--hr";
+      const hrButton = document.createElement("button");
+      hrButton.type = "button";
+      hrButton.className = "trix-button trix-button--icon-hr";
+      hrButton.title = "Linie orizontal\u0103";
+      hrButton.innerHTML = `<span style="font-weight: bold;">\u2015</span>`;
+      hrButton.addEventListener("click", () => {
+        const editor = this.element.querySelector("trix-editor").editor;
+        editor.insertHTML("<hr>");
+      });
+      hrGroup.appendChild(hrButton);
+      const buttonRow = toolbar.querySelector(".trix-button-row");
+      if (buttonRow) {
+        buttonRow.appendChild(hrGroup);
+      }
+    }
+    addIndentControls() {
+      const toolbar = this.element.querySelector("trix-toolbar");
+      if (!toolbar)
+        return;
+      const indentGroup = document.createElement("span");
+      indentGroup.className = "trix-button-group trix-button-group--indent";
+      const outdentButton = document.createElement("button");
+      outdentButton.type = "button";
+      outdentButton.className = "trix-button trix-button--icon-outdent";
+      outdentButton.title = "Mic\u0219oreaz\u0103 indentare";
+      outdentButton.innerHTML = `<span>\u21E4</span>`;
+      outdentButton.addEventListener("click", () => {
+        const editor = this.element.querySelector("trix-editor").editor;
+        editor.decreaseNestingLevel();
+      });
+      const indentButton = document.createElement("button");
+      indentButton.type = "button";
+      indentButton.className = "trix-button trix-button--icon-indent";
+      indentButton.title = "M\u0103re\u0219te indentare";
+      indentButton.innerHTML = `<span>\u21E5</span>`;
+      indentButton.addEventListener("click", () => {
+        const editor = this.element.querySelector("trix-editor").editor;
+        editor.increaseNestingLevel();
+      });
+      indentGroup.appendChild(outdentButton);
+      indentGroup.appendChild(indentButton);
+      const buttonRow = toolbar.querySelector(".trix-button-row");
+      if (buttonRow) {
+        buttonRow.appendChild(indentGroup);
+      }
+    }
+    setAlignment(event) {
+      const alignment = event.currentTarget.dataset.alignment;
+      const editor = this.element.querySelector("trix-editor");
+      if (editor) {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          const element = range.commonAncestorContainer.parentElement;
+          if (element) {
+            let block = element.closest("div, p, h1, h2, blockquote, pre");
+            if (!block) {
+              block = element;
+            }
+            block.style.textAlign = alignment;
+            this.element.querySelectorAll(".trix-button-group--alignment .trix-button").forEach((btn) => {
+              btn.classList.remove("trix-active");
+            });
+            event.currentTarget.classList.add("trix-active");
+          }
+        }
+      }
+    }
+  };
+
   // controllers/searchTeam_controller.js
   var searchTeam_controller_exports = {};
   __export(searchTeam_controller_exports, {
@@ -6606,7 +7080,9 @@
       let professionDivs = document.getElementsByClassName("profession-div");
       this.setProfessionDivsDisplayToGrid(professionDivs);
       let reference2 = this.element.parentElement.innerText || "";
-      let members = Array.from(document.getElementsByClassName("member-card"));
+      let members = Array.from(
+        document.getElementsByClassName("modern-member-card")
+      );
       let counter = 0;
       members.forEach((m) => {
         m.dataset.profession === reference2 || m.dataset.specialty === reference2 || reference2 === "Toat\u0103 echipa" ? (m.style.display = "block", counter++) : m.style.display = "none";
@@ -6625,7 +7101,7 @@
     //   let professionDivs = document.getElementsByClassName('profession-div');
     //   this.setProfessionDivsDisplayToGrid(professionDivs)
     //   let nameReference = this.element.value.toLowerCase();
-    //   let members = Array.from(document.getElementsByClassName('member-card'));
+    //   let members = Array.from(document.getElementsByClassName('modern-member-card'));
     //   let counter = 0;
     //   members.forEach(m => {
     //     if (m.dataset.identity.toLowerCase().includes(nameReference)) {
@@ -6663,7 +7139,7 @@
     //       let query = window.location.search;
     //       const urlParams  = new URLSearchParams(query);
     //       const nameReference = urlParams.get('search[name]')
-    //       let members = Array.from(document.getElementsByClassName('member-card'));
+    //       let members = Array.from(document.getElementsByClassName('modern-member-card'));
     //       let mainContainer = document.getElementById('medical-team');
     //       let counter = 0;
     //       members.forEach(m => {
@@ -6742,21 +7218,35 @@
     default: () => sidemenu_toggle_controller_default
   });
   var sidemenu_toggle_controller_default = class extends Controller {
-    static targets = ["toggle", "hamburger", "shortline", "longline", "longline2"];
-    constructor(context) {
-      super(context);
-      this.hamburger = this.hamburgerTarget;
-      this.longLine = this.longlineTarget;
-      this.longLine2 = this.longline2Target;
-      this.shortLines = this.shortlineTargets;
-      this.elements = [this.hamburger, this.longLine, this.longLine2, this.shortLines].flat();
+    static targets = [
+      "toggle",
+      "hamburger",
+      "shortline",
+      "longline",
+      "longline2"
+    ];
+    connect() {
+      if (this.hasHamburgerTarget) {
+        this.hamburger = this.hamburgerTarget;
+        this.longLine = this.longlineTarget;
+        this.longLine2 = this.longline2Target;
+        this.shortLines = this.shortlineTargets;
+        this.elements = [
+          this.hamburger,
+          this.longLine,
+          this.longLine2,
+          this.shortLines
+        ].flat();
+      }
     }
     toggle() {
       this.toggleTargets.forEach((el) => {
         el.classList.add("trigger");
         el.classList.toggle("active");
       });
-      this.hamburger.classList.toggle("closed");
+      if (this.hasHamburgerTarget) {
+        this.hamburger.classList.toggle("closed");
+      }
       if (document.getElementById("navbar-toggle")) {
         var navbar = document.getElementById("navbar-toggle");
       } else if (document.getElementById("admin-navbar-toggle")) {
@@ -6767,7 +7257,7 @@
       } else if (adminNavbar) {
         adminNavbar.style.zIndex = "1";
       }
-      if (this.hamburger.classList.contains("closed")) {
+      if (this.hasHamburgerTarget && this.hamburger.classList.contains("closed")) {
         this.elements.forEach((el) => el.classList.add("trigger"));
         setTimeout(() => {
           this.hamburger.classList.add("active");
@@ -6788,7 +7278,7 @@
         setTimeout(() => {
           this.longLine2.classList.add("active-long-line-2");
         }, 690);
-      } else if (!this.hamburger.classList.contains("closed")) {
+      } else if (this.hasHamburgerTarget && !this.hamburger.classList.contains("closed")) {
         if (navbar) {
           navbar.style.zIndex = "1002";
         } else if (adminNavbar) {
@@ -6821,7 +7311,9 @@
       } else if (document.getElementById("admin-navbar-toggle")) {
         var adminNavbar = document.getElementById("admin-navbar-toggle");
       }
-      this.hamburger.classList.remove("closed");
+      if (this.hasHamburgerTarget) {
+        this.hamburger.classList.remove("closed");
+      }
       this.toggleTargets.forEach((el) => {
         el.classList.remove("active");
       });
@@ -6830,25 +7322,27 @@
       } else if (adminNavbar) {
         adminNavbar.style.zIndex = "1002";
       }
-      setTimeout(() => {
-        this.longLine2.classList.remove("active-long-line-2");
-      }, 10);
-      setTimeout(() => {
-        this.longLine.classList.remove("active-long-line-1");
-      }, 30);
-      setTimeout(() => {
-        this.shortLines.forEach((el) => {
-          el.classList.remove("hidden");
-        });
-      }, 640);
-      setTimeout(() => {
-        this.shortLines.forEach((el) => {
-          el.classList.remove("active");
-        });
-      }, 740);
-      setTimeout(() => {
-        this.hamburger.classList.remove("active");
-      }, 780);
+      if (this.hasHamburgerTarget) {
+        setTimeout(() => {
+          this.longLine2.classList.remove("active-long-line-2");
+        }, 10);
+        setTimeout(() => {
+          this.longLine.classList.remove("active-long-line-1");
+        }, 30);
+        setTimeout(() => {
+          this.shortLines.forEach((el) => {
+            el.classList.remove("hidden");
+          });
+        }, 640);
+        setTimeout(() => {
+          this.shortLines.forEach((el) => {
+            el.classList.remove("active");
+          });
+        }, 740);
+        setTimeout(() => {
+          this.hamburger.classList.remove("active");
+        }, 780);
+      }
     }
   };
 
@@ -7402,7 +7896,7 @@
   };
 
   // rails:/Users/aquaman/Code/Projects/spinal/spinal_care_ror/app/javascript/controllers/**/*_controller.js
-  var modules = [{ name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "landingimage", module: landingimage_controller_exports, filename: "landingimage_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
+  var modules = [{ name: "admin-modal", module: admin_modal_controller_exports, filename: "admin-modal_controller.js" }, { name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "landingimage", module: landingimage_controller_exports, filename: "landingimage_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFilter", module: memberFilter_controller_exports, filename: "memberFilter_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "member-height", module: member_height_controller_exports, filename: "member_height_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "richTextEditor", module: richTextEditor_controller_exports, filename: "richTextEditor_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
   var controller_default = modules;
 
   // controllers/index.js

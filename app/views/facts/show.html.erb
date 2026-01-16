@@ -1,19 +1,56 @@
-<%= content_for :meta_title, 'Informări pentru pacient Spinal Care Bacău' %>
+<%= content_for :meta_title, "#{@fact.name} - Informații pentru pacient Spinal Care Bacău" %>
 <%= content_for :meta_keywords, @facts.pluck(:name).sample(4).join(', ') %>
-<div class="pacient-section__wall-photo" style="background-image: url('<%#= cl_image_path(bkg_photo, :quality=>80, :width=>800, :crop=>"scale") %>'); filter: grayscale(1) contrast(4) brightness(.5);"></div>
-<div class="fact-section">
-  <h2>Informare pacient</h2>
-  <div class="btn-group dropdown-center">
-    <button type="button" class="btn-drop dropdown-toggle !bg-orange-600 hover:!bg-orange-700 !text-white" data-bs-toggle="dropdown" aria-expanded="false">Selectează informația dorită</button>
-    <ul class="dropdown-menu">
-      <li><%= link_to 'Înapoi la index informări', info_pacient_index_path, class: 'dropdown-item btn-color' %></li>
-      <% @all_facts.each do |fact| %>
-        <li><%= link_to fact.name, "#{fact.slug}", class: 'dropdown-item btn-color' %></li>
-      <% end %>
-    </ul>
+
+<div class="modern-fact-page">
+  <!-- Hero Section -->
+  <div class="fact-hero">
+    <div class="fact-hero-overlay"></div>
+    <div class="fact-hero-content">
+      <div class="fact-breadcrumb">
+        <%= link_to info_pacient_index_path do %>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clip-rule="evenodd" />
+          </svg>
+          <span>Înapoi la informații pentru pacient</span>
+        <% end %>
+      </div>
+      <h1><%= @fact.name %></h1>
+      <p class="hero-subtitle">Informații pentru pacienți</p>
+    </div>
   </div>
-  <div class="fact img-w-<%= @fact.custom_width %>">
-    <h4 class="fs-3 mb-5 text-center h1"><%= @fact.name %></h4>
-    <%= @fact.description %>
+
+  <!-- Content Section -->
+  <div class="fact-content">
+    <div class="fact-content-inner">
+      <!-- Fact Selector Sidebar -->
+      <aside class="fact-selector">
+        <div class="selector-header">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+          </svg>
+          <h3>Alte informații</h3>
+        </div>
+        <nav class="fact-nav">
+          <% @all_facts.each do |fact| %>
+            <%= link_to "/info-pacient/#{fact.slug}", class: "fact-nav-item #{fact.id == @fact.id ? 'active' : ''}" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4.5 2A1.5 1.5 0 003 3.5v13A1.5 1.5 0 004.5 18h11a1.5 1.5 0 001.5-1.5V7.621a1.5 1.5 0 00-.44-1.06l-4.12-4.122A1.5 1.5 0 0011.378 2H4.5zm2.25 8.5a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5zm0 3a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5z" clip-rule="evenodd" />
+              </svg>
+              <span><%= fact.name %></span>
+            <% end %>
+          <% end %>
+        </nav>
+      </aside>
+
+      <!-- Main Fact Content -->
+      <article class="fact-article">
+        <div class="fact-article-header">
+          <h2><%= @fact.name %></h2>
+        </div>
+        <div class="fact-article-body img-w-<%= @fact.custom_width %>">
+          <%= @fact.description %>
+        </div>
+      </article>
+    </div>
   </div>
 </div>

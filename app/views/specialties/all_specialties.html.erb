@@ -1,4 +1,26 @@
-<div class="all-specialties__container">
-  <%= render 'pages/home_partials/home_specialities' %>
-  <%#= image_tag('wave-home-page.svg', class: 'member-page-wave', alt: 'spinal care wave') %>
+<%= content_for :meta_title, 'Specialități Medicale Spinal Care Bacău' %>
+<%= content_for :meta_keywords, @specialties.select(&:is_active).map(&:name).join(', ') %>
+
+<div class="modern-specialties-page">
+  <!-- Hero Section -->
+  <div class="specialties-hero">
+    <div class="specialties-hero-content">
+      <h1>Specialități Medicale</h1>
+      <p>Departamente dedicate sănătății dumneavoastră</p>
+    </div>
+  </div>
+
+  <!-- Specialties Grid -->
+  <div class="specialties-content">
+    <div class="specialties-grid">
+      <% @specialties.select(&:is_active).each do |specialty| %>
+        <%= render partial: 'specialties/modern_specialty_card', locals: {specialty: specialty} %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Feature Section -->
+  <div class="specialties-feature">
+    <%= render_feature("cabinets/www.sysphotodesign.ro_148_qun3b7.webp", "În cadrul clinicii medici experimentați sunt asistați de tehnologii avansate pentru a stabili un diagnostic cât mai exact cât și pentru a realiza un tratament cât mai eficient.", false) %>
+  </div>
 </div>

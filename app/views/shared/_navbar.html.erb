@@ -1,46 +1,97 @@
-<nav class="navbar navbar-expand-sm navbar-light navbar-lewagon" id="navbar-toggle" data-controller="navbarFixed" data-action="scroll@window->navbarFixed#navbarFixed click->blurMain#removeBlur">
-  <div class="navbar-content">
-    <%= link_to root_path, class: "navbar-brand d-flex" do %>
-      <%= image_tag "logo-signature-v6.png", class: 'navbar-brand-img', data: {sidemenu_toggle_target: 'toggle'}, alt: 'logo spinal care' %>
-      <%#= cl_image_tag("kzaelg1jvfchktxo5eht.png", id: 'anmcs') %>
+<nav class="modern-public-navbar" id="navbar-toggle" data-controller="navbarFixed adminLink" data-action="scroll@window->navbarFixed#navbarFixed click->blurMain#removeBlur">
+  <div class="navbar-container">
+    <%= link_to root_path, class: "navbar-logo" do %>
+      <%= image_tag "logo-signature-v6.png", class: 'logo-img', data: {sidemenu_toggle_target: 'toggle'}, alt: 'Spinal Care logo' %>
     <% end %>
-    <div class="navbar-menu" id="navbar-menu">
-        <ul class="navbar-items nav" id="navbar-items">
-          <li class="<%= path_helper == '' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Acasă', root_path %><div></div></li>
-          <li class="<%= path_helper == 'echipa' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Echipa medicală', echipa_path %>
-            <div></div>
-          </li>
-
-          <li class="<%= path_helper == 'specialitati-medicale' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Departamente', specialitati_medicale_path %><div></div></li>
-          <li class="<%= path_helper == 'servicii-medicale' ? 'active-page' : 'active-menu-item' %>"><%= link_to 'Servicii medicale', servicii_medicale_path %><div></div></li>
-          <li class="">
-            <button type="button" class="btn-nude !bg-orange-600 hover:!bg-orange-700 !text-white px-2 py-1 rounded-md" data-bs-toggle="modal" data-bs-target="#promoModal">
-              Programări online
-            </button><div></div>
-          </li>
-          <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Informații
-          </a>
-          <ul class="dropdown-menu">
-            <li class="dropdown-item"><%= link_to 'Info pacient', info_pacient_index_path %><div></div></li>
-            <li class="dropdown-item disabled"><%= link_to 'Cariere', info_pacient_index_path %><div></div></li>
-            <li class="dropdown-item disabled"><%= link_to 'Audiențe', info_pacient_index_path %><div></div></li>
-            <li class="dropdown-item disabled"><%= link_to 'Reclamații', info_pacient_index_path %><div></div></li>
+    
+    <div class="navbar-desktop-menu">
+      <ul class="nav-links" id="navbar-items">
+        <li class="nav-item <%= path_helper == '' ? 'active' : '' %>">
+          <%= link_to root_path, class: 'nav-link' do %>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+            </svg>
+            <span>Acasă</span>
+          <% end %>
+        </li>
+        
+        <li class="nav-item <%= path_helper == 'echipa' ? 'active' : '' %>">
+          <%= link_to echipa_path, class: 'nav-link' do %>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+            </svg>
+            <span>Echipa medicală</span>
+          <% end %>
+        </li>
+        
+        <li class="nav-item <%= path_helper == 'specialitati-medicale' ? 'active' : '' %>">
+          <%= link_to specialitati_medicale_path, class: 'nav-link' do %>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+            </svg>
+            <span>Departamente</span>
+          <% end %>
+        </li>
+        
+        <li class="nav-item <%= path_helper == 'servicii-medicale' ? 'active' : '' %>">
+          <%= link_to servicii_medicale_path, class: 'nav-link' do %>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd" />
+            </svg>
+            <span>Servicii medicale</span>
+          <% end %>
+        </li>
+        
+        <li class="nav-item dropdown-wrapper">
+          <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+            <span>Informații</span>
+            <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <ul class="dropdown-menu modern-dropdown">
+            <li><%= link_to info_pacient_index_path, class: 'dropdown-item' do %>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+              </svg>
+              Info pacient
+            <% end %></li>
+            <li><a class="dropdown-item disabled" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07V19a2 2 0 01-2 2H4a2 2 0 01-2-2V7.07c0-1.32.947-2.488 2.294-2.676A41.047 41.047 0 016 4.193V3.75zm6.5 0v.325a41.622 41.622 0 00-5 0V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25zM10 10a1 1 0 00-1 1v.01a1 1 0 001 1h.01a1 1 0 001-1V11a1 1 0 00-1-1H10z" clip-rule="evenodd" />
+              </svg>
+              Cariere
+            </a></li>
           </ul>
         </li>
-
-          
-          
-          
-          <% if current_user %>
-            <li class="active-menu-item" id="nav-bar-exit-link">
-              <%= link_to 'Ieșire', destroy_user_session_path, data: {turbo_method: :delete} %>
-              <div></div>
-            </li>
-          <% end %>
-        </ul>
+        
+        <% if access || god_mode %>
+          <li class="nav-item">
+            <%= link_to dashboard_path, class: 'nav-link admin-nav-link' do %>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
+              </svg>
+              <span>Admin</span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+      
+      <button type="button" class="cta-button" data-bs-toggle="modal" data-bs-target="#promoModal">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" />
+        </svg>
+        Programare online
+      </button>
     </div>
-      <%= render partial: "shared/navbar/hamburger" %>
+
+    <button class="mobile-menu-toggle" data-sidemenu-toggle-target="hamburger" data-action="click->sidemenu-toggle#toggle">
+      <span class="hamburger-line" data-sidemenu-toggle-target="shortline"></span>
+      <span class="hamburger-line hamburger-line-middle" data-sidemenu-toggle-target="longline"></span>
+      <span class="hamburger-line" data-sidemenu-toggle-target="longline2"></span>
+    </button>
   </div>
 </nav>

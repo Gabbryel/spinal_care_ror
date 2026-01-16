@@ -1,3 +1,356 @@
+/* Modern Pacient Page */
+body:has(.modern-pacient-page) .main {
+  display: block;
+}
+
+.modern-pacient-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 50%);
+}
+
+.pacient-hero {
+  position: relative;
+  height: 50vh;
+  min-height: 400px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pacient-hero-image {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  filter: brightness(0.7);
+}
+
+.pacient-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(90, 122, 138, 0.85) 0%, rgba(90, 122, 138, 0.7) 100%);
+}
+
+.pacient-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  padding: 2rem;
+  max-width: 900px;
+  
+  h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    margin-bottom: 0.5rem;
+    opacity: 0.95;
+  }
+
+  .hero-motto {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-style: italic;
+    opacity: 0.9;
+  }
+}
+
+.pacient-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+/* Info Card with Highlight */
+.info-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 0;
+  margin-bottom: 3rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+}
+
+.info-link-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.info-link-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #4A6775 0%, #5a7a8a 100%);
+  color: white;
+
+  .info-icon {
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+  }
+
+  div {
+    flex: 1;
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 1rem;
+    }
+  }
+
+  .arrow-icon {
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover .arrow-icon {
+    transform: translateX(0.5rem);
+  }
+}
+
+/* Locations Section */
+.locations-section {
+  margin-bottom: 3rem;
+  .section-title {
+    display: block;
+  }
+}
+
+.partners-section {
+  .section-title {
+    display: block;
+  }
+}
+
+.section-title {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.locations-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+
+  @media (min-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.location-card {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+}
+
+.location-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 1px solid #dee2e6;
+
+  .location-icon-wrapper {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(135deg, #4A6775 0%, #5a7a8a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+      width: 1.75rem;
+      height: 1.75rem;
+      color: white;
+    }
+  }
+
+  div {
+    flex: 1;
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 0.25rem;
+    }
+
+    .location-description {
+      margin: 0;
+      color: #6c757d;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+.map-container {
+  width: 100%;
+  height: 400px;
+  background: #f8f9fa;
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+}
+
+/* Contact Card */
+.contact-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 2.5rem;
+  margin-bottom: 3rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  .contact-title {
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+}
+
+.contact-items {
+  display: grid;
+  gap: 2rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+.contact-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 0.75rem;
+  border: 1px solid #dee2e6;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #4A6775;
+    box-shadow: 0 4px 8px rgba(74, 103, 117, 0.15);
+  }
+
+  svg {
+    width: 2rem;
+    height: 2rem;
+    color: #4A6775;
+    flex-shrink: 0;
+  }
+
+  div {
+    flex: 1;
+
+    h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin: 0.25rem 0;
+      color: #495057;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    a {
+      color: #4A6775;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #3a5565;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+/* Partners Section */
+.partners-section {
+  margin-bottom: 3rem;
+}
+
+.partners-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  align-items: center;
+  justify-items: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (min-width: 992px) {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  img {
+    max-width: 150px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+
+    &:hover {
+      filter: grayscale(0%);
+      opacity: 1;
+      transform: scale(1.05);
+    }
+  }
+}
+
+/* Legacy Fact Page Styles */
 .pacient-section, .fact-section {
   position: relative;
   grid-area: 1 / 1 / -1  / -1;
@@ -9,6 +362,23 @@
     margin: 100px auto;
     padding: 50px;
   }
+  
+  .modern-specialty-link {
+    color: #4A6775;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    
+    &:hover {
+      color: #3a5463;
+      text-decoration: underline;
+    }
+    
+    span {
+      display: inline;
+    }
+  }
+  
   .dropdown-center {
     @include drop-down-custom;
     font-size: clamp(18px, 3vw, 24px);

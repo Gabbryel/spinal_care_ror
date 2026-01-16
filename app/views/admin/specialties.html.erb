@@ -1,19 +1,92 @@
 <% if access %>
-  <div class="specialties-main section-main">
-    <h1>Specialități medicale</h1>
-    <p>*pentru editare completă apasă <i class="fa-solid fa-pen-nib"></i></p>
-    <div>
-      <%= link_to "#", data: {bs_toggle: "modal", bs_target: "#newSpecialtyModal"} do %>
-        Adaugă specialitate medicală nouă
+  <div class="specialties-dashboard">
+    <div class="dashboard-header">
+      <div class="header-content">
+        <h1 class="dashboard-title">Specialități medicale</h1>
+        <p class="dashboard-subtitle">Gestionează specialitățile medicale oferite</p>
+      </div>
+      <%= link_to "#", data: { bs_toggle: "modal", bs_target: "#newSpecialtyModal" }, 
+          aria_label: 'Adaugă specialitate nouă', 
+          class: 'btn-add-specialty' do %>
+        <svg class="icon-plus" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        <span>Adaugă specialitate</span>
       <% end %>
     </div>
+
     <%= render partial: "specialties/modal", locals: {new: true, modal_id: "newSpecialtyModal", specialty: @specialty} %>
 
-    <div class="admin-elements specialties-index">
-      <%= render @specialties %>
-    </div>
+    <% if @specialties.any? %>
+      <div class="specialties-grid">
+        <% @specialties.each do |specialty| %>
+          <div class="specialty-card">
+            <div class="specialty-card-header">
+              <h3 class="specialty-name"><%= specialty.name %></h3>
+              <div class="specialty-actions">
+                <%= link_to "#", 
+                    data: {bs_toggle: "modal", bs_target: "#editSpecialtyDesc#{specialty.id}Modal"}, 
+                    class: 'action-btn action-edit-desc',
+                    title: 'Editează descriere' do %>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                  </svg>
+                <% end %>
+                <%= link_to "#", 
+                    data: {bs_toggle: "modal", bs_target: "#editSpecialty#{specialty.id}Modal"}, 
+                    class: 'action-btn action-edit',
+                    title: 'Editează date de bază' do %>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                  </svg>
+                <% end %>
+                <%= link_to specialty_path(specialty), 
+                    data: { turbo_method: :delete, turbo_confirm: "Sigur ștergi specialitatea '#{specialty.name}'?" },
+                    class: 'action-btn action-delete',
+                    title: 'Șterge' do %>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                <% end %>
+              </div>
+            </div>
+            <div class="specialty-card-body">
+              <% if specialty.photo.attached? %>
+                <div class="specialty-image">
+                  <%= cl_image_tag specialty.photo.key, class: "specialty-img", quality: 60, width: 400, crop: "scale" %>
+                </div>
+              <% end %>
+              <div class="specialty-details">
+                <div class="specialty-detail">
+                  <span class="detail-label">Status:</span>
+                  <span class="detail-value <%= specialty.is_active ? 'status-active' : 'status-inactive' %>">
+                    <%= specialty.is_active ? '✓ Activă' : '✗ Inactivă' %>
+                  </span>
+                </div>
+                <% if specialty.has_day_hospitalization %>
+                  <div class="specialty-detail">
+                    <span class="detail-label">Spitalizare de zi:</span>
+                    <span class="detail-value has-feature">✓ Disponibilă</span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <%= render partial: "specialties/modal", locals: {new: false, modal_id: "editSpecialty#{specialty.id}Modal", specialty: specialty} %>
+          <%= render partial: "specialties/modal_description", locals: {modal_id: "editSpecialtyDesc#{specialty.id}Modal", specialty: specialty} %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <h3 class="empty-title">Nu există specialități</h3>
+        <p class="empty-description">Începe prin a adăuga prima specialitate medicală folosind butonul de mai sus.</p>
+      </div>
+    <% end %>
   </div>
 <% else %>
-    <%= no_access %>
+  <%= no_access %>
 <% end %>
 

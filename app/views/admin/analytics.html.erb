@@ -1,0 +1,284 @@
+<% if access %>
+  <div class="analytics-page">
+    <div class="analytics-header">
+      <div class="header-content">
+        <h1>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z" clip-rule="evenodd" />
+            <path fill-rule="evenodd" d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z" clip-rule="evenodd" />
+          </svg>
+          Analytics & Audit
+        </h1>
+        <p class="analytics-subtitle">Rapoarte complete și statistici detaliate despre aplicație</p>
+      </div>
+      <div class="header-actions">
+        <%= link_to dashboard_path, class: 'back-btn' do %>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Înapoi la Dashboard
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Quick Overview -->
+    <div class="analytics-overview">
+      <div class="overview-card overview-card--primary">
+        <div class="overview-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z" />
+          </svg>
+        </div>
+        <div class="overview-content">
+          <div class="overview-value"><%= @total_records %></div>
+          <div class="overview-label">Total înregistrări</div>
+        </div>
+      </div>
+      <div class="overview-card overview-card--success">
+        <div class="overview-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
+          </svg>
+        </div>
+        <div class="overview-content">
+          <div class="overview-value"><%= (@members_with_bio.to_f / @total_members * 100).round(1) %>%</div>
+          <div class="overview-label">Completitudine conținut</div>
+        </div>
+      </div>
+      <div class="overview-card overview-card--warning">
+        <div class="overview-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="overview-content">
+          <div class="overview-value"><%= @members_created_this_month + @services_created_this_month %></div>
+          <div class="overview-label">Activitate lunară</div>
+        </div>
+      </div>
+      <div class="overview-card overview-card--info">
+        <div class="overview-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="overview-content">
+          <div class="overview-value"><%= @admin_users + @god_mode_users %></div>
+          <div class="overview-label">Admini activi</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Analytics Grid -->
+    <div class="analytics-grid">
+      <!-- Content Statistics -->
+      <div class="analytics-card analytics-card--span-2">
+        <h3 class="analytics-card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
+            <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
+          </svg>
+          Statistici Conținut
+        </h3>
+        <div class="analytics-stats-grid">
+          <div class="analytics-stat">
+            <span class="analytics-stat-value"><%= @total_members %></span>
+            <span class="analytics-stat-label">Total membri</span>
+            <span class="analytics-stat-trend analytics-stat-trend--up">+<%= @members_created_this_month %> luna aceasta</span>
+          </div>
+          <div class="analytics-stat">
+            <span class="analytics-stat-value"><%= @members_with_bio %></span>
+            <span class="analytics-stat-label">Cu descriere</span>
+            <span class="analytics-stat-trend"><%= (@members_with_bio.to_f / @total_members * 100).round(1) %>% completitudine</span>
+          </div>
+          <div class="analytics-stat">
+            <span class="analytics-stat-value"><%= @members_with_photo %></span>
+            <span class="analytics-stat-label">Cu fotografie</span>
+            <span class="analytics-stat-trend"><%= (@members_with_photo.to_f / @total_members * 100).round(1) %>% completitudine</span>
+          </div>
+          <div class="analytics-stat">
+            <span class="analytics-stat-value"><%= @total_services %></span>
+            <span class="analytics-stat-label">Servicii medicale</span>
+            <span class="analytics-stat-trend analytics-stat-trend--up">+<%= @services_created_this_month %> luna aceasta</span>
+          </div>
+          <div class="analytics-stat">
+            <span class="analytics-stat-value"><%= @total_specialties %></span>
+            <span class="analytics-stat-label">Specialități</span>
+          </div>
+          <div class="analytics-stat">
+            <span class="analytics-stat-value"><%= @total_facts %></span>
+            <span class="analytics-stat-label">Informații pacienți</span>
+            <span class="analytics-stat-trend analytics-stat-trend--up"><%= @facts_updated_this_week %> actualizate (7 zile)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- User & Admin Activity -->
+      <div class="analytics-card">
+        <h3 class="analytics-card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clip-rule="evenodd" />
+          </svg>
+          Utilizatori & Acces
+        </h3>
+        <div class="analytics-user-stats">
+          <div class="user-stat user-stat--total">
+            <span class="user-stat-value"><%= @total_users %></span>
+            <span class="user-stat-label">Total utilizatori</span>
+          </div>
+          <div class="user-stat user-stat--admin">
+            <span class="user-stat-value"><%= @admin_users %></span>
+            <span class="user-stat-label">Admini</span>
+          </div>
+          <div class="user-stat user-stat--god">
+            <span class="user-stat-value"><%= @god_mode_users %></span>
+            <span class="user-stat-label">God Mode</span>
+          </div>
+          <div class="user-stat">
+            <span class="user-stat-value"><%= @users_created_this_month %></span>
+            <span class="user-stat-label">Creați luna aceasta</span>
+          </div>
+        </div>
+        <div class="user-list-section">
+          <h4>Utilizatori recenți</h4>
+          <% @recent_users.each do |user| %>
+            <div class="user-list-item">
+              <div class="user-list-avatar"><%= user.email.first.upcase %></div>
+              <div class="user-list-info">
+                <div class="user-list-email"><%= user.email %></div>
+                <div class="user-list-meta">
+                  <% if user.god_mode %>
+                    <span class="user-list-badge user-list-badge--god">God</span>
+                  <% elsif user.admin %>
+                    <span class="user-list-badge user-list-badge--admin">Admin</span>
+                  <% end %>
+                  <span class="user-list-time"><%= time_ago_in_words(user.updated_at) %></span>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Growth Trends -->
+      <div class="analytics-card analytics-card--span-2">
+        <h3 class="analytics-card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z" clip-rule="evenodd" />
+            <path fill-rule="evenodd" d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z" clip-rule="evenodd" />
+          </svg>
+          Creștere (Ultim 6 Luni)
+        </h3>
+        <div class="growth-charts">
+          <div class="growth-chart">
+            <h4>Membri noi</h4>
+            <div class="growth-bars">
+              <% max_members = @members_growth.map { |g| g[:count] }.max %>
+              <% max_members = 1 if max_members == 0 %>
+              <% @members_growth.each do |data| %>
+                <div class="growth-bar-item">
+                  <div class="growth-bar-label"><%= data[:month] %></div>
+                  <div class="growth-bar">
+                    <div class="growth-bar-fill growth-bar-fill--members" style="width: <%= (data[:count].to_f / max_members * 100).round(1) %>%"></div>
+                  </div>
+                  <div class="growth-bar-value"><%= data[:count] %></div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="growth-chart">
+            <h4>Servicii noi</h4>
+            <div class="growth-bars">
+              <% max_services = @services_growth.map { |g| g[:count] }.max %>
+              <% max_services = 1 if max_services == 0 %>
+              <% @services_growth.each do |data| %>
+                <div class="growth-bar-item">
+                  <div class="growth-bar-label"><%= data[:month] %></div>
+                  <div class="growth-bar">
+                    <div class="growth-bar-fill growth-bar-fill--services" style="width: <%= (data[:count].to_f / max_services * 100).round(1) %>%"></div>
+                  </div>
+                  <div class="growth-bar-value"><%= data[:count] %></div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Specialties -->
+      <div class="analytics-card">
+        <h3 class="analytics-card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.7 2.805a.75.75 0 01.6 0A60.65 60.65 0 0122.83 8.72a.75.75 0 01-.231 1.337 49.949 49.949 0 00-9.902 3.912l-.003.002-.34.18a.75.75 0 01-.707 0A50.009 50.009 0 007.5 12.174v-.224c0-.131.067-.248.172-.311a54.614 54.614 0 014.653-2.52.75.75 0 00-.65-1.352 56.129 56.129 0 00-4.78 2.589 1.858 1.858 0 00-.859 1.228 49.803 49.803 0 00-4.634-1.527.75.75 0 01-.231-1.337A60.653 60.653 0 0111.7 2.805z" />
+          </svg>
+          Top 10 Specialități
+        </h3>
+        <div class="top-list">
+          <% @top_specialties.each_with_index do |specialty, index| %>
+            <div class="top-list-item">
+              <span class="top-list-rank">#<%= index + 1 %></span>
+              <span class="top-list-name"><%= specialty.name %></span>
+              <span class="top-list-value"><%= specialty.services_count %> servicii</span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Top Professions -->
+      <div class="analytics-card">
+        <h3 class="analytics-card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.502 6h7.128A3.375 3.375 0 0118 9.375v9.375a3 3 0 003-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 00-.673-.05A3 3 0 0015 1.5h-1.5a3 3 0 00-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6zM13.5 3A1.5 1.5 0 0012 4.5h4.5A1.5 1.5 0 0015 3h-1.5z" clip-rule="evenodd" />
+          </svg>
+          Top 10 Profesii
+        </h3>
+        <div class="top-list">
+          <% @top_professions.each_with_index do |profession, index| %>
+            <div class="top-list-item">
+              <span class="top-list-rank">#<%= index + 1 %></span>
+              <span class="top-list-name"><%= profession.name %></span>
+              <span class="top-list-value"><%= profession.members_count %> membri</span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Data Quality Issues -->
+      <div class="analytics-card analytics-card--span-2">
+        <h3 class="analytics-card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+          </svg>
+          Probleme de Calitate
+        </h3>
+        <div class="quality-issues">
+          <div class="quality-issue quality-issue--warning">
+            <div class="quality-issue-icon">⚠️</div>
+            <div class="quality-issue-content">
+              <div class="quality-issue-title">Membri fără specialitate</div>
+              <div class="quality-issue-value"><%= @members_without_specialty %> membri</div>
+            </div>
+          </div>
+          <div class="quality-issue quality-issue--info">
+            <div class="quality-issue-icon">ℹ️</div>
+            <div class="quality-issue-content">
+              <div class="quality-issue-title">Servicii fără membri asociați</div>
+              <div class="quality-issue-value"><%= @services_without_members %> servicii</div>
+            </div>
+          </div>
+          <div class="quality-issue quality-issue--success">
+            <div class="quality-issue-icon">✅</div>
+            <div class="quality-issue-content">
+              <div class="quality-issue-title">Rate completitudine conținut</div>
+              <div class="quality-issue-value"><%= (@members_with_bio.to_f / @total_members * 100).round(1) %>%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%= render 'visitor_analytics' %>
+    </div>
+  </div>
+<% else %>
+  <%= no_access %>
+<% end %>

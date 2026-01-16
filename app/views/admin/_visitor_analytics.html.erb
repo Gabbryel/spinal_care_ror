@@ -1,0 +1,158 @@
+<!-- Visitor Analytics -->
+<div class="analytics-card analytics-card--span-3">
+  <h3 class="analytics-card-title">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
+    </svg>
+    Visitor Analytics
+  </h3>
+
+  <div class="visitor-stats-grid">
+    <div class="visitor-stat-card visitor-stat-card--primary">
+      <div class="visitor-stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
+        </svg>
+      </div>
+      <div class="visitor-stat-content">
+        <div class="visitor-stat-value"><%= number_with_delimiter(@total_visits) %></div>
+        <div class="visitor-stat-label">Total vizite</div>
+        <div class="visitor-stat-meta">
+          <span><%= @total_visits_today %> astăzi</span>
+          <span><%= @total_visits_this_week %> săptămâna aceasta</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="visitor-stat-card visitor-stat-card--success">
+      <div class="visitor-stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="visitor-stat-content">
+        <div class="visitor-stat-value"><%= number_with_delimiter(@unique_visitors) %></div>
+        <div class="visitor-stat-label">Vizitatori unici</div>
+        <div class="visitor-stat-meta">
+          <span><%= @unique_visitors_this_month %> luna aceasta</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="visitor-stat-card visitor-stat-card--info">
+      <div class="visitor-stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+          <path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="visitor-stat-content">
+        <div class="visitor-stat-value"><%= (@total_visits_this_month.to_f / [@unique_visitors_this_month, 1].max).round(1) %></div>
+        <div class="visitor-stat-label">Vizite / Vizitator (luna aceasta)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Most Viewed Pages -->
+  <div class="visitor-section">
+    <h4 class="visitor-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
+      </svg>
+      Pagini cele mai vizualizate (Top 10)
+    </h4>
+    <div class="visitor-pages-list">
+      <% @most_viewed_pages.first(10).each_with_index do |(page, count), index| %>
+        <div class="visitor-page-item">
+          <span class="visitor-page-rank">#<%= index + 1 %></span>
+          <span class="visitor-page-url"><%= page || 'Homepage' %></span>
+          <span class="visitor-page-count"><%= number_with_delimiter(count) %> vizite</span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Traffic Sources -->
+  <% if @top_referrers.any? %>
+    <div class="visitor-section">
+      <h4 class="visitor-section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M19.902 4.098a3.75 3.75 0 00-5.304 0l-4.5 4.5a3.75 3.75 0 001.035 6.037.75.75 0 01-.646 1.353 5.25 5.25 0 01-1.449-8.45l4.5-4.5a5.25 5.25 0 117.424 7.424l-1.757 1.757a.75.75 0 11-1.06-1.06l1.757-1.757a3.75 3.75 0 000-5.304zm-7.389 4.267a.75.75 0 011-.353 5.25 5.25 0 011.449 8.45l-4.5 4.5a5.25 5.25 0 11-7.424-7.424l1.757-1.757a.75.75 0 111.06 1.06l-1.757 1.757a3.75 3.75 0 105.304 5.304l4.5-4.5a3.75 3.75 0 00-1.035-6.037.75.75 0 01-.354-1z" clip-rule="evenodd" />
+        </svg>
+        Surse de trafic (Top 10)
+      </h4>
+      <div class="visitor-referrers-list">
+        <% @top_referrers.first(10).each_with_index do |(referrer, count), index| %>
+          <div class="visitor-referrer-item">
+            <span class="visitor-referrer-rank">#<%= index + 1 %></span>
+            <span class="visitor-referrer-domain"><%= referrer %></span>
+            <span class="visitor-referrer-count"><%= number_with_delimiter(count) %> vizite</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Browsers & Devices -->
+  <div class="visitor-tech-grid">
+    <div class="visitor-tech-section">
+      <h4 class="visitor-section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M2.25 5.25a3 3 0 013-3h13.5a3 3 0 013 3V15a3 3 0 01-3 3h-3v.257c0 .597.237 1.17.659 1.591l.621.622a.75.75 0 01-.53 1.28h-9a.75.75 0 01-.53-1.28l.621-.622a2.25 2.25 0 00.659-1.59V18h-3a3 3 0 01-3-3V5.25zm1.5 0v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5z" clip-rule="evenodd" />
+        </svg>
+        Browsere
+      </h4>
+      <div class="visitor-tech-list">
+        <% @browsers.first(5).each do |(browser, count)| %>
+          <div class="visitor-tech-item">
+            <span class="visitor-tech-name"><%= browser || 'Unknown' %></span>
+            <div class="visitor-tech-bar">
+              <div class="visitor-tech-bar-fill" style="width: <%= (count.to_f / @total_visits * 100).round(1) %>%"></div>
+            </div>
+            <span class="visitor-tech-count"><%= (count.to_f / @total_visits * 100).round(1) %>%</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="visitor-tech-section">
+      <h4 class="visitor-section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M10.5 18.75a.75.75 0 000 1.5h3a.75.75 0 000-1.5h-3z" />
+          <path fill-rule="evenodd" d="M8.625.75A3.375 3.375 0 005.25 4.125v15.75a3.375 3.375 0 003.375 3.375h6.75a3.375 3.375 0 003.375-3.375V4.125A3.375 3.375 0 0015.375.75h-6.75zM7.5 4.125C7.5 3.504 8.004 3 8.625 3H9.75v.375c0 .621.504 1.125 1.125 1.125h2.25c.621 0 1.125-.504 1.125-1.125V3h1.125c.621 0 1.125.504 1.125 1.125v15.75c0 .621-.504 1.125-1.125 1.125h-6.75A1.125 1.125 0 017.5 19.875V4.125z" clip-rule="evenodd" />
+        </svg>
+        Dispozitive
+      </h4>
+      <div class="visitor-tech-list">
+        <% @device_types.each do |(device, count)| %>
+          <div class="visitor-tech-item">
+            <span class="visitor-tech-name"><%= device || 'Unknown' %></span>
+            <div class="visitor-tech-bar">
+              <div class="visitor-tech-bar-fill visitor-tech-bar-fill--device" style="width: <%= (count.to_f / @total_visits * 100).round(1) %>%"></div>
+            </div>
+            <span class="visitor-tech-count"><%= (count.to_f / @total_visits * 100).round(1) %>%</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daily Visits Trend -->
+  <div class="visitor-section">
+    <h4 class="visitor-section-title">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z" />
+      </svg>
+      Trend vizite zilnice (Ultimele 30 zile)
+    </h4>
+    <div class="daily-visits-chart">
+      <% max_daily = @daily_visits.map { |d| d[:count] }.max %>
+      <% @daily_visits.each do |day| %>
+        <div class="daily-visit-bar" title="<%= day[:date] %>: <%= day[:count] %> vizite">
+          <div class="daily-visit-fill" style="height: <%= max_daily > 0 ? (day[:count].to_f / max_daily * 100).round(1) : 0 %>%"></div>
+          <span class="daily-visit-label"><%= day[:date].split(' ').first %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

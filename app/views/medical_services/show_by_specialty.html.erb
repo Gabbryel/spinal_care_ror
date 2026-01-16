@@ -1,32 +1,65 @@
-<div class="medical-services-public">
+<div class="modern-specialty-services-page">
   <%= render partial: "specialty_prices_nav" %>
-  <div class="container mt-5 flex items-center flex-col">
-    <h1 class="text-3xl"><%= @specialty.name %></h1>
-    <div class="admin-elements services-index grid-masonry" >
-      
-        <div class="medical-services-list__specialty grid-masonry-list">
-    
-          <div class="grid-masonry-content">
-            <h4><%= link_to @specialty.name, "specialitati-medicale/#{@specialty.slug}" %></h4>
-            <div class="flex flex-col">
-              <% @specialty.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
-                <%= render ms %>
-              <% end %>
-            </div>
-    
-            <div class="flex flex-col">
-              <% selected_and_sorted_medical_services(@specialty).each_with_index do |ms, i| %>
-                <% if i == 0 || ms.member != selected_and_sorted_medical_services(@specialty)[i-1].member %>
-                  <h5><%= link_to "#{ms.member.academic_title} #{ms.member.name}", "echipa/#{ms.member.slug}" %></h5>
-                <% end %>
-                <%= render ms %>
-              <% end %>
-            </div>
-    
+  
+  <div class="specialty-services-hero">
+    <div class="specialty-services-hero-content">
+      <h1><%= @specialty.name %></h1>
+      <p>Servicii medicale disponibile</p>
+    </div>
+  </div>
+
+  <div class="specialty-services-content">
+    <div class="services-list">
+      <!-- Services without assigned member -->
+      <% if @specialty.medical_services.select { |ms| ms.member == nil}.any? %>
+        <div class="services-section">
+          <div class="section-header">
+            <h2>Servicii generale</h2>
+            <div class="section-line"></div>
           </div>
-    
-    
+          <div class="services-grid">
+            <% @specialty.medical_services.select { |ms| ms.member == nil}.sort {|a, b| a.name <=> b.name}.each do |ms| %>
+              <div class="service-card-modern">
+                <div class="service-card-content">
+                  <%= render ms %>
+                </div>
+              </div>
+            <% end %>
+          </div>
         </div>
+      <% end %>
+
+      <!-- Services grouped by member -->
+      <% selected_and_sorted_medical_services(@specialty).each_with_index do |ms, i| %>
+        <% if i == 0 || ms.member != selected_and_sorted_medical_services(@specialty)[i-1].member %>
+          <div class="services-section">
+            <div class="section-header with-member">
+              <div class="member-info-header">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                </svg>
+                <%= link_to "echipa/#{ms.member.slug}", class: 'member-link' do %>
+                  <h2><%= ms.member.academic_title %> <%= ms.member.name %></h2>
+                <% end %>
+              </div>
+              <div class="section-line"></div>
+            </div>
+            <div class="services-grid">
+        <% end %>
+        
+        <div class="service-card-modern">
+          <div class="service-card-content">
+            <%= render ms %>
+          </div>
+        </div>
+
+        <% if i == selected_and_sorted_medical_services(@specialty).length - 1 || 
+              (i < selected_and_sorted_medical_services(@specialty).length - 1 && 
+               ms.member != selected_and_sorted_medical_services(@specialty)[i+1].member) %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
     </div>
   </div>
 </div>

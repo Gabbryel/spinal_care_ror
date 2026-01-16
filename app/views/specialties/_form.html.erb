@@ -1,11 +1,65 @@
-<%= simple_form_for(specialty, id: (specialty.id ? dom_id(specialty, :edit) : dom_id(Specialty.new))) do |f| %>
-<%= f.input :name, input_html: { autofocus: true } %>
-<%= f.input :photo %>
-<%= f.input :is_active, label: 'Specialitate activă' %>
-<%= f.input :has_day_hospitalization, label: 'Este specialitate cu spitalizare de zi?' %>
-<%= f.input :is_day_hospitalize, label: 'Este spitalizare de zi?', hint: 'Nu folosi această opțiune!!!' %>
-<%#= f.rich_text_area :description %>
-<div class="spec-crud">
-    <button class="btn-custom btn-green">Salvează</button>
-</div>
+<%= simple_form_for(specialty, id: (specialty.id ? dom_id(specialty, :edit) : dom_id(Specialty.new)), html: { class: 'modern-form' }) do |f| %>
+  <% if specialty.errors.any? %>
+    <div class="form-errors">
+      <div class="error-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <div class="error-content">
+        <p class="error-title">Erori de validare:</p>
+        <ul class="error-list">
+          <% specialty.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :name, 'Nume specialitate', class: 'form-label' %>
+    <%= f.input :name, 
+        label: false, 
+        placeholder: 'ex: Ortopedie și Traumatologie', 
+        input_html: { autofocus: true, class: 'form-control-modern' },
+        wrapper: false,
+        error: false %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :photo, 'Fotografie specialitate', class: 'form-label' %>
+    <%= f.input :photo, 
+        label: false,
+        input_html: { class: 'form-control-modern' },
+        wrapper: false,
+        error: false %>
+    <% if specialty.photo.attached? %>
+      <div class="current-image-preview">
+        <%= cl_image_tag specialty.photo.key, class: "preview-img", quality: 60, width: 200, crop: "scale" %>
+        <p class="form-hint">Imaginea curentă</p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-wrapper">
+      <%= f.check_box :is_active, class: 'form-checkbox' %>
+      <%= f.label :is_active, 'Specialitate activă', class: 'checkbox-label' %>
+    </div>
+    <p class="form-hint">Bifează pentru a afișa specialitatea pe site</p>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-wrapper">
+      <%= f.check_box :has_day_hospitalization, class: 'form-checkbox' %>
+      <%= f.label :has_day_hospitalization, 'Are spitalizare de zi', class: 'checkbox-label' %>
+    </div>
+    <p class="form-hint">Bifează dacă specialitatea oferă servicii de spitalizare de zi</p>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" class="btn-cancel" data-bs-dismiss="modal">Anulează</button>
+    <%= f.submit (specialty.new_record? ? 'Adaugă specialitate' : 'Salvează modificările'), class: 'btn-save' %>
+  </div>
 <% end %>
