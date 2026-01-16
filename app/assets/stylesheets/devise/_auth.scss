@@ -1,0 +1,242 @@
+// Modern Auth Pages (Devise)
+.modern-auth-page {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+// Override .main for auth pages
+body:has(.modern-auth-page) .main {
+  display: block;
+  min-height: auto;
+}
+
+// Auth Hero
+.auth-hero {
+  background: linear-gradient(135deg, #4A6775 0%, #3a5463 100%);
+  color: white;
+  padding: 3rem 2rem 2.5rem;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    padding: 2.5rem 1.5rem 2rem;
+  }
+}
+
+.auth-hero-content {
+  max-width: 600px;
+  margin: 0 auto;
+
+  h1 {
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    line-height: 1.2;
+  }
+
+  p {
+    font-size: 1rem;
+    opacity: 0.95;
+    margin: 0;
+  }
+}
+
+// Auth Content
+.auth-content {
+  max-width: 500px;
+  margin: -1.5rem auto 0;
+  padding: 0 2rem 4rem;
+  position: relative;
+  z-index: 10;
+
+  @media (max-width: 768px) {
+    padding: 0 1rem 3rem;
+    margin-top: -1rem;
+  }
+}
+
+.auth-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem;
+  }
+}
+
+.auth-card-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 0.5rem;
+  }
+
+  .auth-subtitle {
+    font-size: 0.9375rem;
+    color: #6b7280;
+    margin: 0;
+  }
+}
+
+// Auth Form
+.auth-form {
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .auth-input-wrapper {
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+
+      abbr {
+        display: none;
+      }
+    }
+
+    .hint {
+      font-size: 0.8125rem;
+      color: #6b7280;
+      margin-top: 0.375rem;
+    }
+  }
+
+  .auth-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #4A6775;
+      box-shadow: 0 0 0 3px rgba(74, 103, 117, 0.1);
+    }
+
+    &::placeholder {
+      color: #9ca3af;
+    }
+  }
+
+  .form-group-checkbox {
+    margin-bottom: 1.5rem;
+
+    .auth-checkbox-wrapper {
+      display: flex;
+      align-items: center;
+
+      label {
+        display: flex;
+        align-items: center;
+        font-size: 0.875rem;
+        color: #374151;
+        margin: 0;
+        cursor: pointer;
+
+        .auth-checkbox {
+          width: 1.125rem;
+          height: 1.125rem;
+          margin-right: 0.5rem;
+          border: 1px solid #d1d5db;
+          border-radius: 0.25rem;
+          cursor: pointer;
+
+          &:checked {
+            background-color: #4A6775;
+            border-color: #4A6775;
+          }
+        }
+      }
+    }
+  }
+
+  .form-actions {
+    margin-top: 2rem;
+  }
+
+  .auth-submit-btn {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    background: linear-gradient(135deg, #4A6775 0%, #3a5463 100%);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(74, 103, 117, 0.25);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(74, 103, 117, 0.35);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .error_notification {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    color: #991b1b;
+    font-size: 0.875rem;
+  }
+}
+
+// Auth Links
+.auth-links {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+
+  .auth-link {
+    display: block;
+    color: #4A6775;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #3a5463;
+      text-decoration: underline;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Auth Notice
+.auth-notice {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f3f4f6;
+  border-radius: 0.5rem;
+  text-align: center;
+
+  p {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.5;
+  }
+}

@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["card", "professionSection", "nameInput"];
+  static targets = ["card", "professionSection", "founderSection", "nameInput"];
 
   connect() {
     this.currentProfession = "all";
@@ -74,5 +74,17 @@ export default class extends Controller {
         section.style.display = "none";
       }
     });
+
+    // Handle founder section separately
+    if (this.hasFounderSectionTarget) {
+      const founderCard = this.founderSectionTarget.querySelector(
+        '[data-memberindexfilter-target="card"]'
+      );
+      if (founderCard && founderCard.style.display !== "none") {
+        this.founderSectionTarget.style.display = "";
+      } else {
+        this.founderSectionTarget.style.display = "none";
+      }
+    }
   }
 }

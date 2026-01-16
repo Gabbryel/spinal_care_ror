@@ -101,6 +101,55 @@
     display: flex;
     gap: 0.5rem;
   }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    svg {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    &.action-edit-desc {
+      background: #f0fdf4;
+      color: #16a34a;
+
+      &:hover {
+        background: #dcfce7;
+        transform: scale(1.1);
+        box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.2);
+      }
+    }
+
+    &.action-edit {
+      background: #eff6ff;
+      color: #2563eb;
+
+      &:hover {
+        background: #dbeafe;
+        transform: scale(1.1);
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+      }
+    }
+
+    &.action-delete {
+      background: #fef2f2;
+      color: #dc2626;
+
+      &:hover {
+        background: #fee2e2;
+        transform: scale(1.1);
+        box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.2);
+      }
+    }
+  }
 }
 
 .specialty-card-body {
@@ -282,5 +331,52 @@
 
   .form-hint {
     margin-top: 0.5rem;
+  }
+}
+// Description edit modal specific styles
+.modal-icon--description {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+}
+
+.modern-form--description {
+  .form-group--richtext {
+    .form-control-trix {
+      trix-editor {
+        min-height: 300px;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        padding: 1rem;
+
+        &:focus {
+          outline: none;
+          border-color: #16a34a;
+          box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+      }
+
+      trix-toolbar {
+        border: 1px solid #d1d5db;
+        border-bottom: none;
+        border-radius: 0.5rem 0.5rem 0 0;
+        background: #f9fafb;
+
+        .trix-button-group {
+          border-color: #e5e7eb;
+        }
+
+        .trix-button {
+          border-bottom-color: #e5e7eb;
+
+          &:hover {
+            background: #f3f4f6;
+          }
+
+          &.trix-active {
+            background: #16a34a;
+            color: white;
+          }
+        }
+      }
+    }
   }
 }

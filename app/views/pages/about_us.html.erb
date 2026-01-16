@@ -9,7 +9,7 @@
     <br>
     <p>În cadrul clinicii medicale Spinal Care regăsiți și următoarele specialități medicale: <br>
       <% @specialties.each_with_index do |s, i| %>
-      <%= link_to "specialitati-medicale/#{s.slug}", class: "info-pacient-index__specialty" do %>
+      <%= link_to "specialitati-medicale/#{s.slug}", class: "modern-specialty-link" do %>
         <span><%= s.name %><%= i == @specialties.count - 1 ? nil : ',' %></span>
       <% end %>
       <% end %>
@@ -24,7 +24,7 @@
       <%= link_to colectiv_path(ms.slug) do %>
         <span><%= ms.academic_title %> 
               <%= ms.name %> 
-              <%= ms.profession.name %> 
+              <%= translate_profession(ms.profession.name) %> 
               <%= ms.doctor_grade %> 
               <%= ms.specialty.name %> 
               <%= i == @medics.count - 1 ? nil : ',' %>

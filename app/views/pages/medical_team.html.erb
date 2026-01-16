@@ -1,7 +1,7 @@
 <%= content_for :meta_title, 'Echipa medicală Spinal Care Bacău' %>
 <%= content_for :meta_keywords, @team_members.map{|tm| full_name_with_title(tm)}.join(', ') %>
 
-<div class="modern-team-page">
+<div class="modern-team-page" data-controller="memberIndexFilter">
   <!-- Hero Section -->
   <div class="team-hero">
     <div class="team-hero-content">
@@ -11,15 +11,27 @@
   </div>
 
   <!-- Filter Section -->
-  <div class="team-filters" data-controller="memberIndexFilter">
+  <div class="team-filters">
     <div class="filters-container">
-      <input 
-        type="text" 
-        placeholder="Caută după nume..." 
-        class="filter-search-input"
-        data-memberindexfilter-target="nameInput"
-        data-action="input->memberIndexFilter#filterByName"
-      >
+      <div class="filter-search-specialty-row">
+        <input 
+          type="text" 
+          placeholder="Caută după nume..." 
+          class="filter-search-input"
+          data-memberindexfilter-target="nameInput"
+          data-action="input->memberIndexFilter#filterByName"
+        >
+        
+        <div class="filter-specialties">
+          <label class="filter-label">Filtrează după specialitate:</label>
+          <select class="filter-select" data-action="change->memberIndexFilter#filterBySpecialty">
+            <option value="all">Toate specialitățile</option>
+            <% @specialties.select{|s| s.members.where(is_active: true).count > 0}.each do |specialty| %>
+              <option value="<%= specialty.slug %>"><%= specialty.name %></option>
+            <% end %>
+          </select>
+        </div>
+      </div>
       
       <div class="filter-buttons">
         <button class="filter-btn active" data-filter="all" data-action="click->memberIndexFilter#filterByProfession">
@@ -35,22 +47,12 @@
           </button>
         <% end %>
       </div>
-
-      <div class="filter-specialties">
-        <label class="filter-label">Filtrează după specialitate:</label>
-        <select class="filter-select" data-action="change->memberIndexFilter#filterBySpecialty">
-          <option value="all">Toate specialitățile</option>
-          <% @specialties.select{|s| s.members.where(is_active: true).count > 0}.each do |specialty| %>
-            <option value="<%= specialty.slug %>"><%= specialty.name %></option>
-          <% end %>
-        </select>
-      </div>
     </div>
   </div>
 
   <!-- Founder Section -->
   <% if @founder %>
-    <div class="founder-section">
+    <div class="founder-section" data-memberindexfilter-target="founderSection">
       <div class="section-header">
         <h2>Fondator</h2>
         <div class="section-line"></div>
@@ -67,7 +69,7 @@
     <% if active_members.any? %>
       <div class="profession-section" data-profession="<%= profession.slug %>" data-memberindexfilter-target="professionSection">
         <div class="section-header">
-          <h2><%= profession.name.pluralize(active_members.count) %></h2>
+          <h2><%= pluralize_profession(profession.name, active_members.count) %></h2>
           <span class="member-count"><%= active_members.count %> <%= active_members.count == 1 ? 'membru' : 'membri' %></span>
           <div class="section-line"></div>
         </div>

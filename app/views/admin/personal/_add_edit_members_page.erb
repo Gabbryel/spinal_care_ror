@@ -32,10 +32,9 @@
       <% unless profession_members.empty? %>
         <div class="personal-profession-section" id="profession-<%= p.id %>">
           <div class="profession-header">
-            <h2><%= p.name.upcase %></h2>
+            <h2><%= pluralize_profession(p.name, profession_members.count) %></h2>
             <span class="member-count"><%= profession_members.count %> <%= profession_members.count == 1 ? 'membru' : 'membri' %></span>
           </div>
-
           <div class="members-grid">
             <% profession_members.each do |member| %>
               <%= render partial: 'members/modal', locals: {new: false, modal_id: "edit#{member.id}", member: member } %>
@@ -63,7 +62,7 @@
 
                   <div class="member-details">
                     <% if member.profession %>
-                      <span class="profession-badge"><%= member.profession.name %></span>
+                      <span class="profession-badge"><%= translate_profession(member.profession.name) %></span>
                     <% end %>
                     <% if member.specialty %>
                       <span class="specialty-badge"><%= member.specialty.name %></span>

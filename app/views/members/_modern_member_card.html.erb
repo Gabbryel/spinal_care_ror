@@ -14,7 +14,10 @@
       <% end %>
       
       <div class="member-badges">
-        <% if m.has_own_page %>
+        <% if m.founder %>
+          <span class="member-badge founder-label"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" /></svg>Fondator</span>
+        <% end %>
+        <% if m.has_own_page && (!defined?(@member) || @member != m) %>
           <span class="member-badge profile-badge">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
@@ -37,10 +40,6 @@
     </div>
 
     <div class="member-info">
-      <% if m.founder %>
-        <span class="founder-label">Fondator</span>
-      <% end %>
-      
       <h3 class="member-name">
         <% if m.academic_title.present? && m.academic_title != '-' %>
           <span class="academic-title"><%= m.academic_title %></span>
@@ -49,7 +48,7 @@
       </h3>
       
       <p class="member-profession">
-        <%= m.profession.name %>
+        <%= translate_profession(m.profession.name) %>
         <% if m.doctor_grade.present? %>
           · <%= m.doctor_grade %>
         <% end %>
@@ -65,7 +64,7 @@
       <% end %>
     </div>
 
-    <% if m.has_own_page %>
+    <% if m.has_own_page && (!defined?(@member) || @member != m) %>
       <%= link_to "../echipa/#{m.slug}", class: 'member-link' do %>
         <span class="sr-only">Vezi profilul lui <%= full_name(m) %></span>
       <% end %>

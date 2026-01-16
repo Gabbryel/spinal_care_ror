@@ -1,7 +1,7 @@
 <div class="medical-team">
   <%= render partial: 'errors/search_when_error' %>
   <% @members.each do |m| %>
-    <%= render partial: "members/member_card", locals: {m: m, i: nil, not_animated: 'not_animated', no_grid_area: 'no_grid_area'} %>
+    <%= render partial: "members/modern_member_card", locals: {m: m} %>
   <% end %>
 </div>
 

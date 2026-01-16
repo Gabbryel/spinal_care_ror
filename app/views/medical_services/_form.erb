@@ -19,24 +19,50 @@
 
       <div class="form-group">
         <%= f.label :specialty_id, 'Specialitate medicală *', class: 'form-label' %>
-        <%= f.association :specialty, 
-            order: :name, 
-            value_method: :id, 
-            label: false, 
-            prompt: 'Selectează specialitatea',
-            wrapper_html: { class: 'form-input-wrapper' } %>
+        <% if defined?(@specialty) && @specialty.persisted? %>
+          <%= f.association :specialty, 
+              collection: [@specialty],
+              selected: @specialty.id,
+              disabled: true,
+              value_method: :id, 
+              label: false,
+              wrapper_html: { class: 'form-input-wrapper' } %>
+          <%= f.hidden_field :specialty_id, value: @specialty.id %>
+          <p class="form-hint">Serviciul va fi adăugat la specialitatea: <%= @specialty.name %></p>
+        <% else %>
+          <%= f.association :specialty, 
+              order: :name, 
+              value_method: :id, 
+              label: false, 
+              prompt: 'Selectează specialitatea',
+              wrapper_html: { class: 'form-input-wrapper' } %>
+        <% end %>
       </div>
 
       <div class="form-group">
         <%= f.label :member_id, 'Specialist asociat', class: 'form-label' %>
+        <% 
+          # Filter members based on context
+          if defined?(@specialty) && @specialty.persisted?
+            # On specialty admin page - only show members from this specialty
+            member_collection = Member.where(specialty_id: @specialty.id)
+                                     .where(has_prices: true)
+                                     .order(:last_name, :first_name)
+            hint_text = "Selectează un specialist din #{@specialty.name} sau lasă necompletat pentru servicii generale"
+          else
+            # On general medical services page - show all members
+            member_collection = Member.all.select { |m| m.has_prices }.sort_by { |m| m.specialty_name }
+            hint_text = "Lasă necompletat pentru servicii generale"
+          end
+        %>
         <%= f.association :member, 
-            collection: Member.all.select { |m| m.has_prices }.sort_by { |m| m.specialty_name }, 
+            collection: member_collection, 
             label_method: :form_label, 
             value_method: :id, 
             label: false, 
             prompt: 'Opțional - selectează specialistul',
             wrapper_html: { class: 'form-input-wrapper' } %>
-        <p class="form-hint">Lasă necompletat pentru servicii generale</p>
+        <p class="form-hint"><%= hint_text %></p>
       </div>
 
       <div class="form-group">

@@ -16,7 +16,7 @@
     <h3 class="member-card-info__name">
        <span><%= m.academic_title if m.academic_title != '-' %></span> <%= full_name(m) %>
     </h3>
-    <p><%= m.profession.name %> <%= m.doctor_grade %></p>
+    <p><%= translate_profession(m.profession.name) %> <%= m.doctor_grade %></p>
   </div>
   <div class="member-card-info__profession">
     <object>

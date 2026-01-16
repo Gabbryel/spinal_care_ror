@@ -1,3 +1,91 @@
+// Modern Feature Section
+.modern-feature-section {
+  width: 100%;
+  padding: 0;
+  margin: 4rem 0;
+
+  @media (max-width: 768px) {
+    margin: 3rem 0;
+  }
+}
+
+.modern-feature-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+  }
+}
+
+.feature-content-inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  @media (min-width: 992px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+
+  &.reverse {
+    @media (min-width: 992px) {
+      .feature-image {
+        order: 2;
+      }
+      .feature-text {
+        order: 1;
+      }
+    }
+  }
+}
+
+.feature-image {
+  width: 100%;
+  overflow: hidden;
+
+  @media (min-width: 992px) {
+    height: 100%;
+    min-height: 400px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.feature-text {
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+
+  @media (min-width: 992px) {
+    padding: 3rem;
+  }
+
+  p {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    line-height: 1.7;
+    color: #374151;
+    margin: 0;
+    text-align: left;
+
+    @media (max-width: 768px) {
+      text-align: center;
+    }
+  }
+}
+
+// Old Schroth styles
 .schroth {
   position: relative;
   grid-area: 6 / 1 / 7 / -1;

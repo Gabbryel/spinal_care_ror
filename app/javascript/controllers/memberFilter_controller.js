@@ -27,7 +27,7 @@ export default class extends Controller {
 
     professionSections.forEach((section) => {
       const visibleMembers = section.querySelectorAll(
-        '.member-card:not([style*="display: none"])'
+        '.modern-member-card:not([style*="display: none"])'
       );
 
       if (visibleMembers.length === 0) {

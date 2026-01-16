@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   get 'dashboard', to: 'admin#dashboard'
+  get 'dashboard/analytics', to: 'admin#analytics'
   get 'dashboard/users', to: 'admin#edit_users'
   get 'dashboard/personal', to: 'admin#personal'
   get 'dashboard/profesii', to: 'admin#professions', as: 'admin_professions'
@@ -30,7 +31,6 @@ Rails.application.routes.draw do
   resources :medical_services, except: %i[index show]
   get 'servicii-medicale', to: 'medical_services#index'
   get 'servicii-medicale/:id', to: 'medical_services#show_by_specialty'
-
 
   get "*any", to: "errors#not_found", via: :all
   get "/500", to: "errors#internal_server_error", via: :all

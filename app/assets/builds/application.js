@@ -6624,7 +6624,7 @@
       );
       professionSections.forEach((section) => {
         const visibleMembers = section.querySelectorAll(
-          '.member-card:not([style*="display: none"])'
+          '.modern-member-card:not([style*="display: none"])'
         );
         if (visibleMembers.length === 0) {
           section.style.display = "none";
@@ -6686,7 +6686,7 @@
     default: () => memberIndexFilter_controller_default
   });
   var memberIndexFilter_controller_default = class extends Controller {
-    static targets = ["card", "professionSection", "nameInput"];
+    static targets = ["card", "professionSection", "founderSection", "nameInput"];
     connect() {
       this.currentProfession = "all";
       this.currentSpecialty = "all";
@@ -6735,6 +6735,59 @@
           section.style.display = "";
         } else {
           section.style.display = "none";
+        }
+      });
+      if (this.hasFounderSectionTarget) {
+        const founderCard = this.founderSectionTarget.querySelector(
+          '[data-memberindexfilter-target="card"]'
+        );
+        if (founderCard && founderCard.style.display !== "none") {
+          this.founderSectionTarget.style.display = "";
+        } else {
+          this.founderSectionTarget.style.display = "none";
+        }
+      }
+    }
+  };
+
+  // controllers/member_height_controller.js
+  var member_height_controller_exports = {};
+  __export(member_height_controller_exports, {
+    default: () => member_height_controller_default
+  });
+  var member_height_controller_default = class extends Controller {
+    connect() {
+      if (document.readyState === "complete") {
+        this.matchHeights();
+      } else {
+        window.addEventListener("load", () => this.matchHeights());
+      }
+      this.resizeHandler = this.matchHeights.bind(this);
+      window.addEventListener("resize", this.resizeHandler);
+    }
+    disconnect() {
+      window.removeEventListener("resize", this.resizeHandler);
+    }
+    matchHeights() {
+      requestAnimationFrame(() => {
+        if (window.innerWidth >= 992) {
+          const cardSection = document.querySelector(".member-card-section");
+          const bioSection = document.querySelector(".member-bio-section");
+          if (cardSection && bioSection) {
+            const cardHeight = cardSection.offsetHeight;
+            bioSection.style.height = `${cardHeight}px`;
+            console.log(
+              "Card height:",
+              cardHeight,
+              "Bio height set to:",
+              cardHeight
+            );
+          }
+        } else {
+          const bioSection = document.querySelector(".member-bio-section");
+          if (bioSection) {
+            bioSection.style.height = "auto";
+          }
         }
       });
     }
@@ -7027,7 +7080,9 @@
       let professionDivs = document.getElementsByClassName("profession-div");
       this.setProfessionDivsDisplayToGrid(professionDivs);
       let reference2 = this.element.parentElement.innerText || "";
-      let members = Array.from(document.getElementsByClassName("member-card"));
+      let members = Array.from(
+        document.getElementsByClassName("modern-member-card")
+      );
       let counter = 0;
       members.forEach((m) => {
         m.dataset.profession === reference2 || m.dataset.specialty === reference2 || reference2 === "Toat\u0103 echipa" ? (m.style.display = "block", counter++) : m.style.display = "none";
@@ -7046,7 +7101,7 @@
     //   let professionDivs = document.getElementsByClassName('profession-div');
     //   this.setProfessionDivsDisplayToGrid(professionDivs)
     //   let nameReference = this.element.value.toLowerCase();
-    //   let members = Array.from(document.getElementsByClassName('member-card'));
+    //   let members = Array.from(document.getElementsByClassName('modern-member-card'));
     //   let counter = 0;
     //   members.forEach(m => {
     //     if (m.dataset.identity.toLowerCase().includes(nameReference)) {
@@ -7084,7 +7139,7 @@
     //       let query = window.location.search;
     //       const urlParams  = new URLSearchParams(query);
     //       const nameReference = urlParams.get('search[name]')
-    //       let members = Array.from(document.getElementsByClassName('member-card'));
+    //       let members = Array.from(document.getElementsByClassName('modern-member-card'));
     //       let mainContainer = document.getElementById('medical-team');
     //       let counter = 0;
     //       members.forEach(m => {
@@ -7841,7 +7896,7 @@
   };
 
   // rails:/Users/aquaman/Code/Projects/spinal/spinal_care_ror/app/javascript/controllers/**/*_controller.js
-  var modules = [{ name: "admin-modal", module: admin_modal_controller_exports, filename: "admin-modal_controller.js" }, { name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "landingimage", module: landingimage_controller_exports, filename: "landingimage_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFilter", module: memberFilter_controller_exports, filename: "memberFilter_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "richTextEditor", module: richTextEditor_controller_exports, filename: "richTextEditor_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
+  var modules = [{ name: "admin-modal", module: admin_modal_controller_exports, filename: "admin-modal_controller.js" }, { name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "landingimage", module: landingimage_controller_exports, filename: "landingimage_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFilter", module: memberFilter_controller_exports, filename: "memberFilter_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "member-height", module: member_height_controller_exports, filename: "member_height_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "richTextEditor", module: richTextEditor_controller_exports, filename: "richTextEditor_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
   var controller_default = modules;
 
   // controllers/index.js

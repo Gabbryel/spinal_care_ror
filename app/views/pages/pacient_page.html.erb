@@ -1,36 +1,132 @@
-<%= content_for :meta_title, 'Informări pentru pacient Spinal Care Bacău' %>
+<%= content_for :meta_title, 'Informații pentru Pacient - Spinal Care Bacău' %>
 <%= content_for :meta_keywords, @facts.pluck(:name).sample(4).join(', ') %>
-<div class="pacient-section__wall-photo" style="background-image: url('<%= cl_image_path("www.sysphotodesign.ro_10_w9nw5g.webp", :quality=>80, :fetch_format=>:webp, :width=>1000) %>');"></div>
-<div class="pacient-section">
-  <h1>Spinal Care Bacău</h1>
-  <h2>Clinică medicală</h2>
-  <h3>Mâinile care te pun pe picioare!</h3>
-  <div class="pacient-section__info ">
-    <%= link_to "info-pacient/#{@facts[0].slug}" do %>
-      <h3 class="cursor-pointer !bg-orange-600 hover:!bg-orange-700 !text-white p-2 rounded-lg">Informații pentru pacient</h3>
-    <% end %>
-  <div class="mt-5">
-    <h2 class="mb-5">Ambulatoriu de specialitate</h2>
-    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2743.033572862404!2d26.90179677747024!3d46.56680140919857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b56fd886e18b1f%3A0xd3e2c4f39a7d4311!2sClinica%20Spinal%20Care%20Bac%C4%83u!5e0!3m2!1sen!2sro!4v1747072735626!5m2!1sen!2sro" width="400" height="300" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="width: 100%; min-width: 360px; height: 30dvh; margin: 0 auto"></iframe>
+
+<div class="modern-pacient-page">
+  <!-- Hero Section -->
+  <div class="pacient-hero">
+    <div class="pacient-hero-overlay"></div>
+    <div class="pacient-hero-image" style="background-image: url('<%= cl_image_path("www.sysphotodesign.ro_10_w9nw5g.webp", :quality=>70, :fetch_format=>:auto, :width=>1200) %>');"></div>
+    <div class="pacient-hero-content">
+      <h1>Spinal Care Bacău</h1>
+      <p class="hero-subtitle">Clinică medicală</p>
+      <p class="hero-motto">Mâinile care te pun pe picioare!</p>
+    </div>
   </div>
-  <div class="mt-5">
-    <h2 class="mb-5">Spitalizare de zi</h2>
-    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2743.0364318582992!2d26.903044276958052!3d46.56674487111334!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b56f892c6878af%3A0xc8779ea05dcef568!2sSpinal%20Care%20Medicina%20interna%20Neurologie!5e0!3m2!1sro!2sro!4v1749714810008!5m2!1sro!2sro" width="400" height="300" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="width: 100%; min-width: 360px; height: 30dvh; margin: 0 auto"></iframe>
-  </div>
-  <div class="!bg-orange-600 !text-white p-2 rounded-lg mt-5 fs-6">
-    <p>Audiențe manager clinică în fiecare zi de marți 12:30-13:30. Programare: 0374554344 / anca.seto@spinalcare.ro</p>
-    <p>Sugestii, reclamații? pacient@spinalcare.ro</p>
-    <p>Vrei să faci parte din echipa noastră? Trimite un CV la cv@spinalcare.ro</p>
-  </div>
-    <div class="pacient-section__info-partners">
-      <h2>Parteneriate</h2>
-      <div class="pacient-section__info-partners-index">
-        <%= cl_image_tag("cnas_large_h4m1m7.webp", :quality=>"auto:good", :width=>150) %>
-        <%= cl_image_tag("medicover_n0pidy.webp", :quality=>"auto:good", :width=>150) %>
-        <%= cl_image_tag("signal-iduna_rg0bxw.webp", :quality=>"auto:good", :width=>150) %>
-        <%= cl_image_tag("omniasig_uzvywg.webp", :quality=>"auto:good", :width=>150) %>
-        <%= cl_image_tag("Allianz_Tiriac_ai_l8lo4z.webp", :quality=>"auto:good", :width=>150) %>
-        <%= cl_image_tag("logo-vertical-Regina-Maria_agewz5.webp", :quality=>"auto:good", :width=>150) %>
+
+  <!-- Main Content -->
+  <div class="pacient-content">
+    <!-- Patient Info Link -->
+    <div class="info-card highlight-card">
+      <%= link_to "info-pacient/#{@facts[0].slug}", class: 'info-link-card' do %>
+        <div class="info-link-content">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="info-icon">
+            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+          </svg>
+          <div>
+            <h3>Informații pentru pacient</h3>
+            <p>Documentele și informațiile de care ai nevoie</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="arrow-icon">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Locations Section -->
+    <div class="locations-section">
+      <h2 class="section-title">Locațiile noastre</h2>
+      
+      <div class="locations-grid">
+        <!-- Ambulatoriu -->
+        <div class="location-card">
+          <div class="location-header">
+            <div class="location-icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div>
+              <h3>Ambulatoriu de specialitate</h3>
+              <p class="location-description">Servicii medicale ambulatorii</p>
+            </div>
+          </div>
+          <div class="map-container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2743.033572862404!2d26.90179677747024!3d46.56680140919857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b56fd886e18b1f%3A0xd3e2c4f39a7d4311!2sClinica%20Spinal%20Care%20Bac%C4%83u!5e0!3m2!1sen!2sro!4v1747072735626!5m2!1sen!2sro" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+
+        <!-- Spitalizare de zi -->
+        <div class="location-card">
+          <div class="location-header">
+            <div class="location-icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
+                <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
+              </svg>
+            </div>
+            <div>
+              <h3>Spitalizare de zi</h3>
+              <p class="location-description">Servicii cu internare</p>
+            </div>
+          </div>
+          <div class="map-container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2743.0364318582992!2d26.903044276958052!3d46.56674487111334!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b56f892c6878af%3A0xc8779ea05dcef568!2sSpinal%20Care%20Medicina%20interna%20Neurologie!5e0!3m2!1sro!2sro!4v1749714810008!5m2!1sro!2sro" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="contact-card">
+      <h2 class="contact-title">Contact & Informații</h2>
+      <div class="contact-items">
+        <div class="contact-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
+          </svg>
+          <div>
+            <h4>Audiențe manager clinică</h4>
+            <p>În fiecare zi de marți, 12:30-13:30</p>
+            <p>Programare: <a href="tel:0374554344">0374 554 344</a> / <a href="mailto:anca.seto@spinalcare.ro">anca.seto@spinalcare.ro</a></p>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
+            <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
+          </svg>
+          <div>
+            <h4>Sugestii, reclamații</h4>
+            <p><a href="mailto:pacient@spinalcare.ro">pacient@spinalcare.ro</a></p>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.357-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm7.5 0v.09a49.488 49.488 0 00-6 0v-.09a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5zm-3 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+            <path d="M3 18.4v-2.796a4.3 4.3 0 00.713.31A26.226 26.226 0 0012 17.25c2.892 0 5.68-.468 8.287-1.335.252-.084.49-.189.713-.311V18.4c0 1.452-1.047 2.728-2.523 2.923-2.12.282-4.282.427-6.477.427a49.19 49.19 0 01-6.477-.427C4.047 21.128 3 19.852 3 18.4z" />
+          </svg>
+          <div>
+            <h4>Carieră</h4>
+            <p>Vrei să faci parte din echipa noastră?</p>
+            <p>Trimite CV: <a href="mailto:cv@spinalcare.ro">cv@spinalcare.ro</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Partners Section -->
+    <div class="partners-section">
+      <h2 class="section-title">Parteneriate</h2>
+      <div class="partners-grid">
+        <%= cl_image_tag("cnas_large_h4m1m7.webp", :quality=>70, :width=>200, :fetch_format=>:auto) %>
+        <%= cl_image_tag("medicover_n0pidy.webp", :quality=>70, :width=>200, :fetch_format=>:auto) %>
+        <%= cl_image_tag("signal-iduna_rg0bxw.webp", :quality=>70, :width=>200, :fetch_format=>:auto) %>
+        <%= cl_image_tag("omniasig_uzvywg.webp", :quality=>70, :width=>200, :fetch_format=>:auto) %>
+        <%= cl_image_tag("Allianz_Tiriac_ai_l8lo4z.webp", :quality=>70, :width=>200, :fetch_format=>:auto) %>
+        <%= cl_image_tag("logo-vertical-Regina-Maria_agewz5.webp", :quality=>70, :width=>200, :fetch_format=>:auto) %>
       </div>
     </div>
   </div>

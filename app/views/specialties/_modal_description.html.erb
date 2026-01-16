@@ -1,0 +1,31 @@
+<div class="modal fade specialty-modal" id="<%= modal_id %>" tabindex="-1" aria-labelledby="<%= modal_id %>Label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content modern-modal-content">
+      <div class="modal-header modern-modal-header">
+        <div class="modal-title-wrapper">
+          <div class="modal-icon modal-icon--description">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="modal-title" id="<%= modal_id %>Label">
+              Editează descrierea specialității
+            </h1>
+            <p class="modal-subtitle">
+              <%= specialty.name %>
+            </p>
+          </div>
+        </div>
+        <button type="button" class="modern-close-btn" data-bs-dismiss="modal" aria-label="Close">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body modern-modal-body">
+        <%= render partial: "specialties/form_description", locals: {specialty: specialty} %>
+      </div>
+    </div>
+  </div>
+</div>

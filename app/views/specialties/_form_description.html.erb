@@ -1,0 +1,32 @@
+<%= simple_form_for(specialty, id: (specialty.id ? dom_id(specialty, :edit_desc) : dom_id(Specialty.new, :desc)), html: { class: 'modern-form modern-form--description' }) do |f| %>
+  <% if specialty.errors.any? %>
+    <div class="form-errors">
+      <div class="error-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <div class="error-content">
+        <p class="error-title">Erori de validare:</p>
+        <ul class="error-list">
+          <% specialty.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="form-group form-group--richtext">
+    <%= f.label :description, 'Descriere specialitate', class: 'form-label' %>
+    <%= f.rich_text_area :description, 
+        placeholder: 'Adaugă o descriere detaliată a specialității medicale...', 
+        class: 'form-control-trix' %>
+    <p class="form-hint">Folosește editorul pentru a adăuga text formatat, liste, linkuri etc.</p>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" class="btn-cancel" data-bs-dismiss="modal">Anulează</button>
+    <%= f.submit 'Salvează descrierea', class: 'btn-save' %>
+  </div>
+<% end %>

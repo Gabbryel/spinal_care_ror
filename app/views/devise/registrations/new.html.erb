@@ -1,36 +1,59 @@
-<div class="form-container">
-  <div class="form-container_a">
-<h2>Cont nou de admin</h2>
+<%= content_for :meta_title, 'Cont Nou - Spinal Care' %>
 
-<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), data: { turbo: :false }) do |f| %>
-  <%= f.error_notification %>
-
-  <div class="form-inputs">
-    <%= f.input :email,
-                label: false,
-                placeholder: 'adresa de email',
-                required: true,
-                autofocus: true,
-                input_html: { autocomplete: "email" }%>
-    <%= f.input :password,
-                label: false,
-                placeholder: 'parola dorită',
-                required: true,
-                hint: ("Minim #{@minimum_password_length} caractere!" if @minimum_password_length),
-                input_html: { autocomplete: "new-password" } %>
-    <%= f.input :password_confirmation,
-                label: false,
-                placeholder: 'confirmare parolă',
-                required: true,
-                input_html: { autocomplete: "new-password" } %>
+<div class="modern-auth-page">
+  <div class="auth-hero">
+    <div class="auth-hero-content">
+      <h1>Cont Nou</h1>
+      <p>Creează un cont de administrator</p>
+    </div>
   </div>
 
-  <div class="form-actions">
-    <%= f.button :submit, "Cont nou" %>
-  </div>
-<% end %>
+  <div class="auth-content">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <h2>Înregistrare</h2>
+      </div>
 
-<%= render "devise/shared/links" %>
+      <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), data: { turbo: :false }, html: { class: 'auth-form' }) do |f| %>
+        <%= f.error_notification %>
 
+        <div class="form-group">
+          <%= f.input :email,
+                      label: 'Email',
+                      placeholder: 'nume@exemplu.ro',
+                      required: true,
+                      autofocus: true,
+                      input_html: { autocomplete: "email", class: 'auth-input' },
+                      wrapper_html: { class: 'auth-input-wrapper' } %>
+        </div>
+
+        <div class="form-group">
+          <%= f.input :password,
+                      label: 'Parolă',
+                      placeholder: '••••••••',
+                      required: true,
+                      hint: ("Minimum #{@minimum_password_length} caractere" if @minimum_password_length),
+                      input_html: { autocomplete: "new-password", class: 'auth-input' },
+                      wrapper_html: { class: 'auth-input-wrapper' } %>
+        </div>
+
+        <div class="form-group">
+          <%= f.input :password_confirmation,
+                      label: 'Confirmă parola',
+                      placeholder: '••••••••',
+                      required: true,
+                      input_html: { autocomplete: "new-password", class: 'auth-input' },
+                      wrapper_html: { class: 'auth-input-wrapper' } %>
+        </div>
+
+        <div class="form-actions">
+          <%= f.button :submit, "Creează cont", class: 'auth-submit-btn' %>
+        </div>
+      <% end %>
+
+      <div class="auth-links">
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
   </div>
-  </div>
+</div>
