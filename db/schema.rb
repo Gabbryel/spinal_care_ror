@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_15_194405) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_17_071840) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -107,6 +107,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_194405) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["career_id"], name: "index_applications_on_career_id"
+  end
+
+  create_table "audit_logs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "action", null: false
+    t.string "auditable_type", null: false
+    t.integer "auditable_id", null: false
+    t.text "change_data"
+    t.string "ip_address"
+    t.text "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action"], name: "index_audit_logs_on_action"
+    t.index ["auditable_type", "auditable_id"], name: "index_audit_logs_on_auditable_type_and_auditable_id"
+    t.index ["created_at"], name: "index_audit_logs_on_created_at"
+    t.index ["user_id"], name: "index_audit_logs_on_user_id"
   end
 
   create_table "careers", force: :cascade do |t|
@@ -212,6 +228,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_194405) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "applications", "careers"
+  add_foreign_key "audit_logs", "users"
   add_foreign_key "careers", "professions"
   add_foreign_key "medical_services", "members"
   add_foreign_key "medical_services", "specialties"

@@ -1,0 +1,242 @@
+<% if access %>
+  <div class="analytics-page">
+    <div class="analytics-header">
+      <div class="header-content">
+        <h1>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" />
+          </svg>
+          Audit Log
+        </h1>
+        <p class="analytics-subtitle">Urmărește toate modificările și activitățile din sistem</p>
+      </div>
+      <div class="header-actions">
+        <%= link_to dashboard_path, class: 'back-btn' do %>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Înapoi la Dashboard
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Statistics Overview -->
+    <div class="audit-stats-grid">
+      <div class="audit-stat-card">
+        <div class="audit-stat-icon audit-stat-icon--total">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
+            <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
+          </svg>
+        </div>
+        <div class="audit-stat-content">
+          <div class="audit-stat-value"><%= @total_logs %></div>
+          <div class="audit-stat-label">Total acțiuni</div>
+        </div>
+      </div>
+
+      <div class="audit-stat-card">
+        <div class="audit-stat-icon audit-stat-icon--week">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.75 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM7.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM8.25 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM9.75 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM10.5 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM12.75 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM14.25 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 13.5a.75.75 0 100-1.5.75.75 0 000 1.5z" />
+            <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="audit-stat-content">
+          <div class="audit-stat-value"><%= @logs_this_week %></div>
+          <div class="audit-stat-label">Această săptămână</div>
+        </div>
+      </div>
+
+      <div class="audit-stat-card">
+        <div class="audit-stat-icon audit-stat-icon--month">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.625 1.5H9a3.75 3.75 0 013.75 3.75v1.875c0 1.036.84 1.875 1.875 1.875H16.5a3.75 3.75 0 013.75 3.75v7.875c0 1.035-.84 1.875-1.875 1.875H5.625a1.875 1.875 0 01-1.875-1.875V3.375c0-1.036.84-1.875 1.875-1.875zm6.905 9.97a.75.75 0 00-1.06 0l-3 3a.75.75 0 101.06 1.06l1.72-1.72V18a.75.75 0 001.5 0v-4.19l1.72 1.72a.75.75 0 101.06-1.06l-3-3z" clip-rule="evenodd" />
+            <path d="M14.25 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0016.5 7.5h-1.875a.375.375 0 01-.375-.375V5.25z" />
+          </svg>
+        </div>
+        <div class="audit-stat-content">
+          <div class="audit-stat-value"><%= @logs_this_month %></div>
+          <div class="audit-stat-label">Această lună</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="audit-filters">
+      <%= form_with url: dashboard_audit_path, method: :get, class: 'filter-form' do |f| %>
+        <div class="filter-group">
+          <label>Acțiune</label>
+          <%= f.select :action_filter, options_for_select([['Toate', ''], ['Create', 'create'], ['Update', 'update'], ['Destroy', 'destroy'], ['Login', 'login'], ['Logout', 'logout']], params[:action_filter]), {}, class: 'filter-select' %>
+        </div>
+        
+        <div class="filter-group">
+          <label>Model</label>
+          <%= f.select :type_filter, options_for_select([['Toate', '']] + @available_types.map { |t| [t, t] }, params[:type_filter]), {}, class: 'filter-select' %>
+        </div>
+        
+        <div class="filter-group">
+          <label>Utilizator</label>
+          <%= f.select :user_filter, options_for_select([['Toți', '']] + @available_users.map { |u| [u.email, u.id] }, params[:user_filter]), {}, class: 'filter-select' %>
+        </div>
+        
+        <div class="filter-actions">
+          <%= f.submit 'Filtrează', class: 'filter-btn' %>
+          <%= link_to 'Resetează', dashboard_audit_path, class: 'filter-reset-btn' %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Activity Distribution -->
+    <div class="audit-distribution-grid">
+      <div class="audit-card">
+        <h3 class="audit-card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V3.375c0-1.036-.84-1.875-1.875-1.875H5.625zM7.5 15a.75.75 0 01.75-.75h1.5a.75.75 0 01.75.75v4.5a.75.75 0 01-.75.75h-1.5a.75.75 0 01-.75-.75V15zm4.125-.75a.75.75 0 00-.75.75v4.5c0 .414.336.75.75.75h1.5a.75.75 0 00.75-.75V15a.75.75 0 00-.75-.75h-1.5zm3.375.75a.75.75 0 01.75-.75h1.5a.75.75 0 01.75.75v4.5a.75.75 0 01-.75.75h-1.5a.75.75 0 01-.75-.75V15z" clip-rule="evenodd" />
+          </svg>
+          Acțiuni
+        </h3>
+        <div class="distribution-items">
+          <% @activity_by_action.each do |action, count| %>
+            <div class="distribution-item">
+              <div class="distribution-header">
+                <span><%= action.capitalize %></span>
+                <span class="distribution-count"><%= count %></span>
+              </div>
+              <div class="distribution-bar">
+                <div class="distribution-fill" style="width: <%= (count.to_f / @total_logs * 100).round(1) %>%"></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="audit-card">
+        <h3 class="audit-card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.906 9c.382 0 .749.057 1.094.162V9a3 3 0 00-3-3h-3.879a.75.75 0 01-.53-.22L11.47 3.66A2.25 2.25 0 009.879 3H6a3 3 0 00-3 3v3.162A3.756 3.756 0 014.094 9h15.812zM4.094 10.5a2.25 2.25 0 00-2.227 2.568l.857 6A2.25 2.25 0 004.951 21H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-2.227-2.568H4.094z" />
+          </svg>
+          Modele
+        </h3>
+        <div class="distribution-items">
+          <% @activity_by_model.sort_by { |_, count| -count }.first(6).each do |model, count| %>
+            <div class="distribution-item">
+              <div class="distribution-header">
+                <span><%= model %></span>
+                <span class="distribution-count"><%= count %></span>
+              </div>
+              <div class="distribution-bar">
+                <div class="distribution-fill distribution-fill--alt" style="width: <%= (count.to_f / @total_logs * 100).round(1) %>%"></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Most Active Users -->
+    <div class="audit-card">
+      <h3 class="audit-card-title">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
+        </svg>
+        Cei mai activi utilizatori
+      </h3>
+      <div class="audit-users-grid">
+        <% @most_active_users.each do |user, count| %>
+          <div class="audit-user-card">
+            <div class="audit-user-info">
+              <div class="audit-user-avatar">
+                <%= user.email.first.upcase %>
+              </div>
+              <div class="audit-user-details">
+                <div class="audit-user-email"><%= user.email %></div>
+                <div class="audit-user-role">
+                  <% if user.god_mode %>
+                    <span class="role-badge role-badge--god">God Mode</span>
+                  <% elsif user.admin %>
+                    <span class="role-badge role-badge--admin">Admin</span>
+                  <% else %>
+                    <span class="role-badge">User</span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            <div class="audit-user-count">
+              <span class="user-action-count"><%= count %></span>
+              <span class="user-action-label">acțiuni</span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Recent Activity Timeline -->
+    <div class="audit-card">
+      <h3 class="audit-card-title">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
+        </svg>
+        Activitate recentă
+      </h3>
+      <div class="audit-timeline">
+        <% @recent_activity.each do |log| %>
+          <div class="timeline-item">
+            <div class="timeline-icon timeline-icon--<%= log.action_color %>">
+              <% case log.action %>
+              <% when 'create' %>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                </svg>
+              <% when 'update' %>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z" />
+                  <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
+                </svg>
+              <% when 'destroy' %>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z" clip-rule="evenodd" />
+                </svg>
+              <% when 'login' %>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 015.25 2h5.5A2.25 2.25 0 0113 4.25v2a.75.75 0 01-1.5 0v-2a.75.75 0 00-.75-.75h-5.5a.75.75 0 00-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 00.75-.75v-2a.75.75 0 011.5 0v2A2.25 2.25 0 0110.75 18h-5.5A2.25 2.25 0 013 15.75V4.25z" clip-rule="evenodd" />
+                  <path fill-rule="evenodd" d="M19 10a.75.75 0 00-.75-.75H8.704l1.048-.943a.75.75 0 10-1.004-1.114l-2.5 2.25a.75.75 0 000 1.114l2.5 2.25a.75.75 0 101.004-1.114l-1.048-.943h9.546A.75.75 0 0019 10z" clip-rule="evenodd" />
+                </svg>
+              <% when 'logout' %>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 015.25 2h5.5A2.25 2.25 0 0113 4.25v2a.75.75 0 01-1.5 0v-2a.75.75 0 00-.75-.75h-5.5a.75.75 0 00-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 00.75-.75v-2a.75.75 0 011.5 0v2A2.25 2.25 0 0110.75 18h-5.5A2.25 2.25 0 013 15.75V4.25z" clip-rule="evenodd" />
+                  <path fill-rule="evenodd" d="M6 10a.75.75 0 01.75-.75h9.546l-1.048-.943a.75.75 0 111.004-1.114l2.5 2.25a.75.75 0 010 1.114l-2.5 2.25a.75.75 0 11-1.004-1.114l1.048-.943H6.75A.75.75 0 016 10z" clip-rule="evenodd" />
+                </svg>
+              <% end %>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-header">
+                <span class="timeline-action"><%= log.action.capitalize %></span>
+                <span class="timeline-model"><%= log.auditable_type %></span>
+                <% if log.auditable %>
+                  <span class="timeline-item-name">- <%= log.auditable_name %></span>
+                <% end %>
+              </div>
+              <div class="timeline-meta">
+                <span class="timeline-user">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" />
+                  </svg>
+                  <%= log.user.email %>
+                </span>
+                <span class="timeline-time"><%= time_ago_in_words(log.created_at) %> ago</span>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="audit-pagination">
+      <%= paginate @audit_logs if @audit_logs.respond_to?(:current_page) %>
+    </div>
+  </div>
+<% else %>
+  <%= render 'shared/no_access' %>
+<% end %>
