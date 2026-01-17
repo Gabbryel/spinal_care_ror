@@ -1,4 +1,5 @@
 class Profession < ApplicationRecord
+  include Auditable
   has_many :members
   validates :name, presence: true
   include SlugHelper

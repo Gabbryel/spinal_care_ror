@@ -7,6 +7,7 @@ class Member < ApplicationRecord
   validates :last_name, :first_name, :profession_id, presence: true
   include SlugHelper
   include CheckSlugHelper
+  include Auditable
   after_save :slugify, unless: :check_slug
 
   def to_param

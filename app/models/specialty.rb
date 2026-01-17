@@ -6,6 +6,7 @@ class Specialty < ApplicationRecord
   validates :name, presence: true
   include SlugHelper
   include CheckSlugHelper
+  include Auditable
   after_save :slugify, unless: :check_slug
   def to_param
     "#{slug}"

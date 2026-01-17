@@ -2,6 +2,7 @@ class Fact < ApplicationRecord
   has_rich_text :description
   include SlugHelper
   include CheckSlugHelper
+  include Auditable
   after_save :slugify, unless: :check_slug
 
   def to_param

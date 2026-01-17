@@ -168,6 +168,47 @@ class AdminController < ApplicationController
     @fact = Fact.new()
     @facts = Fact.all.sort {|x, y| y.updated_at <=> x.updated_at}
   end
+  
+  def audit
+    @audit_logs = AuditLog.includes(:user).recent
+    
+    # Filter by action if provided
+    @audit_logs = @audit_logs.by_action(params[:action_filter]) if params[:action_filter].present?
+    
+    # Filter by model type if provided
+    @audit_logs = @audit_logs.by_type(params[:type_filter]) if params[:type_filter].present?
+    
+    # Filter by user if provided
+    @audit_logs = @audit_logs.by_user(params[:user_filter]) if params[:user_filter].present?
+    
+    # Paginate
+    @audit_logs = @audit_logs.page(params[:page]).per(50)
+    
+    # Statistics
+    @total_logs = AuditLog.count
+    @logs_this_week = AuditLog.this_week.count
+    @logs_this_month = AuditLog.this_month.count
+    
+    # Activity by action
+    @activity_by_action = AuditLog.group(:action).count
+    
+    # Activity by model
+    @activity_by_model = AuditLog.group(:auditable_type).count
+    
+    # Most active users
+    @most_active_users = AuditLog.group(:user_id)
+                                 .select('user_id, COUNT(*) as actions_count')
+                                 .order('actions_count DESC')
+                                 .limit(10)
+                                 .map { |log| [User.find(log.user_id), log.actions_count] }
+    
+    # Recent activity timeline
+    @recent_activity = AuditLog.includes(:user).recent.limit(20)
+    
+    # Available filters
+    @available_types = AuditLog.distinct.pluck(:auditable_type).sort
+    @available_users = User.where(id: AuditLog.distinct.pluck(:user_id)).order(:email)
+  end
 
   def test
     @profession = Profession.new()

@@ -1,4 +1,7 @@
 class MedicalService < ApplicationRecord
+  include SlugHelper
+  include CheckSlugHelper
+  include Auditable
   belongs_to :specialty, counter_cache: true
   belongs_to :member, optional: true
   has_rich_text :description

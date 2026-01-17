@@ -1,0 +1,494 @@
+// Audit Log Styles - Using analytics page structure
+.audit-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.audit-stat-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.audit-stat-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 2rem;
+    height: 2rem;
+    color: white;
+  }
+
+  &--total {
+    background: linear-gradient(135deg, #4A6775 0%, #3a5463 100%);
+  }
+
+  &--week {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+  }
+
+  &--month {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  }
+}
+
+.audit-stat-content {
+  flex: 1;
+}
+
+.audit-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.audit-stat-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+// Filters
+.audit-filters {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  margin-bottom: 2.5rem;
+}
+
+.filter-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+  }
+}
+
+.filter-select {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #374151;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #4A6775;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #4A6775;
+    box-shadow: 0 0 0 3px rgba(74, 103, 117, 0.1);
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.filter-btn {
+  padding: 0.625rem 1.5rem;
+  background: linear-gradient(135deg, #4A6775 0%, #3a5463 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 103, 117, 0.3);
+  }
+}
+
+.filter-reset-btn {
+  padding: 0.625rem 1.5rem;
+  background: white;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    border-color: #9ca3af;
+    color: #374151;
+  }
+}
+
+// Distribution Grid
+.audit-distribution-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.audit-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  margin-bottom: 2.5rem;
+}
+
+.audit-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #4A6775;
+  }
+}
+
+.distribution-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.distribution-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.distribution-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+
+  span:first-child {
+    color: #374151;
+    font-weight: 500;
+  }
+
+  .distribution-count {
+    color: #6b7280;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+}
+
+.distribution-bar {
+  height: 0.75rem;
+  background: #f3f4f6;
+  border-radius: 0.5rem;
+  overflow: hidden;
+
+  .distribution-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4A6775 0%, #5a7a8a 100%);
+    border-radius: 0.5rem;
+    transition: width 0.5s ease;
+
+    &--alt {
+      background: linear-gradient(90deg, #14b8a6 0%, #0d9488 100%);
+    }
+  }
+}
+
+// Users Grid
+.audit-users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.audit-user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f3f4f6;
+    border-color: #4A6775;
+  }
+}
+
+.audit-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.audit-user-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #4A6775 0%, #3a5463 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.audit-user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.audit-user-email {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audit-user-role {
+  font-size: 0.75rem;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #e5e7eb;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &--admin {
+    background: #fce7f3;
+    color: #be185d;
+  }
+
+  &--god {
+    background: #fef3c7;
+    color: #b45309;
+  }
+}
+
+.audit-user-count {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.125rem;
+  flex-shrink: 0;
+}
+
+.user-action-count {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4A6775;
+  line-height: 1;
+}
+
+.user-action-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+// Timeline
+.audit-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  border-left: 3px solid #e5e7eb;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f3f4f6;
+    border-left-color: #4A6775;
+  }
+}
+
+.timeline-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    color: white;
+  }
+
+  &--success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  }
+
+  &--warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  }
+
+  &--danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  }
+
+  &--info {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  }
+
+  &--secondary {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  }
+}
+
+.timeline-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.timeline-action {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 0.875rem;
+}
+
+.timeline-model {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.timeline-item-name {
+  font-size: 0.875rem;
+  color: #4A6775;
+  font-weight: 500;
+}
+
+.timeline-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.timeline-user {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+
+  svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}
+
+.timeline-time {
+  color: #9ca3af;
+}
+
+// Pagination
+.audit-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .audit-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-form {
+    grid-template-columns: 1fr;
+  }
+
+  .audit-users-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-item {
+    flex-direction: column;
+  }
+}
