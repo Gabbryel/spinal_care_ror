@@ -90,3 +90,54 @@
     </div>
   <% end %>
 </div>
+
+<script>
+  // Prevent modal flicker on form submit by hiding modal immediately
+  (function() {
+    document.addEventListener('DOMContentLoaded', function() {
+      const forms = document.querySelectorAll('.medical-service-form form');
+      forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+          const modal = this.closest('.modal');
+          if (modal) {
+            // Immediately hide modal to prevent flicker during redirect
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            document.body.style.removeProperty('overflow');
+            document.body.style.removeProperty('padding-right');
+            
+            // Remove backdrop
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+              backdrop.remove();
+            }
+          }
+        });
+      });
+    });
+    
+    // Also listen for Turbo events in case page loads via Turbo
+    document.addEventListener('turbo:load', function() {
+      const forms = document.querySelectorAll('.medical-service-form form');
+      forms.forEach(form => {
+        if (form.dataset.listenerAdded) return;
+        form.dataset.listenerAdded = 'true';
+        
+        form.addEventListener('submit', function(e) {
+          const modal = this.closest('.modal');
+          if (modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            document.body.style.removeProperty('overflow');
+            document.body.style.removeProperty('padding-right');
+            
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) backdrop.remove();
+          }
+        });
+      });
+    });
+  })();
+</script>

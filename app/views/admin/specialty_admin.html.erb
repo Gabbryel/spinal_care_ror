@@ -111,6 +111,17 @@
       <button data-bs-toggle="modal" data-bs-target="#newMedicalServiceModal">Adaugă serviciu</button>
     </div>
   <% end %>
+
+  <%# Edit modals for all services - rendered once at page level to prevent flickering %>  <% if @services_with_member.any? %>
+    <% @services_with_member.each do |service| %>
+      <%= render partial: "medical_services/modal", locals: {new: false, modal_id: "editMedicalService#{service.id}Modal", medical_service: service} %>
+    <% end %>
+  <% end %>
+  <% if @services_without_member.any? %>
+    <% @services_without_member.each do |service| %>
+      <%= render partial: "medical_services/modal", locals: {new: false, modal_id: "editMedicalService#{service.id}Modal", medical_service: service} %>
+    <% end %>
+  <% end %>
 </div>
 <% else %>
   <%= no_access %>

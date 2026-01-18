@@ -16,8 +16,7 @@ class MedicalServicesController < ApplicationController
         format.html { redirect_to admin_specialty_path(@medical_service.specialty), notice: 'Serviciu medical adăugat!' }
         format.json { render :show, status: :created, location: @medical_service }
       else
-        format.turbo_stream
-        format.html { render :new }
+        format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @medical_service.errors, status: :unprocessable_entity }
       end
     end
@@ -34,8 +33,7 @@ class MedicalServicesController < ApplicationController
         format.html { redirect_to admin_specialty_path(@specialty), notice: 'Serviciu medical modificat!'}
         format.json { render :show, status: :updated, location: @medical_service}
       else
-        format.turbo_stream
-        format.html { render :edit }
+        format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @medical_service.errors, status: :unprocessable_entity }
       end
     end
