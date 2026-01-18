@@ -22,7 +22,7 @@
       <div class="user-details">
         <span class="user-email"><%= current_user.email %></span>
         <span class="user-role">
-          <%= god_mode ? 'God Mode' : (admin ? 'Admin' : 'User') %>
+          <%= current_user.god_mode ? 'God Mode' : (current_user.admin ? 'Admin' : 'User') %>
         </span>
       </div>
     </div>
