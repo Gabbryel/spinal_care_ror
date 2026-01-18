@@ -1,5 +1,5 @@
 <div class="medical-service-form">
-  <%= simple_form_for(medical_service, id: (medical_service.id ? "edit_medical_service_#{medical_service.id}" : dom_id(MedicalService.new))) do |f| %>
+  <%= simple_form_for(medical_service, id: (medical_service.id ? "edit_medical_service_#{medical_service.id}" : dom_id(MedicalService.new)), html: { data: { turbo: false } }) do |f| %>
     <% if medical_service.errors.any? %>
       <div class="form-error-message">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
