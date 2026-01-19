@@ -100,7 +100,6 @@
                 <div class="month-name"><%= consumption.month %></div>
                 <div class="consumption-value">
                   <%= number_with_precision(consumption.consumption, precision: 2) %>
-                  <span class="unit">unități</span>
                 </div>
               </div>
             <% end %>
@@ -112,7 +111,6 @@
                 <div class="consumption-value">
                   <% if consumption %>
                     <%= number_with_precision(consumption.consumption, precision: 2) %>
-                    <span class="unit">unități</span>
                   <% else %>
                     <span class="no-data-text">-</span>
                   <% end %>

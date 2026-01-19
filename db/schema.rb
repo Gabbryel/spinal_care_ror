@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_19_070228) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_19_112410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -119,9 +119,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_070228) do
     t.text "user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "request_method"
+    t.string "request_path"
+    t.string "controller_name"
+    t.string "action_name"
+    t.text "params_data"
+    t.text "changes_summary"
+    t.text "description"
+    t.string "referer"
+    t.integer "duration_ms"
+    t.integer "status_code"
     t.index ["action"], name: "index_audit_logs_on_action"
+    t.index ["action_name"], name: "index_audit_logs_on_action_name"
     t.index ["auditable_type", "auditable_id"], name: "index_audit_logs_on_auditable_type_and_auditable_id"
+    t.index ["controller_name"], name: "index_audit_logs_on_controller_name"
     t.index ["created_at"], name: "index_audit_logs_on_created_at"
+    t.index ["request_method"], name: "index_audit_logs_on_request_method"
+    t.index ["user_id", "created_at"], name: "index_audit_logs_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
   end
 
@@ -150,7 +164,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_19_070228) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "slug"
-    t.bigint "specialty_id", null: false
+    t.bigint "specialty_id"
     t.bigint "member_id"
     t.boolean "has_day_hospitalization", default: false
     t.index ["member_id"], name: "index_medical_services_on_member_id"

@@ -3,7 +3,7 @@ class Member < ApplicationRecord
   has_one_attached :photo
   belongs_to :profession
   belongs_to :specialty, optional: true
-  has_many :medical_services
+  has_many :medical_services, dependent: :nullify
   validates :last_name, :first_name, :profession_id, presence: true
   include SlugHelper
   include CheckSlugHelper

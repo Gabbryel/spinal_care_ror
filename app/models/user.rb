@@ -5,6 +5,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   
+  has_many :audit_logs, dependent: :destroy
+  
   def log_login(ip_address, user_agent)
     AuditLog.create!(
       user: self,
