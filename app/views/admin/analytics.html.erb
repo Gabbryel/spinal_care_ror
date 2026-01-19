@@ -1,5 +1,5 @@
 <% if access %>
-  <div class="analytics-page-enhanced" data-controller="analytics-charts">
+  <div class="analytics-page-enhanced" data-controller="analytics-charts analytics-period-filter">
     <div class="analytics-header">
       <div class="header-content">
         <h1>
@@ -17,6 +17,76 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
           Înapoi la Dashboard
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Period Filter -->
+    <div class="period-filter-container">
+      <%= form_with url: dashboard_analytics_path, method: :get, class: 'period-filter-form', data: { analytics_period_filter_target: 'form', action: 'change->analytics-period-filter#handlePeriodChange' } do |f| %>
+        <div class="filter-group">
+          <label for="period-select">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+            </svg>
+            Perioadă:
+          </label>
+          <%= f.select :period, 
+            options_for_select([
+              ['Ultimele 7 zile', '7'],
+              ['Ultimele 30 zile', '30'],
+              ['Ultimele 90 zile', '90'],
+              ['Ultimele 6 luni', '180'],
+              ['Ultimul an', '365'],
+              ['Tot timpul', 'all'],
+              ['Personalizat', 'custom']
+            ], @period),
+            {},
+            { 
+              id: 'period-select',
+              class: 'period-select',
+              data: { 
+                analytics_period_filter_target: 'periodSelect',
+                action: 'change->analytics-period-filter#toggleCustomDates'
+              }
+            } 
+          %>
+        </div>
+
+        <div class="custom-dates-group <%= @period == 'custom' ? '' : 'hidden' %>" data-analytics-period-filter-target="customDates">
+          <div class="date-input-wrapper">
+            <label for="custom_start_date">De la:</label>
+            <%= f.date_field :custom_start_date, 
+              value: @custom_start_date,
+              class: 'date-input',
+              id: 'custom_start_date' 
+            %>
+          </div>
+          <div class="date-input-wrapper">
+            <label for="custom_end_date">Până la:</label>
+            <%= f.date_field :custom_end_date, 
+              value: @custom_end_date,
+              class: 'date-input',
+              id: 'custom_end_date' 
+            %>
+          </div>
+          <%= f.submit 'Aplică', class: 'apply-btn' %>
+        </div>
+      <% end %>
+      
+      <div class="period-info">
+        <% if @period == 'custom' && @custom_start_date.present? && @custom_end_date.present? %>
+          Afișare date: <%= Date.parse(@custom_start_date).strftime('%d.%m.%Y') %> - <%= Date.parse(@custom_end_date).strftime('%d.%m.%Y') %>
+        <% else %>
+          <%= case @period
+              when '7' then 'Ultimele 7 zile'
+              when '30' then 'Ultimele 30 zile'
+              when '90' then 'Ultimele 90 zile'
+              when '180' then 'Ultimele 6 luni'
+              when '365' then 'Ultimul an'
+              when 'all' then 'Tot timpul'
+              else 'Ultimele 30 zile'
+              end %>
         <% end %>
       </div>
     </div>

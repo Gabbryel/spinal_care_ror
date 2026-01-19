@@ -6,7 +6,21 @@ class AdminController < ApplicationController
   end
   
   def analytics
-    # Audit data
+    # Period filter setup
+    @period = params[:period] || '30'
+    @start_date = calculate_start_date(@period)
+    @custom_start_date = params[:custom_start_date]
+    @custom_end_date = params[:custom_end_date]
+    
+    # If custom period, override start_date
+    if @period == 'custom' && @custom_start_date.present? && @custom_end_date.present?
+      @start_date = Time.zone.parse(@custom_start_date).beginning_of_day
+      @end_date = Time.zone.parse(@custom_end_date).end_of_day
+    else
+      @end_date = Time.zone.now
+    end
+    
+    # Audit data (not filtered by period)
     @total_members = Member.count
     @total_services = MedicalService.count
     @total_specialties = Specialty.count
@@ -16,19 +30,19 @@ class AdminController < ApplicationController
     @admin_users = User.where(admin: true).count
     @god_mode_users = User.where(god_mode: true).count
     
-    # Visitor analytics (exclude dashboard/admin pages)
+    # Visitor analytics (exclude dashboard/admin pages) - filtered by period
     public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', @start_date, @end_date)
     
     @total_visits = public_visits.count
     @total_visits_today = public_visits.where('started_at >= ?', Time.zone.now.beginning_of_day).count
     @total_visits_this_week = public_visits.where('started_at >= ?', 1.week.ago).count
     @total_visits_this_month = public_visits.where('started_at >= ?', 1.month.ago).count
     @unique_visitors = public_visits.distinct.count(:visitor_token)
-    @unique_visitors_this_month = public_visits.where('started_at >= ?', 1.month.ago).distinct.count(:visitor_token)
+    @unique_visitors_this_month = public_visits.distinct.count(:visitor_token)
     
     # New vs Returning Visitors
-    @new_visitors = public_visits.where('started_at >= ?', 1.month.ago)
-                                .group(:visitor_token)
+    @new_visitors = public_visits.group(:visitor_token)
                                 .having('COUNT(*) = 1')
                                 .count
                                 .length
@@ -36,7 +50,7 @@ class AdminController < ApplicationController
     
     # Most viewed pages (public only) with events
     events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
-                        .where('time >= ?', 1.month.ago)
+                        .where('time >= ? AND time <= ?', @start_date, @end_date)
     
     @most_viewed_pages = events.group("properties->>'url'")
                                .order('count_all DESC')
@@ -50,10 +64,10 @@ class AdminController < ApplicationController
     end
     
     # Traffic Sources with categorization
-    referrer_base = public_visits.where.not(referrer: nil).where('started_at >= ?', 1.month.ago)
+    referrer_base = public_visits.where.not(referrer: nil)
     
     @traffic_by_source = {
-      'Direct' => public_visits.where(referrer: nil).where('started_at >= ?', 1.month.ago).count,
+      'Direct' => public_visits.where(referrer: nil).count,
       'Google' => referrer_base.where('referring_domain LIKE ?', '%google%').count,
       'Facebook' => referrer_base.where('referring_domain LIKE ?', '%facebook%').count,
       'Instagram' => referrer_base.where('referring_domain LIKE ?', '%instagram%').count,
@@ -62,7 +76,7 @@ class AdminController < ApplicationController
     }
     
     # Top Referrers (detailed) - All referrers with percentages
-    referrer_visits = public_visits.where.not(referrer: nil).where('started_at >= ?', 1.month.ago)
+    referrer_visits = public_visits.where.not(referrer: nil)
     @total_referrer_visits = referrer_visits.count
     @top_referrers = referrer_visits.group(:referring_domain)
                                     .order('count_all DESC')
@@ -74,38 +88,35 @@ class AdminController < ApplicationController
     end.to_h
     
     # Browser statistics
-    @browsers = public_visits.where('started_at >= ?', 1.month.ago)
-                             .group(:browser)
+    @browsers = public_visits.group(:browser)
                              .order('count_all DESC')
                              .limit(8)
                              .count
     
     # Operating Systems
-    @operating_systems = public_visits.where('started_at >= ?', 1.month.ago)
-                                     .group(:os)
+    @operating_systems = public_visits.group(:os)
                                      .order('count_all DESC')
                                      .limit(8)
                                      .count
     
     # Device types
-    @device_types = public_visits.where('started_at >= ?', 1.month.ago)
-                                 .group(:device_type)
+    @device_types = public_visits.group(:device_type)
                                  .order('count_all DESC')
                                  .count
     
-    # Hourly Distribution (last 7 days)
+    # Hourly Distribution (for selected period)
     @hourly_visits = (0..23).map do |hour|
       {
         hour: "#{hour}:00",
-        count: public_visits.where('started_at >= ?', 7.days.ago)
-                           .where('EXTRACT(HOUR FROM started_at) = ?', hour)
+        count: public_visits.where('EXTRACT(HOUR FROM started_at) = ?', hour)
                            .count
       }
     end
     
-    # Daily visits trend (last 30 days)
-    @daily_visits = (0..29).map do |i|
-      date = i.days.ago.beginning_of_day
+    # Daily visits trend (for selected period)
+    days_count = [(@end_date.to_date - @start_date.to_date).to_i, 90].min
+    @daily_visits = (0..days_count).map do |i|
+      date = i.days.ago(@end_date).beginning_of_day
       {
         date: date.strftime('%d %b'),
         count: public_visits.where('started_at >= ? AND started_at < ?', date, date + 1.day).count
@@ -113,8 +124,7 @@ class AdminController < ApplicationController
     end.reverse
     
     # Geographic Distribution (by city/region if available)
-    @geographic_data = public_visits.where('started_at >= ?', 1.month.ago)
-                                   .where.not(city: [nil, ''])
+    @geographic_data = public_visits.where.not(city: [nil, ''])
                                    .group(:city)
                                    .order('count_all DESC')
                                    .limit(10)
@@ -126,41 +136,42 @@ class AdminController < ApplicationController
     @avg_visit_duration = 2.5 # Default estimate in minutes
     
     # Bounce Rate (visits with only one page view)
-    total_visits_month = public_visits.where('started_at >= ?', 1.month.ago).count
-    single_page_visits = events.where('time >= ?', 1.month.ago)
-                               .group(:visit_id)
+    total_visits_period = public_visits.count
+    single_page_visits = events.group(:visit_id)
                                .having('COUNT(*) = 1')
                                .count
                                .length
     
-    @bounce_rate = total_visits_month > 0 ? ((single_page_visits.to_f / total_visits_month) * 100).round(1) : 0
+    @bounce_rate = total_visits_period > 0 ? ((single_page_visits.to_f / total_visits_period) * 100).round(1) : 0
     
     # Pages per Visit
-    total_events = events.where('time >= ?', 1.month.ago).count
-    @pages_per_visit = total_visits_month > 0 ? (total_events.to_f / total_visits_month).round(2) : 0
+    total_events = events.count
+    @pages_per_visit = total_visits_period > 0 ? (total_events.to_f / total_visits_period).round(2) : 0
     
-    # Weekly Comparison
-    visits_this_week = public_visits.where('started_at >= ?', 1.week.ago).count
-    visits_last_week = public_visits.where('started_at >= ? AND started_at < ?', 2.weeks.ago, 1.week.ago).count
-    @weekly_growth = visits_last_week > 0 ? (((visits_this_week - visits_last_week).to_f / visits_last_week) * 100).round(1) : 0
+    # Weekly Comparison (only if period allows)
+    if (@end_date - @start_date) >= 2.weeks
+      visits_this_week = public_visits.where('started_at >= ?', 1.week.ago(@end_date)).count
+      visits_last_week = public_visits.where('started_at >= ? AND started_at < ?', 2.weeks.ago(@end_date), 1.week.ago(@end_date)).count
+      @weekly_growth = visits_last_week > 0 ? (((visits_this_week - visits_last_week).to_f / visits_last_week) * 100).round(1) : 0
+    else
+      @weekly_growth = 0
+    end
     
     # Top Exit Pages - All pages
-    @top_exit_pages = events.where('time >= ?', 1.month.ago)
-                            .group("properties->>'url'")
+    @top_exit_pages = events.group("properties->>'url'")
                             .order('count_all DESC')
                             .count
                             .transform_keys { |url| url&.gsub(/^https?:\/\/[^\/]+/, '')&.presence || '/' }
     
     # Top Entry Pages (landing pages)
-    @top_entry_pages = public_visits.where('started_at >= ?', 1.month.ago)
-                                    .where.not(landing_page: [nil, ''])
+    @top_entry_pages = public_visits.where.not(landing_page: [nil, ''])
                                     .group(:landing_page)
                                     .order('count_all DESC')
                                     .count
                                     .transform_keys { |url| url&.gsub(/^https?:\/\/[^\/]+/, '')&.presence || '/' }
     
     # Click Analytics - All clicks without limits
-    click_events = events.where(name: 'click').where('time >= ?', 1.month.ago)
+    click_events = events.where(name: 'click')
     
     @total_clicks = click_events.count
     
@@ -213,11 +224,11 @@ class AdminController < ApplicationController
     @specialties_with_services = Specialty.joins(:medical_services).distinct.count
     @specialties_without_services = Specialty.count - @specialties_with_services
     
-    # Time-based statistics
-    @members_created_this_month = Member.where('created_at >= ?', 1.month.ago).count
-    @services_created_this_month = MedicalService.where('created_at >= ?', 1.month.ago).count
-    @facts_updated_this_week = Fact.where('updated_at >= ?', 1.week.ago).count
-    @users_created_this_month = User.where('created_at >= ?', 1.month.ago).count
+    # Time-based statistics (filtered by period)
+    @members_created_this_month = Member.where('created_at >= ? AND created_at <= ?', @start_date, @end_date).count
+    @services_created_this_month = MedicalService.where('created_at >= ? AND created_at <= ?', @start_date, @end_date).count
+    @facts_updated_this_week = Fact.where('updated_at >= ? AND updated_at <= ?', @start_date, @end_date).count
+    @users_created_this_month = User.where('created_at >= ? AND created_at <= ?', @start_date, @end_date).count
     
     # Recent activity
     @recent_members = Member.order(updated_at: :desc).limit(5)
@@ -440,6 +451,27 @@ class AdminController < ApplicationController
     @professions = Profession.all.order(name: :asc)
     @specialty = Specialty.new()
     @specialties = Specialty.all.order(name: :asc)
+  end
+
+  private
+
+  def calculate_start_date(period)
+    case period
+    when '7'
+      7.days.ago
+    when '30'
+      30.days.ago
+    when '90'
+      90.days.ago
+    when '180'
+      180.days.ago
+    when '365'
+      365.days.ago
+    when 'all'
+      100.years.ago # Effectively all time
+    else
+      30.days.ago # Default to 30 days
+    end
   end
 
 end
