@@ -1,0 +1,80 @@
+<div class="medicines-consumption-form">
+  <%= simple_form_for(medicines_consumption, html: { data: { turbo: false } }) do |f| %>
+    <% if medicines_consumption.errors.any? %>
+      <div class="form-error-message">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+        </svg>
+        <%= medicines_consumption.errors.full_messages.to_sentence.capitalize %>
+      </div>
+    <% end %>
+
+    <div class="form-section">
+      <div class="form-group">
+        <%= f.label :month, 'Luna *', class: 'form-label' %>
+        <%= f.select :month, 
+            options_for_select(MedicinesConsumption::MONTHS, medicines_consumption.month),
+            { prompt: 'Selectează luna' },
+            class: 'form-control' %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :year, 'Selectează anul *', class: 'form-label' %>
+        <%= f.input :year,
+            input_html: { 
+              value: medicines_consumption.year || Time.current.year,
+              min: 2000,
+              max: 2100,
+              class: 'form-control'
+            },
+            label: false %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :consumption, 'Consum (unități) *', class: 'form-label' %>
+        <%= f.input :consumption,
+            input_html: { 
+              step: 0.01,
+              min: 0,
+              placeholder: '0.00',
+              class: 'form-control'
+            },
+            label: false %>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        Anulează
+      </button>
+      <%= f.submit (medicines_consumption.new_record? ? 'Salvează' : 'Actualizează'), class: 'btn btn-primary' %>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('.medicines-consumption-form form');
+        if (form) {
+          form.addEventListener('submit', function() {
+            const modal = form.closest('.modal');
+            if (modal) {
+              setTimeout(() => {
+                const bsModal = bootstrap.Modal.getInstance(modal);
+                if (bsModal) {
+                  bsModal.hide();
+                }
+                // Remove backdrop
+                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('overflow');
+                document.body.style.removeProperty('padding-right');
+              }, 100);
+            }
+          });
+        }
+      });
+    </script>
+  <% end %>
+</div>

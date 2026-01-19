@@ -169,6 +169,12 @@ class AdminController < ApplicationController
     @facts = Fact.all.sort {|x, y| y.updated_at <=> x.updated_at}
   end
   
+  def medicines_consumption
+    @medicines_consumption = MedicinesConsumption.new
+    @consumptions = MedicinesConsumption.all.order(year: :desc, month: :desc)
+    @years = @consumptions.pluck(:year).uniq.sort.reverse
+  end
+  
   def audit
     @audit_logs = AuditLog.includes(:user).recent
     

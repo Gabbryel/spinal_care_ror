@@ -1,0 +1,136 @@
+<div class="modern-consumption-page">
+  <div class="consumption-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.644 1.59a.75.75 0 01.712 0l9.75 5.25a.75.75 0 010 1.32l-9.75 5.25a.75.75 0 01-.712 0l-9.75-5.25a.75.75 0 010-1.32l9.75-5.25z" />
+          <path d="M3.265 10.602l7.668 4.129a2.25 2.25 0 002.134 0l7.668-4.13 1.37.739a.75.75 0 010 1.32l-9.75 5.25a.75.75 0 01-.71 0l-9.75-5.25a.75.75 0 010-1.32l1.37-.738z" />
+          <path d="M10.933 19.231l-7.668-4.13-1.37.739a.75.75 0 000 1.32l9.75 5.25c.221.12.489.12.71 0l9.75-5.25a.75.75 0 000-1.32l-1.37-.738-7.668 4.13a2.25 2.25 0 01-2.134-.001z" />
+        </svg>
+      </div>
+      <div>
+        <h1>Consum Medicamente</h1>
+        <p>Evoluția consumului de medicamente pe luni și ani</p>
+      </div>
+    </div>
+    <%= link_to root_path, class: 'back-link' do %>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+      </svg>
+      Înapoi
+    <% end %>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="consumption-filters">
+    <div class="filters-container">
+      <%= form_with url: consum_path, method: :get, class: 'filters-form' do %>
+        <div class="filter-group">
+          <label for="year-filter" class="filter-label">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clip-rule="evenodd" />
+            </svg>
+            Anul
+          </label>
+          <%= select_tag :year, 
+              options_for_select([['Selectează anul', '']] + @all_years.map { |y| [y, y] }, @selected_year),
+              id: 'year-filter',
+              class: 'filter-select',
+              onchange: 'this.form.submit()' %>
+        </div>
+
+        <div class="filter-group">
+          <label for="month-filter" class="filter-label">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M5.25 12a.75.75 0 01.75-.75h.01a.75.75 0 01.75.75v.01a.75.75 0 01-.75.75H6a.75.75 0 01-.75-.75V12zM6 13.25a.75.75 0 00-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 00.75-.75V14a.75.75 0 00-.75-.75H6zM7.25 12a.75.75 0 01.75-.75h.01a.75.75 0 01.75.75v.01a.75.75 0 01-.75.75H8a.75.75 0 01-.75-.75V12zM8 13.25a.75.75 0 00-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 00.75-.75V14a.75.75 0 00-.75-.75H8zM9.25 10a.75.75 0 01.75-.75h.01a.75.75 0 01.75.75v.01a.75.75 0 01-.75.75H10a.75.75 0 01-.75-.75V10zM10 11.25a.75.75 0 00-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 00.75-.75V12a.75.75 0 00-.75-.75H10zM9.25 14a.75.75 0 01.75-.75h.01a.75.75 0 01.75.75v.01a.75.75 0 01-.75.75H10a.75.75 0 01-.75-.75V14zM12 9.25a.75.75 0 00-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 00.75-.75V10a.75.75 0 00-.75-.75H12zM11.25 12a.75.75 0 01.75-.75h.01a.75.75 0 01.75.75v.01a.75.75 0 01-.75.75H12a.75.75 0 01-.75-.75V12zM12 13.25a.75.75 0 00-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 00.75-.75V14a.75.75 0 00-.75-.75H12zM13.25 10a.75.75 0 01.75-.75h.01a.75.75 0 01.75.75v.01a.75.75 0 01-.75.75H14a.75.75 0 01-.75-.75V10zM14 11.25a.75.75 0 00-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 00.75-.75V12a.75.75 0 00-.75-.75H14z" />
+              <path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clip-rule="evenodd" />
+            </svg>
+            Luna
+          </label>
+          <%= select_tag :month,
+              options_for_select([['Selectează luna', '']] + @all_months.map { |m| [m, m] }, @selected_month),
+              id: 'month-filter',
+              class: 'filter-select',
+              onchange: 'this.form.submit()' %>
+        </div>
+
+        <% if @selected_year.present? || @selected_month.present? %>
+          <%= link_to consum_path, class: 'filter-reset' do %>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+            </svg>
+            Resetează filtrele
+          <% end %>
+        <% end %>
+      <% end %>
+      
+      <% if @selected_year.present? || @selected_month.present? %>
+        <div class="active-filters">
+          <span class="filter-label-text">Filtre active:</span>
+          <% if @selected_year.present? %>
+            <span class="filter-tag">
+              An: <%= @selected_year %>
+            </span>
+          <% end %>
+          <% if @selected_month.present? %>
+            <span class="filter-tag">
+              Luna: <%= @selected_month %>
+            </span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @consumptions.any? %>
+    <% @consumptions_by_year.each do |year, consumptions| %>
+      <div class="consumption-year-section">
+        <div class="year-header">
+          <h2><%= year %></h2>
+          <div class="year-total">
+            <span class="label">Total<%= @selected_month.present? ? " (#{@selected_month})" : '' %>:</span>
+            <span class="value"><%= number_with_precision(consumptions.sum(&:consumption), precision: 2) %></span>
+          </div>
+        </div>
+
+        <div class="consumption-grid">
+          <% if @selected_month.present? %>
+            <% consumptions.each do |consumption| %>
+              <div class="consumption-card has-data">
+                <div class="month-name"><%= consumption.month %></div>
+                <div class="consumption-value">
+                  <%= number_with_precision(consumption.consumption, precision: 2) %>
+                  <span class="unit">unități</span>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <% MedicinesConsumption::MONTHS.each do |month| %>
+              <% consumption = consumptions.find { |c| c.month == month } %>
+              <div class="consumption-card <%= consumption ? 'has-data' : 'no-data' %>">
+                <div class="month-name"><%= month %></div>
+                <div class="consumption-value">
+                  <% if consumption %>
+                    <%= number_with_precision(consumption.consumption, precision: 2) %>
+                    <span class="unit">unități</span>
+                  <% else %>
+                    <span class="no-data-text">-</span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="empty-state">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z" clip-rule="evenodd" />
+        <path fill-rule="evenodd" d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z" clip-rule="evenodd" />
+      </svg>
+      <h3>Nu există date disponibile</h3>
+      <p>Nu au fost înregistrate date despre consumul de medicamente</p>
+    </div>
+  <% end %>
+</div>

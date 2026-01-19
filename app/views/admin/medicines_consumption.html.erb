@@ -1,0 +1,127 @@
+<% if access %>
+  <div class="analytics-page">
+    <div class="analytics-header">
+      <div class="header-content">
+        <h1>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.644 1.59a.75.75 0 01.712 0l9.75 5.25a.75.75 0 010 1.32l-9.75 5.25a.75.75 0 01-.712 0l-9.75-5.25a.75.75 0 010-1.32l9.75-5.25z" />
+            <path d="M3.265 10.602l7.668 4.129a2.25 2.25 0 002.134 0l7.668-4.13 1.37.739a.75.75 0 010 1.32l-9.75 5.25a.75.75 0 01-.71 0l-9.75-5.25a.75.75 0 010-1.32l1.37-.738z" />
+            <path d="M10.933 19.231l-7.668-4.13-1.37.739a.75.75 0 000 1.32l9.75 5.25c.221.12.489.12.71 0l9.75-5.25a.75.75 0 000-1.32l-1.37-.738-7.668 4.13a2.25 2.25 0 01-2.134-.001z" />
+          </svg>
+          Consum Medicamente
+        </h1>
+        <p class="analytics-subtitle">Gestionare și monitorizare consum medicamente</p>
+      </div>
+      <div class="header-actions">
+        <%= link_to dashboard_path, class: 'back-btn' do %>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Înapoi la Dashboard
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Consumption Table -->
+    <div class="analytics-card">
+      <div class="card-header">
+        <h2>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
+            <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
+          </svg>
+          Consum medicamente
+        </h2>
+        <div class="card-header-actions">
+          <span class="record-count"><%= @consumptions.count %> înregistrări</span>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newConsumptionModal">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+            </svg>
+            Adaugă consum
+          </button>
+        </div>
+      </div>
+
+      <% if @consumptions.any? %>
+        <div class="table-responsive">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>Luna</th>
+                <th>Anul</th>
+                <th>Consum (unități)</th>
+                <th>Creat la</th>
+                <th>Actualizat la</th>
+                <th>Acțiuni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @consumptions.each do |consumption| %>
+                <tr>
+                  <td><strong><%= consumption.month %></strong></td>
+                  <td><%= consumption.year %></td>
+                  <td>
+                    <span class="consumption-badge">
+                      <%= number_with_precision(consumption.consumption, precision: 2) %>
+                    </span>
+                  </td>
+                  <td><%= consumption.created_at.strftime('%d.%m.%Y %H:%M') %></td>
+                  <td><%= consumption.updated_at.strftime('%d.%m.%Y %H:%M') %></td>
+                  <td>
+                    <div class="action-buttons">
+                      <button type="button" class="action-btn action-btn--edit" data-bs-toggle="modal" data-bs-target="#editConsumptionModal<%= consumption.id %>" title="Editează">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z" />
+                          <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
+                        </svg>
+                      </button>
+                      <%= link_to medicines_consumption_path(consumption),
+                          data: { turbo_method: :delete, turbo_confirm: "Sigur ștergi înregistrarea pentru #{consumption.month} #{consumption.year}?" },
+                          class: 'action-btn action-btn--delete',
+                          title: 'Șterge' do %>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z" clip-rule="evenodd" />
+                        </svg>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.644 1.59a.75.75 0 01.712 0l9.75 5.25a.75.75 0 010 1.32l-9.75 5.25a.75.75 0 01-.712 0l-9.75-5.25a.75.75 0 010-1.32l9.75-5.25z" />
+            <path d="M3.265 10.602l7.668 4.129a2.25 2.25 0 002.134 0l7.668-4.13 1.37.739a.75.75 0 010 1.32l-9.75 5.25a.75.75 0 01-.71 0l-9.75-5.25a.75.75 0 010-1.32l1.37-.738z" />
+          </svg>
+          <h3>Nicio înregistrare</h3>
+          <p>Adaugă prima înregistrare de consum folosind formularul de mai sus</p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Modals -->
+    <%= render partial: 'medicines_consumptions/modal', 
+        locals: { 
+          medicines_consumption: @medicines_consumption, 
+          modal_id: 'newConsumptionModal',
+          new: true 
+        } %>
+
+    <% if @consumptions.any? %>
+      <% @consumptions.each do |consumption| %>
+        <%= render partial: 'medicines_consumptions/modal',
+            locals: {
+              medicines_consumption: consumption,
+              modal_id: "editConsumptionModal#{consumption.id}",
+              new: false
+            } %>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <%= render 'shared/no_access' %>
+<% end %>

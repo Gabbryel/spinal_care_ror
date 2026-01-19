@@ -53,7 +53,7 @@
   .navbar-desktop-menu {
     display: none;
 
-    @media (min-width: 1024px) {
+    @media (orientation: landscape) and (min-width: 1024px) {
       display: flex;
       align-items: center;
       gap: 2rem;
@@ -241,7 +241,7 @@
     padding: 0;
     z-index: 1001;
 
-    @media (min-width: 1024px) {
+    @media (orientation: landscape) and (min-width: 1024px) {
       display: none;
     }
 
@@ -283,7 +283,7 @@
   flex-direction: column;
   overflow-y: auto;
 
-  @media (min-width: 1024px) {
+  @media (orientation: landscape) and (min-width: 1024px) {
     display: none;
   }
 

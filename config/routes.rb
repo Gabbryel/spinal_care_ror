@@ -11,6 +11,9 @@ Rails.application.routes.draw do
   get 'dashboard/servicii-medicale/:id', to: 'admin#specialty_admin', as: 'admin_specialty'
 
   get 'dashboard/info-pacient', to: 'admin#info_pacient'
+  get 'dashboard/consum-medicamente', to: 'admin#medicines_consumption'
+
+  resources :medicines_consumptions, only: %i[create update destroy]
 
 
   resources :facts, except: %i[show]
@@ -29,6 +32,7 @@ Rails.application.routes.draw do
   get 'specialitati-medicale/:id', to: 'specialties#about'
   get '/echipa', to: 'pages#medical_team'
   get '/echipa/:id', to: 'members#show', as: 'colectiv'
+  get '/consum', to: 'pages#consum'
   resources :medical_services, except: %i[index show]
   get 'servicii-medicale', to: 'medical_services#index'
   get 'servicii-medicale/:id', to: 'medical_services#show_by_specialty'

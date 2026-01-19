@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_17_071840) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_19_070228) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -155,6 +155,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_17_071840) do
     t.boolean "has_day_hospitalization", default: false
     t.index ["member_id"], name: "index_medical_services_on_member_id"
     t.index ["specialty_id"], name: "index_medical_services_on_specialty_id"
+  end
+
+  create_table "medicines_consumptions", force: :cascade do |t|
+    t.string "month", null: false
+    t.integer "year", null: false
+    t.decimal "consumption", precision: 10, scale: 2, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["year", "month"], name: "index_medicines_consumptions_on_year_and_month", unique: true
+    t.index ["year"], name: "index_medicines_consumptions_on_year"
   end
 
   create_table "members", force: :cascade do |t|

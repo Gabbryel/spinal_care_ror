@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
-  skip_before_action :authenticate_user!, only: %i[ home medical_team pacient_page ]
+  skip_before_action :authenticate_user!, only: %i[ home medical_team pacient_page consum ]
 
   def home
     # @review = Review.new()
@@ -26,5 +26,26 @@ class PagesController < ApplicationController
     @specialties = Specialty.all.order(:name)
     @medical_services = MedicalService.all.sample(30)
     @medics = Member.all.select { |m| m.profession.name == 'medic'}
+  end
+  
+  def consum
+    @consumptions = MedicinesConsumption.all
+    
+    # Filter by year if provided
+    if params[:year].present?
+      @consumptions = @consumptions.where(year: params[:year])
+      @selected_year = params[:year].to_i
+    end
+    
+    # Filter by month if provided
+    if params[:month].present?
+      @consumptions = @consumptions.where(month: params[:month])
+      @selected_month = params[:month]
+    end
+    
+    @consumptions = @consumptions.order(year: :desc, month: :desc)
+    @all_years = MedicinesConsumption.pluck(:year).uniq.sort.reverse
+    @all_months = MedicinesConsumption::MONTHS
+    @consumptions_by_year = @consumptions.group_by(&:year)
   end
 end
