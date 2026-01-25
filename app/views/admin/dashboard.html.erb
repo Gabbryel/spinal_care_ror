@@ -27,8 +27,8 @@
           <h3>Utilizatori</h3>
           <p>Gestionează admini și permisiuni</p>
           <div class="card-stats">
-            <span class="stat-badge"><%= User.count %> utilizatori</span>
-            <span class="stat-badge"><%= User.where(admin: true).count %> admini</span>
+            <span class="stat-badge"><%= @users_count %> utilizatori</span>
+            <span class="stat-badge"><%= @admin_count %> admini</span>
           </div>
         </div>
         <div class="card-arrow">
@@ -49,8 +49,8 @@
           <h3>Personal</h3>
           <p>Gestionează membrii echipei</p>
           <div class="card-stats">
-            <span class="stat-badge"><%= Member.count %> membri</span>
-            <span class="stat-badge"><%= Profession.count %> profesii</span>
+            <span class="stat-badge"><%= @members_count %> membri</span>
+            <span class="stat-badge"><%= @professions_count %> profesii</span>
           </div>
         </div>
         <div class="card-arrow">
@@ -72,7 +72,7 @@
           <h3>Profesii</h3>
           <p>Gestionează profesiile medicale</p>
           <div class="card-stats">
-            <span class="stat-badge"><%= Profession.count %> profesii</span>
+            <span class="stat-badge"><%= @professions_count %> profesii</span>
           </div>
         </div>
         <div class="card-arrow">
@@ -95,7 +95,7 @@
           <h3>Specialități medicale</h3>
           <p>Gestionează specialitățile</p>
           <div class="card-stats">
-            <span class="stat-badge"><%= Specialty.count %> specialități</span>
+            <span class="stat-badge"><%= @specialties_count %> specialități</span>
           </div>
         </div>
         <div class="card-arrow">
@@ -116,7 +116,7 @@
           <h3>Servicii medicale</h3>
           <p>Gestionează serviciile oferite</p>
           <div class="card-stats">
-            <span class="stat-badge"><%= MedicalService.count %> servicii</span>
+            <span class="stat-badge"><%= @services_count %> servicii</span>
           </div>
         </div>
         <div class="card-arrow">
@@ -137,7 +137,7 @@
           <h3>Informații pacienți</h3>
           <p>Gestionează informările pentru clienți</p>
           <div class="card-stats">
-            <span class="stat-badge"><%= Fact.count %> informații</span>
+            <span class="stat-badge"><%= @facts_count %> informații</span>
           </div>
         </div>
         <div class="card-arrow">
@@ -174,19 +174,19 @@
         <h3>Statistici rapide</h3>
         <div class="stats-grid">
           <div class="stat-item">
-            <div class="stat-value"><%= Member.count %></div>
+            <div class="stat-value"><%= @members_count %></div>
             <div class="stat-label">Membri echipă</div>
           </div>
           <div class="stat-item">
-            <div class="stat-value"><%= MedicalService.count %></div>
-            <div class="stat-label">Servicii</div>
+            <div class="stat-value"><%= @services_count %></div>
+            <div class="stat-label">Servicii medicale</div>
           </div>
           <div class="stat-item">
-            <div class="stat-value"><%= Specialty.count %></div>
+            <div class="stat-value"><%= @specialties_count %></div>
             <div class="stat-label">Specialități</div>
           </div>
           <div class="stat-item">
-            <div class="stat-value"><%= User.count %></div>
+            <div class="stat-value"><%= @users_count %></div>
             <div class="stat-label">Utilizatori</div>
           </div>
         </div>

@@ -31,7 +31,7 @@
 
   <!-- Specialty Navigation Tabs -->
   <div class="specialty-tabs">
-    <% Specialty.all.order(name: :asc).each do |s| %>
+    <% @all_specialties.each do |s| %>
       <%= link_to s.name, admin_specialty_path(s), class: "tab #{s.id == @specialty.id ? 'active' : ''}" %>
     <% end %>
   </div>

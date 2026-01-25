@@ -3,6 +3,16 @@ class AdminController < ApplicationController
   def dashboard
     @m = Member.new()
     @professions = Profession.all
+    
+    # Cache counts for dashboard stats
+    @users_count = User.count
+    @admin_count = User.where(admin: true).count
+    @members_count = Member.count
+    @professions_count = Profession.count
+    @specialties_count = Specialty.count
+    @services_count = MedicalService.count
+    @facts_count = Fact.count
+    @reviews_count = Review.count
   end
   
   def analytics
@@ -128,9 +138,9 @@ class AdminController < ApplicationController
     # Weekly growth (only if needed)
     @weekly_growth = 0
     if (@end_date - @start_date) >= 2.weeks
-      week_data = public_visits.group("CASE WHEN started_at >= '#{1.week.ago(@end_date)}' THEN 'this' ELSE 'last' END").count
-      visits_this_week = week_data['this'] || 0
-      visits_last_week = week_data['last'] || 0
+      one_week_ago = 1.week.ago(@end_date)
+      visits_this_week = public_visits.where('started_at >= ?', one_week_ago).count
+      visits_last_week = public_visits.where('started_at < ?', one_week_ago).count
       @weekly_growth = visits_last_week > 0 ? (((visits_this_week - visits_last_week).to_f / visits_last_week) * 100).round(1) : 0
     end
     
@@ -283,14 +293,15 @@ class AdminController < ApplicationController
 
   def medical_services
     @medical_service = MedicalService.new()
-    @medical_services = MedicalService.order(name: :asc).to_a
-    @selected_members = Member.includes([:medical_services]).select { |m| m.medical_services.count > 0}.to_a
-    @specialties = Specialty.all.order(name: :asc)
+    @medical_services = MedicalService.order(name: :asc)
+    @selected_members = Member.joins(:medical_services).distinct.includes(:medical_services).order(last_name: :asc)
+    @specialties = Specialty.includes(:medical_services).order(name: :asc)
   end
 
   def specialty_admin
     @medical_service = MedicalService.new()
-    @specialty = Specialty.find_by!(slug: params[:id])
+    @specialty = Specialty.includes(:medical_services).find_by!(slug: params[:id])
+    @all_specialties = Specialty.order(name: :asc)
     
     # Order services: first by member (with member first), then by name
     @services_with_member = @specialty.medical_services
@@ -305,7 +316,7 @@ class AdminController < ApplicationController
 
   def info_pacient
     @fact = Fact.new()
-    @facts = Fact.all.sort {|x, y| y.updated_at <=> x.updated_at}
+    @facts = Fact.all.order(updated_at: :desc)
   end
   
   def medicines_consumption
@@ -407,16 +418,16 @@ class AdminController < ApplicationController
                          .where('created_at >= ?', 1.day.ago)
                          .count
     
-    # Browser and device statistics
-    @browser_stats = AuditLog.where('created_at >= ?', 7.days.ago)
-                            .group_by { |log| log.browser_info }
-                            .transform_values(&:count)
-                            .sort_by { |_, count| -count }
+    # Browser and device statistics (optimized to avoid loading all records)
+    week_logs = AuditLog.where('created_at >= ?', 7.days.ago).select(:user_agent).to_a
     
-    @device_stats = AuditLog.where('created_at >= ?', 7.days.ago)
-                           .group_by { |log| log.device_info }
-                           .transform_values(&:count)
-                           .sort_by { |_, count| -count }
+    @browser_stats = week_logs.group_by { |log| log.browser_info }
+                              .transform_values(&:count)
+                              .sort_by { |_, count| -count }
+    
+    @device_stats = week_logs.group_by { |log| log.device_info }
+                             .transform_values(&:count)
+                             .sort_by { |_, count| -count }
     
     # Available filters
     @available_actions = AuditLog.distinct.pluck(:action).compact.sort
