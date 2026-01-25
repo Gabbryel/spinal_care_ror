@@ -404,6 +404,94 @@ class AdminController < ApplicationController
     
     # Database metrics
     @total_records = @total_members + @total_services + @total_specialties + @total_professions + @total_facts + @total_users
+    
+    # ===== PATIENT JOURNEY ANALYTICS =====
+    # Common Visit Paths (top 15 multi-page journeys)
+    multi_page_visits = events.group(:visit_id)
+                              .having('COUNT(*) > 1')
+                              .order('COUNT(*) DESC')
+                              .limit(15)
+                              .pluck(:visit_id)
+    
+    @common_paths = multi_page_visits.map do |visit_id|
+      path = events.where(visit_id: visit_id)
+                   .order(:time)
+                   .pluck("properties->>'url'")
+                   .map { |url| normalize_url(url) }
+      { path: path, steps: path.size }
+    end.group_by { |p| p[:path] }
+       .transform_values { |v| v.size }
+       .sort_by { |_, count| -count }
+       .first(10)
+       .to_h
+    
+    # Average path length
+    @avg_path_length = (@pages_per_visit * @total_visits).to_i / [@total_visits, 1].max
+    
+    # Drop-off Analysis: Pages with highest exit rates
+    exit_page_counts = events.group(:visit_id)
+                             .select('visit_id, MAX(time) as last_time')
+                             .map do |visit|
+      events.where(visit_id: visit.visit_id, time: visit.last_time)
+            .pluck("properties->>'url'")
+            .first
+    end.compact
+    
+    exit_distribution = exit_page_counts.group_by(&:itself)
+                                        .transform_values(&:size)
+                                        .sort_by { |_, count| -count }
+                                        .first(15)
+    
+    @high_exit_pages = exit_distribution.map do |url, count|
+      normalized_url = normalize_url(url)
+      page_views = events.where("properties->>'url' = ?", url).count
+      exit_rate = page_views > 0 ? ((count.to_f / page_views) * 100).round(1) : 0
+      { page: normalized_url, exits: count, views: page_views, exit_rate: exit_rate }
+    end
+    
+    # Returning Visitor Patterns
+    returning_visitor_data = public_visits.group(:visitor_token)
+                                          .having('COUNT(*) > 1')
+                                          .order('COUNT(*) DESC')
+                                          .limit(100)
+                                          .pluck(:visitor_token, 'COUNT(*) as visit_count')
+    
+    @returning_visitor_distribution = {
+      '2 visits' => returning_visitor_data.count { |_, count| count == 2 },
+      '3-5 visits' => returning_visitor_data.count { |_, count| count >= 3 && count <= 5 },
+      '6-10 visits' => returning_visitor_data.count { |_, count| count >= 6 && count <= 10 },
+      '11+ visits' => returning_visitor_data.count { |_, count| count > 10 }
+    }
+    
+    # Average time between visits for returning visitors
+    returning_visit_gaps = returning_visitor_data.first(20).map do |token, _|
+      visits = public_visits.where(visitor_token: token)
+                            .order(:started_at)
+                            .pluck(:started_at)
+      next nil if visits.size < 2
+      
+      gaps = visits.each_cons(2).map { |v1, v2| (v2 - v1) / 1.day }
+      gaps.sum / gaps.size
+    end.compact
+    
+    @avg_days_between_visits = returning_visit_gaps.any? ? (returning_visit_gaps.sum / returning_visit_gaps.size).round(1) : 0
+    
+    # Most revisited pages (by returning visitors)
+    @most_revisited_pages = events.joins("INNER JOIN ahoy_visits ON ahoy_visits.id = ahoy_events.visit_id")
+                                  .where("ahoy_visits.visitor_token IN (?)", returning_visitor_data.map(&:first))
+                                  .group("properties->>'url'")
+                                  .order('count_all DESC')
+                                  .limit(10)
+                                  .count
+                                  .transform_keys { |url| normalize_url(url) }
+    
+    # Loyalty Segments
+    @loyalty_segments = {
+      new_visitors: @new_visitors,
+      occasional: @returning_visitor_distribution['2 visits'] || 0,
+      regular: (@returning_visitor_distribution['3-5 visits'] || 0) + (@returning_visitor_distribution['6-10 visits'] || 0),
+      loyal: @returning_visitor_distribution['11+ visits'] || 0
+    }
   end
   
   def edit_users
