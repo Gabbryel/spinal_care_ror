@@ -256,13 +256,61 @@
       <% if @geographic_data.any? %>
         <div class="chart-card chart-card--half">
           <div class="chart-card-header">
-            <h3>Distribuție Geografică</h3>
+            <h3>Distribuție Geografică - Toate orașele</h3>
             <div class="chart-card-meta">Top <%= @geographic_data.size %> orașe</div>
           </div>
           <div class="chart-card-body">
             <canvas 
               data-analytics-charts-target="geographicChart"
               data-chart-data='{"labels": <%= raw @geographic_data.keys.to_json %>, "values": <%= raw @geographic_data.values.to_json %>}'
+            ></canvas>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Visitors by Country -->
+      <% if @visitors_by_country.any? %>
+        <div class="chart-card chart-card--half">
+          <div class="chart-card-header">
+            <h3>Vizitatori pe Țări</h3>
+            <div class="chart-card-meta">Top <%= @visitors_by_country.size %> țări</div>
+          </div>
+          <div class="chart-card-body">
+            <canvas 
+              data-analytics-charts-target="countryChart"
+              data-chart-data='{"labels": <%= raw @visitors_by_country.keys.to_json %>, "values": <%= raw @visitors_by_country.values.to_json %>}'
+            ></canvas>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Visitors by County (Romania) -->
+      <% if @visitors_by_county.any? %>
+        <div class="chart-card chart-card--half">
+          <div class="chart-card-header">
+            <h3>Vizitatori din România - pe Județe</h3>
+            <div class="chart-card-meta">Top <%= @visitors_by_county.size %> județe</div>
+          </div>
+          <div class="chart-card-body">
+            <canvas 
+              data-analytics-charts-target="countyChart"
+              data-chart-data='{"labels": <%= raw @visitors_by_county.keys.to_json %>, "values": <%= raw @visitors_by_county.values.to_json %>}'
+            ></canvas>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Visitors by City (Romania) -->
+      <% if @visitors_by_city_romania.any? %>
+        <div class="chart-card chart-card--half">
+          <div class="chart-card-header">
+            <h3>Vizitatori din România - pe Orașe</h3>
+            <div class="chart-card-meta">Top <%= @visitors_by_city_romania.size %> orașe</div>
+          </div>
+          <div class="chart-card-body">
+            <canvas 
+              data-analytics-charts-target="cityRomaniaChart"
+              data-chart-data='{"labels": <%= raw @visitors_by_city_romania.keys.to_json %>, "values": <%= raw @visitors_by_city_romania.values.to_json %>}'
             ></canvas>
           </div>
         </div>
@@ -371,6 +419,120 @@
           </table>
         </div>
       </div>
+
+      <!-- Visitors by Country - Detailed Table -->
+      <% if @visitors_by_country.any? %>
+        <div class="table-card table-card--scrollable">
+          <div class="table-card-header">
+            <h3>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21.721 12.752a9.711 9.711 0 00-.945-5.003 12.754 12.754 0 01-4.339 2.708 18.991 18.991 0 01-.214 4.772 17.165 17.165 0 005.498-2.477zM14.634 15.55a17.324 17.324 0 00.332-4.647c-.952.227-1.945.347-2.966.347-1.021 0-2.014-.12-2.966-.347a17.515 17.515 0 00.332 4.647 17.385 17.385 0 005.268 0zM9.772 17.119a18.963 18.963 0 004.456 0A17.182 17.182 0 0112 21.724a17.18 17.18 0 01-2.228-4.605zM7.777 15.23a18.87 18.87 0 01-.214-4.774 12.753 12.753 0 01-4.34-2.708 9.711 9.711 0 00-.944 5.004 17.165 17.165 0 005.498 2.477zM21.356 14.752a9.765 9.765 0 01-7.478 6.817 18.64 18.64 0 001.988-4.718 18.627 18.627 0 005.49-2.098zM2.644 14.752c1.682.971 3.53 1.688 5.49 2.099a18.64 18.64 0 001.988 4.718 9.765 9.765 0 01-7.478-6.816zM13.878 2.43a9.755 9.755 0 016.116 3.986 11.267 11.267 0 01-3.746 2.504 18.63 18.63 0 00-2.37-6.49zM12 2.276a17.152 17.152 0 012.805 7.121c-.897.23-1.837.353-2.805.353-.968 0-1.908-.122-2.805-.353A17.151 17.151 0 0112 2.276zM10.122 2.43a18.629 18.629 0 00-2.37 6.49 11.266 11.266 0 01-3.746-2.504 9.754 9.754 0 016.116-3.985z" />
+              </svg>
+              Vizitatori pe Țări
+            </h3>
+            <span class="table-count"><%= @visitors_by_country.count %> țări</span>
+          </div>
+          <div class="table-card-body">
+            <table class="analytics-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Țară</th>
+                  <th>Vizitatori</th>
+                  <th>Procent</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% total_country_visits = @visitors_by_country.values.sum %>
+                <% @visitors_by_country.each_with_index do |(country, count), index| %>
+                  <tr>
+                    <td><span class="table-rank">#<%= index + 1 %></span></td>
+                    <td class="table-text-wrap"><strong><%= country %></strong></td>
+                    <td><strong><%= number_with_delimiter(count) %></strong></td>
+                    <td><span class="table-percentage"><%= ((count.to_f / total_country_visits) * 100).round(2) %>%</span></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Visitors by County (Romania) - Detailed Table -->
+      <% if @visitors_by_county.any? %>
+        <div class="table-card table-card--scrollable">
+          <div class="table-card-header">
+            <h3>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+              </svg>
+              Vizitatori din România - pe Județe
+            </h3>
+            <span class="table-count"><%= @visitors_by_county.count %> județe</span>
+          </div>
+          <div class="table-card-body">
+            <table class="analytics-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Județ</th>
+                  <th>Vizitatori</th>
+                  <th>Procent</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% total_county_visits = @visitors_by_county.values.sum %>
+                <% @visitors_by_county.each_with_index do |(county, count), index| %>
+                  <tr>
+                    <td><span class="table-rank">#<%= index + 1 %></span></td>
+                    <td class="table-text-wrap"><strong><%= county %></strong></td>
+                    <td><strong><%= number_with_delimiter(count) %></strong></td>
+                    <td><span class="table-percentage"><%= ((count.to_f / total_county_visits) * 100).round(2) %>%</span></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Visitors by City (Romania) - Detailed Table -->
+      <% if @visitors_by_city_romania.any? %>
+        <div class="table-card table-card--scrollable">
+          <div class="table-card-header">
+            <h3>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M3 2.25a.75.75 0 000 1.5v16.5h-.75a.75.75 0 000 1.5H15v-18a.75.75 0 000-1.5H3zM6.75 19.5v-2.25a.75.75 0 01.75-.75h3a.75.75 0 01.75.75v2.25a.75.75 0 01-.75.75h-3a.75.75 0 01-.75-.75zM6 6.75A.75.75 0 016.75 6h.75a.75.75 0 010 1.5h-.75A.75.75 0 016 6.75zM6.75 9a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75zM6 12.75a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM10.5 6a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75zm-.75 3.75A.75.75 0 0110.5 9h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM10.5 12a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75zM16.5 6.75v15h5.25a.75.75 0 000-1.5H21v-12a.75.75 0 000-1.5h-4.5zm1.5 4.5a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75h-.008a.75.75 0 01-.75-.75v-.008zm.75 2.25a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75v-.008a.75.75 0 00-.75-.75h-.008zM18 17.25a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75h-.008a.75.75 0 01-.75-.75v-.008z" clip-rule="evenodd" />
+              </svg>
+              Vizitatori din România - pe Orașe
+            </h3>
+            <span class="table-count"><%= @visitors_by_city_romania.count %> orașe</span>
+          </div>
+          <div class="table-card-body">
+            <table class="analytics-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Oraș</th>
+                  <th>Vizitatori</th>
+                  <th>Procent</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% total_city_visits = @visitors_by_city_romania.values.sum %>
+                <% @visitors_by_city_romania.each_with_index do |(city, count), index| %>
+                  <tr>
+                    <td><span class="table-rank">#<%= index + 1 %></span></td>
+                    <td class="table-text-wrap"><strong><%= city %></strong></td>
+                    <td><strong><%= number_with_delimiter(count) %></strong></td>
+                    <td><span class="table-percentage"><%= ((count.to_f / total_city_visits) * 100).round(2) %>%</span></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
     </div>
 
     <!-- Click Analytics Section -->

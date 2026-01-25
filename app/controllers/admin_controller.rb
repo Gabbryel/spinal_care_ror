@@ -112,7 +112,30 @@ class AdminController < ApplicationController
       { date: date.strftime('%d %b'), count: daily_data[date] || 0 }
     end.reverse
     
-    # Geographic Distribution (LIMIT 10)
+    # Geographic Distribution - Countries (LIMIT 15)
+    @visitors_by_country = public_visits.where.not(country: [nil, ''])
+                                        .group(:country)
+                                        .order('count_all DESC')
+                                        .limit(15)
+                                        .count
+    
+    # Geographic Distribution - Romania by Region/County (LIMIT 20)
+    @visitors_by_county = public_visits.where(country: ['Romania', 'RO'])
+                                       .where.not(region: [nil, ''])
+                                       .group(:region)
+                                       .order('count_all DESC')
+                                       .limit(20)
+                                       .count
+    
+    # Geographic Distribution - Romania by City (LIMIT 20)
+    @visitors_by_city_romania = public_visits.where(country: ['Romania', 'RO'])
+                                             .where.not(city: [nil, ''])
+                                             .group(:city)
+                                             .order('count_all DESC')
+                                             .limit(20)
+                                             .count
+    
+    # Geographic Distribution - All Cities (Legacy, LIMIT 10)
     @geographic_data = public_visits.where.not(city: [nil, ''])
                                    .group(:city)
                                    .order('count_all DESC')
