@@ -1,0 +1,945 @@
+<% if access %>
+  <div class="analytics-dashboard-v2" data-controller="analytics-charts analytics-period-filter">
+    
+    <!-- ========== HEADER ========== -->
+    <div class="analytics-header-v2">
+      <div class="header-left">
+        <h1 class="page-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="title-icon">
+            <path fill-rule="evenodd" d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z" clip-rule="evenodd" />
+            <path fill-rule="evenodd" d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z" clip-rule="evenodd" />
+          </svg>
+          Analytics Dashboard
+        </h1>
+        <p class="page-subtitle">Business Intelligence în timp real</p>
+      </div>
+      <div class="header-right">
+        <div class="realtime-badge">
+          <span class="pulse-dot"></span>
+          <strong><%= @realtime_visitors %></strong> vizitatori acum
+        </div>
+        <%= link_to dashboard_path, class: 'btn-back' do %>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Dashboard
+        <% end %>
+      </div>
+    </div>
+
+    <!-- ========== PERIOD FILTER ========== -->
+    <div class="period-filter-v2">
+      <%= form_with url: dashboard_analytics_path, method: :get, class: 'period-form', data: { analytics_period_filter_target: 'form', action: 'change->analytics-period-filter#handlePeriodChange' } do |f| %>
+        <div class="filter-controls">
+          <label class="filter-label">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+            </svg>
+            Perioadă:
+          </label>
+          <%= f.select :period, 
+            options_for_select([
+              ['Ultimele 7 zile', '7'],
+              ['Ultimele 30 zile', '30'],
+              ['Ultimele 90 zile', '90'],
+              ['Ultimele 6 luni', '180'],
+              ['Ultimul an', '365'],
+              ['Tot timpul', 'all'],
+              ['Personalizat', 'custom']
+            ], @period),
+            {},
+            { 
+              class: 'period-select',
+              data: { 
+                analytics_period_filter_target: 'periodSelect',
+                action: 'change->analytics-period-filter#toggleCustomDates'
+              }
+            } 
+          %>
+
+          <div class="custom-dates <%= @period == 'custom' ? '' : 'hidden' %>" data-analytics-period-filter-target="customDates">
+            <%= f.date_field :custom_start_date, value: @custom_start_date, class: 'date-input', placeholder: 'De la' %>
+            <%= f.date_field :custom_end_date, value: @custom_end_date, class: 'date-input', placeholder: 'Până la' %>
+            <%= f.submit 'Aplică', class: 'btn-apply' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- ========== HERO KPI DASHBOARD ========== -->
+    <section class="kpi-hero-section">
+      <div class="kpi-grid">
+        
+        <!-- Total Visits -->
+        <div class="kpi-card kpi-card--visits">
+          <div class="kpi-header">
+            <div class="kpi-icon kpi-icon--visits">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM3.087 17.87a.563.563 0 01.563-.563h6a.563.563 0 01.563.563 6.94 6.94 0 01-7.126 0z"/>
+              </svg>
+            </div>
+            <span class="kpi-label">Total Vizite</span>
+          </div>
+          <div class="kpi-value"><%= number_with_delimiter(@total_visits) %></div>
+          <div class="kpi-comparison <%= @total_visits_change_pct >= 0 ? 'positive' : 'negative' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="trend-icon">
+              <% if @total_visits_change_pct >= 0 %>
+                <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+              <% else %>
+                <path fill-rule="evenodd" d="M10 3a.75.75 0 01.75.75v10.638l3.96-4.158a.75.75 0 111.08 1.04l-5.25 5.5a.75.75 0 01-1.08 0l-5.25-5.5a.75.75 0 111.08-1.04l3.96 4.158V3.75A.75.75 0 0110 3z" clip-rule="evenodd" />
+              <% end %>
+            </svg>
+            <%= @total_visits_change_pct >= 0 ? '+' : '' %><%= @total_visits_change_pct %>%
+            <span class="comparison-text">vs. perioada anterioară</span>
+          </div>
+        </div>
+
+        <!-- Unique Visitors -->
+        <div class="kpi-card kpi-card--unique">
+          <div class="kpi-header">
+            <div class="kpi-icon kpi-icon--unique">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <span class="kpi-label">Vizitatori Unici</span>
+          </div>
+          <div class="kpi-value"><%= number_with_delimiter(@unique_visitors) %></div>
+          <div class="kpi-comparison <%= @unique_visitors_change_pct >= 0 ? 'positive' : 'negative' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="trend-icon">
+              <% if @unique_visitors_change_pct >= 0 %>
+                <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+              <% else %>
+                <path fill-rule="evenodd" d="M10 3a.75.75 0 01.75.75v10.638l3.96-4.158a.75.75 0 111.08 1.04l-5.25 5.5a.75.75 0 01-1.08 0l-5.25-5.5a.75.75 0 111.08-1.04l3.96 4.158V3.75A.75.75 0 0110 3z" clip-rule="evenodd" />
+              <% end %>
+            </svg>
+            <%= @unique_visitors_change_pct >= 0 ? '+' : '' %><%= @unique_visitors_change_pct %>%
+            <span class="comparison-text">vs. perioada anterioară</span>
+          </div>
+        </div>
+
+        <!-- Pages per Visit -->
+        <div class="kpi-card kpi-card--pages">
+          <div class="kpi-header">
+            <div class="kpi-icon kpi-icon--pages">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .707A8.237 8.237 0 016 18.75c1.995 0 3.823.707 5.25 1.886V4.533zM12.75 20.636A8.214 8.214 0 0118 18.75c.966 0 1.89.166 2.75.47a.75.75 0 001-.708V4.262a.75.75 0 00-.5-.707A9.735 9.735 0 0018 3a9.707 9.707 0 00-5.25 1.533v16.103z" />
+              </svg>
+            </div>
+            <span class="kpi-label">Pagini / Vizită</span>
+          </div>
+          <div class="kpi-value"><%= @pages_per_visit %></div>
+          <div class="kpi-comparison <%= @pages_per_visit_change_pct >= 0 ? 'positive' : 'negative' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="trend-icon">
+              <% if @pages_per_visit_change_pct >= 0 %>
+                <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+              <% else %>
+                <path fill-rule="evenodd" d="M10 3a.75.75 0 01.75.75v10.638l3.96-4.158a.75.75 0 111.08 1.04l-5.25 5.5a.75.75 0 01-1.08 0l-5.25-5.5a.75.75 0 111.08-1.04l3.96 4.158V3.75A.75.75 0 0110 3z" clip-rule="evenodd" />
+              <% end %>
+            </svg>
+            <%= @pages_per_visit_change_pct >= 0 ? '+' : '' %><%= @pages_per_visit_change_pct %>%
+            <span class="comparison-text">vs. perioada anterioară</span>
+          </div>
+        </div>
+
+        <!-- Bounce Rate -->
+        <div class="kpi-card kpi-card--bounce <%= @bounce_rate < 40 ? 'status-good' : @bounce_rate < 60 ? 'status-warning' : 'status-bad' %>">
+          <div class="kpi-header">
+            <div class="kpi-icon kpi-icon--bounce">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-2.625 6c-.54 0-.828.419-.936.634a1.96 1.96 0 00-.189.866c0 .298.059.605.189.866.108.215.395.634.936.634.54 0 .828-.419.936-.634.13-.26.189-.568.189-.866 0-.298-.059-.605-.189-.866-.108-.215-.395-.634-.936-.634zm4.314.634c.108-.215.395-.634.936-.634.54 0 .828.419.936.634.13.26.189.568.189.866 0 .298-.059.605-.189.866-.108.215-.395.634-.936.634-.54 0-.828-.419-.936-.634a1.96 1.96 0 01-.189-.866c0-.298.059-.605.189-.866zm-4.34 7.964a.75.75 0 01-1.061-1.06 5.236 5.236 0 003.73-1.538 5.236 5.236 0 003.695 1.538.75.75 0 100-1.5 3.736 3.736 0 01-2.639-1.098.75.75 0 00-1.061 0 3.736 3.736 0 01-2.664 1.098z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <span class="kpi-label">Bounce Rate</span>
+          </div>
+          <div class="kpi-value"><%= @bounce_rate %>%</div>
+          <div class="kpi-comparison <%= @bounce_rate_change_pct <= 0 ? 'positive' : 'negative' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="trend-icon">
+              <% if @bounce_rate_change_pct <= 0 %>
+                <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+              <% else %>
+                <path fill-rule="evenodd" d="M10 3a.75.75 0 01.75.75v10.638l3.96-4.158a.75.75 0 111.08 1.04l-5.25 5.5a.75.75 0 01-1.08 0l-5.25-5.5a.75.75 0 111.08-1.04l3.96 4.158V3.75A.75.75 0 0110 3z" clip-rule="evenodd" />
+              <% end %>
+            </svg>
+            <%= @bounce_rate_change_pct >= 0 ? '+' : '' %><%= @bounce_rate_change_pct %>%
+            <span class="comparison-text">vs. perioada anterioară</span>
+          </div>
+          <div class="status-indicator">
+            <% if @bounce_rate < 40 %>
+              <span class="badge badge-success">Excelent</span>
+            <% elsif @bounce_rate < 60 %>
+              <span class="badge badge-warning">Acceptabil</span>
+            <% else %>
+              <span class="badge badge-danger">Necesită îmbunătățire</span>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Avg Session Duration -->
+        <div class="kpi-card kpi-card--duration">
+          <div class="kpi-header">
+            <div class="kpi-icon kpi-icon--duration">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <span class="kpi-label">Durată Medie Sesiune</span>
+          </div>
+          <div class="kpi-value"><%= @avg_session_duration %> <span class="kpi-unit">min</span></div>
+          <div class="kpi-comparison <%= @avg_session_duration_change_pct >= 0 ? 'positive' : 'negative' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="trend-icon">
+              <% if @avg_session_duration_change_pct >= 0 %>
+                <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+              <% else %>
+                <path fill-rule="evenodd" d="M10 3a.75.75 0 01.75.75v10.638l3.96-4.158a.75.75 0 111.08 1.04l-5.25 5.5a.75.75 0 01-1.08 0l-5.25-5.5a.75.75 0 111.08-1.04l3.96 4.158V3.75A.75.75 0 0110 3z" clip-rule="evenodd" />
+              <% end %>
+            </svg>
+            <%= @avg_session_duration_change_pct >= 0 ? '+' : '' %><%= @avg_session_duration_change_pct %>%
+            <span class="comparison-text">vs. perioada anterioară</span>
+          </div>
+        </div>
+
+        <!-- New vs Returning -->
+        <div class="kpi-card kpi-card--audience">
+          <div class="kpi-header">
+            <div class="kpi-icon kpi-icon--audience">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clip-rule="evenodd" />
+                <path d="M5.082 14.254a8.287 8.287 0 00-1.308 5.135 9.687 9.687 0 01-1.764-.44l-.115-.04a.563.563 0 01-.373-.487l-.01-.121a3.75 3.75 0 013.57-4.047zM20.226 19.389a8.287 8.287 0 00-1.308-5.135 3.75 3.75 0 013.57 4.047l-.01.121a.563.563 0 01-.373.486l-.115.04c-.567.2-1.156.349-1.764.441z" />
+              </svg>
+            </div>
+            <span class="kpi-label">Compoziție Audiență</span>
+          </div>
+          <div class="audience-stats">
+            <div class="audience-stat">
+              <span class="audience-label">Noi</span>
+              <span class="audience-value"><%= number_with_delimiter(@new_visitors) %></span>
+              <span class="audience-percent"><%= (@unique_visitors > 0 ? (@new_visitors.to_f / @unique_visitors * 100).round(1) : 0) %>%</span>
+            </div>
+            <div class="audience-divider"></div>
+            <div class="audience-stat">
+              <span class="audience-label">Recurenți</span>
+              <span class="audience-value"><%= number_with_delimiter(@returning_visitors) %></span>
+              <span class="audience-percent"><%= (@unique_visitors > 0 ? (@returning_visitors.to_f / @unique_visitors * 100).round(1) : 0) %>%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========== TIME-BASED PERFORMANCE ========== -->
+    <section class="section-time-based">
+      <div class="section-header">
+        <h2 class="section-title">Performanță în Timp</h2>
+        <div class="section-stats">
+          <div class="stat-pill">
+            <span class="stat-label">Astăzi:</span>
+            <strong><%= number_with_delimiter(@visits_today) %></strong> vizite
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">Săptămâna:</span>
+            <strong><%= number_with_delimiter(@visits_this_week) %></strong> vizite
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">Luna:</span>
+            <strong><%= number_with_delimiter(@visits_this_month) %></strong> vizite
+          </div>
+          <% if @weekly_growth != 0 %>
+            <div class="stat-pill stat-pill--<%= @weekly_growth >= 0 ? 'positive' : 'negative' %>">
+              <span class="stat-label">Creștere săptămânală:</span>
+              <strong><%= @weekly_growth >= 0 ? '+' : '' %><%= @weekly_growth %>%</strong>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <!-- Daily Visits Chart -->
+        <div class="chart-card chart-card--large">
+          <div class="chart-header">
+            <h3 class="chart-title">Vizite Zilnice</h3>
+            <span class="chart-info"><%= @daily_visits.size %> zile</span>
+          </div>
+          <div class="chart-body">
+            <canvas id="dailyVisitsChart" data-analytics-charts-target="dailyChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Hourly Distribution Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">Distribuție Orară</h3>
+            <span class="chart-info">24 ore</span>
+          </div>
+          <div class="chart-body">
+            <canvas id="hourlyVisitsChart" data-analytics-charts-target="hourlyChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <!-- Day of Week Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">Performanță pe Zi</h3>
+            <span class="chart-info">Săptămânal</span>
+          </div>
+          <div class="chart-body">
+            <canvas id="dowChart" data-analytics-charts-target="dowChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="chart-card chart-card--large">
+          <div class="chart-header">
+            <h3 class="chart-title">Heatmap Trafic</h3>
+            <span class="chart-info">Ultimele 7 zile × 24 ore</span>
+          </div>
+          <div class="chart-body">
+            <div class="heatmap-container">
+              <table class="heatmap-table">
+                <thead>
+                  <tr>
+                    <th>Zi</th>
+                    <% (0..23).each do |hour| %>
+                      <th class="heatmap-hour"><%= hour %></th>
+                    <% end %>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @heatmap_data.each do |day_data| %>
+                    <tr>
+                      <td class="heatmap-day-label"><%= day_data[:date] %></td>
+                      <% day_data[:hours].each do |count| %>
+                        <% intensity = count > 0 ? [(count.to_f / @heatmap_data.flat_map { |d| d[:hours] }.max * 100).round : 0] : 0 %>
+                        <td class="heatmap-cell" 
+                            data-count="<%= count %>" 
+                            style="background-color: <%= count > 0 ? "rgba(59, 130, 246, #{intensity / 100.0})" : '#f3f4f6' %>">
+                          <%= count if count > 0 %>
+                        </td>
+                      <% end %>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- To be continued with remaining sections... -->
+    <div class="development-notice">
+      <strong>🚧 Analytics Dashboard v2 în development</strong>
+      <p>Secțiunile rămase (Traffic Sources, Medical Services, Geographic, etc.) vor fi adăugate în continuare...</p>
+      <p class="text-muted">Pentru moment, continuă să folosești secțiunile din vechiul view mai jos.</p>
+    </div>
+
+    <!-- Include old analytics sections below for now -->
+    <%= render partial: 'admin/analytics_legacy_sections' rescue nil %>
+
+  </div>
+
+  <style>
+    /* ========== V2 STYLES ========== */
+    .analytics-dashboard-v2 {
+      padding: 2rem;
+      background: #f9fafb;
+      min-height: 100vh;
+    }
+
+    .analytics-header-v2 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0;
+    }
+
+    .title-icon {
+      width: 2rem;
+      height: 2rem;
+      color: #3b82f6;
+    }
+
+    .page-subtitle {
+      color: #6b7280;
+      margin: 0.25rem 0 0 0;
+      font-size: 0.875rem;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .realtime-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #dbeafe;
+      border-radius: 999px;
+      color: #1e40af;
+      font-size: 0.875rem;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .btn-back {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #f3f4f6;
+      color: #374151;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .btn-back:hover {
+      background: #e5e7eb;
+    }
+
+    .btn-back svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    /* Period Filter */
+    .period-filter-v2 {
+      background: white;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .filter-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .filter-label svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      color: #6b7280;
+    }
+
+    .period-select, .date-input {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+
+    .custom-dates {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .custom-dates.hidden {
+      display: none;
+    }
+
+    .btn-apply {
+      padding: 0.5rem 1.5rem;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn-apply:hover {
+      background: #2563eb;
+    }
+
+    /* KPI Hero Section */
+    .kpi-hero-section {
+      margin-bottom: 2rem;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .kpi-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-left: 4px solid #3b82f6;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .kpi-card--visits { border-left-color: #3b82f6; }
+    .kpi-card--unique { border-left-color: #8b5cf6; }
+    .kpi-card--pages { border-left-color: #10b981; }
+    .kpi-card--bounce { border-left-color: #f59e0b; }
+    .kpi-card--duration { border-left-color: #ec4899; }
+    .kpi-card--audience { border-left-color: #6366f1; }
+
+    .kpi-card.status-good { border-left-color: #10b981; }
+    .kpi-card.status-warning { border-left-color: #f59e0b; }
+    .kpi-card.status-bad { border-left-color: #ef4444; }
+
+    .kpi-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .kpi-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: #eff6ff;
+    }
+
+    .kpi-icon svg {
+      width: 1.5rem;
+      height: 1.5rem;
+      color: #3b82f6;
+    }
+
+    .kpi-icon--visits svg { color: #3b82f6; }
+    .kpi-icon--unique svg { color: #8b5cf6; }
+    .kpi-icon--pages svg { color: #10b981; }
+    .kpi-icon--bounce svg { color: #f59e0b; }
+    .kpi-icon--duration svg { color: #ec4899; }
+    .kpi-icon--audience svg { color: #6366f1; }
+
+    .kpi-label {
+      font-size: 0.875rem;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .kpi-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-unit {
+      font-size: 1rem;
+      color: #6b7280;
+      font-weight: 400;
+    }
+
+    .kpi-comparison {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .kpi-comparison.positive {
+      color: #10b981;
+    }
+
+    .kpi-comparison.negative {
+      color: #ef4444;
+    }
+
+    .trend-icon {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .comparison-text {
+      color: #9ca3af;
+      font-weight: 400;
+      font-size: 0.75rem;
+    }
+
+    .status-indicator {
+      margin-top: 0.75rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-warning {
+      background: #fed7aa;
+      color: #92400e;
+    }
+
+    .badge-danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .audience-stats {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .audience-stat {
+      flex: 1;
+      text-align: center;
+    }
+
+    .audience-label {
+      display: block;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-bottom: 0.25rem;
+    }
+
+    .audience-value {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .audience-percent {
+      display: block;
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-top: 0.25rem;
+    }
+
+    .audience-divider {
+      width: 1px;
+      height: 3rem;
+      background: #e5e7eb;
+    }
+
+    /* Time-Based Section */
+    .section-time-based {
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #111827;
+      margin: 0;
+    }
+
+    .section-stats {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      padding: 0.5rem 1rem;
+      background: white;
+      border-radius: 999px;
+      font-size: 0.875rem;
+      color: #6b7280;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .stat-pill strong {
+      color: #111827;
+    }
+
+    .stat-pill--positive {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .stat-pill--positive strong {
+      color: #065f46;
+    }
+
+    .stat-pill--negative {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .stat-pill--negative strong {
+      color: #991b1b;
+    }
+
+    .charts-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .chart-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .chart-card--large {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 1200px) {
+      .chart-card--large {
+        grid-column: span 1;
+      }
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .chart-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #111827;
+      margin: 0;
+    }
+
+    .chart-info {
+      font-size: 0.875rem;
+      color: #9ca3af;
+    }
+
+    .chart-body {
+      min-height: 250px;
+    }
+
+    /* Heatmap */
+    .heatmap-container {
+      overflow-x: auto;
+    }
+
+    .heatmap-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 2px;
+      font-size: 0.75rem;
+    }
+
+    .heatmap-table th,
+    .heatmap-table td {
+      padding: 0.5rem;
+      text-align: center;
+      border-radius: 4px;
+    }
+
+    .heatmap-table th {
+      background: #f3f4f6;
+      color: #6b7280;
+      font-weight: 600;
+    }
+
+    .heatmap-hour {
+      min-width: 30px;
+      font-size: 0.625rem;
+    }
+
+    .heatmap-day-label {
+      background: #f9fafb;
+      font-weight: 600;
+      color: #374151;
+      white-space: nowrap;
+    }
+
+    .heatmap-cell {
+      min-width: 30px;
+      height: 30px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      color: white;
+      font-weight: 600;
+      font-size: 0.625rem;
+    }
+
+    .heatmap-cell:hover {
+      transform: scale(1.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    /* Development Notice */
+    .development-notice {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 2rem 0;
+    }
+
+    .development-notice strong {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #92400e;
+    }
+
+    .development-notice p {
+      margin: 0.25rem 0;
+      color: #78350f;
+    }
+
+    .text-muted {
+      opacity: 0.7;
+      font-size: 0.875rem;
+    }
+  </style>
+
+  <script>
+    // Initialize Chart.js charts when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      // Daily Visits Chart
+      const dailyCtx = document.getElementById('dailyVisitsChart');
+      if (dailyCtx) {
+        new Chart(dailyCtx, {
+          type: 'line',
+          data: {
+            labels: <%= raw @daily_visits.map { |d| d[:date] }.to_json %>,
+            datasets: [{
+              label: 'Vizite',
+              data: <%= raw @daily_visits.map { |d| d[:count] }.to_json %>,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        });
+      }
+
+      // Hourly Visits Chart
+      const hourlyCtx = document.getElementById('hourlyVisitsChart');
+      if (hourlyCtx) {
+        new Chart(hourlyCtx, {
+          type: 'bar',
+          data: {
+            labels: <%= raw @hourly_visits.map { |h| h[:hour] }.to_json %>,
+            datasets: [{
+              label: 'Vizite',
+              data: <%= raw @hourly_visits.map { |h| h[:count] }.to_json %>,
+              backgroundColor: '#8b5cf6'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        });
+      }
+
+      // Day of Week Chart
+      const dowCtx = document.getElementById('dowChart');
+      if (dowCtx) {
+        new Chart(dowCtx, {
+          type: 'bar',
+          data: {
+            labels: <%= raw @visits_by_day_of_week.map { |d| d[:day] }.to_json %>,
+            datasets: [{
+              label: 'Vizite',
+              data: <%= raw @visits_by_day_of_week.map { |d| d[:count] }.to_json %>,
+              backgroundColor: '#10b981'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        });
+      }
+    });
+  </script>
+
+<% else %>
+  <%= render 'admin/no_access' %>
+<% end %>

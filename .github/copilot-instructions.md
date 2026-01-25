@@ -144,3 +144,4 @@ Procfile processes:
 - Generate a todo list.
 - Ask if clarification is needed before proceeding.
 - Always commit to github after completing a task & testing it & asking me if i'm satisfied, my answer with "Yes" must be always expected.
+- Generate  a .md file with a prompt and instruction and the output and the result of any task that implies adding a new feature or redesigning a page.

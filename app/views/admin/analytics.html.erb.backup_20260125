@@ -1,0 +1,915 @@
+<% if access %>
+  <div class="analytics-page-enhanced" data-controller="analytics-charts analytics-period-filter">
+    <div class="analytics-header">
+      <div class="header-content">
+        <h1>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z" clip-rule="evenodd" />
+            <path fill-rule="evenodd" d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z" clip-rule="evenodd" />
+          </svg>
+          Analytics Avansat
+        </h1>
+        <p class="analytics-subtitle">Rapoarte detaliate cu grafice interactive și metrici în timp real</p>
+      </div>
+      <div class="header-actions">
+        <%= link_to dashboard_path, class: 'back-btn' do %>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Înapoi la Dashboard
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Period Filter -->
+    <div class="period-filter-container">
+      <%= form_with url: dashboard_analytics_path, method: :get, class: 'period-filter-form', data: { analytics_period_filter_target: 'form', action: 'change->analytics-period-filter#handlePeriodChange' } do |f| %>
+        <div class="filter-group">
+          <label for="period-select">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+            </svg>
+            Perioadă:
+          </label>
+          <%= f.select :period, 
+            options_for_select([
+              ['Ultimele 7 zile', '7'],
+              ['Ultimele 30 zile', '30'],
+              ['Ultimele 90 zile', '90'],
+              ['Ultimele 6 luni', '180'],
+              ['Ultimul an', '365'],
+              ['Tot timpul', 'all'],
+              ['Personalizat', 'custom']
+            ], @period),
+            {},
+            { 
+              id: 'period-select',
+              class: 'period-select',
+              data: { 
+                analytics_period_filter_target: 'periodSelect',
+                action: 'change->analytics-period-filter#toggleCustomDates'
+              }
+            } 
+          %>
+        </div>
+
+        <div class="custom-dates-group <%= @period == 'custom' ? '' : 'hidden' %>" data-analytics-period-filter-target="customDates">
+          <div class="date-input-wrapper">
+            <label for="custom_start_date">De la:</label>
+            <%= f.date_field :custom_start_date, 
+              value: @custom_start_date,
+              class: 'date-input',
+              id: 'custom_start_date' 
+            %>
+          </div>
+          <div class="date-input-wrapper">
+            <label for="custom_end_date">Până la:</label>
+            <%= f.date_field :custom_end_date, 
+              value: @custom_end_date,
+              class: 'date-input',
+              id: 'custom_end_date' 
+            %>
+          </div>
+          <%= f.submit 'Aplică', class: 'apply-btn' %>
+        </div>
+      <% end %>
+      
+      <div class="period-info">
+        <% if @period == 'custom' && @custom_start_date.present? && @custom_end_date.present? %>
+          Afișare date: <%= Date.parse(@custom_start_date).strftime('%d.%m.%Y') %> - <%= Date.parse(@custom_end_date).strftime('%d.%m.%Y') %>
+        <% else %>
+          <%= case @period
+              when '7' then 'Ultimele 7 zile'
+              when '30' then 'Ultimele 30 zile'
+              when '90' then 'Ultimele 90 zile'
+              when '180' then 'Ultimele 6 luni'
+              when '365' then 'Ultimul an'
+              when 'all' then 'Tot timpul'
+              else 'Ultimele 30 zile'
+              end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Key Metrics Overview -->
+    <div class="analytics-metrics-grid">
+      <div class="metric-card metric-card--primary">
+        <div class="metric-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM3.087 17.87a.563.563 0 01.563-.563h6a.563.563 0 01.563.563 6.94 6.94 0 01-7.126 0z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value"><%= number_with_delimiter(@total_visits_this_month) %></div>
+          <div class="metric-label">Vizite (Luna aceasta)</div>
+          <div class="metric-trend <%= @weekly_growth >= 0 ? 'metric-trend--up' : 'metric-trend--down' %>">
+            <%= @weekly_growth > 0 ? '+' : '' %><%= @weekly_growth %>% față de săptămâna trecută
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card metric-card--success">
+        <div class="metric-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value"><%= number_with_delimiter(@unique_visitors_this_month) %></div>
+          <div class="metric-label">Vizitatori unici</div>
+          <div class="metric-sub">Noi: <%= @new_visitors %> | Recurenți: <%= @returning_visitors %></div>
+        </div>
+      </div>
+
+      <div class="metric-card metric-card--warning">
+        <div class="metric-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.625 16.5a1.875 1.875 0 100-3.75 1.875 1.875 0 000 3.75z" />
+            <path fill-rule="evenodd" d="M5.625 1.5H9a3.75 3.75 0 013.75 3.75v1.875c0 1.036.84 1.875 1.875 1.875H16.5a3.75 3.75 0 013.75 3.75v7.875c0 1.035-.84 1.875-1.875 1.875H5.625a1.875 1.875 0 01-1.875-1.875V3.375c0-1.036.84-1.875 1.875-1.875z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value"><%= @pages_per_visit %></div>
+          <div class="metric-label">Pagini / Vizită</div>
+          <div class="metric-sub">Durată medie: <%= @avg_visit_duration.round(1) %> min</div>
+        </div>
+      </div>
+
+      <div class="metric-card metric-card--info">
+        <div class="metric-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5.507 4.048A3 3 0 017.785 3h8.43a3 3 0 012.278 1.048l1.722 2.008A4.533 4.533 0 0019.5 6h-15c-.243 0-.482.02-.715.056l1.722-2.008z" />
+            <path fill-rule="evenodd" d="M1.5 10.5a3 3 0 013-3h15a3 3 0 110 6h-15a3 3 0 01-3-3zm15 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm2.25.75a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value"><%= @bounce_rate %>%</div>
+          <div class="metric-label">Bounce Rate</div>
+          <div class="metric-sub">Vizite cu o singură pagină</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid">
+      <!-- Daily Visits Trend -->
+      <div class="chart-card chart-card--full">
+        <div class="chart-card-header">
+          <h3>Trafic Zilnic (Ultimele 30 zile)</h3>
+          <div class="chart-card-meta">
+            <span class="chart-meta-item">
+              <span class="chart-meta-dot chart-meta-dot--primary"></span>
+              Vizite: <%= @total_visits_this_month %>
+            </span>
+          </div>
+        </div>
+        <div class="chart-card-body">
+          <canvas 
+            data-analytics-charts-target="visitsChart"
+            data-chart-data='{"labels": <%= raw @daily_visits.map { |d| d[:date] }.to_json %>, "visits": <%= raw @daily_visits.map { |d| d[:count] }.to_json %>}'
+          ></canvas>
+        </div>
+      </div>
+
+      <!-- Most Viewed Pages -->
+      <div class="chart-card chart-card--half">
+        <div class="chart-card-header">
+          <h3>Cele Mai Vizualizate Pagini</h3>
+          <div class="chart-card-meta">Total: <%= @most_viewed_pages.values.sum %> vizualizări</div>
+        </div>
+        <div class="chart-card-body">
+          <canvas 
+            data-analytics-charts-target="pagesChart"
+            data-chart-data='{"labels": <%= raw @most_viewed_pages.keys.first(10).to_json %>, "views": <%= raw @most_viewed_pages.values.first(10).to_json %>}'
+          ></canvas>
+        </div>
+      </div>
+
+      <!-- Traffic Sources -->
+      <div class="chart-card chart-card--half">
+        <div class="chart-card-header">
+          <h3>Surse de Trafic</h3>
+          <div class="chart-card-meta">Distribuție pe canale</div>
+        </div>
+        <div class="chart-card-body">
+          <canvas 
+            data-analytics-charts-target="sourcesChart"
+            data-chart-data='{"labels": <%= raw @traffic_by_source.keys.to_json %>, "values": <%= raw @traffic_by_source.values.to_json %>}'
+          ></canvas>
+        </div>
+      </div>
+
+      <!-- Device Distribution -->
+      <div class="chart-card chart-card--third">
+        <div class="chart-card-header">
+          <h3>Tipuri Dispozitive</h3>
+        </div>
+        <div class="chart-card-body">
+          <canvas 
+            data-analytics-charts-target="devicesChart"
+            data-chart-data='{"labels": <%= raw @device_types.keys.to_json %>, "values": <%= raw @device_types.values.to_json %>}'
+          ></canvas>
+        </div>
+      </div>
+
+      <!-- Browser Statistics -->
+      <div class="chart-card chart-card--third">
+        <div class="chart-card-header">
+          <h3>Browsere</h3>
+        </div>
+        <div class="chart-card-body">
+          <canvas 
+            data-analytics-charts-target="browsersChart"
+            data-chart-data='{"labels": <%= raw @browsers.keys.to_json %>, "values": <%= raw @browsers.values.to_json %>}'
+          ></canvas>
+        </div>
+      </div>
+
+      <!-- Operating Systems -->
+      <div class="chart-card chart-card--third">
+        <div class="chart-card-header">
+          <h3>Sisteme de Operare</h3>
+        </div>
+        <div class="chart-card-body">
+          <canvas 
+            data-analytics-charts-target="osChart"
+            data-chart-data='{"labels": <%= raw @operating_systems.keys.to_json %>, "values": <%= raw @operating_systems.values.to_json %>}'
+          ></canvas>
+        </div>
+      </div>
+
+      <!-- Hourly Distribution -->
+      <div class="chart-card chart-card--half">
+        <div class="chart-card-header">
+          <h3>Distribuție pe Ore (Ultimele 7 zile)</h3>
+          <div class="chart-card-meta">Ore de vârf identificate</div>
+        </div>
+        <div class="chart-card-body">
+          <canvas 
+            data-analytics-charts-target="hourlyChart"
+            data-chart-data='{"labels": <%= raw @hourly_visits.map { |h| h[:hour] }.to_json %>, "values": <%= raw @hourly_visits.map { |h| h[:count] }.to_json %>}'
+          ></canvas>
+        </div>
+      </div>
+
+      <!-- Geographic Distribution -->
+      <% if @geographic_data.any? %>
+        <div class="chart-card chart-card--half">
+          <div class="chart-card-header">
+            <h3>Distribuție Geografică - Toate orașele</h3>
+            <div class="chart-card-meta">Top <%= @geographic_data.size %> orașe</div>
+          </div>
+          <div class="chart-card-body">
+            <canvas 
+              data-analytics-charts-target="geographicChart"
+              data-chart-data='{"labels": <%= raw @geographic_data.keys.to_json %>, "values": <%= raw @geographic_data.values.to_json %>}'
+            ></canvas>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Visitors by Country -->
+      <% if @visitors_by_country.any? %>
+        <div class="chart-card chart-card--half">
+          <div class="chart-card-header">
+            <h3>Vizitatori pe Țări</h3>
+            <div class="chart-card-meta">Top <%= @visitors_by_country.size %> țări</div>
+          </div>
+          <div class="chart-card-body">
+            <canvas 
+              data-analytics-charts-target="countryChart"
+              data-chart-data='{"labels": <%= raw @visitors_by_country.keys.to_json %>, "values": <%= raw @visitors_by_country.values.to_json %>}'
+            ></canvas>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Visitors by County (Romania) -->
+      <% if @visitors_by_county.any? %>
+        <div class="chart-card chart-card--half">
+          <div class="chart-card-header">
+            <h3>Vizitatori din România - pe Județe</h3>
+            <div class="chart-card-meta">Top <%= @visitors_by_county.size %> județe</div>
+          </div>
+          <div class="chart-card-body">
+            <canvas 
+              data-analytics-charts-target="countyChart"
+              data-chart-data='{"labels": <%= raw @visitors_by_county.keys.to_json %>, "values": <%= raw @visitors_by_county.values.to_json %>}'
+            ></canvas>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Visitors by City (Romania) -->
+      <% if @visitors_by_city_romania.any? %>
+        <div class="chart-card chart-card--half">
+          <div class="chart-card-header">
+            <h3>Vizitatori din România - pe Orașe</h3>
+            <div class="chart-card-meta">Top <%= @visitors_by_city_romania.size %> orașe</div>
+          </div>
+          <div class="chart-card-body">
+            <canvas 
+              data-analytics-charts-target="cityRomaniaChart"
+              data-chart-data='{"labels": <%= raw @visitors_by_city_romania.keys.to_json %>, "values": <%= raw @visitors_by_city_romania.values.to_json %>}'
+            ></canvas>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Detailed Tables -->
+    <div class="analytics-tables-grid">
+      <!-- Top Referrers Detail with Percentages -->
+      <div class="table-card table-card--scrollable">
+        <div class="table-card-header">
+          <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M19.902 4.098a3.75 3.75 0 00-5.304 0l-4.5 4.5a3.75 3.75 0 001.035 6.037.75.75 0 01-.646 1.353 5.25 5.25 0 01-1.449-8.45l4.5-4.5a5.25 5.25 0 117.424 7.424l-1.757 1.757a.75.75 0 11-1.06-1.06l1.757-1.757a3.75 3.75 0 000-5.304zm-7.389 4.267a.75.75 0 011-.353 5.25 5.25 0 011.449 8.45l-4.5 4.5a5.25 5.25 0 11-7.424-7.424l1.757-1.757a.75.75 0 111.06 1.06l-1.757 1.757a3.75 3.75 0 105.304 5.304l4.5-4.5a3.75 3.75 0 00-1.035-6.037.75.75 0 01-.354-1z" clip-rule="evenodd" />
+            </svg>
+            Toate Sursele de Trafic
+          </h3>
+          <span class="table-count"><%= @top_referrers_with_percentage.count %> surse unice</span>
+        </div>
+        <div class="table-card-body">
+          <table class="analytics-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Domeniu</th>
+                <th>Vizite</th>
+                <th>Procent</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @top_referrers_with_percentage.each_with_index do |(domain, data), index| %>
+                <tr>
+                  <td><span class="table-rank">#<%= index + 1 %></span></td>
+                  <td class="table-text-wrap"><%= domain || 'Direct' %></td>
+                  <td><strong><%= number_with_delimiter(data[:count]) %></strong></td>
+                  <td><span class="table-percentage"><%= data[:percentage] %>%</span></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Top Entry Pages -->
+      <div class="table-card table-card--scrollable">
+        <div class="table-card-header">
+          <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9A.75.75 0 0115 9V5.25a1.5 1.5 0 00-1.5-1.5h-6zM4.72 12.53a.75.75 0 010-1.06l3-3a.75.75 0 011.06 1.06l-1.72 1.72H18a.75.75 0 010 1.5H7.06l1.72 1.72a.75.75 0 11-1.06 1.06l-3-3z" clip-rule="evenodd" />
+            </svg>
+            Toate Paginile de Intrare
+          </h3>
+          <span class="table-count"><%= @top_entry_pages.count %> pagini</span>
+        </div>
+        <div class="table-card-body">
+          <table class="analytics-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Pagină</th>
+                <th>Intrări</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @top_entry_pages.each_with_index do |(page, count), index| %>
+                <tr>
+                  <td><span class="table-rank">#<%= index + 1 %></span></td>
+                  <td class="table-text-wrap"><%= page %></td>
+                  <td><strong><%= number_with_delimiter(count) %></strong></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Top Exit Pages - All -->
+      <div class="table-card table-card--scrollable">
+        <div class="table-card-header">
+          <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9A.75.75 0 0115 9V5.25a1.5 1.5 0 00-1.5-1.5h-6zm10.72 4.72a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9a.75.75 0 010-1.5h10.94l-1.72-1.72a.75.75 0 010-1.06z" clip-rule="evenodd" />
+            </svg>
+            Toate Paginile de Ieșire
+          </h3>
+          <span class="table-count"><%= @top_exit_pages.count %> pagini</span>
+        </div>
+        <div class="table-card-body">
+          <table class="analytics-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Pagină</th>
+                <th>Ieșiri</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @top_exit_pages.each_with_index do |(page, count), index| %>
+                <tr>
+                  <td><span class="table-rank">#<%= index + 1 %></span></td>
+                  <td class="table-text-wrap"><%= page %></td>
+                  <td><strong><%= number_with_delimiter(count) %></strong></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Visitors by Country - Detailed Table -->
+      <% if @visitors_by_country.any? %>
+        <div class="table-card table-card--scrollable">
+          <div class="table-card-header">
+            <h3>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21.721 12.752a9.711 9.711 0 00-.945-5.003 12.754 12.754 0 01-4.339 2.708 18.991 18.991 0 01-.214 4.772 17.165 17.165 0 005.498-2.477zM14.634 15.55a17.324 17.324 0 00.332-4.647c-.952.227-1.945.347-2.966.347-1.021 0-2.014-.12-2.966-.347a17.515 17.515 0 00.332 4.647 17.385 17.385 0 005.268 0zM9.772 17.119a18.963 18.963 0 004.456 0A17.182 17.182 0 0112 21.724a17.18 17.18 0 01-2.228-4.605zM7.777 15.23a18.87 18.87 0 01-.214-4.774 12.753 12.753 0 01-4.34-2.708 9.711 9.711 0 00-.944 5.004 17.165 17.165 0 005.498 2.477zM21.356 14.752a9.765 9.765 0 01-7.478 6.817 18.64 18.64 0 001.988-4.718 18.627 18.627 0 005.49-2.098zM2.644 14.752c1.682.971 3.53 1.688 5.49 2.099a18.64 18.64 0 001.988 4.718 9.765 9.765 0 01-7.478-6.816zM13.878 2.43a9.755 9.755 0 016.116 3.986 11.267 11.267 0 01-3.746 2.504 18.63 18.63 0 00-2.37-6.49zM12 2.276a17.152 17.152 0 012.805 7.121c-.897.23-1.837.353-2.805.353-.968 0-1.908-.122-2.805-.353A17.151 17.151 0 0112 2.276zM10.122 2.43a18.629 18.629 0 00-2.37 6.49 11.266 11.266 0 01-3.746-2.504 9.754 9.754 0 016.116-3.985z" />
+              </svg>
+              Vizitatori pe Țări
+            </h3>
+            <span class="table-count"><%= @visitors_by_country.count %> țări</span>
+          </div>
+          <div class="table-card-body">
+            <table class="analytics-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Țară</th>
+                  <th>Vizitatori</th>
+                  <th>Procent</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% total_country_visits = @visitors_by_country.values.sum %>
+                <% @visitors_by_country.each_with_index do |(country, count), index| %>
+                  <tr>
+                    <td><span class="table-rank">#<%= index + 1 %></span></td>
+                    <td class="table-text-wrap"><strong><%= country %></strong></td>
+                    <td><strong><%= number_with_delimiter(count) %></strong></td>
+                    <td><span class="table-percentage"><%= ((count.to_f / total_country_visits) * 100).round(2) %>%</span></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Visitors by County (Romania) - Detailed Table -->
+      <% if @visitors_by_county.any? %>
+        <div class="table-card table-card--scrollable">
+          <div class="table-card-header">
+            <h3>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+              </svg>
+              Vizitatori din România - pe Județe
+            </h3>
+            <span class="table-count"><%= @visitors_by_county.count %> județe</span>
+          </div>
+          <div class="table-card-body">
+            <table class="analytics-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Județ</th>
+                  <th>Vizitatori</th>
+                  <th>Procent</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% total_county_visits = @visitors_by_county.values.sum %>
+                <% @visitors_by_county.each_with_index do |(county, count), index| %>
+                  <tr>
+                    <td><span class="table-rank">#<%= index + 1 %></span></td>
+                    <td class="table-text-wrap"><strong><%= county %></strong></td>
+                    <td><strong><%= number_with_delimiter(count) %></strong></td>
+                    <td><span class="table-percentage"><%= ((count.to_f / total_county_visits) * 100).round(2) %>%</span></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Visitors by City (Romania) - Detailed Table -->
+      <% if @visitors_by_city_romania.any? %>
+        <div class="table-card table-card--scrollable">
+          <div class="table-card-header">
+            <h3>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M3 2.25a.75.75 0 000 1.5v16.5h-.75a.75.75 0 000 1.5H15v-18a.75.75 0 000-1.5H3zM6.75 19.5v-2.25a.75.75 0 01.75-.75h3a.75.75 0 01.75.75v2.25a.75.75 0 01-.75.75h-3a.75.75 0 01-.75-.75zM6 6.75A.75.75 0 016.75 6h.75a.75.75 0 010 1.5h-.75A.75.75 0 016 6.75zM6.75 9a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75zM6 12.75a.75.75 0 01.75-.75h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM10.5 6a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75zm-.75 3.75A.75.75 0 0110.5 9h.75a.75.75 0 010 1.5h-.75a.75.75 0 01-.75-.75zM10.5 12a.75.75 0 000 1.5h.75a.75.75 0 000-1.5h-.75zM16.5 6.75v15h5.25a.75.75 0 000-1.5H21v-12a.75.75 0 000-1.5h-4.5zm1.5 4.5a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75h-.008a.75.75 0 01-.75-.75v-.008zm.75 2.25a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75v-.008a.75.75 0 00-.75-.75h-.008zM18 17.25a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75h-.008a.75.75 0 01-.75-.75v-.008z" clip-rule="evenodd" />
+              </svg>
+              Vizitatori din România - pe Orașe
+            </h3>
+            <span class="table-count"><%= @visitors_by_city_romania.count %> orașe</span>
+          </div>
+          <div class="table-card-body">
+            <table class="analytics-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Oraș</th>
+                  <th>Vizitatori</th>
+                  <th>Procent</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% total_city_visits = @visitors_by_city_romania.values.sum %>
+                <% @visitors_by_city_romania.each_with_index do |(city, count), index| %>
+                  <tr>
+                    <td><span class="table-rank">#<%= index + 1 %></span></td>
+                    <td class="table-text-wrap"><strong><%= city %></strong></td>
+                    <td><strong><%= number_with_delimiter(count) %></strong></td>
+                    <td><span class="table-percentage"><%= ((count.to_f / total_city_visits) * 100).round(2) %>%</span></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Click Analytics Section -->
+    <div class="click-analytics-section">
+      <h2 class="section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M12 1.5a.75.75 0 01.75.75V4.5a.75.75 0 01-1.5 0V2.25A.75.75 0 0112 1.5zM5.636 4.136a.75.75 0 011.06 0l1.592 1.591a.75.75 0 01-1.061 1.06l-1.591-1.59a.75.75 0 010-1.061zm12.728 0a.75.75 0 010 1.06l-1.591 1.592a.75.75 0 01-1.06-1.061l1.59-1.591a.75.75 0 011.061 0zm-6.816 4.496a.75.75 0 01.82.311l5.228 7.917a.75.75 0 01-.777 1.148l-2.097-.43 1.045 3.9a.75.75 0 01-1.45.388l-1.044-3.899-1.601 1.42a.75.75 0 01-1.247-.606l.569-9.47a.75.75 0 01.554-.68zM3 10.5a.75.75 0 01.75-.75H6a.75.75 0 010 1.5H3.75A.75.75 0 013 10.5zm14.25 0a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H18a.75.75 0 01-.75-.75zm-8.962 3.712a.75.75 0 010 1.061l-1.591 1.591a.75.75 0 11-1.061-1.06l1.591-1.592a.75.75 0 011.06 0z" clip-rule="evenodd" />
+        </svg>
+        Analiza Completă Click-urilor
+      </h2>
+      <div class="section-subtitle"><%= number_with_delimiter(@total_clicks) %> click-uri înregistrate în ultima lună - Toate detaliile disponibile</div>
+    </div>
+
+    <!-- Click Charts Summary -->
+    <div class="charts-grid">
+      <!-- Top Clicked Destinations -->
+      <div class="chart-card chart-card--half">
+        <div class="chart-card-header">
+          <h3>Top Destinații Click-uri</h3>
+          <div class="chart-card-meta"><%= number_with_delimiter(@total_clicks) %> click-uri totale</div>
+        </div>
+        <div class="chart-card-body">
+          <canvas 
+            data-analytics-charts-target="clickDestinationsChart"
+            data-chart-data="<%= {
+              labels: @top_click_destinations.keys.first(10),
+              datasets: [{
+                label: 'Click-uri',
+                data: @top_click_destinations.values.first(10),
+                backgroundColor: 'rgba(168, 85, 247, 0.8)',
+                borderColor: 'rgba(168, 85, 247, 1)',
+                borderWidth: 2
+              }]
+            }.to_json %>">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Top Clicked Elements -->
+      <div class="chart-card chart-card--half">
+        <div class="chart-card-header">
+          <h3>Top Elemente Clicate</h3>
+          <div class="chart-card-meta">Text/Butoane cele mai frecvente</div>
+        </div>
+        <div class="chart-card-body">
+          <canvas 
+            data-analytics-charts-target="clickedElementsChart"
+            data-chart-data="<%= {
+              labels: @top_clicked_elements.keys.first(10).map { |text| text&.truncate(40) || 'Unknown' },
+              datasets: [{
+                label: 'Click-uri',
+                data: @top_clicked_elements.values.first(10),
+                backgroundColor: 'rgba(236, 72, 153, 0.8)',
+                borderColor: 'rgba(236, 72, 153, 1)',
+                borderWidth: 2
+              }]
+            }.to_json %>">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Clicks by Page -->
+      <div class="chart-card chart-card--half">
+        <div class="chart-card-header">
+          <h3>Click-uri pe Pagină</h3>
+          <div class="chart-card-meta">Unde se întâmplă cele mai multe click-uri</div>
+        </div>
+        <div class="chart-card-body">
+          <canvas 
+            data-analytics-charts-target="clicksByPageChart"
+            data-chart-data="<%= {
+              labels: @clicks_by_page.keys,
+              datasets: [{
+                label: 'Click-uri',
+                data: @clicks_by_page.values,
+                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                borderColor: 'rgba(59, 130, 246, 1)',
+                borderWidth: 2
+              }]
+            }.to_json %>">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Click Types Distribution -->
+      <div class="chart-card chart-card--half">
+        <div class="chart-card-header">
+          <h3>Tipuri de Click-uri</h3>
+          <div class="chart-card-meta">Link-uri vs Butoane</div>
+        </div>
+        <div class="chart-card-body">
+          <canvas 
+            data-analytics-charts-target="clickTypesChart"
+            data-chart-data="<%= {
+              labels: @clicks_by_type.keys.map(&:titleize),
+              datasets: [{
+                label: 'Click-uri',
+                data: @clicks_by_type.values,
+                backgroundColor: [
+                  'rgba(16, 185, 129, 0.8)',
+                  'rgba(245, 158, 11, 0.8)',
+                  'rgba(239, 68, 68, 0.8)'
+                ],
+                borderColor: [
+                  'rgba(16, 185, 129, 1)',
+                  'rgba(245, 158, 11, 1)',
+                  'rgba(239, 68, 68, 1)'
+                ],
+                borderWidth: 2
+              }]
+            }.to_json %>">
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Click Data Tables -->
+    <div class="detailed-tables-grid">
+      <!-- All Click Destinations -->
+      <div class="table-card table-card--scrollable">
+        <div class="table-card-header">
+          <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" />
+              <path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 001.06.053L16.5 4.44v2.81a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.553l-9.056 8.194a.75.75 0 00-.053 1.06z" />
+            </svg>
+            Toate Destinațiile Click-urilor
+          </h3>
+          <span class="table-count"><%= @top_click_destinations.size %> destinații</span>
+        </div>
+        <div class="table-card-body">
+          <% if @top_click_destinations.any? %>
+            <table class="analytics-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Destinație</th>
+                  <th>Click-uri</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @top_click_destinations.each_with_index do |(destination, count), index| %>
+                  <tr>
+                    <td><span class="table-rank">#<%= index + 1 %></span></td>
+                    <td class="table-text-wrap"><%= destination %></td>
+                    <td><strong><%= number_with_delimiter(count) %></strong></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p class="empty-state">Nu există date disponibile</p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- All Clicked Elements -->
+      <div class="table-card table-card--scrollable">
+        <div class="table-card-header">
+          <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+            </svg>
+            Toate Elementele Click-ate
+          </h3>
+          <span class="table-count"><%= @top_clicked_elements.size %> elemente</span>
+        </div>
+        <div class="table-card-body">
+          <% if @top_clicked_elements.any? %>
+            <table class="analytics-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Text Element</th>
+                  <th>Click-uri</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @top_clicked_elements.each_with_index do |(element, count), index| %>
+                  <tr>
+                    <td><span class="table-rank">#<%= index + 1 %></span></td>
+                    <td class="table-text-wrap"><%= element.presence || '(fără text)' %></td>
+                    <td><strong><%= number_with_delimiter(count) %></strong></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p class="empty-state">Nu există date disponibile</p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- All Pages with Clicks -->
+      <div class="table-card table-card--scrollable">
+        <div class="table-card-header">
+          <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.25 2A2.25 2.25 0 002 4.25v11.5A2.25 2.25 0 004.25 18h11.5A2.25 2.25 0 0018 15.75V4.25A2.25 2.25 0 0015.75 2H4.25zm4.03 6.28a.75.75 0 00-1.06-1.06L4.97 9.47a.75.75 0 000 1.06l2.25 2.25a.75.75 0 001.06-1.06L6.56 10l1.72-1.72zm4.5-1.06a.75.75 0 10-1.06 1.06L13.44 10l-1.72 1.72a.75.75 0 101.06 1.06l2.25-2.25a.75.75 0 000-1.06l-2.25-2.25z" clip-rule="evenodd" />
+            </svg>
+            Toate Paginile cu Click-uri
+          </h3>
+          <span class="table-count"><%= @clicks_by_page.size %> pagini</span>
+        </div>
+        <div class="table-card-body">
+          <% if @clicks_by_page.any? %>
+            <table class="analytics-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Pagină</th>
+                  <th>Click-uri</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @clicks_by_page.each_with_index do |(page, count), index| %>
+                  <tr>
+                    <td><span class="table-rank">#<%= index + 1 %></span></td>
+                    <td class="table-text-wrap"><%= page %></td>
+                    <td><strong><%= number_with_delimiter(count) %></strong></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <p class="empty-state">Nu există date disponibile</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Statistics Section -->
+    <div class="content-stats-section">
+      <h2 class="section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
+        </svg>
+        Statistici Detaliate Conținut
+      </h2>
+      <div class="section-subtitle">Completitudine și acoperire date în platformă</div>
+      
+      <div class="content-stats-grid">
+        <!-- Members Overview -->
+        <div class="content-stat-card">
+          <div class="content-stat-icon content-stat-icon--members">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0z" />
+            </svg>
+          </div>
+          <div class="content-stat-info">
+            <div class="content-stat-value"><%= @total_members %></div>
+            <div class="content-stat-label">Membri Totali</div>
+            <div class="content-stat-trend">+<%= @members_created_this_month %> luna aceasta</div>
+            <div class="content-stat-meta">
+              <%= @members_with_bio %> cu biografie | <%= @members_with_photo %> cu poză
+            </div>
+          </div>
+        </div>
+
+        <!-- Members with Biography -->
+        <div class="content-stat-card">
+          <div class="content-stat-icon content-stat-icon--success">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="content-stat-info">
+            <div class="content-stat-value"><%= ((@members_with_bio.to_f / @total_members) * 100).round(1) %>%</div>
+            <div class="content-stat-label">Membri cu Biografie</div>
+            <div class="content-stat-trend"><%= @members_with_bio %> / <%= @total_members %></div>
+            <div class="content-stat-meta text-warning">
+              <%= @members_without_bio %> fără biografie
+            </div>
+          </div>
+        </div>
+
+        <!-- Members with Photos -->
+        <div class="content-stat-card">
+          <div class="content-stat-icon content-stat-icon--info">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-5.94 5.94a.75.75 0 01-1.06 0l-2.69-2.69a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="content-stat-info">
+            <div class="content-stat-value"><%= ((@members_with_photo.to_f / @total_members) * 100).round(1) %>%</div>
+            <div class="content-stat-label">Membri cu Poze</div>
+            <div class="content-stat-trend"><%= @members_with_photo %> / <%= @total_members %></div>
+            <div class="content-stat-meta text-warning">
+              <%= @members_without_photo %> fără poze
+            </div>
+          </div>
+        </div>
+
+        <!-- Services Overview -->
+        <div class="content-stat-card">
+          <div class="content-stat-icon content-stat-icon--services">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.25 5.337c0-.355-.186-.676-.401-.959a1.647 1.647 0 01-.349-1.003c0-1.036 1.007-1.875 2.25-1.875S15 2.34 15 3.375c0 .369-.128.713-.349 1.003-.215.283-.401.604-.401.959 0 .332.278.598.61.578 1.91-.114 3.79-.342 5.632-.676a.75.75 0 01.878.645 49.17 49.17 0 01.376 5.452.657.657 0 01-.66.664c-.354 0-.675-.186-.958-.401a1.647 1.647 0 00-1.003-.349c-1.035 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401.31 0 .557.262.534.571a48.774 48.774 0 01-.595 4.845.75.75 0 01-.61.61c-1.82.317-3.673.533-5.555.642a.58.58 0 01-.611-.581c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.035-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959a.641.641 0 01-.658.643 49.118 49.118 0 01-4.708-.36.75.75 0 01-.645-.878c.293-1.614.504-3.257.629-4.924A.53.53 0 005.337 15c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.036 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.369 0 .713.128 1.003.349.283.215.604.401.959.401a.656.656 0 00.659-.663 47.703 47.703 0 00-.31-4.82.75.75 0 01.83-.832c1.343.155 2.703.254 4.077.294a.64.64 0 00.657-.642z" />
+            </svg>
+          </div>
+          <div class="content-stat-info">
+            <div class="content-stat-value"><%= @total_services %></div>
+            <div class="content-stat-label">Servicii Medicale</div>
+            <div class="content-stat-trend">+<%= @services_created_this_month %> luna aceasta</div>
+            <div class="content-stat-meta">
+              <%= @services_without_description %> fără descriere
+            </div>
+          </div>
+        </div>
+
+        <!-- Specialties Coverage -->
+        <div class="content-stat-card">
+          <div class="content-stat-icon content-stat-icon--specialties">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.7 2.805a.75.75 0 01.6 0A60.65 60.65 0 0122.83 8.72a.75.75 0 01-.231 1.337 49.949 49.949 0 00-9.902 3.912l-.003.002-.34.18a.75.75 0 01-.707 0z" />
+            </svg>
+          </div>
+          <div class="content-stat-info">
+            <div class="content-stat-value"><%= @total_specialties %></div>
+            <div class="content-stat-label">Specialități Totale</div>
+            <div class="content-stat-trend"><%= @specialties_with_members %> cu membri</div>
+            <div class="content-stat-meta">
+              <%= @specialties_with_services %> cu servicii | <%= @specialties_without_members %> fără membri
+            </div>
+          </div>
+        </div>
+
+        <!-- Professions Coverage -->
+        <div class="content-stat-card">
+          <div class="content-stat-icon content-stat-icon--primary">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21.721 12.752a9.711 9.711 0 00-.945-5.003 12.754 12.754 0 01-4.339 2.708 18.991 18.991 0 01-.214 4.772 17.165 17.165 0 005.498-2.477zM14.634 15.55a17.324 17.324 0 00.332-4.647c-.952.227-1.945.347-2.966.347-1.021 0-2.014-.12-2.966-.347a17.515 17.515 0 00.332 4.647 17.385 17.385 0 005.268 0zM9.772 17.119a18.963 18.963 0 004.456 0A17.182 17.182 0 0112 21.724a17.18 17.18 0 01-2.228-4.605zM7.777 15.23a18.87 18.87 0 01-.214-4.774 12.753 12.753 0 01-4.34-2.708 9.711 9.711 0 00-.944 5.004 17.165 17.165 0 005.498 2.477zM21.356 14.752a9.765 9.765 0 01-7.478 6.817 18.64 18.64 0 001.988-4.718 18.627 18.627 0 005.49-2.098zM2.644 14.752c1.682.971 3.53 1.688 5.49 2.099a18.64 18.64 0 001.988 4.718 9.765 9.765 0 01-7.478-6.816zM13.878 2.43a9.755 9.755 0 016.116 3.986 11.267 11.267 0 01-3.746 2.504 18.63 18.63 0 00-2.37-6.49zM12 2.276a17.152 17.152 0 012.805 7.121c-.897.23-1.837.353-2.805.353-.968 0-1.908-.122-2.805-.353A17.151 17.151 0 0112 2.276zM10.122 2.43a18.629 18.629 0 00-2.37 6.49 11.266 11.266 0 01-3.746-2.504 9.754 9.754 0 016.116-3.985z" />
+            </svg>
+          </div>
+          <div class="content-stat-info">
+            <div class="content-stat-value"><%= @total_professions %></div>
+            <div class="content-stat-label">Profesii Totale</div>
+            <div class="content-stat-trend"><%= @professions_with_members %> cu membri</div>
+            <div class="content-stat-meta">
+              <%= @professions_without_members %> fără membri
+            </div>
+          </div>
+        </div>
+
+        <!-- Users -->
+        <div class="content-stat-card">
+          <div class="content-stat-icon content-stat-icon--users">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="content-stat-info">
+            <div class="content-stat-value"><%= @total_users %></div>
+            <div class="content-stat-label">Utilizatori</div>
+            <div class="content-stat-trend">+<%= @users_created_this_month %> luna aceasta</div>
+            <div class="content-stat-meta">
+              <%= @admin_users %> admin | <%= @god_mode_users %> god mode
+            </div>
+          </div>
+        </div>
+
+        <!-- Facts -->
+        <div class="content-stat-card">
+          <div class="content-stat-icon content-stat-icon--warning">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="content-stat-info">
+            <div class="content-stat-value"><%= @total_facts %></div>
+            <div class="content-stat-label">Fapte/Statistici</div>
+            <div class="content-stat-trend"><%= @facts_updated_this_week %> actualizate săptămâna</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <%= no_access %>
+<% end %>
