@@ -263,13 +263,6 @@ class AdminController < ApplicationController
                                  .limit(10)
   end
   
-  private
-  
-  def normalize_url(url)
-    return 'Homepage' if url.nil? || url == '/' || url.empty?
-    url.gsub(/^https?:\/\/[^\/]+/, '').presence || '/'
-  end
-  
   def edit_users
     @users = User.all.order(email: :asc)
   end
@@ -443,8 +436,13 @@ class AdminController < ApplicationController
     @specialty = Specialty.new()
     @specialties = Specialty.all.order(name: :asc)
   end
-
+  
   private
+  
+  def normalize_url(url)
+    return 'Homepage' if url.nil? || url == '/' || url.empty?
+    url.gsub(/^https?:\/\/[^\/]+/, '').presence || '/'
+  end
 
   def calculate_start_date(period)
     case period
