@@ -137,3 +137,10 @@ Procfile processes:
 
 - Reference existing patterns in `BkgPhotosHelper`
 - Always use quality/width optimizations: `quality: 60, width: 1000, crop: "scale"`
+
+#### Rules for Agent
+
+- Treat every task with max attention.
+- Generate a todo list.
+- Ask if clarification is needed before proceeding.
+- Always commit to github after completing a task & testing it & asking me if i'm satisfied, my answer with "Yes" must be always expected.
