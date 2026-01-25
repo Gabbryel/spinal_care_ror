@@ -409,7 +409,7 @@ class AdminController < ApplicationController
     # Common Visit Paths (top 15 multi-page journeys)
     multi_page_visits = events.group(:visit_id)
                               .having('COUNT(*) > 1')
-                              .order('COUNT(*) DESC')
+                              .order(Arel.sql('COUNT(*) DESC'))
                               .limit(15)
                               .pluck(:visit_id)
     
@@ -492,6 +492,63 @@ class AdminController < ApplicationController
       regular: (@returning_visitor_distribution['3-5 visits'] || 0) + (@returning_visitor_distribution['6-10 visits'] || 0),
       loyal: @returning_visitor_distribution['11+ visits'] || 0
     }
+
+    # ===== MEDICINE CONSUMPTION ANALYTICS =====
+    # Monthly Trends (last 12 months)
+    @medicine_monthly = MedicinesConsumption.where('created_at >= ?', 12.months.ago)
+                                            .group("DATE_TRUNC('month', created_at)")
+                                            .select("DATE_TRUNC('month', created_at) as month, 
+                                                    SUM(total_amount) as total_spent,
+                                                    SUM(budget) as total_budget,
+                                                    COUNT(*) as transaction_count")
+                                            .order('month ASC')
+
+    # Current Month Stats
+    current_month_start = Date.today.beginning_of_month
+    @current_month_spend = MedicinesConsumption.where('created_at >= ?', current_month_start).sum(:total_amount)
+    @current_month_budget = MedicinesConsumption.where('created_at >= ?', current_month_start).sum(:budget)
+    @current_month_variance = @current_month_budget > 0 ? 
+                             (((@current_month_spend - @current_month_budget).to_f / @current_month_budget) * 100).round(1) : 0
+
+    # Year-over-Year Comparison
+    current_year_spend = MedicinesConsumption.where('EXTRACT(YEAR FROM created_at) = ?', Date.today.year)
+                                             .sum(:total_amount)
+    previous_year_spend = MedicinesConsumption.where('EXTRACT(YEAR FROM created_at) = ?', Date.today.year - 1)
+                                              .sum(:total_amount)
+    @medicine_yoy_change = calculate_percentage_change(current_year_spend, previous_year_spend)
+    @current_year_spend = current_year_spend
+    @previous_year_spend = previous_year_spend
+
+    # Top Medications/Categories
+    @top_medicines = MedicinesConsumption.where('created_at >= ?', 6.months.ago)
+                                         .group(:medicine_name)
+                                         .select('medicine_name, 
+                                                 SUM(total_amount) as total_cost,
+                                                 SUM(quantity) as total_quantity,
+                                                 COUNT(*) as purchase_count')
+                                         .order('total_cost DESC')
+                                         .limit(10)
+
+    # Average Monthly Spend (for forecasting)
+    monthly_averages = MedicinesConsumption.where('created_at >= ?', 6.months.ago)
+                                           .group("DATE_TRUNC('month', created_at)")
+                                           .sum(:total_amount)
+    @avg_monthly_spend = monthly_averages.values.any? ? 
+                         (monthly_averages.values.sum / monthly_averages.values.size).round(2) : 0
+
+    # Next Quarter Forecast (simple moving average)
+    @next_quarter_forecast = (@avg_monthly_spend * 3).round(2)
+
+    # Budget Compliance Rate (last 6 months)
+    compliant_months = MedicinesConsumption.where('created_at >= ?', 6.months.ago)
+                                           .group("DATE_TRUNC('month', created_at)")
+                                           .select("DATE_TRUNC('month', created_at) as month,
+                                                   SUM(total_amount) as spent,
+                                                   SUM(budget) as budget")
+                                           .to_a
+                                           .count { |m| m.spent <= m.budget }
+    total_months = compliant_months.count > 0 ? compliant_months.count : 6
+    @budget_compliance_rate = total_months > 0 ? ((compliant_months.to_f / total_months) * 100).round(1) : 0
   end
   
   def edit_users
