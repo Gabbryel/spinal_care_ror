@@ -52,18 +52,11 @@ class AdminController < ApplicationController
     @unique_visitors = public_visits.distinct.count(:visitor_token)
     @unique_visitors_this_month = @unique_visitors
     
-    # Time-based visit counts (optimized with single query using CASE)
+    # Time-based visit counts (separate queries for clarity and PostgreSQL compatibility)
     now = Time.zone.now
-    time_based_visits = public_visits.select(
-      "COUNT(*) as total,
-       SUM(CASE WHEN started_at >= '#{now.beginning_of_day}' THEN 1 ELSE 0 END) as today,
-       SUM(CASE WHEN started_at >= '#{1.week.ago}' THEN 1 ELSE 0 END) as week,
-       SUM(CASE WHEN started_at >= '#{1.month.ago}' THEN 1 ELSE 0 END) as month"
-    ).first
-    
-    @total_visits_today = time_based_visits&.today || 0
-    @total_visits_this_week = time_based_visits&.week || 0
-    @total_visits_this_month = time_based_visits&.month || 0
+    @total_visits_today = public_visits.where('started_at >= ?', now.beginning_of_day).count
+    @total_visits_this_week = public_visits.where('started_at >= ?', 1.week.ago).count
+    @total_visits_this_month = public_visits.where('started_at >= ?', 1.month.ago).count
     
     # New vs Returning Visitors (limit data processed)
     visitor_counts = public_visits.group(:visitor_token).count
