@@ -1703,44 +1703,29 @@
             ],
             datasets: [
               {
-                label: 'Cheltuieli Reale',
+                label: 'Consum Total',
                 data: [
                   <% @medicine_monthly.each do |record| %>
-                    <%= record.total_spent %>,
+                    <%= record.total_consumption %>,
                   <% end %>
                 ],
-                borderColor: '#ef4444',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 borderWidth: 2,
                 fill: true,
                 tension: 0.4,
                 yAxisID: 'y'
               },
               {
-                label: 'Buget',
+                label: 'Număr Înregistrări',
                 data: [
                   <% @medicine_monthly.each do |record| %>
-                    <%= record.total_budget %>,
-                  <% end %>
-                ],
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                borderWidth: 2,
-                borderDash: [5, 5],
-                fill: false,
-                tension: 0.4,
-                yAxisID: 'y'
-              },
-              {
-                label: 'Număr Tranzacții',
-                data: [
-                  <% @medicine_monthly.each do |record| %>
-                    <%= record.transaction_count %>,
+                    <%= record.record_count %>,
                   <% end %>
                 ],
                 type: 'bar',
-                backgroundColor: 'rgba(59, 130, 246, 0.3)',
-                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                borderColor: '#10b981',
                 borderWidth: 1,
                 yAxisID: 'y1'
               }
@@ -1760,7 +1745,7 @@
                 position: 'left',
                 title: {
                   display: true,
-                  text: 'Cost (RON)'
+                  text: 'Consum (RON)'
                 },
                 ticks: {
                   callback: function(value) {
@@ -1774,7 +1759,7 @@
                 position: 'right',
                 title: {
                   display: true,
-                  text: 'Tranzacții'
+                  text: 'Înregistrări'
                 },
                 grid: {
                   drawOnChartArea: false
@@ -1793,8 +1778,8 @@
                     if (label) {
                       label += ': ';
                     }
-                    if (context.datasetIndex === 2) {
-                      label += context.parsed.y + ' tranzacții';
+                    if (context.datasetIndex === 1) {
+                      label += context.parsed.y + ' înregistrări';
                     } else {
                       label += context.parsed.y.toLocaleString('ro-RO') + ' RON';
                     }
