@@ -95,7 +95,9 @@
         <div class="kpi-content">
           <div class="kpi-label">Top Locație</div>
           <div class="kpi-value-small"><%= @top_location ? @top_location[0] : 'N/A' %></div>
-          <div class="kpi-meta"><%= @top_location ? number_with_delimiter(@top_location[1]) : '0' %> vizitatori</div>
+          <div class="kpi-trend <%= @location_change_pct >= 0 ? 'positive' : 'negative' %>">
+            <%= @location_change_pct >= 0 ? '↑' : '↓' %> <%= @location_change_pct.abs %>% (<%= number_with_delimiter(@top_location ? @top_location[1] : 0) %> vizitatori)
+          </div>
         </div>
       </div>
 
@@ -108,7 +110,9 @@
         <div class="kpi-content">
           <div class="kpi-label">Top Sursă</div>
           <div class="kpi-value-small"><%= @top_source[0] %></div>
-          <div class="kpi-meta"><%= number_with_delimiter(@top_source[1]) %> vizite (<%= ((@top_source[1].to_f / @total_visitors) * 100).round(1) %>%)</div>
+          <div class="kpi-trend <%= @source_change_pct >= 0 ? 'positive' : 'negative' %>">
+            <%= @source_change_pct >= 0 ? '↑' : '↓' %> <%= @source_change_pct.abs %>% (<%= number_with_delimiter(@top_source[1]) %> vizite)
+          </div>
         </div>
       </div>
 
@@ -121,7 +125,9 @@
         <div class="kpi-content">
           <div class="kpi-label">Top Pagină</div>
           <div class="kpi-value-small"><%= @top_page[0] %></div>
-          <div class="kpi-meta"><%= number_with_delimiter(@top_page[1]) %> vizualizări</div>
+          <div class="kpi-trend <%= @page_change_pct >= 0 ? 'positive' : 'negative' %>">
+            <%= @page_change_pct >= 0 ? '↑' : '↓' %> <%= @page_change_pct.abs %>% (<%= number_with_delimiter(@top_page[1]) %> vizualizări)
+          </div>
         </div>
       </div>
     </div>

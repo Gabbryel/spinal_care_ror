@@ -310,16 +310,29 @@
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
   overflow: hidden;
+  height: auto;
+  .section-title {
+    padding: 0 !important;
+  }
+}
+
+.analytics-section:not([open]) {
+  height: 60px;
+}
+
+.analytics-section:not([open]) turbo-frame {
+  display: none;
 }
 
 .section-header {
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 1.25rem;
   cursor: pointer;
   user-select: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: background 0.2s;
+  width: 100%;
 }
 
 .section-header:hover {
@@ -329,21 +342,21 @@
 .section-title {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 1.125rem;
+  gap: 0.625rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #1f2937;
 }
 
 .section-icon {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.25rem;
+  height: 1.25rem;
   color: #3b82f6;
 }
 
 .chevron {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.125rem;
+  height: 1.125rem;
   color: #9ca3af;
   transition: transform 0.3s;
 }

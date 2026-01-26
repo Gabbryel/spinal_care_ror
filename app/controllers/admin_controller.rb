@@ -72,12 +72,24 @@ class AdminController < ApplicationController
                                   .count
                                   .first
     
+    # Calculate trend for top location (compare current count vs previous period count for same location)
+    if @top_location
+      prev_location_count = prev_visits.where(city: @top_location[0]).count
+      @location_change_pct = prev_location_count > 0 ? (((@top_location[1] - prev_location_count).to_f / prev_location_count) * 100).round(1) : 0
+    else
+      @location_change_pct = 0
+    end
+    
     @top_source = public_visits.group(:referring_domain)
                                 .order('count_all DESC')
                                 .limit(1)
                                 .count
                                 .first
     @top_source = @top_source ? [@top_source[0] || 'Direct', @top_source[1]] : ['Direct', @total_visitors]
+    
+    # Calculate trend for top source
+    prev_source_count = prev_visits.where(referring_domain: @top_source[0]).count
+    @source_change_pct = prev_source_count > 0 ? (((@top_source[1] - prev_source_count).to_f / prev_source_count) * 100).round(1) : 0
     
     events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
                         .where('time >= ? AND time <= ?', @start_date, @end_date)
@@ -88,6 +100,12 @@ class AdminController < ApplicationController
                      .count
                      .first
     @top_page = @top_page ? [normalize_url(@top_page[0]), @top_page[1]] : ['/', 0]
+    
+    # Calculate trend for top page
+    prev_events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
+                              .where('time >= ? AND time < ?', prev_start, @start_date)
+    prev_page_count = prev_events.where("properties->>'url' = ?", @top_page[0]).count
+    @page_change_pct = prev_page_count > 0 ? (((@top_page[1] - prev_page_count).to_f / prev_page_count) * 100).round(1) : 0
     
     # Store base queries for lazy-loaded sections
     @public_visits_query = public_visits
@@ -102,13 +120,13 @@ class AdminController < ApplicationController
     public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
                                 .where('started_at >= ? AND started_at <= ?', start_date, end_date)
     
-    days_count = [((end_date.to_date - start_date.to_date).to_i), 90].min
+    days_count = ((end_date.to_date - start_date.to_date).to_i).abs
     daily_data = public_visits.group("DATE(started_at)").count
     
     daily_visits = (0..days_count).map do |i|
-      date = i.days.ago(end_date).to_date
+      date = (start_date.to_date + i.days)
       { date: date, label: date.strftime('%d %b'), count: daily_data[date] || 0 }
-    end.reverse
+    end
     
     @daily_labels = daily_visits.map { |d| d[:label] }
     @daily_data = daily_visits.map { |d| d[:count] }
@@ -258,6 +276,12 @@ class AdminController < ApplicationController
       .limit(10)
       .count
     
+    # Set view variables
+    @navigation_clicks = @top_navigation_clicks.map { |url, count| { 'name' => url, 'landing_page' => url, 'click_count' => count } }
+    @total_clicks = meaningful_clicks.count
+    @conversions_count = @conversion_clicks.values.sum
+    @user_journey_paths = @user_journeys.map { |path, count| { 'pages' => path.split(' → '), 'count' => count } }
+    
     render partial: 'admin/analytics/user_journey'
   end
   
@@ -278,7 +302,7 @@ class AdminController < ApplicationController
     @top_doctors = doctor_events.map do |url, count|
       slug = url.split('/').last
       member = Member.find_by(slug: slug) || Member.find_by("first_name || '-' || last_name = ?", slug)
-      [member&.full_name || slug, count]
+      [member&.name || slug, count]
     end
     @total_doctor_views = doctor_events.values.sum
     
