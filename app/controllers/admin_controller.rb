@@ -498,41 +498,32 @@ class AdminController < ApplicationController
     @medicine_monthly = MedicinesConsumption.where('created_at >= ?', 12.months.ago)
                                             .group("DATE_TRUNC('month', created_at)")
                                             .select(Arel.sql("DATE_TRUNC('month', created_at) as month, 
-                                                    SUM(total_amount) as total_spent,
-                                                    SUM(budget) as total_budget,
-                                                    COUNT(*) as transaction_count"))
+                                                    SUM(consumption) as total_consumption,
+                                                    COUNT(*) as record_count"))
                                             .order('month ASC')
 
     # Current Month Stats
     current_month_start = Date.today.beginning_of_month
-    @current_month_spend = MedicinesConsumption.where('created_at >= ?', current_month_start).sum(:total_amount)
-    @current_month_budget = MedicinesConsumption.where('created_at >= ?', current_month_start).sum(:budget)
-    @current_month_variance = @current_month_budget > 0 ? 
-                             (((@current_month_spend - @current_month_budget).to_f / @current_month_budget) * 100).round(1) : 0
+    @current_month_consumption = MedicinesConsumption.where('created_at >= ?', current_month_start).sum(:consumption)
+    # Budget tracking not available in current schema
+    @current_month_variance = 0
 
     # Year-over-Year Comparison
-    current_year_spend = MedicinesConsumption.where('EXTRACT(YEAR FROM created_at) = ?', Date.today.year)
-                                             .sum(:total_amount)
-    previous_year_spend = MedicinesConsumption.where('EXTRACT(YEAR FROM created_at) = ?', Date.today.year - 1)
-                                              .sum(:total_amount)
-    @medicine_yoy_change = calculate_percentage_change(current_year_spend, previous_year_spend)
-    @current_year_spend = current_year_spend
-    @previous_year_spend = previous_year_spend
+    current_year_consumption = MedicinesConsumption.where('EXTRACT(YEAR FROM created_at) = ?', Date.today.year)
+                                                   .sum(:consumption)
+    previous_year_consumption = MedicinesConsumption.where('EXTRACT(YEAR FROM created_at) = ?', Date.today.year - 1)
+                                                    .sum(:consumption)
+    @medicine_yoy_change = calculate_percentage_change(current_year_consumption, previous_year_consumption)
+    @current_year_consumption = current_year_consumption
+    @previous_year_consumption = previous_year_consumption
 
-    # Top Medications/Categories
-    @top_medicines = MedicinesConsumption.where('created_at >= ?', 6.months.ago)
-                                         .group(:medicine_name)
-                                         .select(Arel.sql('medicine_name, 
-                                                 SUM(total_amount) as total_cost,
-                                                 SUM(quantity) as total_quantity,
-                                                 COUNT(*) as purchase_count'))
-                                         .order('total_cost DESC')
-                                         .limit(10)
+    # Top Medications/Categories - Not available (medicine_name column doesn't exist in schema)
+    @top_medicines = []
 
-    # Average Monthly Spend (for forecasting)
+    # Average Monthly Consumption (for forecasting)
     monthly_averages = MedicinesConsumption.where('created_at >= ?', 6.months.ago)
                                            .group("DATE_TRUNC('month', created_at)")
-                                           .sum(:total_amount)
+                                           .sum(:consumption)
     @avg_monthly_spend = monthly_averages.values.any? ? 
                          (monthly_averages.values.sum / monthly_averages.values.size).round(2) : 0
 
