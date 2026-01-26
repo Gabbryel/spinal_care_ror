@@ -2,6 +2,12 @@ Rails.application.routes.draw do
 
   get 'dashboard', to: 'admin#dashboard'
   get 'dashboard/analytics', to: 'admin#analytics'
+  get 'dashboard/analytics/daily_chart', to: 'admin#analytics_daily_chart'
+  get 'dashboard/analytics/geography', to: 'admin#analytics_geography'
+  get 'dashboard/analytics/sources', to: 'admin#analytics_sources'
+  get 'dashboard/analytics/pages', to: 'admin#analytics_pages'
+  get 'dashboard/analytics/user_journey', to: 'admin#analytics_user_journey'
+  get 'dashboard/analytics/content', to: 'admin#analytics_content'
   get 'dashboard/audit', to: 'admin#audit'
   get 'dashboard/users', to: 'admin#edit_users'
   get 'dashboard/personal', to: 'admin#personal'

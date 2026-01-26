@@ -1,0 +1,289 @@
+<%= turbo_frame_tag "content" do %>
+  <% if @top_doctors.any? || @top_specialties.any? || @top_services.any? %>
+  <div class="content-section">
+    <div class="content-grid">
+      <!-- Top Doctors -->
+      <div class="content-container">
+        <h4 class="content-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="content-icon">
+            <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
+          </svg>
+          Top Medici
+        </h4>
+        <div class="content-list">
+          <% @top_doctors.each_with_index do |(doctor, views), index| %>
+            <div class="content-item">
+              <div class="content-rank rank-doctor"><%= index + 1 %></div>
+              <div class="content-info">
+                <div class="content-name"><%= doctor %></div>
+                <div class="content-stats">
+                  <%= number_with_delimiter(views) %> vizualizări
+                </div>
+              </div>
+              <div class="content-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="badge-icon">
+                  <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Top Specialties -->
+      <div class="content-container">
+        <h4 class="content-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="content-icon">
+            <path d="M11.7 2.805a.75.75 0 01.6 0A60.65 60.65 0 0122.83 8.72a.75.75 0 01-.231 1.337 49.949 49.949 0 00-9.902 3.912l-.003.002-.34.18a.75.75 0 01-.707 0A50.009 50.009 0 007.5 12.174v-.224c0-.131.067-.248.172-.311a54.614 54.614 0 014.653-2.52.75.75 0 00-.65-1.352 56.129 56.129 0 00-4.78 2.589 1.858 1.858 0 00-.859 1.228 49.803 49.803 0 00-4.634-1.527.75.75 0 01-.231-1.337A60.653 60.653 0 0111.7 2.805z" />
+          </svg>
+          Top Specialități
+        </h4>
+        <div class="content-list">
+          <% @top_specialties.each_with_index do |(specialty, views), index| %>
+            <div class="content-item">
+              <div class="content-rank rank-specialty"><%= index + 1 %></div>
+              <div class="content-info">
+                <div class="content-name"><%= specialty %></div>
+                <div class="content-stats">
+                  <%= number_with_delimiter(views) %> vizualizări
+                </div>
+              </div>
+              <div class="content-progress">
+                <div class="progress-bar" style="width: <%= (views.to_f / @top_specialties.first[1] * 100).round %>%"></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Top Services -->
+      <div class="content-container">
+        <h4 class="content-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="content-icon">
+            <path fill-rule="evenodd" d="M4.5 3.75a3 3 0 00-3 3v10.5a3 3 0 003 3h15a3 3 0 003-3V6.75a3 3 0 00-3-3h-15zm9 4.5a.75.75 0 00-1.5 0v5.25a.75.75 0 001.5 0V8.25zm2.25 5.25a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H16.5a.75.75 0 01-.75-.75zm.75-3a.75.75 0 000 1.5h3.75a.75.75 0 000-1.5H16.5z" clip-rule="evenodd" />
+          </svg>
+          Top Servicii Medicale
+        </h4>
+        <div class="content-list">
+          <% @top_services.each_with_index do |(service, views), index| %>
+            <div class="content-item">
+              <div class="content-rank rank-service"><%= index + 1 %></div>
+              <div class="content-info">
+                <div class="content-name"><%= service %></div>
+                <div class="content-stats">
+                  <%= number_with_delimiter(views) %> vizualizări
+                </div>
+              </div>
+              <div class="content-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="badge-icon">
+                  <path d="M10 9a3 3 0 100-6 3 3 0 000 6zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.49 15.326a.78.78 0 01-.358-.442 3 3 0 014.308-3.516 6.484 6.484 0 00-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 01-2.07-.655zM16.44 15.98a4.97 4.97 0 002.07-.654.78.78 0 00.357-.442 3 3 0 00-4.308-3.517 6.484 6.484 0 011.907 3.96 2.32 2.32 0 01-.026.654zM18 8a2 2 0 11-4 0 2 2 0 014 0zM5.304 16.19a.844.844 0 01-.277-.71 5 5 0 019.947 0 .843.843 0 01-.277.71A6.975 6.975 0 0110 18a6.974 6.974 0 01-4.696-1.81z" />
+                </svg>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Performance Summary -->
+    <div class="content-summary">
+      <div class="summary-section">
+        <h5 class="summary-title">Sumar Performanță Conținut</h5>
+        <div class="summary-metrics">
+          <div class="metric-item">
+            <div class="metric-label">Total Profile Medici Vizualizate</div>
+            <div class="metric-value"><%= number_with_delimiter(@total_doctor_views) %></div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">Total Specialități Vizualizate</div>
+            <div class="metric-value"><%= number_with_delimiter(@total_specialty_views) %></div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">Total Servicii Vizualizate</div>
+            <div class="metric-value"><%= number_with_delimiter(@total_service_views) %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% else %>
+  <div class="empty-state">
+    <p>Nu există date despre conținut disponibile pentru perioada selectată.</p>
+  </div>
+  <% end %>
+
+  <style>
+    .content-section {
+      padding: 1rem 0;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .content-container {
+      background: #f9fafb;
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+    }
+
+    .content-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 1rem;
+    }
+
+    .content-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      color: #3b82f6;
+    }
+
+    .content-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .content-item {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.2s;
+    }
+
+    .content-item:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transform: translateX(4px);
+    }
+
+    .content-rank {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.375rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+      color: white;
+    }
+
+    .rank-doctor {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+    }
+
+    .rank-specialty {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .rank-service {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .content-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .content-name {
+      font-weight: 600;
+      color: #1f2937;
+      font-size: 0.9375rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .content-stats {
+      font-size: 0.8125rem;
+      color: #6b7280;
+      margin-top: 0.125rem;
+    }
+
+    .content-badge {
+      width: 1.5rem;
+      height: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .badge-icon {
+      width: 100%;
+      height: 100%;
+      color: #fbbf24;
+    }
+
+    .content-progress {
+      width: 4rem;
+      height: 0.375rem;
+      background: #e5e7eb;
+      border-radius: 0.25rem;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #059669);
+      border-radius: 0.25rem;
+      transition: width 0.6s ease;
+    }
+
+    .content-summary {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+    }
+
+    .summary-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 1rem;
+    }
+
+    .summary-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .metric-item {
+      text-align: center;
+      padding: 1rem;
+      background: #f9fafb;
+      border-radius: 0.5rem;
+    }
+
+    .metric-label {
+      font-size: 0.8125rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #3b82f6;
+    }
+
+    @media (max-width: 768px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+<% end %>

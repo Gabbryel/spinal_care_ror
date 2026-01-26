@@ -1,0 +1,269 @@
+<%= turbo_frame_tag "pages" do %>
+  <% if @most_viewed_pages.any? %>
+  <div class="pages-section">
+    <div class="pages-grid">
+      <!-- Most Viewed Pages -->
+      <div class="pages-table-container">
+        <h4 class="pages-title">Cele Mai Vizualizate Pagini</h4>
+        <table class="pages-table">
+          <thead>
+            <tr>
+              <th>Pagină</th>
+              <th>Vizualizări</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @most_viewed_pages.each_with_index do |(page, count), index| %>
+              <tr>
+                <td class="page-url">
+                  <div class="page-rank"><%= index + 1 %></div>
+                  <div class="page-details">
+                    <div class="page-path"><%= page %></div>
+                  </div>
+                </td>
+                <td class="page-count"><%= number_with_delimiter(count) %></td>
+                <td class="page-percent"><%= ((count.to_f / @total_page_views) * 100).round(1) %>%</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Top Entry Pages -->
+      <div class="pages-table-container">
+        <h4 class="pages-title">Top Pagini de Intrare</h4>
+        <table class="pages-table">
+          <thead>
+            <tr>
+              <th>Pagină</th>
+              <th>Intrări</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @top_entry_pages.each_with_index do |(page, count), index| %>
+              <tr>
+                <td class="page-url">
+                  <div class="page-rank entry"><%= index + 1 %></div>
+                  <div class="page-details">
+                    <div class="page-path"><%= page %></div>
+                  </div>
+                </td>
+                <td class="page-count"><%= number_with_delimiter(count) %></td>
+                <td class="page-percent"><%= ((count.to_f / @unique_visitors) * 100).round(1) %>%</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pages Performance Summary -->
+    <div class="pages-summary">
+      <div class="summary-card">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="summary-icon">
+          <path d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .707A8.237 8.237 0 016 18.75c1.995 0 3.823.707 5.25 1.886V4.533zM12.75 20.636A8.214 8.214 0 0118 18.75c.966 0 1.89.166 2.75.47a.75.75 0 001-.708V4.262a.75.75 0 00-.5-.707A9.735 9.735 0 0018 3a9.707 9.707 0 00-5.25 1.533v16.103z" />
+        </svg>
+        <div>
+          <div class="summary-label">Total Pagini Vizualizate</div>
+          <div class="summary-value"><%= number_with_delimiter(@total_page_views) %></div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="summary-icon">
+          <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm4.5 7.5a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0v-2.25a.75.75 0 01.75-.75zm3.75-1.5a.75.75 0 00-1.5 0v4.5a.75.75 0 001.5 0V12zm2.25-3a.75.75 0 01.75.75v6.75a.75.75 0 01-1.5 0V9.75A.75.75 0 0113.5 9zm3.75-1.5a.75.75 0 00-1.5 0v9a.75.75 0 001.5 0v-9z" clip-rule="evenodd" />
+        </svg>
+        <div>
+          <div class="summary-label">Pagini Unice Vizitate</div>
+          <div class="summary-value"><%= number_with_delimiter(@unique_pages_count) %></div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="summary-icon">
+          <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
+        </svg>
+        <div>
+          <div class="summary-label">Medie Pagini/Vizită</div>
+          <div class="summary-value"><%= (@total_page_views.to_f / @unique_visitors).round(1) %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% else %>
+  <div class="empty-state">
+    <p>Nu există date despre pagini disponibile pentru perioada selectată.</p>
+  </div>
+  <% end %>
+
+  <style>
+    .pages-section {
+      padding: 1rem 0;
+    }
+
+    .pages-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .pages-table-container {
+      background: #f9fafb;
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+      overflow: hidden;
+    }
+
+    .pages-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 1rem;
+    }
+
+    .pages-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .pages-table thead th {
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      padding: 0.5rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .pages-table thead th:first-child {
+      width: 60%;
+    }
+    
+    .pages-table thead th:nth-child(2) {
+      width: 25%;
+    }
+    
+    .pages-table thead th:last-child {
+      width: 15%;
+    }
+
+    .pages-table tbody tr {
+      border-bottom: 1px solid #e5e7eb;
+      transition: background 0.2s;
+    }
+
+    .pages-table tbody tr:hover {
+      background: white;
+    }
+
+    .pages-table tbody td {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.875rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .page-url {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .page-rank {
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 0.375rem;
+      background: #3b82f6;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8125rem;
+      flex-shrink: 0;
+    }
+
+    .page-rank.entry {
+      background: #10b981;
+    }
+
+    .page-details {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .page-path {
+      font-weight: 500;
+      color: #374151;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+      display: block;
+    }
+    
+    .page-url {
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .page-count {
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .page-percent {
+      color: #6b7280;
+      font-size: 0.8125rem;
+    }
+
+    .pages-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .summary-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .summary-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      color: #3b82f6;
+      flex-shrink: 0;
+    }
+
+    .summary-label {
+      font-size: 0.8125rem;
+      color: #6b7280;
+      margin-bottom: 0.25rem;
+    }
+
+    .summary-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    @media (max-width: 768px) {
+      .pages-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+<% end %>
