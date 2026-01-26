@@ -1,5 +1,5 @@
 <% if access %>
-  <div class="analytics-dashboard-new" data-controller="analytics-refresh">
+  <div class="analytics-dashboard-new" data-controller="analytics-refresh" data-analytics-refresh-interval-value="1200000">
     <!-- Header -->
     <div class="analytics-header-new">
       <div>
@@ -21,34 +21,39 @@
     </div>
 
     <!-- Period Filter -->
-    <div class="period-filter-new">
+    <div class="period-filter-new" role="region" aria-label="Filtru perioadă">
       <%= form_with url: dashboard_analytics_path, method: :get, class: 'period-form-new' do |f| %>
-        <div class="filter-buttons">
-          <%= button_tag 'Azi', type: 'submit', name: 'period', value: 'today', class: "filter-btn #{@period == 'today' ? 'active' : ''}" %>
-          <%= button_tag 'Săptămâna', type: 'submit', name: 'period', value: 'week', class: "filter-btn #{@period == 'week' ? 'active' : ''}" %>
-          <%= button_tag 'Luna', type: 'submit', name: 'period', value: 'month', class: "filter-btn #{@period == 'month' ? 'active' : ''}" %>
-          <%= button_tag '7 zile', type: 'submit', name: 'period', value: '7', class: "filter-btn #{@period == '7' ? 'active' : ''}" %>
-          <%= button_tag '30 zile', type: 'submit', name: 'period', value: '30', class: "filter-btn #{@period == '30' ? 'active' : ''}" %>
-          <%= button_tag '90 zile', type: 'submit', name: 'period', value: '90', class: "filter-btn #{@period == '90' ? 'active' : ''}" %>
+        <div class="filter-buttons" role="group" aria-label="Opțiuni perioadă predefinite">
+          <%= button_tag 'Azi', type: 'submit', name: 'period', value: 'today', class: "filter-btn #{@period == 'today' ? 'active' : ''}", aria: { pressed: @period == 'today', label: 'Filtrează date pentru astăzi' } %>
+          <%= button_tag 'Săptămâna', type: 'submit', name: 'period', value: 'week', class: "filter-btn #{@period == 'week' ? 'active' : ''}", aria: { pressed: @period == 'week', label: 'Filtrează date pentru săptămâna curentă' } %>
+          <%= button_tag 'Luna', type: 'submit', name: 'period', value: 'month', class: "filter-btn #{@period == 'month' ? 'active' : ''}", aria: { pressed: @period == 'month', label: 'Filtrează date pentru luna curentă' } %>
+          <%= button_tag '7 zile', type: 'submit', name: 'period', value: '7', class: "filter-btn #{@period == '7' ? 'active' : ''}", aria: { pressed: @period == '7', label: 'Filtrează date pentru ultimele 7 zile' } %>
+          <%= button_tag '30 zile', type: 'submit', name: 'period', value: '30', class: "filter-btn #{@period == '30' ? 'active' : ''}", aria: { pressed: @period == '30', label: 'Filtrează date pentru ultimele 30 zile' } %>
+          <%= button_tag '90 zile', type: 'submit', name: 'period', value: '90', class: "filter-btn #{@period == '90' ? 'active' : ''}", aria: { pressed: @period == '90', label: 'Filtrează date pentru ultimele 90 zile' } %>
         </div>
-        <div class="custom-filter" data-controller="custom-date-filter">
-          <%= f.date_field :custom_start_date, value: @custom_start_date, class: 'date-input-new', placeholder: 'De la' %>
-          <%= f.date_field :custom_end_date, value: @custom_end_date, class: 'date-input-new', placeholder: 'Până la' %>
-          <%= f.submit 'Aplică', class: 'btn-apply-new' %>
+        <div class="custom-filter" data-controller="analytics-date-filter" role="group" aria-label="Filtru perioadă personalizată">
+          <%= f.date_field :custom_start_date, value: @custom_start_date, class: 'date-input-new', placeholder: 'De la', aria: { label: 'Data de început' }, data: { analytics_date_filter_target: 'startDate', action: 'change->analytics-date-filter#validateDates' } %>
+          <%= f.date_field :custom_end_date, value: @custom_end_date, class: 'date-input-new', placeholder: 'Până la', aria: { label: 'Data de sfârșit' }, data: { analytics_date_filter_target: 'endDate', action: 'change->analytics-date-filter#validateDates' } %>
+          <%= f.submit 'Aplică', class: 'btn-apply-new', aria: { label: 'Aplică filtru perioadă personalizată' }, data: { analytics_date_filter_target: 'applyButton', action: 'click->analytics-date-filter#handleApply' } %>
         </div>
       <% end %>
     </div>
 
     <!-- TIER 1: Hero KPIs (Always Visible) -->
-    <div class="hero-kpis">
-      <div class="kpi-card kpi-primary">
+    <div class="hero-kpis" role="region" aria-label="Indicatori cheie de performanță">
+      <article class="kpi-card kpi-primary" role="article" aria-label="Total vizitatori">
         <div class="kpi-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
             <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM3.087 17.87a.563.563 0 01.563-.563h6a.563.563 0 01.563.563 6.94 6.94 0 01-7.126 0z"/>
           </svg>
         </div>
         <div class="kpi-content">
-          <div class="kpi-label">Total Vizitatori</div>
+          <div class="kpi-label" data-controller="tooltip" data-tooltip-text-value="Numărul total de vizite pe site, inclusiv vizitatori care revin">
+            Total Vizitatori
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tooltip-icon">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+            </svg>
+          </div>
           <div class="kpi-value"><%= number_with_delimiter(@total_visitors) %></div>
           <div class="kpi-trend <%= @visitors_change_pct >= 0 ? 'positive' : 'negative' %>">
             <%= @visitors_change_pct >= 0 ? '↑' : '↓' %> <%= @visitors_change_pct.abs %>% vs perioada anterioară
@@ -63,7 +68,12 @@
           </svg>
         </div>
         <div class="kpi-content">
-          <div class="kpi-label">Vizitatori Unici</div>
+          <div class="kpi-label" data-controller="tooltip" data-tooltip-text-value="Vizitatori distincti bazați pe cookie-uri. Un vizitator poate avea multiple vizite.">
+            Vizitatori Unici
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tooltip-icon">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+            </svg>
+          </div>
           <div class="kpi-value"><%= number_with_delimiter(@unique_visitors) %></div>
           <div class="kpi-trend <%= @unique_change_pct >= 0 ? 'positive' : 'negative' %>">
             <%= @unique_change_pct >= 0 ? '↑' : '↓' %> <%= @unique_change_pct.abs %>% vs perioada anterioară
@@ -135,8 +145,8 @@
     <!-- TIER 2: Daily Traffic Chart (Lazy Loaded) -->
     <%= turbo_frame_tag "daily_chart", src: dashboard_analytics_daily_chart_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
       <div class="loading-section">
-        <div class="spinner"></div>
-        <p>Se încarcă graficul zilnic...</p>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-chart"></div>
       </div>
     <% end %>
 
@@ -158,8 +168,11 @@
         </summary>
         <%= turbo_frame_tag "geography", src: dashboard_analytics_geography_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
           <div class="loading-content">
-            <div class="spinner-small"></div>
-            <p>Se încarcă datele geografice...</p>
+            <div class="skeleton skeleton-table">
+              <div class="skeleton skeleton-row"></div>
+              <div class="skeleton skeleton-row"></div>
+              <div class="skeleton skeleton-row"></div>
+            </div>
           </div>
         <% end %>
       </details>
@@ -179,8 +192,11 @@
         </summary>
         <%= turbo_frame_tag "sources", src: dashboard_analytics_sources_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
           <div class="loading-content">
-            <div class="spinner-small"></div>
-            <p>Se încarcă sursele de trafic...</p>
+            <div class="skeleton skeleton-table">
+              <div class="skeleton skeleton-row"></div>
+              <div class="skeleton skeleton-row"></div>
+              <div class="skeleton skeleton-row"></div>
+            </div>
           </div>
         <% end %>
       </details>
@@ -200,8 +216,11 @@
         </summary>
         <%= turbo_frame_tag "pages", src: dashboard_analytics_pages_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
           <div class="loading-content">
-            <div class="spinner-small"></div>
-            <p>Se încarcă paginile...</p>
+            <div class="skeleton skeleton-table">
+              <div class="skeleton skeleton-row"></div>
+              <div class="skeleton skeleton-row"></div>
+              <div class="skeleton skeleton-row"></div>
+            </div>
           </div>
         <% end %>
       </details>
@@ -221,8 +240,11 @@
         </summary>
         <%= turbo_frame_tag "user_journey", src: dashboard_analytics_user_journey_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
           <div class="loading-content">
-            <div class="spinner-small"></div>
-            <p>Se încarcă parcursul utilizatorilor...</p>
+            <div class="skeleton skeleton-table">
+              <div class="skeleton skeleton-row"></div>
+              <div class="skeleton skeleton-row"></div>
+              <div class="skeleton skeleton-row"></div>
+            </div>
           </div>
         <% end %>
       </details>
@@ -242,8 +264,11 @@
         </summary>
         <%= turbo_frame_tag "content", src: dashboard_analytics_content_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
           <div class="loading-content">
-            <div class="spinner-small"></div>
-            <p>Se încarcă performanța conținutului...</p>
+            <div class="skeleton skeleton-table">
+              <div class="skeleton skeleton-row"></div>
+              <div class="skeleton skeleton-row"></div>
+              <div class="skeleton skeleton-row"></div>
+            </div>
           </div>
         <% end %>
       </details>
