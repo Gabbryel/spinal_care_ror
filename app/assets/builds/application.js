@@ -21637,6 +21637,72 @@
     }
   };
 
+  // controllers/analytics_date_filter_controller.js
+  var analytics_date_filter_controller_exports = {};
+  __export(analytics_date_filter_controller_exports, {
+    default: () => analytics_date_filter_controller_default
+  });
+  var analytics_date_filter_controller_default = class extends Controller {
+    static targets = ["startDate", "endDate", "applyButton"];
+    connect() {
+      this.validateDates();
+    }
+    validateDates() {
+      if (!this.hasStartDateTarget || !this.hasEndDateTarget)
+        return;
+      const start3 = this.startDateTarget.value;
+      const end2 = this.endDateTarget.value;
+      if (start3 && end2) {
+        const isValid = this.isValidDateRange(start3, end2);
+        this.toggleApplyButton(isValid);
+        if (isValid) {
+          this.clearError();
+        }
+      }
+    }
+    isValidDateRange(start3, end2) {
+      return new Date(start3) <= new Date(end2);
+    }
+    toggleApplyButton(isValid) {
+      if (this.hasApplyButtonTarget) {
+        this.applyButtonTarget.disabled = !isValid;
+        this.applyButtonTarget.classList.toggle("disabled", !isValid);
+      }
+    }
+    handleApply(event) {
+      const start3 = this.startDateTarget.value;
+      const end2 = this.endDateTarget.value;
+      if (!start3 || !end2) {
+        event.preventDefault();
+        this.showError("V\u0103 rug\u0103m s\u0103 selecta\u021Bi ambele date (\xEEnceput \u0219i sf\xE2r\u0219it).");
+        return;
+      }
+      if (!this.isValidDateRange(start3, end2)) {
+        event.preventDefault();
+        this.showError(
+          "Data de \xEEnceput trebuie s\u0103 fie \xEEnainte de data de sf\xE2r\u0219it."
+        );
+        return;
+      }
+    }
+    showError(message) {
+      this.clearError();
+      const error2 = document.createElement("div");
+      error2.className = "date-filter-error";
+      error2.textContent = message;
+      error2.setAttribute("role", "alert");
+      if (this.hasApplyButtonTarget) {
+        this.applyButtonTarget.parentElement.appendChild(error2);
+      }
+    }
+    clearError() {
+      const existingError = this.element.querySelector(".date-filter-error");
+      if (existingError) {
+        existingError.remove();
+      }
+    }
+  };
+
   // controllers/analytics_period_filter_controller.js
   var analytics_period_filter_controller_exports = {};
   __export(analytics_period_filter_controller_exports, {
@@ -21662,6 +21728,69 @@
           this.formTarget.submit();
         }, 100);
       }
+    }
+  };
+
+  // controllers/analytics_refresh_controller.js
+  var analytics_refresh_controller_exports = {};
+  __export(analytics_refresh_controller_exports, {
+    default: () => analytics_refresh_controller_default
+  });
+  var analytics_refresh_controller_default = class extends Controller {
+    static values = {
+      interval: { type: Number, default: 12e5 }
+      // 20 minutes default
+    };
+    connect() {
+      this.startAutoRefresh();
+    }
+    disconnect() {
+      this.stopAutoRefresh();
+    }
+    startAutoRefresh() {
+      const heroSection = this.element.querySelector(".hero-kpis");
+      if (!heroSection)
+        return;
+      this.refreshTimer = setInterval(() => {
+        this.refreshHeroKPIs(heroSection);
+      }, this.intervalValue);
+    }
+    stopAutoRefresh() {
+      if (this.refreshTimer) {
+        clearInterval(this.refreshTimer);
+      }
+    }
+    async refreshHeroKPIs(heroSection) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const refreshUrl = window.location.pathname + "?" + urlParams.toString();
+      try {
+        const response = await fetch(refreshUrl, {
+          headers: {
+            Accept: "text/html",
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        });
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        const newHeroSection = doc.querySelector(".hero-kpis");
+        if (newHeroSection) {
+          heroSection.innerHTML = newHeroSection.innerHTML;
+          this.showNotification("Date actualizate");
+        }
+      } catch (error2) {
+        console.error("Eroare la actualizarea datelor:", error2);
+      }
+    }
+    showNotification(message) {
+      const notification = document.createElement("div");
+      notification.className = "analytics-notification";
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.classList.add("fade-out");
+        setTimeout(() => notification.remove(), 300);
+      }, 2e3);
     }
   };
 
@@ -23224,7 +23353,7 @@
   };
 
   // rails:/Users/aquaman/Code/Projects/spinal/spinal_care_ror/app/javascript/controllers/**/*_controller.js
-  var modules = [{ name: "admin-modal", module: admin_modal_controller_exports, filename: "admin-modal_controller.js" }, { name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "analytics-charts", module: analytics_charts_controller_exports, filename: "analytics_charts_controller.js" }, { name: "analytics-period-filter", module: analytics_period_filter_controller_exports, filename: "analytics_period_filter_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "click-tracker", module: click_tracker_controller_exports, filename: "click_tracker_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "landingimage", module: landingimage_controller_exports, filename: "landingimage_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFilter", module: memberFilter_controller_exports, filename: "memberFilter_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "member-height", module: member_height_controller_exports, filename: "member_height_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "richTextEditor", module: richTextEditor_controller_exports, filename: "richTextEditor_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
+  var modules = [{ name: "admin-modal", module: admin_modal_controller_exports, filename: "admin-modal_controller.js" }, { name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "analytics-charts", module: analytics_charts_controller_exports, filename: "analytics_charts_controller.js" }, { name: "analytics-date-filter", module: analytics_date_filter_controller_exports, filename: "analytics_date_filter_controller.js" }, { name: "analytics-period-filter", module: analytics_period_filter_controller_exports, filename: "analytics_period_filter_controller.js" }, { name: "analytics-refresh", module: analytics_refresh_controller_exports, filename: "analytics_refresh_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "click-tracker", module: click_tracker_controller_exports, filename: "click_tracker_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "landingimage", module: landingimage_controller_exports, filename: "landingimage_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFilter", module: memberFilter_controller_exports, filename: "memberFilter_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "member-height", module: member_height_controller_exports, filename: "member_height_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "richTextEditor", module: richTextEditor_controller_exports, filename: "richTextEditor_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
   var controller_default = modules;
 
   // controllers/index.js
