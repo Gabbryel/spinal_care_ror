@@ -74,9 +74,9 @@ class AdminController < ApplicationController
     @pages_per_visit_change_pct = calculate_percentage_change(@pages_per_visit, @previous_pages_per_visit)
     
     # Bounce Rate (single page visits / total visits)
-    single_page_visits = events.group(:visit_id).having('COUNT(*) = 1').count.length
+    single_page_visits = events.group(:visit_id).having(Arel.sql('COUNT(*) = 1')).count.length
     @bounce_rate = @total_visits > 0 ? ((single_page_visits.to_f / @total_visits) * 100).round(1) : 0
-    previous_single_page_visits = previous_events.group(:visit_id).having('COUNT(*) = 1').count.length
+    previous_single_page_visits = previous_events.group(:visit_id).having(Arel.sql('COUNT(*) = 1')).count.length
     @previous_bounce_rate = previous_total_visits_count > 0 ? ((previous_single_page_visits.to_f / previous_total_visits_count) * 100).round(1) : 0
     @bounce_rate_change_pct = calculate_percentage_change(@bounce_rate, @previous_bounce_rate)
     
@@ -408,7 +408,7 @@ class AdminController < ApplicationController
     # ===== PATIENT JOURNEY ANALYTICS =====
     # Common Visit Paths (top 15 multi-page journeys)
     multi_page_visits = events.group(:visit_id)
-                              .having('COUNT(*) > 1')
+                              .having(Arel.sql('COUNT(*) > 1'))
                               .order(Arel.sql('COUNT(*) DESC'))
                               .limit(15)
                               .pluck(:visit_id)
@@ -451,10 +451,10 @@ class AdminController < ApplicationController
     
     # Returning Visitor Patterns
     returning_visitor_data = public_visits.group(:visitor_token)
-                                          .having('COUNT(*) > 1')
-                                          .order('COUNT(*) DESC')
+                                          .having(Arel.sql('COUNT(*) > 1'))
+                                          .order(Arel.sql('COUNT(*) DESC'))
                                           .limit(100)
-                                          .pluck(:visitor_token, 'COUNT(*) as visit_count')
+                                          .pluck(:visitor_token, Arel.sql('COUNT(*) as visit_count'))
     
     @returning_visitor_distribution = {
       '2 visits' => returning_visitor_data.count { |_, count| count == 2 },
@@ -497,10 +497,10 @@ class AdminController < ApplicationController
     # Monthly Trends (last 12 months)
     @medicine_monthly = MedicinesConsumption.where('created_at >= ?', 12.months.ago)
                                             .group("DATE_TRUNC('month', created_at)")
-                                            .select("DATE_TRUNC('month', created_at) as month, 
+                                            .select(Arel.sql("DATE_TRUNC('month', created_at) as month, 
                                                     SUM(total_amount) as total_spent,
                                                     SUM(budget) as total_budget,
-                                                    COUNT(*) as transaction_count")
+                                                    COUNT(*) as transaction_count"))
                                             .order('month ASC')
 
     # Current Month Stats
@@ -522,10 +522,10 @@ class AdminController < ApplicationController
     # Top Medications/Categories
     @top_medicines = MedicinesConsumption.where('created_at >= ?', 6.months.ago)
                                          .group(:medicine_name)
-                                         .select('medicine_name, 
+                                         .select(Arel.sql('medicine_name, 
                                                  SUM(total_amount) as total_cost,
                                                  SUM(quantity) as total_quantity,
-                                                 COUNT(*) as purchase_count')
+                                                 COUNT(*) as purchase_count'))
                                          .order('total_cost DESC')
                                          .limit(10)
 
