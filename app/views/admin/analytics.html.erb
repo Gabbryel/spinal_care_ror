@@ -312,7 +312,7 @@
                     <tr>
                       <td class="heatmap-day-label"><%= day_data[:date] %></td>
                       <% day_data[:hours].each do |count| %>
-                        <% intensity = count > 0 ? [(count.to_f / @heatmap_data.flat_map { |d| d[:hours] }.max * 100).round : 0] : 0 %>
+                        <% intensity = count > 0 ? (count.to_f / @heatmap_data.flat_map { |d| d[:hours] }.max * 100).round : 0 %>
                         <td class="heatmap-cell" 
                             data-count="<%= count %>" 
                             style="background-color: <%= count > 0 ? "rgba(59, 130, 246, #{intensity / 100.0})" : '#f3f4f6' %>">
