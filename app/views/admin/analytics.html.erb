@@ -516,39 +516,23 @@
           </div>
         </div>
 
-        <!-- Budget Variance Gauge -->
+        <!-- Current Month Consumption -->
         <div class="chart-card">
           <div class="chart-header">
-            <h3 class="chart-title">Luna Curentă - Buget</h3>
+            <h3 class="chart-title">Luna Curentă - Consum</h3>
             <span class="chart-info"><%= Date.today.strftime('%B %Y') %></span>
           </div>
           <div class="chart-body">
             <div class="budget-overview">
               <div class="budget-row">
-                <span class="budget-label">Buget:</span>
-                <span class="budget-value"><%= number_to_currency(@current_month_budget, unit: 'RON ', separator: ',', delimiter: '.') %></span>
-              </div>
-              <div class="budget-row">
-                <span class="budget-label">Cheltuit:</span>
-                <span class="budget-value budget-spent"><%= number_to_currency(@current_month_spend, unit: 'RON ', separator: ',', delimiter: '.') %></span>
-              </div>
-              <div class="budget-row">
-                <span class="budget-label">Rămas:</span>
-                <span class="budget-value <%= (@current_month_budget - @current_month_spend) >= 0 ? 'budget-positive' : 'budget-negative' %>">
-                  <%= number_to_currency(@current_month_budget - @current_month_spend, unit: 'RON ', separator: ',', delimiter: '.') %>
-                </span>
+                <span class="budget-label">Consum Total:</span>
+                <span class="budget-value budget-spent"><%= number_to_currency(@current_month_consumption, unit: 'RON ', separator: ',', delimiter: '.') %></span>
               </div>
             </div>
-            <div class="budget-progress-wrapper">
-              <% spent_percentage = @current_month_budget > 0 ? ((@current_month_spend.to_f / @current_month_budget) * 100).round(1) : 0 %>
-              <div class="budget-progress-bar">
-                <div class="budget-progress-fill <%= spent_percentage > 100 ? 'over-budget' : spent_percentage > 80 ? 'near-budget' : 'within-budget' %>" 
-                     style="width: <%= [spent_percentage, 100].min %>%">
-                </div>
-              </div>
-              <div class="budget-progress-label">
-                <%= spent_percentage %>% utilizat
-              </div>
+            <div class="forecast-box" style="margin-top: 1.5rem;">
+              <div class="forecast-label">Media Lunară (6 luni):</div>
+              <div class="forecast-value"><%= number_to_currency(@avg_monthly_spend, unit: 'RON ', separator: ',', delimiter: '.') %></div>
+              <div class="forecast-note">Bazat pe ultimele 6 luni</div>
             </div>
           </div>
         </div>
@@ -563,7 +547,7 @@
             <div class="yoy-comparison">
               <div class="yoy-year">
                 <div class="yoy-label"><%= Date.today.year - 1 %></div>
-                <div class="yoy-amount"><%= number_to_currency(@previous_year_spend, unit: 'RON ', separator: ',', delimiter: '.') %></div>
+                <div class="yoy-amount"><%= number_to_currency(@previous_year_consumption, unit: 'RON ', separator: ',', delimiter: '.') %></div>
               </div>
               <div class="yoy-arrow <%= @medicine_yoy_change >= 0 ? 'yoy-up' : 'yoy-down' %>">
                 <%= @medicine_yoy_change >= 0 ? '↑' : '↓' %>
@@ -571,7 +555,7 @@
               </div>
               <div class="yoy-year">
                 <div class="yoy-label"><%= Date.today.year %></div>
-                <div class="yoy-amount yoy-current"><%= number_to_currency(@current_year_spend, unit: 'RON ', separator: ',', delimiter: '.') %></div>
+                <div class="yoy-amount yoy-current"><%= number_to_currency(@current_year_consumption, unit: 'RON ', separator: ',', delimiter: '.') %></div>
               </div>
             </div>
             <div class="forecast-box">
