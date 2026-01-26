@@ -105,10 +105,13 @@ class AdminController < ApplicationController
     days_count = [((end_date.to_date - start_date.to_date).to_i), 90].min
     daily_data = public_visits.group("DATE(started_at)").count
     
-    @daily_visits = (0..days_count).map do |i|
+    daily_visits = (0..days_count).map do |i|
       date = i.days.ago(end_date).to_date
-      { date: date.strftime('%d %b'), count: daily_data[date] || 0 }
+      { date: date, label: date.strftime('%d %b'), count: daily_data[date] || 0 }
     end.reverse
+    
+    @daily_labels = daily_visits.map { |d| d[:label] }
+    @daily_data = daily_visits.map { |d| d[:count] }
     
     render partial: 'admin/analytics/daily_chart'
   end

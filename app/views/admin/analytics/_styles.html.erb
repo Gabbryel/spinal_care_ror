@@ -387,4 +387,27 @@
     font-size: 1.75rem;
   }
 }
+
+/* Empty States */
+.empty-state {
+  padding: 3rem 2rem;
+  text-align: center;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.empty-state p {
+  color: #6b7280;
+  font-size: 0.9375rem;
+  margin: 0;
+}
+
+.empty-state::before {
+  content: "📊";
+  display: block;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
 </style>

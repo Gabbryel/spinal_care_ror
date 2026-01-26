@@ -1,4 +1,5 @@
 <%= turbo_frame_tag "pages" do %>
+  <% if @most_viewed_pages.any? %>
   <div class="pages-section">
     <div class="pages-grid">
       <!-- Most Viewed Pages -->
@@ -91,6 +92,11 @@
       </div>
     </div>
   </div>
+  <% else %>
+  <div class="empty-state">
+    <p>Nu există date despre pagini disponibile pentru perioada selectată.</p>
+  </div>
+  <% end %>
 
   <style>
     .pages-section {

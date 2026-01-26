@@ -1,4 +1,5 @@
 <%= turbo_frame_tag "content" do %>
+  <% if @top_doctors.any? || @top_specialties.any? || @top_services.any? %>
   <div class="content-section">
     <div class="content-grid">
       <!-- Top Doctors -->
@@ -105,6 +106,11 @@
       </div>
     </div>
   </div>
+  <% else %>
+  <div class="empty-state">
+    <p>Nu există date despre conținut disponibile pentru perioada selectată.</p>
+  </div>
+  <% end %>
 
   <style>
     .content-section {

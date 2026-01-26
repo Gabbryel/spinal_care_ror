@@ -1,9 +1,16 @@
 <%= turbo_frame_tag "daily_chart" do %>
   <div class="chart-section">
     <h3 class="chart-title">Trafic Zilnic</h3>
-    <canvas id="dailyTrafficChart" height="100"></canvas>
+    <% if @daily_data.sum > 0 %>
+      <canvas id="dailyTrafficChart" height="100"></canvas>
+    <% else %>
+      <div class="empty-state">
+        <p>Nu există date disponibile pentru perioada selectată.</p>
+      </div>
+    <% end %>
   </div>
 
+  <% if @daily_data.sum > 0 %>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script>
     const ctx = document.getElementById('dailyTrafficChart');
@@ -86,6 +93,7 @@
       new Chart(ctx, config);
     }
   </script>
+  <% end %>
 
   <style>
     .chart-section {
