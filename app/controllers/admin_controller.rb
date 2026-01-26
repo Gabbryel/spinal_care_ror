@@ -120,6 +120,9 @@ class AdminController < ApplicationController
     public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
                                 .where('started_at >= ? AND started_at <= ?', start_date, end_date)
     
+    @total_visitors = public_visits.count
+    @unique_visitors = public_visits.distinct.count(:visitor_token)
+    
     @visitors_by_city = public_visits.where.not(city: [nil, ''])
                                     .group(:city)
                                     .order('count_all DESC')
@@ -141,6 +144,9 @@ class AdminController < ApplicationController
     
     public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
                                 .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    
+    @total_visitors = public_visits.count
+    @unique_visitors = public_visits.distinct.count(:visitor_token)
     
     traffic_data = public_visits.group(:referrer, :referring_domain).count
     @traffic_by_source = {
@@ -168,11 +174,14 @@ class AdminController < ApplicationController
     events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
                         .where('time >= ? AND time <= ?', start_date, end_date)
     
-    @most_viewed_pages = events.group(Arel.sql("properties->>'url'"))
-                               .order('count_all DESC')
-                               .limit(20)
-                               .count
-                               .transform_keys { |url| normalize_url(url) }
+    page_events = events.group(Arel.sql("properties->>'url'"))
+                        .order('count_all DESC')
+                        .limit(20)
+                        .count
+    
+    @most_viewed_pages = page_events.transform_keys { |url| normalize_url(url) }
+    @total_page_views = page_events.values.sum
+    @unique_pages_count = page_events.keys.count
     
     public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
                                 .where('started_at >= ? AND started_at <= ?', start_date, end_date)
@@ -184,12 +193,20 @@ class AdminController < ApplicationController
                                     .count
                                     .transform_keys { |url| normalize_url(url) }
     
+    @unique_visitors = public_visits.distinct.count(:visitor_token)
+    
     render partial: 'admin/analytics/pages'
   end
   
   def analytics_user_journey
     start_date = calculate_period_dates[:start_date]
     end_date = calculate_period_dates[:end_date]
+    
+    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    
+    @total_visitors = public_visits.count
+    @unique_visitors = public_visits.distinct.count(:visitor_token)
     
     # Filter meaningful clicks (exclude GDPR, external, UI noise)
     meaningful_clicks = Ahoy::Event
@@ -249,32 +266,38 @@ class AdminController < ApplicationController
                         .where('time >= ? AND time <= ?', start_date, end_date)
     
     # Top doctors by profile views
-    @top_doctors = events.where(Arel.sql("properties->>'url' LIKE '/echipa/%'"))
-                        .group(Arel.sql("properties->>'url'"))
-                        .order('count_all DESC')
-                        .limit(10)
-                        .count
-                        .map do |url, count|
-                          slug = url.split('/').last
-                          member = Member.find_by(slug: slug) || Member.find_by("first_name || '-' || last_name = ?", slug)
-                          { name: member&.full_name || slug, url: url, views: count }
-                        end
+    doctor_events = events.where(Arel.sql("properties->>'url' LIKE '/echipa/%'"))
+                         .group(Arel.sql("properties->>'url'"))
+                         .order('count_all DESC')
+                         .limit(10)
+                         .count
+    
+    @top_doctors = doctor_events.map do |url, count|
+      slug = url.split('/').last
+      member = Member.find_by(slug: slug) || Member.find_by("first_name || '-' || last_name = ?", slug)
+      [member&.full_name || slug, count]
+    end
+    @total_doctor_views = doctor_events.values.sum
     
     # Top specialties
-    @top_specialties = events.where(Arel.sql("properties->>'url' LIKE '/specialitati%'"))
-                             .group(Arel.sql("properties->>'url'"))
-                             .order('count_all DESC')
-                             .limit(10)
-                             .count
-                             .transform_keys { |url| normalize_url(url) }
+    specialty_events = events.where(Arel.sql("properties->>'url' LIKE '/specialitati%'"))
+                            .group(Arel.sql("properties->>'url'"))
+                            .order('count_all DESC')
+                            .limit(10)
+                            .count
+    
+    @top_specialties = specialty_events.transform_keys { |url| normalize_url(url) }
+    @total_specialty_views = specialty_events.values.sum
     
     # Top services
-    @top_services = events.where(Arel.sql("properties->>'url' LIKE '/servicii%'"))
+    service_events = events.where(Arel.sql("properties->>'url' LIKE '/servicii%'"))
                           .group(Arel.sql("properties->>'url'"))
                           .order('count_all DESC')
                           .limit(10)
                           .count
-                          .transform_keys { |url| normalize_url(url) }
+    
+    @top_services = service_events.transform_keys { |url| normalize_url(url) }
+    @total_service_views = service_events.values.sum
     
     render partial: 'admin/analytics/content'
   end
