@@ -292,7 +292,7 @@ class AdminController < ApplicationController
     
     # ===== ENGAGEMENT & INTERACTION =====
     # Click Analytics
-    click_events = events.where(name: 'click')
+    click_events = events.where(name: ['click', '$click'])
     @total_clicks = click_events.count
     
     @top_click_destinations = click_events.group("properties->>'destination'")
