@@ -150,9 +150,21 @@
 /* Hero KPIs */
 .hero-kpis {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   margin-bottom: 2rem;
+}
+
+@media (max-width: 1200px) {
+  .hero-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-kpis {
+    grid-template-columns: 1fr;
+  }
 }
 
 .kpi-card {
