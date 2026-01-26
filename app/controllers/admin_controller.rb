@@ -210,7 +210,7 @@ class AdminController < ApplicationController
     @service_unique_visitors = service_events.distinct.count(:visit_id)
     
     # Top Viewed Service Pages (LIMIT 15)
-    @top_service_pages = service_events.group("properties->>'url'")
+    @top_service_pages = service_events.group(Arel.sql("properties->>'url'"))
                                        .order('count_all DESC')
                                        .limit(15)
                                        .count
@@ -227,7 +227,7 @@ class AdminController < ApplicationController
     @member_unique_visitors = member_events.distinct.count(:visit_id)
     
     # Top Viewed Member Profiles (LIMIT 15)
-    @top_member_pages = member_events.group("properties->>'url'")
+    @top_member_pages = member_events.group(Arel.sql("properties->>'url'"))
                                      .order('count_all DESC')
                                      .limit(15)
                                      .count
@@ -269,7 +269,7 @@ class AdminController < ApplicationController
     
     # ===== PAGE PERFORMANCE =====
     # Most Viewed Pages (LIMIT 20)
-    @most_viewed_pages = events.group("properties->>'url'")
+    @most_viewed_pages = events.group(Arel.sql("properties->>'url'"))
                                .order('count_all DESC')
                                .limit(20)
                                .count
@@ -284,7 +284,7 @@ class AdminController < ApplicationController
                                     .transform_keys { |url| normalize_url(url) }
     
     # Exit Pages (LIMIT 15)
-    @top_exit_pages = events.group("properties->>'url'")
+    @top_exit_pages = events.group(Arel.sql("properties->>'url'"))
                             .order('count_all DESC')
                             .limit(15)
                             .count
@@ -295,24 +295,24 @@ class AdminController < ApplicationController
     click_events = events.where(name: ['click', '$click'])
     @total_clicks = click_events.count
     
-    @top_click_destinations = click_events.group("properties->>'destination'")
+    @top_click_destinations = click_events.group(Arel.sql("properties->>'destination'"))
                                           .order('count_all DESC')
                                           .limit(10)
                                           .count
                                           .transform_keys { |dest| dest&.gsub(/^https?:\/\/[^\/]+/, '')&.presence || dest }
     
-    @top_clicked_elements = click_events.group("properties->>'text'")
+    @top_clicked_elements = click_events.group(Arel.sql("properties->>'text'"))
                                         .order('count_all DESC')
                                         .limit(10)
                                         .count
     
-    @clicks_by_page = click_events.group("properties->>'page'")
+    @clicks_by_page = click_events.group(Arel.sql("properties->>'page'"))
                                   .order('count_all DESC')
                                   .limit(10)
                                   .count
                                   .transform_keys { |page| page&.presence || '/' }
     
-    @clicks_by_type = click_events.group("properties->>'element_type'").count
+    @clicks_by_type = click_events.group(Arel.sql("properties->>'element_type'")).count
     
     # ===== CONTENT STATISTICS =====
     # Basic counts
@@ -416,7 +416,7 @@ class AdminController < ApplicationController
     @common_paths = multi_page_visits.map do |visit_id|
       path = events.where(visit_id: visit_id)
                    .order(:time)
-                   .pluck("properties->>'url'")
+                   .pluck(Arel.sql("properties->>'url'"))
                    .map { |url| normalize_url(url) }
       { path: path, steps: path.size }
     end.group_by { |p| p[:path] }
@@ -433,7 +433,7 @@ class AdminController < ApplicationController
                              .select('visit_id, MAX(time) as last_time')
                              .map do |visit|
       events.where(visit_id: visit.visit_id, time: visit.last_time)
-            .pluck("properties->>'url'")
+            .pluck(Arel.sql("properties->>'url'"))
             .first
     end.compact
     
@@ -479,7 +479,7 @@ class AdminController < ApplicationController
     # Most revisited pages (by returning visitors)
     @most_revisited_pages = events.joins("INNER JOIN ahoy_visits ON ahoy_visits.id = ahoy_events.visit_id")
                                   .where("ahoy_visits.visitor_token IN (?)", returning_visitor_data.map(&:first))
-                                  .group("properties->>'url'")
+                                  .group(Arel.sql("properties->>'url'"))
                                   .order('count_all DESC')
                                   .limit(10)
                                   .count
