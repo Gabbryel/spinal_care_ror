@@ -147,6 +147,8 @@
   gap: 1rem;
   border: 1px solid #e5e7eb;
   transition: all 0.3s;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .kpi-card:hover {
@@ -201,6 +203,8 @@
 
 .kpi-content {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .kpi-label {
@@ -215,15 +219,19 @@
   font-weight: 700;
   color: #1f2937;
   line-height: 1;
-}
-
-.kpi-value-small {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.kpi-value-small {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f2937;
+  overflow: hidden;
+  word-break: break-word;
+  display: block;
+  line-height: 1.3;
 }
 
 .kpi-meta {
