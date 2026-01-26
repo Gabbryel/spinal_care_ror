@@ -1698,7 +1698,7 @@
           data: {
             labels: [
               <% @medicine_monthly.each do |record| %>
-                '<%= record.month.strftime('%b %Y') %>',
+                '<%= Date.parse(record.month.to_s).strftime('%b %Y') %>',
               <% end %>
             ],
             datasets: [
