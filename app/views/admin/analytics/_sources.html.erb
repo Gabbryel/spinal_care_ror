@@ -1,0 +1,250 @@
+<%= turbo_frame_tag "sources" do %>
+  <div class="sources-section">
+    <div class="sources-grid">
+      <!-- Traffic Sources Distribution -->
+      <div class="sources-chart-container">
+        <h4 class="sources-title">Distribuție Surse</h4>
+        <canvas id="sourcesChart" width="300" height="300"></canvas>
+      </div>
+
+      <!-- Top Referrers Table -->
+      <div class="referrers-container">
+        <h4 class="sources-title">Top Referrers</h4>
+        <table class="referrers-table">
+          <thead>
+            <tr>
+              <th>Sursă</th>
+              <th>Vizite</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @top_referrers.each do |referrer, count| %>
+              <tr>
+                <td class="referrer-url">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="link-icon">
+                    <path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd" />
+                  </svg>
+                  <%= truncate(referrer, length: 50) %>
+                </td>
+                <td class="referrer-count"><%= number_with_delimiter(count) %></td>
+                <td class="referrer-percent"><%= ((count.to_f / @total_visitors) * 100).round(1) %>%</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Traffic Sources Summary Cards -->
+    <div class="sources-cards">
+      <% @traffic_sources.each_with_index do |(source, count), index| %>
+        <div class="source-card" data-source="<%= source %>">
+          <div class="source-badge" style="background: <%= ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'][index % 6] %>"></div>
+          <div class="source-info">
+            <div class="source-name"><%= source %></div>
+            <div class="source-stats">
+              <%= number_with_delimiter(count) %> vizite · <%= ((count.to_f / @total_visitors) * 100).round(1) %>%
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    const sourcesCtx = document.getElementById('sourcesChart');
+    if (sourcesCtx) {
+      const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+      
+      const data = {
+        labels: <%= raw @traffic_sources.map { |s, c| s }.to_json %>,
+        datasets: [{
+          data: <%= raw @traffic_sources.map { |s, c| c }.to_json %>,
+          backgroundColor: colors,
+          borderWidth: 0
+        }]
+      };
+
+      const config = {
+        type: 'doughnut',
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 15,
+                font: {
+                  size: 12
+                },
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              padding: 12,
+              cornerRadius: 8,
+              callbacks: {
+                label: function(context) {
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = ((context.parsed / total) * 100).toFixed(1);
+                  return context.label + ': ' + context.parsed.toLocaleString() + ' (' + percentage + '%)';
+                }
+              }
+            }
+          }
+        }
+      };
+
+      new Chart(sourcesCtx, config);
+    }
+  </script>
+
+  <style>
+    .sources-section {
+      padding: 1rem 0;
+    }
+
+    .sources-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .sources-chart-container {
+      background: #f9fafb;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .sources-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 1.5rem;
+      width: 100%;
+    }
+
+    #sourcesChart {
+      max-width: 280px;
+      max-height: 280px;
+    }
+
+    .referrers-container {
+      background: #f9fafb;
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+    }
+
+    .referrers-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .referrers-table thead th {
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      padding: 0.5rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .referrers-table tbody tr {
+      border-bottom: 1px solid #e5e7eb;
+      transition: background 0.2s;
+    }
+
+    .referrers-table tbody tr:hover {
+      background: white;
+    }
+
+    .referrers-table tbody td {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .referrer-url {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .link-icon {
+      width: 1rem;
+      height: 1rem;
+      color: #3b82f6;
+      flex-shrink: 0;
+    }
+
+    .referrer-count {
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .referrer-percent {
+      color: #6b7280;
+      font-size: 0.8125rem;
+    }
+
+    .sources-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .source-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.2s;
+    }
+
+    .source-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .source-badge {
+      width: 0.5rem;
+      height: 2.5rem;
+      border-radius: 0.25rem;
+    }
+
+    .source-info {
+      flex: 1;
+    }
+
+    .source-name {
+      font-weight: 600;
+      color: #1f2937;
+      font-size: 0.9375rem;
+    }
+
+    .source-stats {
+      font-size: 0.8125rem;
+      color: #6b7280;
+      margin-top: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .sources-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+<% end %>

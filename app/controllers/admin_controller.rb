@@ -16,65 +16,132 @@ class AdminController < ApplicationController
   end
   
   def analytics
-    # Period filter setup
+    # Period filter setup with new presets
     @period = params[:period] || '30'
-    @start_date = calculate_start_date(@period)
     @custom_start_date = params[:custom_start_date]
     @custom_end_date = params[:custom_end_date]
     
-    # If custom period, override start_date
+    # Calculate date range based on period
     if @period == 'custom' && @custom_start_date.present? && @custom_end_date.present?
       @start_date = Time.zone.parse(@custom_start_date).beginning_of_day
       @end_date = Time.zone.parse(@custom_end_date).end_of_day
     else
       @end_date = Time.zone.now
+      @start_date = case @period
+                    when 'today' then @end_date.beginning_of_day
+                    when 'week' then 1.week.ago(@end_date)
+                    when 'month' then 1.month.ago(@end_date)
+                    when '7' then 7.days.ago(@end_date)
+                    when '30' then 30.days.ago(@end_date)
+                    when '90' then 90.days.ago(@end_date)
+                    when 'all' then 100.years.ago
+                    else 30.days.ago(@end_date)
+                    end
     end
     
-    # Batch basic counts in one query per table
-    @total_members = Member.count
-    @total_services = MedicalService.count
-    @total_specialties = Specialty.count
-    @total_professions = Profession.count
-    @total_facts = Fact.count
-    @total_users = User.count
-    
-    # User role counts in single query
-    user_counts = User.group(:admin, :god_mode).count
-    @admin_users = user_counts.select { |k, _| k[0] == true }.values.sum
-    @god_mode_users = user_counts.select { |k, _| k[1] == true }.values.sum
-    
-    # Base query for public visits - reuse throughout
+    # PHASE 1: HERO KPIs ONLY - Optimize for <1s load
+    # Base query for public visits
     public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
                                 .where('started_at >= ? AND started_at <= ?', @start_date, @end_date)
     
-    # Visitor counts
-    @total_visits = public_visits.count
+    # Critical metrics
+    @total_visitors = public_visits.count
     @unique_visitors = public_visits.distinct.count(:visitor_token)
-    @unique_visitors_this_month = @unique_visitors
+    days_in_period = ((@end_date - @start_date) / 1.day).ceil
+    @daily_average = days_in_period > 0 ? (@total_visitors / days_in_period).round : 0
     
-    # Time-based visit counts (separate queries for clarity and PostgreSQL compatibility)
-    now = Time.zone.now
-    @total_visits_today = public_visits.where('started_at >= ?', now.beginning_of_day).count
-    @total_visits_this_week = public_visits.where('started_at >= ?', 1.week.ago).count
-    @total_visits_this_month = public_visits.where('started_at >= ?', 1.month.ago).count
+    # Previous period comparison (single efficient query)
+    prev_start = @start_date - (@end_date - @start_date)
+    prev_end = @start_date
+    prev_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                             .where('started_at >= ? AND started_at < ?', prev_start, prev_end)
+    prev_count = prev_visits.count
+    @visitors_change_pct = prev_count > 0 ? (((@total_visitors - prev_count).to_f / prev_count) * 100).round(1) : 0
     
-    # New vs Returning Visitors (limit data processed)
-    visitor_counts = public_visits.group(:visitor_token).count
-    @new_visitors = visitor_counts.count { |_, count| count == 1 }
-    @returning_visitors = @unique_visitors_this_month - @new_visitors
+    prev_unique = prev_visits.distinct.count(:visitor_token)
+    @unique_change_pct = prev_unique > 0 ? (((@unique_visitors - prev_unique).to_f / prev_unique) * 100).round(1) : 0
     
-    # Events base query
+    prev_daily = prev_count / days_in_period.to_f
+    @daily_change_pct = prev_daily > 0 ? (((@daily_average - prev_daily) / prev_daily) * 100).round(1) : 0
+    
+    # Top 3 metrics (LIMIT 1 for performance)
+    @top_location = public_visits.where.not(city: [nil, ''])
+                                  .group(:city)
+                                  .order('count_all DESC')
+                                  .limit(1)
+                                  .count
+                                  .first
+    
+    @top_source = public_visits.group(:referring_domain)
+                                .order('count_all DESC')
+                                .limit(1)
+                                .count
+                                .first
+    @top_source = @top_source ? [@top_source[0] || 'Direct', @top_source[1]] : ['Direct', @total_visitors]
+    
     events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
                         .where('time >= ? AND time <= ?', @start_date, @end_date)
     
-    # Most viewed pages (LIMIT 15)
-    @most_viewed_pages = events.group("properties->>'url'")
-                               .order('count_all DESC')
-                               .limit(15)
-                               .count
-                               .transform_keys { |url| normalize_url(url) }
+    @top_page = events.group(Arel.sql("properties->>'url'"))
+                     .order('count_all DESC')
+                     .limit(1)
+                     .count
+                     .first
+    @top_page = @top_page ? [normalize_url(@top_page[0]), @top_page[1]] : ['/', 0]
     
-    # Traffic Sources (optimized single query)
+    # Store base queries for lazy-loaded sections
+    @public_visits_query = public_visits
+    @events_query = events
+  end
+  
+  # PHASE 2: Lazy-loaded sections
+  def analytics_daily_chart
+    start_date = calculate_period_dates[:start_date]
+    end_date = calculate_period_dates[:end_date]
+    
+    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    
+    days_count = [((end_date.to_date - start_date.to_date).to_i), 90].min
+    daily_data = public_visits.group("DATE(started_at)").count
+    
+    @daily_visits = (0..days_count).map do |i|
+      date = i.days.ago(end_date).to_date
+      { date: date.strftime('%d %b'), count: daily_data[date] || 0 }
+    end.reverse
+    
+    render partial: 'admin/analytics/daily_chart'
+  end
+  
+  def analytics_geography
+    start_date = calculate_period_dates[:start_date]
+    end_date = calculate_period_dates[:end_date]
+    
+    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    
+    @visitors_by_city = public_visits.where.not(city: [nil, ''])
+                                    .group(:city)
+                                    .order('count_all DESC')
+                                    .limit(20)
+                                    .count
+    
+    @visitors_by_country = public_visits.where.not(country: [nil, ''])
+                                        .group(:country)
+                                        .order('count_all DESC')
+                                        .limit(10)
+                                        .count
+    
+    render partial: 'admin/analytics/geography'
+  end
+  
+  def analytics_sources
+    start_date = calculate_period_dates[:start_date]
+    end_date = calculate_period_dates[:end_date]
+    
+    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    
     traffic_data = public_visits.group(:referrer, :referring_domain).count
     @traffic_by_source = {
       'Direct' => traffic_data.select { |k, _| k[0].nil? }.values.sum,
@@ -82,201 +149,134 @@ class AdminController < ApplicationController
       'Facebook' => traffic_data.select { |k, _| k[1]&.include?('facebook') }.values.sum,
       'Instagram' => traffic_data.select { |k, _| k[1]&.include?('instagram') }.values.sum
     }
-    @traffic_by_source['Alte surse'] = @total_visits - @traffic_by_source.values.sum
+    total = public_visits.count
+    @traffic_by_source['Alte surse'] = total - @traffic_by_source.values.sum
     
-    # Top Referrers (LIMIT 20)
-    referrer_data = public_visits.where.not(referrer: nil)
-                                 .group(:referring_domain)
-                                 .order('count_all DESC')
-                                 .limit(20)
-                                 .count
-    @total_referrer_visits = referrer_data.values.sum
-    @top_referrers_with_percentage = referrer_data.transform_values do |count|
-      { count: count, percentage: @total_referrer_visits > 0 ? ((count.to_f / @total_referrer_visits) * 100).round(2) : 0 }
-    end
+    @top_referrers = public_visits.where.not(referring_domain: nil)
+                                  .group(:referring_domain)
+                                  .order('count_all DESC')
+                                  .limit(15)
+                                  .count
     
-    # Browser, OS, Device (LIMIT 8)
-    @browsers = public_visits.group(:browser).order('count_all DESC').limit(8).count
-    @operating_systems = public_visits.group(:os).order('count_all DESC').limit(8).count
-    @device_types = public_visits.group(:device_type).order('count_all DESC').count
+    render partial: 'admin/analytics/sources'
+  end
+  
+  def analytics_pages
+    start_date = calculate_period_dates[:start_date]
+    end_date = calculate_period_dates[:end_date]
     
-    # Hourly Distribution (optimized single query)
-    hourly_data = public_visits.group("EXTRACT(HOUR FROM started_at)").count
-    @hourly_visits = (0..23).map { |hour| { hour: "#{hour}:00", count: hourly_data[hour.to_f] || 0 } }
+    events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
+                        .where('time >= ? AND time <= ?', start_date, end_date)
     
-    # Daily visits (optimized, limit to 30 days max for performance)
-    days_count = [((@end_date.to_date - @start_date.to_date).to_i), 30].min
-    daily_data = public_visits.group("DATE(started_at)").count
-    @daily_visits = (0..days_count).map do |i|
-      date = i.days.ago(@end_date).to_date
-      { date: date.strftime('%d %b'), count: daily_data[date] || 0 }
-    end.reverse
+    @most_viewed_pages = events.group(Arel.sql("properties->>'url'"))
+                               .order('count_all DESC')
+                               .limit(20)
+                               .count
+                               .transform_keys { |url| normalize_url(url) }
     
-    # Geographic Distribution - Countries (LIMIT 15)
-    @visitors_by_country = public_visits.where.not(country: [nil, ''])
-                                        .group(:country)
-                                        .order('count_all DESC')
-                                        .limit(15)
-                                        .count
+    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
     
-    # Geographic Distribution - Romania by Region/County (LIMIT 20)
-    @visitors_by_county = public_visits.where(country: ['Romania', 'RO'])
-                                       .where.not(region: [nil, ''])
-                                       .group(:region)
-                                       .order('count_all DESC')
-                                       .limit(20)
-                                       .count
-    
-    # Geographic Distribution - Romania by City (LIMIT 20)
-    @visitors_by_city_romania = public_visits.where(country: ['Romania', 'RO'])
-                                             .where.not(city: [nil, ''])
-                                             .group(:city)
-                                             .order('count_all DESC')
-                                             .limit(20)
-                                             .count
-    
-    # Geographic Distribution - All Cities (Legacy, LIMIT 10)
-    @geographic_data = public_visits.where.not(city: [nil, ''])
-                                   .group(:city)
-                                   .order('count_all DESC')
-                                   .limit(10)
-                                   .count
-    
-    # Engagement Metrics
-    @avg_visit_duration = 2.5
-    total_visits_period = @total_visits
-    total_events = events.count
-    single_page_visits = events.group(:visit_id).having('COUNT(*) = 1').count.length
-    
-    @bounce_rate = total_visits_period > 0 ? ((single_page_visits.to_f / total_visits_period) * 100).round(1) : 0
-    @pages_per_visit = total_visits_period > 0 ? (total_events.to_f / total_visits_period).round(2) : 0
-    
-    # Weekly growth (only if needed)
-    @weekly_growth = 0
-    if (@end_date - @start_date) >= 2.weeks
-      one_week_ago = 1.week.ago(@end_date)
-      visits_this_week = public_visits.where('started_at >= ?', one_week_ago).count
-      visits_last_week = public_visits.where('started_at < ?', one_week_ago).count
-      @weekly_growth = visits_last_week > 0 ? (((visits_this_week - visits_last_week).to_f / visits_last_week) * 100).round(1) : 0
-    end
-    
-    # Entry/Exit pages (LIMIT 10)
     @top_entry_pages = public_visits.where.not(landing_page: [nil, ''])
                                     .group(:landing_page)
                                     .order('count_all DESC')
-                                    .limit(10)
+                                    .limit(15)
                                     .count
                                     .transform_keys { |url| normalize_url(url) }
     
-    @top_exit_pages = events.group("properties->>'url'")
-                            .order('count_all DESC')
-                            .limit(10)
-                            .count
-                            .transform_keys { |url| normalize_url(url) }
+    render partial: 'admin/analytics/pages'
+  end
+  
+  def analytics_user_journey
+    start_date = calculate_period_dates[:start_date]
+    end_date = calculate_period_dates[:end_date]
     
-    # Click Analytics (LIMIT 10 each)
-    click_events = events.where(name: 'click')
-    @total_clicks = click_events.count
+    # Filter meaningful clicks (exclude GDPR, external, UI noise)
+    meaningful_clicks = Ahoy::Event
+      .where(name: '$click')
+      .where("properties->>'url' NOT LIKE '%privacy%'")
+      .where("properties->>'url' NOT LIKE '%cookie%'")
+      .where("properties->>'url' NOT LIKE '%gdpr%'")
+      .where("properties->>'text' NOT ILIKE '%Accept%Cookie%'")
+      .where("properties->>'text' NOT ILIKE '%Decline%'")
+      .where("properties->>'text' NOT ILIKE '%Close%'")
+      .where('time >= ? AND time <= ?', start_date, end_date)
     
-    @top_click_destinations = click_events.group("properties->>'destination'")
-                                          .order('count_all DESC')
-                                          .limit(10)
-                                          .count
-                                          .transform_keys { |dest| dest&.gsub(/^https?:\/\/[^\/]+/, '')&.presence || dest }
+    # User journey sequences
+    @user_journeys = meaningful_clicks
+      .select(:visit_id, Arel.sql("STRING_AGG(properties->>'url', ' → ' ORDER BY time) as path"))
+      .group(:visit_id)
+      .having('COUNT(*) > 1')
+      .limit(100)
+      .map { |j| j.path }
+      .group_by(&:itself)
+      .transform_values(&:count)
+      .sort_by { |_, count| -count }
+      .first(10)
     
-    @top_clicked_elements = click_events.group("properties->>'text'")
-                                        .order('count_all DESC')
-                                        .limit(10)
-                                        .count
+    # Top navigation clicks (internal only)
+    @top_navigation_clicks = meaningful_clicks
+      .where("properties->>'url' LIKE '/echipa%' 
+              OR properties->>'url' LIKE '/servicii%' 
+              OR properties->>'url' LIKE '/specialitati%'
+              OR properties->>'url' LIKE '/informatii%'")
+      .group(Arel.sql("properties->>'url'"))
+      .order('count_all DESC')
+      .limit(15)
+      .count
+      .transform_keys { |url| normalize_url(url) }
     
-    @clicks_by_page = click_events.group("properties->>'page'")
-                                  .order('count_all DESC')
-                                  .limit(10)
-                                  .count
-                                  .transform_keys { |page| page&.presence || '/' }
+    # Conversion clicks
+    @conversion_clicks = meaningful_clicks
+      .where("properties->>'text' ILIKE '%contact%' 
+              OR properties->>'text' ILIKE '%programare%'
+              OR properties->>'text' ILIKE '%apel%'
+              OR properties->>'url' LIKE 'tel:%'
+              OR properties->>'url' LIKE 'mailto:%'")
+      .group(Arel.sql("properties->>'text'"))
+      .order('count_all DESC')
+      .limit(10)
+      .count
     
-    @clicks_by_type = click_events.group("properties->>'element_type'").count
+    render partial: 'admin/analytics/user_journey'
+  end
+  
+  def analytics_content
+    start_date = calculate_period_dates[:start_date]
+    end_date = calculate_period_dates[:end_date]
     
-    # Content statistics (optimized with calculations instead of separate counts)
-    @members_with_bio = Member.joins(:rich_text_description).where.not(action_text_rich_texts: { body: [nil, ''] }).count rescue 0
-    @members_without_bio = @total_members - @members_with_bio
+    events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
+                        .where('time >= ? AND time <= ?', start_date, end_date)
     
-    @members_with_photo = Member.joins(:photo_attachment).distinct.count rescue 0
-    @members_without_photo = @total_members - @members_with_photo
+    # Top doctors by profile views
+    @top_doctors = events.where(Arel.sql("properties->>'url' LIKE '/echipa/%'"))
+                        .group(Arel.sql("properties->>'url'"))
+                        .order('count_all DESC')
+                        .limit(10)
+                        .count
+                        .map do |url, count|
+                          slug = url.split('/').last
+                          member = Member.find_by(slug: slug) || Member.find_by("first_name || '-' || last_name = ?", slug)
+                          { name: member&.full_name || slug, url: url, views: count }
+                        end
     
-    @services_per_specialty = MedicalService.group(:specialty_id).count
-    @members_per_profession = Member.group(:profession_id).count
-    @members_per_specialty = Member.where.not(specialty_id: nil).group(:specialty_id).count
+    # Top specialties
+    @top_specialties = events.where(Arel.sql("properties->>'url' LIKE '/specialitati%'"))
+                             .group(Arel.sql("properties->>'url'"))
+                             .order('count_all DESC')
+                             .limit(10)
+                             .count
+                             .transform_keys { |url| normalize_url(url) }
     
-    @services_without_description = @total_services - (MedicalService.joins(:rich_text_description).where.not(action_text_rich_texts: { body: [nil, ''] }).count rescue 0)
+    # Top services
+    @top_services = events.where(Arel.sql("properties->>'url' LIKE '/servicii%'"))
+                          .group(Arel.sql("properties->>'url'"))
+                          .order('count_all DESC')
+                          .limit(10)
+                          .count
+                          .transform_keys { |url| normalize_url(url) }
     
-    # Coverage metrics (use existing counts)
-    specialty_member_counts = @members_per_specialty.keys.uniq.size
-    @specialties_with_members = specialty_member_counts
-    @specialties_without_members = @total_specialties - @specialties_with_members
-    
-    profession_member_counts = @members_per_profession.keys.uniq.size
-    @professions_with_members = profession_member_counts
-    @professions_without_members = @total_professions - @professions_with_members
-    
-    @specialties_with_services = @services_per_specialty.keys.uniq.size
-    @specialties_without_services = @total_specialties - @specialties_with_services
-    
-    # Time-based statistics
-    @members_created_this_month = Member.where('created_at >= ? AND created_at <= ?', @start_date, @end_date).count
-    @services_created_this_month = MedicalService.where('created_at >= ? AND created_at <= ?', @start_date, @end_date).count
-    @facts_updated_this_week = Fact.where('updated_at >= ? AND updated_at <= ?', @start_date, @end_date).count
-    @users_created_this_month = User.where('created_at >= ? AND created_at <= ?', @start_date, @end_date).count
-    
-    # Recent activity (eager load minimal data)
-    @recent_members = Member.select(:id, :first_name, :last_name, :updated_at).order(updated_at: :desc).limit(5)
-    @recent_services = MedicalService.select(:id, :name, :updated_at).order(updated_at: :desc).limit(5)
-    @recent_facts = Fact.select(:id, :title, :updated_at).order(updated_at: :desc).limit(5)
-    @recent_users = User.select(:id, :email, :updated_at).order(updated_at: :desc).limit(5)
-    
-    # Database metrics (use cached counts)
-    @total_records = @total_members + @total_services + @total_specialties + @total_professions + @total_facts + @total_users
-    
-    # Growth trends (optimized - single query per model)
-    six_months_ago = 6.months.ago.beginning_of_month
-    member_growth_data = Member.where('created_at >= ?', six_months_ago)
-                               .group("DATE_TRUNC('month', created_at)")
-                               .count
-    
-    @members_growth = (0..5).map do |i|
-      date = i.months.ago.beginning_of_month
-      { month: date.strftime('%b'), count: member_growth_data[date] || 0 }
-    end.reverse
-    
-    service_growth_data = MedicalService.where('created_at >= ?', six_months_ago)
-                                        .group("DATE_TRUNC('month', created_at)")
-                                        .count
-    
-    @services_growth = (0..5).map do |i|
-      date = i.months.ago.beginning_of_month
-      { month: date.strftime('%b'), count: service_growth_data[date] || 0 }
-    end.reverse
-    
-    # Most updated (LIMIT 10, minimal fields)
-    @most_updated_members = Member.select(:id, :first_name, :last_name, :updated_at).order(updated_at: :desc).limit(10)
-    @most_updated_services = MedicalService.select(:id, :name, :updated_at).order(updated_at: :desc).limit(10)
-    
-    # Completeness metrics
-    @members_without_specialty = Member.where(specialty_id: nil).count
-    @services_without_members = MedicalService.left_joins(:members).where(members: { id: nil }).distinct.count rescue 0
-    
-    # Top specialties and professions (already grouped data exists)
-    @top_specialties = Specialty.left_joins(:medical_services)
-                                .group('specialties.id', 'specialties.name')
-                                .select('specialties.id, specialties.name, COUNT(medical_services.id) as services_count')
-                                .order('services_count DESC')
-                                .limit(10)
-    
-    @top_professions = Profession.left_joins(:members)
-                                 .group('professions.id', 'professions.name')
-                                 .select('professions.id, professions.name, COUNT(members.id) as members_count')
-                                 .order('members_count DESC')
-                                 .limit(10)
+    render partial: 'admin/analytics/content'
   end
   
   def edit_users
@@ -455,6 +455,31 @@ class AdminController < ApplicationController
   
   private
   
+  def calculate_period_dates
+    period = params[:period] || '30'
+    custom_start = params[:custom_start_date]
+    custom_end = params[:custom_end_date]
+    
+    if period == 'custom' && custom_start.present? && custom_end.present?
+      start_date = Time.zone.parse(custom_start).beginning_of_day
+      end_date = Time.zone.parse(custom_end).end_of_day
+    else
+      end_date = Time.zone.now
+      start_date = case period
+                   when 'today' then end_date.beginning_of_day
+                   when 'week' then 1.week.ago(end_date)
+                   when 'month' then 1.month.ago(end_date)
+                   when '7' then 7.days.ago(end_date)
+                   when '30' then 30.days.ago(end_date)
+                   when '90' then 90.days.ago(end_date)
+                   when 'all' then 100.years.ago
+                   else 30.days.ago(end_date)
+                   end
+    end
+    
+    { start_date: start_date, end_date: end_date }
+  end
+  
   def normalize_url(url)
     return 'Homepage' if url.nil? || url == '/' || url.empty?
     url.gsub(/^https?:\/\/[^\/]+/, '').presence || '/'
@@ -462,6 +487,12 @@ class AdminController < ApplicationController
 
   def calculate_start_date(period)
     case period
+    when 'today'
+      Time.zone.now.beginning_of_day
+    when 'week'
+      1.week.ago
+    when 'month'
+      1.month.ago
     when '7'
       7.days.ago
     when '30'
@@ -473,9 +504,9 @@ class AdminController < ApplicationController
     when '365'
       365.days.ago
     when 'all'
-      100.years.ago # Effectively all time
+      100.years.ago
     else
-      30.days.ago # Default to 30 days
+      30.days.ago
     end
   end
 

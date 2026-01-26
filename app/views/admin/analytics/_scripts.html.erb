@@ -1,0 +1,107 @@
+<script>
+  // Auto-refresh Hero KPIs every 60 seconds
+  document.addEventListener('DOMContentLoaded', () => {
+    const refreshInterval = 60000; // 60 seconds
+    const heroSection = document.querySelector('.hero-kpis');
+    
+    if (heroSection) {
+      setInterval(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const refreshUrl = window.location.pathname + '?' + urlParams.toString();
+        
+        fetch(refreshUrl, {
+          headers: {
+            'Accept': 'text/html',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newHeroSection = doc.querySelector('.hero-kpis');
+          
+          if (newHeroSection) {
+            heroSection.innerHTML = newHeroSection.innerHTML;
+            
+            // Show brief notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+              position: fixed;
+              top: 20px;
+              right: 20px;
+              background: #10b981;
+              color: white;
+              padding: 0.75rem 1.5rem;
+              border-radius: 0.5rem;
+              font-size: 0.875rem;
+              z-index: 1000;
+              animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = 'Date actualizate';
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+              notification.style.animation = 'slideOut 0.3s ease';
+              setTimeout(() => notification.remove(), 300);
+            }, 2000);
+          }
+        })
+        .catch(error => console.error('Eroare la actualizarea datelor:', error));
+      }, refreshInterval);
+    }
+  });
+  
+  // Custom date filter validation
+  document.addEventListener('DOMContentLoaded', () => {
+    const customStartDate = document.querySelector('input[name="custom_start_date"]');
+    const customEndDate = document.querySelector('input[name="custom_end_date"]');
+    const applyBtn = document.querySelector('.btn-apply-new');
+    
+    if (customStartDate && customEndDate && applyBtn) {
+      applyBtn.addEventListener('click', (e) => {
+        const start = customStartDate.value;
+        const end = customEndDate.value;
+        
+        if (!start || !end) {
+          e.preventDefault();
+          alert('Vă rugăm să selectați ambele date (început și sfârșit).');
+          return;
+        }
+        
+        if (new Date(start) > new Date(end)) {
+          e.preventDefault();
+          alert('Data de început trebuie să fie înainte de data de sfârșit.');
+          return;
+        }
+      });
+    }
+  });
+  
+  // Add animation styles
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+</script>
