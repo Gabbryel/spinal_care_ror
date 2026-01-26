@@ -123,13 +123,13 @@ class AdminController < ApplicationController
     @total_visitors = public_visits.count
     @unique_visitors = public_visits.distinct.count(:visitor_token)
     
-    @visitors_by_city = public_visits.where.not(city: [nil, ''])
+    @top_cities = public_visits.where.not(city: [nil, ''])
                                     .group(:city)
                                     .order('count_all DESC')
                                     .limit(20)
                                     .count
     
-    @visitors_by_country = public_visits.where.not(country: [nil, ''])
+    @top_countries = public_visits.where.not(country: [nil, ''])
                                         .group(:country)
                                         .order('count_all DESC')
                                         .limit(10)
@@ -149,14 +149,14 @@ class AdminController < ApplicationController
     @unique_visitors = public_visits.distinct.count(:visitor_token)
     
     traffic_data = public_visits.group(:referrer, :referring_domain).count
-    @traffic_by_source = {
+    @traffic_sources = {
       'Direct' => traffic_data.select { |k, _| k[0].nil? }.values.sum,
       'Google' => traffic_data.select { |k, _| k[1]&.include?('google') }.values.sum,
       'Facebook' => traffic_data.select { |k, _| k[1]&.include?('facebook') }.values.sum,
       'Instagram' => traffic_data.select { |k, _| k[1]&.include?('instagram') }.values.sum
     }
     total = public_visits.count
-    @traffic_by_source['Alte surse'] = total - @traffic_by_source.values.sum
+    @traffic_sources['Alte surse'] = total - @traffic_sources.values.sum
     
     @top_referrers = public_visits.where.not(referring_domain: nil)
                                   .group(:referring_domain)
