@@ -175,7 +175,7 @@ class AdminController < ApplicationController
                             .transform_keys { |url| normalize_url(url) }
     
     # Click Analytics (LIMIT 10 each)
-    click_events = events.where(name: 'click')
+    click_events = events.where(name: ['click', '$click'])
     @total_clicks = click_events.count
     
     @top_click_destinations = click_events.group("properties->>'destination'")
