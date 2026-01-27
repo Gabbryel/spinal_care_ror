@@ -138,6 +138,9 @@ class AdminController < ApplicationController
     start_date = calculate_period_dates[:start_date]
     end_date = calculate_period_dates[:end_date]
     
+    events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
+                        .where('time >= ? AND time <= ?', start_date, end_date)
+    
     public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
                                 .where('started_at >= ? AND started_at <= ?', start_date, end_date)
     
@@ -256,9 +259,9 @@ class AdminController < ApplicationController
       .where("properties->>'url' NOT LIKE '%privacy%'")
       .where("properties->>'url' NOT LIKE '%cookie%'")
       .where("properties->>'url' NOT LIKE '%gdpr%'")
-      .where("properties->>'text' NOT ILIKE '%Accept%Cookie%'")
-      .where("properties->>'text' NOT ILIKE '%Decline%'")
-      .where("properties->>'text' NOT ILIKE '%Close%'")
+      .where("properties->>'text' NOT ILIKE '%Accept%Cookie%' OR properties->>'text' IS NULL")
+      .where("properties->>'text' NOT ILIKE '%Decline%' OR properties->>'text' IS NULL")
+      .where("properties->>'text' NOT ILIKE '%Close%' OR properties->>'text' IS NULL")
       .where('time >= ? AND time <= ?', start_date, end_date)
     
     # User journey sequences
