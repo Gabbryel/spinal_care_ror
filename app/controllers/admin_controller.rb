@@ -163,13 +163,17 @@ class AdminController < ApplicationController
     click_events = events.where(name: ['click', '$click'])
     @total_clicks = click_events.count
     
-    @top_click_destinations = click_events.group("properties->>'destination'")
+    # Use 'url' field for automatic $click events (most common)
+    @top_click_destinations = click_events.where("properties->>'url' IS NOT NULL AND properties->>'url' != ''")
+                                          .group("properties->>'url'")
                                           .order('count_all DESC')
                                           .limit(10)
                                           .count
-                                          .transform_keys { |dest| dest&.gsub(/^https?:\/\/[^\/]+/, '')&.presence || dest }
+                                          .transform_keys { |dest| normalize_url(dest) }
     
-    @top_clicked_elements = click_events.group("properties->>'text'")
+    # Use 'name' field for link text from automatic tracking, fallback to 'text' for custom events
+    @top_clicked_elements = click_events.where("(properties->>'name' IS NOT NULL AND properties->>'name' != '') OR (properties->>'text' IS NOT NULL AND properties->>'text' != '')")
+                                        .group(Arel.sql("COALESCE(properties->>'name', properties->>'text')"))
                                         .order('count_all DESC')
                                         .limit(10)
                                         .count

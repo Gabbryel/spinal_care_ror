@@ -21869,7 +21869,7 @@
       const id = element.id;
       const currentPage = window.location.pathname;
       if (window.ahoy) {
-        ahoy.track("click", {
+        ahoy.track("$click", {
           element_type: type,
           destination,
           text,
