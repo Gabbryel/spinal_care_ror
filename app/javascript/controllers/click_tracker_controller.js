@@ -34,7 +34,7 @@ export default class extends Controller {
 
     // Send to Ahoy
     if (window.ahoy) {
-      ahoy.track("click", {
+      ahoy.track("$click", {
         element_type: type,
         destination: destination,
         text: text,

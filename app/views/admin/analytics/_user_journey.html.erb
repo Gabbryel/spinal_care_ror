@@ -18,7 +18,7 @@
         </svg>
         <div>
           <div class="journey-label">Click-uri Unice/Utilizator</div>
-          <div class="journey-value"><%= (@total_clicks.to_f / @unique_visitors).round(1) %></div>
+          <div class="journey-value"><%= @unique_visitors > 0 ? (@total_clicks.to_f / @unique_visitors).round(1) : 0 %></div>
         </div>
       </div>
 
@@ -56,7 +56,7 @@
               </td>
               <td class="click-path"><%= truncate(click['landing_page'], length: 40) %></td>
               <td class="click-count"><%= number_with_delimiter(click['click_count']) %></td>
-              <td class="click-percent"><%= ((click['click_count'].to_f / @total_clicks) * 100).round(1) %>%</td>
+              <td class="click-percent"><%= @total_clicks > 0 ? ((click['click_count'].to_f / @total_clicks) * 100).round(1) : 0 %>%</td>
             </tr>
           <% end %>
         </tbody>

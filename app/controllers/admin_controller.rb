@@ -303,8 +303,8 @@ class AdminController < ApplicationController
     # Set view variables
     @navigation_clicks = @top_navigation_clicks.map { |url, count| { 'name' => url, 'landing_page' => url, 'click_count' => count } }
     @total_clicks = meaningful_clicks.count
-    @conversions_count = @conversion_clicks.values.sum
-    @user_journey_paths = @user_journeys.map { |path, count| { 'pages' => path.split(' → '), 'count' => count } }
+    @conversions_count = @conversion_clicks&.values&.sum || 0
+    @user_journey_paths = @user_journeys&.map { |path, count| { 'pages' => path.split(' → '), 'count' => count } } || []
     
     render partial: 'admin/analytics/user_journey'
   end
