@@ -353,7 +353,12 @@ class AdminController < ApplicationController
     
     Rails.logger.info "Analytics Content - Specialty events: #{specialty_events.inspect}"
     
-    @top_specialties = specialty_events.transform_keys { |url| normalize_url(url) }
+    @top_specialties = specialty_events.map do |url, count|
+      slug = url.split('/').last&.split('?')&.first&.split('#')&.first
+      next if slug.blank?
+      specialty = Specialty.find_by(slug: slug)
+      [specialty&.name || slug, count]
+    end.compact
     @total_specialty_views = specialty_events.values.sum
     
     # Top services
@@ -366,7 +371,12 @@ class AdminController < ApplicationController
     
     Rails.logger.info "Analytics Content - Service events: #{service_events.inspect}"
     
-    @top_services = service_events.transform_keys { |url| normalize_url(url) }
+    @top_services = service_events.map do |url, count|
+      slug = url.split('/').last&.split('?')&.first&.split('#')&.first
+      next if slug.blank?
+      service = MedicalService.find_by(slug: slug)
+      [service&.name || slug, count]
+    end.compact
     @total_service_views = service_events.values.sum
     
     render partial: 'admin/analytics/content'
