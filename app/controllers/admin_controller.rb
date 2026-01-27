@@ -263,9 +263,9 @@ class AdminController < ApplicationController
       .where("properties->>'url' NOT LIKE '%privacy%'")
       .where("properties->>'url' NOT LIKE '%cookie%'")
       .where("properties->>'url' NOT LIKE '%gdpr%'")
-      .where("properties->>'text' NOT ILIKE '%Accept%Cookie%' OR properties->>'text' IS NULL")
-      .where("properties->>'text' NOT ILIKE '%Decline%' OR properties->>'text' IS NULL")
-      .where("properties->>'text' NOT ILIKE '%Close%' OR properties->>'text' IS NULL")
+      .where("properties->>'name' NOT ILIKE '%Accept%Cookie%' OR properties->>'name' IS NULL")
+      .where("properties->>'name' NOT ILIKE '%Decline%' OR properties->>'name' IS NULL")
+      .where("properties->>'name' NOT ILIKE '%Close%' OR properties->>'name' IS NULL")
       .where('time >= ? AND time <= ?', start_date, end_date)
     
     # User journey sequences
@@ -294,12 +294,12 @@ class AdminController < ApplicationController
     
     # Conversion clicks
     @conversion_clicks = meaningful_clicks
-      .where("properties->>'text' ILIKE '%contact%' 
-              OR properties->>'text' ILIKE '%programare%'
-              OR properties->>'text' ILIKE '%apel%'
+      .where("properties->>'name' ILIKE '%contact%' 
+              OR properties->>'name' ILIKE '%programare%'
+              OR properties->>'name' ILIKE '%apel%'
               OR properties->>'url' LIKE 'tel:%'
               OR properties->>'url' LIKE 'mailto:%'")
-      .group(Arel.sql("properties->>'text'"))
+      .group(Arel.sql("properties->>'name'"))
       .order('count_all DESC')
       .limit(10)
       .count

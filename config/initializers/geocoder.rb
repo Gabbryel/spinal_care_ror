@@ -10,7 +10,7 @@ Geocoder.configure(
   # IPInfo.io is free up to 50,000 requests/month
   # For production, consider getting an API token from https://ipinfo.io
   # Add IPINFO_TOKEN to your environment variables
-  # ipinfo_io: {
-  #   api_key: ENV['IPINFO_TOKEN']
-  # }
+  ipinfo_io: {
+    api_key: ENV['IPINFO_TOKEN']
+  }
 )
