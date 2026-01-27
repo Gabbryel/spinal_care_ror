@@ -53,6 +53,7 @@ gem 'cloudinary', '~> 1.25.0' # Ensure the latest compatible version is specifie
 gem "pundit", "~> 2.2"
 gem "devise"
 gem "ahoy_matey"
+gem "geocoder"
 gem "kaminari"
 gem "autoprefixer-rails"
 gem "font-awesome-sass", "~> 6.1"
