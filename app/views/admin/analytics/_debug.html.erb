@@ -1,0 +1,235 @@
+<div class="debug-panel" style="background: #1f2937; color: #f3f4f6; padding: 2rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.875rem; max-height: 80vh; overflow-y: auto;">
+  <h2 style="color: #60a5fa; font-size: 1.5rem; margin-bottom: 1.5rem; font-family: sans-serif;">
+    🔍 Analytics Debug Panel
+  </h2>
+
+  <!-- Database Statistics -->
+  <section style="margin-bottom: 2rem;">
+    <h3 style="color: #34d399; font-size: 1.25rem; margin-bottom: 1rem; font-family: sans-serif;">
+      📊 Database Statistics
+    </h3>
+    <div style="background: #374151; padding: 1rem; border-radius: 0.375rem;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563;">Total Visits (All Time)</td>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563; text-align: right; color: #60a5fa; font-weight: bold;">
+            <%= number_with_delimiter(@debug_data[:database_stats][:total_visits]) %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563;">Total Events (All Time)</td>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563; text-align: right; color: #60a5fa; font-weight: bold;">
+            <%= number_with_delimiter(@debug_data[:database_stats][:total_events]) %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563;">Visits in Current Period</td>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563; text-align: right; color: #34d399; font-weight: bold;">
+            <%= number_with_delimiter(@debug_data[:database_stats][:visits_in_period]) %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem;">Events in Current Period</td>
+          <td style="padding: 0.5rem; text-align: right; color: #34d399; font-weight: bold;">
+            <%= number_with_delimiter(@debug_data[:database_stats][:events_in_period]) %>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- Period Info -->
+  <section style="margin-bottom: 2rem;">
+    <h3 style="color: #fbbf24; font-size: 1.25rem; margin-bottom: 1rem; font-family: sans-serif;">
+      📅 Current Period
+    </h3>
+    <div style="background: #374151; padding: 1rem; border-radius: 0.375rem;">
+      <p><strong>Period:</strong> <%= @debug_data[:period_info][:current_period] %> days</p>
+      <p><strong>Start Date:</strong> <%= @debug_data[:period_info][:start_date].strftime('%Y-%m-%d %H:%M:%S') %></p>
+      <p><strong>End Date:</strong> <%= @debug_data[:period_info][:end_date].strftime('%Y-%m-%d %H:%M:%S') %></p>
+      <p><strong>Days in Period:</strong> <%= @debug_data[:period_info][:days_in_period] %></p>
+    </div>
+  </section>
+
+  <!-- Geography Data -->
+  <section style="margin-bottom: 2rem;">
+    <h3 style="color: #f472b6; font-size: 1.25rem; margin-bottom: 1rem; font-family: sans-serif;">
+      🌍 Geography Data
+    </h3>
+    <div style="background: #374151; padding: 1rem; border-radius: 0.375rem;">
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+        <tr>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563;">Visits with City</td>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563; text-align: right; color: <%= @debug_data[:geography][:visits_with_city] > 0 ? '#34d399' : '#ef4444' %>; font-weight: bold;">
+            <%= number_with_delimiter(@debug_data[:geography][:visits_with_city]) %>
+            <%= @debug_data[:geography][:visits_with_city] == 0 ? '❌ NO DATA' : '✅' %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563;">Visits with Country</td>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563; text-align: right; color: <%= @debug_data[:geography][:visits_with_country] > 0 ? '#34d399' : '#ef4444' %>; font-weight: bold;">
+            <%= number_with_delimiter(@debug_data[:geography][:visits_with_country]) %>
+            <%= @debug_data[:geography][:visits_with_country] == 0 ? '❌ NO DATA' : '✅' %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563;">Unique Cities</td>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563; text-align: right; font-weight: bold;">
+            <%= @debug_data[:geography][:unique_cities] %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem;">Unique Countries</td>
+          <td style="padding: 0.5rem; text-align: right; font-weight: bold;">
+            <%= @debug_data[:geography][:unique_countries] %>
+          </td>
+        </tr>
+      </table>
+
+      <% if @debug_data[:geography][:sample_cities].any? %>
+        <details style="margin-top: 1rem;">
+          <summary style="cursor: pointer; color: #60a5fa; margin-bottom: 0.5rem;">Sample Cities (First 10)</summary>
+          <pre style="background: #1f2937; padding: 0.5rem; border-radius: 0.25rem; overflow-x: auto; margin-top: 0.5rem;"><%= JSON.pretty_generate(@debug_data[:geography][:sample_cities]) %></pre>
+        </details>
+      <% end %>
+
+      <% if @debug_data[:geography][:top_cities_query].any? %>
+        <details style="margin-top: 1rem;">
+          <summary style="cursor: pointer; color: #60a5fa; margin-bottom: 0.5rem;">Top Cities in Period</summary>
+          <pre style="background: #1f2937; padding: 0.5rem; border-radius: 0.25rem; overflow-x: auto; margin-top: 0.5rem;"><%= JSON.pretty_generate(@debug_data[:geography][:top_cities_query]) %></pre>
+        </details>
+      <% else %>
+        <p style="color: #ef4444; margin-top: 1rem;">⚠️ No geography data for current period!</p>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Click Events Data -->
+  <section style="margin-bottom: 2rem;">
+    <h3 style="color: #a78bfa; font-size: 1.25rem; margin-bottom: 1rem; font-family: sans-serif;">
+      🖱️ Click Events Data
+    </h3>
+    <div style="background: #374151; padding: 1rem; border-radius: 0.375rem;">
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+        <tr>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563;">Total Click Events (All Time)</td>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563; text-align: right; color: <%= @debug_data[:clicks][:total_click_events] > 0 ? '#34d399' : '#ef4444' %>; font-weight: bold;">
+            <%= number_with_delimiter(@debug_data[:clicks][:total_click_events]) %>
+            <%= @debug_data[:clicks][:total_click_events] == 0 ? '❌ NO DATA' : '✅' %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563;">Click Events in Period</td>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563; text-align: right; color: <%= @debug_data[:clicks][:click_events_in_period] > 0 ? '#34d399' : '#ef4444' %>; font-weight: bold;">
+            <%= number_with_delimiter(@debug_data[:clicks][:click_events_in_period]) %>
+            <%= @debug_data[:clicks][:click_events_in_period] == 0 ? '❌ NO DATA' : '✅' %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563;">Events with URL</td>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563; text-align: right; font-weight: bold;">
+            <%= number_with_delimiter(@debug_data[:clicks][:events_with_url]) %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem;">Events with Name</td>
+          <td style="padding: 0.5rem; text-align: right; font-weight: bold;">
+            <%= number_with_delimiter(@debug_data[:clicks][:events_with_name]) %>
+          </td>
+        </tr>
+      </table>
+
+      <details style="margin-top: 1rem;">
+        <summary style="cursor: pointer; color: #60a5fa; margin-bottom: 0.5rem;">Event Names Distribution</summary>
+        <pre style="background: #1f2937; padding: 0.5rem; border-radius: 0.25rem; overflow-x: auto; margin-top: 0.5rem;"><%= JSON.pretty_generate(@debug_data[:clicks][:event_names]) %></pre>
+      </details>
+
+      <% if @debug_data[:clicks][:sample_click_events].any? %>
+        <details style="margin-top: 1rem;">
+          <summary style="cursor: pointer; color: #60a5fa; margin-bottom: 0.5rem;">Sample Click Events (5)</summary>
+          <pre style="background: #1f2937; padding: 0.5rem; border-radius: 0.25rem; overflow-x: auto; margin-top: 0.5rem; white-space: pre-wrap;"><%= JSON.pretty_generate(@debug_data[:clicks][:sample_click_events]) %></pre>
+        </details>
+      <% else %>
+        <p style="color: #ef4444; margin-top: 1rem;">⚠️ No click events found!</p>
+      <% end %>
+
+      <% if @debug_data[:clicks][:sample_properties].any? %>
+        <details style="margin-top: 1rem;">
+          <summary style="cursor: pointer; color: #60a5fa; margin-bottom: 0.5rem;">Sample Event Properties (10)</summary>
+          <pre style="background: #1f2937; padding: 0.5rem; border-radius: 0.25rem; overflow-x: auto; margin-top: 0.5rem; white-space: pre-wrap;"><%= JSON.pretty_generate(@debug_data[:clicks][:sample_properties]) %></pre>
+        </details>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Performance/Page Views -->
+  <section style="margin-bottom: 2rem;">
+    <h3 style="color: #fb923c; font-size: 1.25rem; margin-bottom: 1rem; font-family: sans-serif;">
+      📈 Performance & Page Views
+    </h3>
+    <div style="background: #374151; padding: 1rem; border-radius: 0.375rem;">
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+        <tr>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563;">View Events (All Time)</td>
+          <td style="padding: 0.5rem; border-bottom: 1px solid #4b5563; text-align: right; color: <%= @debug_data[:performance][:view_events] > 0 ? '#34d399' : '#ef4444' %>; font-weight: bold;">
+            <%= number_with_delimiter(@debug_data[:performance][:view_events]) %>
+            <%= @debug_data[:performance][:view_events] == 0 ? '❌ NO DATA' : '✅' %>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem;">View Events in Period</td>
+          <td style="padding: 0.5rem; text-align: right; color: <%= @debug_data[:performance][:view_events_in_period] > 0 ? '#34d399' : '#ef4444' %>; font-weight: bold;">
+            <%= number_with_delimiter(@debug_data[:performance][:view_events_in_period]) %>
+            <%= @debug_data[:performance][:view_events_in_period] == 0 ? '❌ NO DATA' : '✅' %>
+          </td>
+        </tr>
+      </table>
+
+      <% if @debug_data[:performance][:top_urls].any? %>
+        <details style="margin-top: 1rem;">
+          <summary style="cursor: pointer; color: #60a5fa; margin-bottom: 0.5rem;">Top URLs in Period (10)</summary>
+          <table style="width: 100%; border-collapse: collapse; margin-top: 0.5rem; background: #1f2937; padding: 0.5rem; border-radius: 0.25rem;">
+            <% @debug_data[:performance][:top_urls].each_with_index do |(url, count), index| %>
+              <tr>
+                <td style="padding: 0.25rem; border-bottom: 1px solid #374151; color: #9ca3af;"><%= index + 1 %>.</td>
+                <td style="padding: 0.25rem; border-bottom: 1px solid #374151; color: #60a5fa;"><%= url || '(null)' %></td>
+                <td style="padding: 0.25rem; border-bottom: 1px solid #374151; text-align: right; color: #34d399; font-weight: bold;"><%= number_with_delimiter(count) %></td>
+              </tr>
+            <% end %>
+          </table>
+        </details>
+      <% else %>
+        <p style="color: #ef4444; margin-top: 1rem;">⚠️ No page view data for current period!</p>
+      <% end %>
+
+      <% if @debug_data[:performance][:sample_view_events].any? %>
+        <details style="margin-top: 1rem;">
+          <summary style="cursor: pointer; color: #60a5fa; margin-bottom: 0.5rem;">Sample View Events (5)</summary>
+          <pre style="background: #1f2937; padding: 0.5rem; border-radius: 0.25rem; overflow-x: auto; margin-top: 0.5rem; white-space: pre-wrap;"><%= JSON.pretty_generate(@debug_data[:performance][:sample_view_events]) %></pre>
+        </details>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Action Items -->
+  <section style="background: #fef3c7; color: #92400e; padding: 1rem; border-radius: 0.375rem; border-left: 4px solid #f59e0b;">
+    <h4 style="margin-top: 0; color: #92400e; font-family: sans-serif;">💡 Troubleshooting Tips</h4>
+    <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+      <% if @debug_data[:geography][:visits_with_city] == 0 %>
+        <li>❌ <strong>No geography data:</strong> Ahoy may not be tracking IP geolocation. Check geocoder gem configuration.</li>
+      <% end %>
+      <% if @debug_data[:clicks][:total_click_events] == 0 %>
+        <li>❌ <strong>No click events:</strong> Ahoy auto-click tracking may not be enabled. Check ahoy.trackClicks() in JavaScript.</li>
+      <% end %>
+      <% if @debug_data[:performance][:view_events] == 0 %>
+        <li>❌ <strong>No view events:</strong> Ahoy view tracking may not be enabled. Check ahoy.trackView() in JavaScript.</li>
+      <% end %>
+      <% if @debug_data[:database_stats][:visits_in_period] == 0 %>
+        <li>⚠️ <strong>No visits in current period:</strong> Try selecting a longer period or check if Ahoy is tracking visits.</li>
+      <% end %>
+      <% if @debug_data[:geography][:visits_with_city] > 0 && @debug_data[:geography][:top_cities_query].empty? %>
+        <li>⚠️ <strong>Data exists but not showing:</strong> Check the date filters and dashboard filter logic.</li>
+      <% end %>
+    </ul>
+  </section>
+</div>

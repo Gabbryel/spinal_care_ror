@@ -381,6 +381,79 @@ class AdminController < ApplicationController
     
     render partial: 'admin/analytics/content'
   end
+
+  def analytics_debug
+    start_date = calculate_period_dates[:start_date]
+    end_date = calculate_period_dates[:end_date]
+
+    # Database Statistics
+    @debug_data = {
+      database_stats: {
+        total_visits: Ahoy::Visit.count,
+        total_events: Ahoy::Event.count,
+        visits_in_period: Ahoy::Visit.where('started_at >= ? AND started_at <= ?', start_date, end_date).count,
+        events_in_period: Ahoy::Event.where('time >= ? AND time <= ?', start_date, end_date).count
+      },
+      
+      # Geography Data
+      geography: {
+        visits_with_city: Ahoy::Visit.where.not(city: [nil, '']).count,
+        visits_with_country: Ahoy::Visit.where.not(country: [nil, '']).count,
+        unique_cities: Ahoy::Visit.where.not(city: [nil, '']).distinct.pluck(:city).count,
+        unique_countries: Ahoy::Visit.where.not(country: [nil, '']).distinct.pluck(:country).count,
+        sample_cities: Ahoy::Visit.where.not(city: [nil, '']).limit(10).pluck(:city, :country),
+        top_cities_query: Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                     .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+                                     .where.not(city: [nil, ''])
+                                     .group(:city, :country)
+                                     .order('count_all DESC')
+                                     .limit(10)
+                                     .count
+      },
+      
+      # Click Events Data
+      clicks: {
+        total_click_events: Ahoy::Event.where(name: ['$click', 'click']).count,
+        click_events_in_period: Ahoy::Event.where(name: ['$click', 'click'])
+                                           .where('time >= ? AND time <= ?', start_date, end_date).count,
+        events_with_url: Ahoy::Event.where("properties->>'url' IS NOT NULL")
+                                    .where("properties->>'url' != ''").count,
+        events_with_name: Ahoy::Event.where("properties->>'name' IS NOT NULL")
+                                     .where("properties->>'name' != ''").count,
+        sample_click_events: Ahoy::Event.where(name: ['$click', 'click'])
+                                        .limit(5)
+                                        .pluck(:name, :properties),
+        event_names: Ahoy::Event.group(:name).count,
+        sample_properties: Ahoy::Event.where.not(properties: {}).limit(10).pluck(:name, :properties)
+      },
+      
+      # Performance/Page Views
+      performance: {
+        view_events: Ahoy::Event.where(name: '$view').count,
+        view_events_in_period: Ahoy::Event.where(name: '$view')
+                                          .where('time >= ? AND time <= ?', start_date, end_date).count,
+        top_urls: Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
+                             .where('time >= ? AND time <= ?', start_date, end_date)
+                             .group(Arel.sql("properties->>'url'"))
+                             .order('count_all DESC')
+                             .limit(10)
+                             .count,
+        sample_view_events: Ahoy::Event.where(name: '$view')
+                                       .limit(5)
+                                       .pluck(:time, :properties)
+      },
+      
+      # Date Range Info
+      period_info: {
+        start_date: start_date,
+        end_date: end_date,
+        days_in_period: ((end_date - start_date) / 1.day).ceil,
+        current_period: params[:period] || '30'
+      }
+    }
+
+    render partial: 'admin/analytics/debug'
+  end
   
   def edit_users
     @users = User.all.order(email: :asc)

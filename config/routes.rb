@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   get 'dashboard/analytics/pages', to: 'admin#analytics_pages'
   get 'dashboard/analytics/user_journey', to: 'admin#analytics_user_journey'
   get 'dashboard/analytics/content', to: 'admin#analytics_content'
+  get 'dashboard/analytics/debug', to: 'admin#analytics_debug'
   get 'dashboard/audit', to: 'admin#audit'
   get 'dashboard/users', to: 'admin#edit_users'
   get 'dashboard/personal', to: 'admin#personal'

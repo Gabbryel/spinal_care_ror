@@ -272,6 +272,32 @@
           </div>
         <% end %>
       </details>
+
+      <!-- Debug Panel (God Mode Only) -->
+      <% if current_user&.god_mode? %>
+      <details class="analytics-section" style="border: 2px solid #f59e0b;">
+        <summary class="section-header" style="background: #fef3c7;">
+          <div class="section-title" style="color: #92400e;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="section-icon" style="color: #f59e0b;">
+              <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+            </svg>
+            🔍 Debug Panel (God Mode)
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="chevron">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          </svg>
+        </summary>
+        <%= turbo_frame_tag "debug", src: dashboard_analytics_debug_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
+          <div class="loading-content">
+            <div class="skeleton skeleton-table">
+              <div class="skeleton skeleton-row"></div>
+              <div class="skeleton skeleton-row"></div>
+              <div class="skeleton skeleton-row"></div>
+            </div>
+          </div>
+        <% end %>
+      </details>
+      <% end %>
     </div>
   </div>
 
