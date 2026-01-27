@@ -109,6 +109,18 @@
   <% else %>
   <div class="empty-state">
     <p>Nu există date despre conținut disponibile pentru perioada selectată.</p>
+    <% if Rails.env.development? || current_user&.god_mode? %>
+      <div class="debug-info" style="margin-top: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 4px; font-size: 12px;">
+        <strong>Debug Info:</strong><br>
+        Top Doctors: <%= @top_doctors&.count || 0 %> rezultate<br>
+        Top Specialties: <%= @top_specialties&.count || 0 %> rezultate<br>
+        Top Services: <%= @top_services&.count || 0 %> rezultate<br>
+        Total Doctor Views: <%= @total_doctor_views || 0 %><br>
+        Total Specialty Views: <%= @total_specialty_views || 0 %><br>
+        Total Service Views: <%= @total_service_views || 0 %><br>
+        <em>Check logs for detailed event counts and queries</em>
+      </div>
+    <% end %>
   </div>
   <% end %>
 

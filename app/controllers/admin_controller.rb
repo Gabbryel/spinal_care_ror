@@ -317,39 +317,54 @@ class AdminController < ApplicationController
     start_date = calculate_period_dates[:start_date]
     end_date = calculate_period_dates[:end_date]
     
+    # Get all relevant events (both page views and clicks)
     events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
                         .where('time >= ? AND time <= ?', start_date, end_date)
     
-    # Top doctors by profile views
-    doctor_events = events.where(Arel.sql("properties->>'url' LIKE '/echipa/%'"))
+    # Debug logging for production
+    Rails.logger.info "Analytics Content - Total events: #{events.count}"
+    Rails.logger.info "Analytics Content - Date range: #{start_date} to #{end_date}"
+    
+    # Top doctors by profile views (all event types with /echipa/ URLs)
+    doctor_events = events.where("properties->>'url' LIKE ?", '/echipa/%')
+                         .where("properties->>'url' NOT LIKE ?", '%/echipa#%')  # Exclude anchor links
                          .group(Arel.sql("properties->>'url'"))
                          .order('count_all DESC')
                          .limit(10)
                          .count
     
+    Rails.logger.info "Analytics Content - Doctor events: #{doctor_events.inspect}"
+    
     @top_doctors = doctor_events.map do |url, count|
-      slug = url.split('/').last
+      slug = url.split('/').last&.split('?')&.first&.split('#')&.first  # Clean URL parameters and fragments
+      next if slug.blank?
       member = Member.find_by(slug: slug) || Member.find_by("first_name || '-' || last_name = ?", slug)
       [member&.name || slug, count]
-    end
+    end.compact
     @total_doctor_views = doctor_events.values.sum
     
     # Top specialties
-    specialty_events = events.where(Arel.sql("properties->>'url' LIKE '/specialitati%'"))
+    specialty_events = events.where("properties->>'url' LIKE ?", '/specialitati%')
+                            .where("properties->>'url' NOT LIKE ?", '%/specialitati#%')
                             .group(Arel.sql("properties->>'url'"))
                             .order('count_all DESC')
                             .limit(10)
                             .count
     
+    Rails.logger.info "Analytics Content - Specialty events: #{specialty_events.inspect}"
+    
     @top_specialties = specialty_events.transform_keys { |url| normalize_url(url) }
     @total_specialty_views = specialty_events.values.sum
     
     # Top services
-    service_events = events.where(Arel.sql("properties->>'url' LIKE '/servicii%'"))
+    service_events = events.where("properties->>'url' LIKE ?", '/servicii%')
+                          .where("properties->>'url' NOT LIKE ?", '%/servicii#%')
                           .group(Arel.sql("properties->>'url'"))
                           .order('count_all DESC')
                           .limit(10)
                           .count
+    
+    Rails.logger.info "Analytics Content - Service events: #{service_events.inspect}"
     
     @top_services = service_events.transform_keys { |url| normalize_url(url) }
     @total_service_views = service_events.values.sum
