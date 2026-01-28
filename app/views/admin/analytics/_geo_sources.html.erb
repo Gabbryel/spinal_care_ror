@@ -1,6 +1,18 @@
 <%= turbo_frame_tag "geo_sources" do %>
   <% if @geo_sources.any? || @top_sources.any? || @top_locations.any? %>
   <div class="geography-section">
+    <!-- Filter Status Indicator -->
+    <% filter_bots = params[:filter_bots] != 'false' %>
+    <% filter_geography = params[:filter_geography] == 'true' %>
+    <% if filter_bots || filter_geography %>
+      <div style="margin-bottom: 1rem; padding: 0.75rem; background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; font-size: 0.875rem; color: #047857; display: flex; align-items: center; gap: 0.5rem;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;">
+          <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
+        </svg>
+        <span><strong>Filtre active:</strong> <%= filter_bots ? '✓ Bots excluse' : '' %><%= filter_bots && filter_geography ? ' • ' : '' %><%= filter_geography ? '✓ Doar România + Vecini' : '' %></span>
+      </div>
+    <% end %>
+    
     <!-- Summary Stats -->
     <div class="stats-grid" style="margin-bottom: 2rem;">
       <div class="stat-card">
