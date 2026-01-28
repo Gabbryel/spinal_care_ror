@@ -257,17 +257,15 @@ class AdminController < ApplicationController
     @total_page_views = page_events.values.sum
     @unique_pages_count = page_events.keys.count
     
-    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    # Use the already filtered visits for entry pages
+    @top_entry_pages = filtered_visits.where.not(landing_page: [nil, ''])
+                                      .group(:landing_page)
+                                      .order('count_all DESC')
+                                      .limit(15)
+                                      .count
+                                      .transform_keys { |url| normalize_url(url) }
     
-    @top_entry_pages = public_visits.where.not(landing_page: [nil, ''])
-                                    .group(:landing_page)
-                                    .order('count_all DESC')
-                                    .limit(15)
-                                    .count
-                                    .transform_keys { |url| normalize_url(url) }
-    
-    @unique_visitors = public_visits.distinct.count(:visitor_token)
+    @unique_visitors = filtered_visits.distinct.count(:visitor_token)
     
     render partial: 'admin/analytics/pages'
   end
