@@ -1,4 +1,6 @@
 class AdminController < ApplicationController
+  include AnalyticsFilterHelper
+  
   layout "dashboard"
   def dashboard
     @m = Member.new()
@@ -20,29 +22,22 @@ class AdminController < ApplicationController
     @period = params[:period] || '30'
     @custom_start_date = params[:custom_start_date]
     @custom_end_date = params[:custom_end_date]
+    @filter_bots = params[:filter_bots] != 'false' # Default: filter bots
+    @filter_geography = params[:filter_geography] == 'true' # Default: show all countries
     
     # Calculate date range based on period
-    if @period == 'custom' && @custom_start_date.present? && @custom_end_date.present?
-      @start_date = Time.zone.parse(@custom_start_date).beginning_of_day
-      @end_date = Time.zone.parse(@custom_end_date).end_of_day
-    else
-      @end_date = Time.zone.now
-      @start_date = case @period
-                    when 'today' then @end_date.beginning_of_day
-                    when 'week' then 1.week.ago(@end_date)
-                    when 'month' then 1.month.ago(@end_date)
-                    when '7' then 7.days.ago(@end_date)
-                    when '30' then 30.days.ago(@end_date)
-                    when '90' then 90.days.ago(@end_date)
-                    when 'all' then 100.years.ago
-                    else 30.days.ago(@end_date)
-                    end
-    end
+    dates = calculate_period_dates
+    @start_date = dates[:start_date]
+    @end_date = dates[:end_date]
     
     # PHASE 1: HERO KPIs ONLY - Optimize for <1s load
-    # Base query for public visits
-    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                                .where('started_at >= ? AND started_at <= ?', @start_date, @end_date)
+    # Base query for public visits (with bot and geo filtering)
+    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                              .where('started_at >= ? AND started_at <= ?', @start_date, @end_date)
+    
+    public_visits = apply_analytics_filters(base_visits, 
+                                           include_bots: !@filter_bots,
+                                           relevant_countries_only: @filter_geography)
     
     # Critical metrics
     @total_visitors = public_visits.count
@@ -53,8 +48,11 @@ class AdminController < ApplicationController
     # Previous period comparison (single efficient query)
     prev_start = @start_date - (@end_date - @start_date)
     prev_end = @start_date
-    prev_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                             .where('started_at >= ? AND started_at < ?', prev_start, prev_end)
+    prev_base = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                           .where('started_at >= ? AND started_at < ?', prev_start, prev_end)
+    prev_visits = apply_analytics_filters(prev_base,
+                                         include_bots: !@filter_bots,
+                                         relevant_countries_only: @filter_geography)
     prev_count = prev_visits.count
     @visitors_change_pct = prev_count > 0 ? (((@total_visitors - prev_count).to_f / prev_count) * 100).round(1) : 0
     
@@ -531,6 +529,71 @@ class AdminController < ApplicationController
     @total_geo_visits = public_visits.where.not(city: [nil, '']).count
     
     render partial: 'admin/analytics/geo_sources'
+  end
+
+  def analytics_bot_traffic
+    dates = calculate_period_dates
+    start_date = dates[:start_date]
+    end_date = dates[:end_date]
+
+    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+
+    # Bot visits based on user agent
+    bot_user_agent_visits = base_visits.where(
+      "user_agent ~* ?",
+      BOT_PATTERNS.map(&:source).join('|')
+    )
+
+    # Visits from bot-heavy countries
+    bot_country_visits = base_visits.where(country: BOT_COUNTRIES)
+
+    # Combined: visits that are EITHER bots OR from bot countries
+    all_bot_visits = base_visits.where(
+      "user_agent ~* ? OR country IN (?)",
+      BOT_PATTERNS.map(&:source).join('|'),
+      BOT_COUNTRIES
+    )
+
+    # Statistics
+    @total_bot_visits = all_bot_visits.count
+    @bot_agent_count = bot_user_agent_visits.count
+    @bot_country_count = bot_country_visits.count
+    @total_visits = base_visits.count
+    @bot_percentage = @total_visits > 0 ? ((@total_bot_visits.to_f / @total_visits) * 100).round(1) : 0
+
+    # Top bot countries
+    @bot_countries = bot_country_visits
+                       .group(:country, :city)
+                       .order('count_all DESC')
+                       .limit(15)
+                       .count
+                       .map { |k, v| { country: k[0], city: k[1], visits: v } }
+
+    # Top bot user agents
+    @bot_agents = bot_user_agent_visits
+                    .group(:user_agent)
+                    .order('count_all DESC')
+                    .limit(10)
+                    .count
+                    .map { |agent, count| { agent: agent, visits: count } }
+
+    # Bot referrers
+    @bot_referrers = all_bot_visits
+                       .group(:referring_domain)
+                       .order('count_all DESC')
+                       .limit(10)
+                       .count
+                       .map { |domain, count| { domain: domain || 'Direct', visits: count } }
+
+    # Daily bot traffic trend
+    @bot_daily = all_bot_visits
+                   .group(Arel.sql("DATE(started_at)"))
+                   .order(Arel.sql("DATE(started_at)"))
+                   .count
+                   .map { |date, count| { date: date.to_s, count: count } }
+
+    render partial: 'admin/analytics/bot_traffic'
   end
 
   def personal

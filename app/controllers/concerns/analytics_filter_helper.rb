@@ -1,0 +1,116 @@
+module AnalyticsFilterHelper
+  extend ActiveSupport::Concern
+
+  # Bot user agent patterns (common crawlers, scrapers, spam bots)
+  BOT_PATTERNS = [
+    /bot/i, /crawl/i, /spider/i, /slurp/i, /scraper/i,
+    /headless/i, /phantom/i, /puppeteer/i, /selenium/i,
+    /curl/i, /wget/i, /python/i, /java/i, /perl/i,
+    /ahrefs/i, /semrush/i, /moz/i, /majestic/i, /dotbot/i,
+    /petalbot/i, /bingpreview/i, /yandex/i, /baidu/i,
+    /dataforseo/i, /uptimerobot/i, /pingdom/i, /statuscode/i,
+    /archive\.org/i, /wayback/i, /mediapartners/i,
+    /feedfetcher/i, /rss/i, /scrapy/i, /webcopier/i
+  ].freeze
+
+  # Relevant countries for Romanian medical clinic
+  RELEVANT_COUNTRIES = [
+    'Romania', 'România', 'RO',
+    'Moldova', 'Republica Moldova', 'MD',
+    'Italy', 'Italia', 'IT',
+    'Spain', 'España', 'ES',
+    'United Kingdom', 'UK', 'GB',
+    'Germany', 'Deutschland', 'DE',
+    'France', 'FR',
+    'Austria', 'AT',
+    'Hungary', 'Magyarország', 'HU',
+    'Bulgaria', 'България', 'BG',
+    'Greece', 'Ελλάδα', 'GR',
+    'Serbia', 'Србија', 'RS',
+    'Ukraine', 'Україна', 'UA'
+  ].freeze
+
+  # Bot-heavy countries (likely spam/scraper traffic)
+  BOT_COUNTRIES = [
+    'Vietnam', 'Viet Nam', 'VN',
+    'Brazil', 'Brasil', 'BR',
+    'Iraq', 'IQ',
+    'China', '中国', 'CN',
+    'India', 'IN',
+    'Indonesia', 'ID',
+    'Pakistan', 'PK',
+    'Bangladesh', 'BD',
+    'Philippines', 'PH',
+    'Thailand', 'TH'
+  ].freeze
+
+  private
+
+  def bot_visit?(user_agent)
+    return true if user_agent.blank?
+    BOT_PATTERNS.any? { |pattern| user_agent.match?(pattern) }
+  end
+
+  def filter_bot_visits(visits)
+    visits.where.not(
+      id: Ahoy::Visit.where(
+        "user_agent ~* ?",
+        BOT_PATTERNS.map(&:source).join('|')
+      ).select(:id)
+    )
+  end
+
+  def filter_relevant_countries(visits)
+    visits.where(country: RELEVANT_COUNTRIES)
+  end
+
+  def bot_country_visits(visits)
+    visits.where(country: BOT_COUNTRIES)
+  end
+
+  def apply_analytics_filters(visits, options = {})
+    filtered = visits
+
+    # Apply bot filtering unless explicitly disabled
+    unless options[:include_bots]
+      filtered = filter_bot_visits(filtered)
+    end
+
+    # Apply geographic filtering if requested
+    if options[:relevant_countries_only]
+      filtered = filter_relevant_countries(filtered)
+    end
+
+    # Exclude bot countries unless explicitly included
+    unless options[:include_bot_countries]
+      filtered = filtered.where.not(country: BOT_COUNTRIES)
+    end
+
+    filtered
+  end
+
+  def calculate_period_dates
+    period = params[:period] || '30'
+    custom_start_date = params[:custom_start_date]
+    custom_end_date = params[:custom_end_date]
+    
+    if period == 'custom' && custom_start_date.present? && custom_end_date.present?
+      start_date = Time.zone.parse(custom_start_date).beginning_of_day
+      end_date = Time.zone.parse(custom_end_date).end_of_day
+    else
+      end_date = Time.zone.now
+      start_date = case period
+                   when 'today' then end_date.beginning_of_day
+                   when 'week' then 1.week.ago(end_date)
+                   when 'month' then 1.month.ago(end_date)
+                   when '7' then 7.days.ago(end_date)
+                   when '30' then 30.days.ago(end_date)
+                   when '90' then 90.days.ago(end_date)
+                   when 'all' then 100.years.ago
+                   else 30.days.ago(end_date)
+                   end
+    end
+    
+    { start_date: start_date, end_date: end_date }
+  end
+end

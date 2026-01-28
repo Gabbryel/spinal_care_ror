@@ -1,0 +1,190 @@
+<%= turbo_frame_tag "bot_traffic" do %>
+  <div class="geography-section" style="border: 2px solid #ef4444; border-radius: 12px; background: #fef2f2;">
+    <!-- Warning Banner -->
+    <div style="background: #fca5a5; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px; color: #991b1b; flex-shrink: 0;">
+        <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+      </svg>
+      <div>
+        <strong style="color: #991b1b;">Bot & Spam Traffic Detected</strong>
+        <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: #7f1d1d;">
+          This section shows automated traffic from crawlers, scrapers, and spam bots. These visits are excluded from main analytics.
+        </p>
+      </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="stats-grid" style="margin-bottom: 2rem;">
+      <div class="stat-card" style="border: 2px solid #f87171;">
+        <div class="stat-label">Total Bot Visits</div>
+        <div class="stat-value" style="color: #dc2626;"><%= number_with_delimiter(@total_bot_visits) %></div>
+        <div class="stat-meta" style="color: #991b1b;"><%= @bot_percentage %>% din total trafic</div>
+      </div>
+      <div class="stat-card stat-warning">
+        <div class="stat-label">Bots User Agent</div>
+        <div class="stat-value"><%= number_with_delimiter(@bot_agent_count) %></div>
+        <div class="stat-meta">Detectate prin user agent</div>
+      </div>
+      <div class="stat-card stat-warning">
+        <div class="stat-label">Țări Suspecte</div>
+        <div class="stat-value"><%= number_with_delimiter(@bot_country_count) %></div>
+        <div class="stat-meta">Vietnam, Brazil, Iraq, etc.</div>
+      </div>
+    </div>
+
+    <!-- Daily Bot Traffic Chart -->
+    <div class="geo-table-container" style="margin-bottom: 2rem;">
+      <h4 class="geo-table-title">📊 Trafic Bot pe Zile</h4>
+      <div style="background: white; padding: 1.5rem; border-radius: 8px;">
+        <canvas id="botDailyChart" style="max-height: 250px;"></canvas>
+      </div>
+    </div>
+
+    <!-- Two Column Layout -->
+    <div class="geo-grid">
+      <!-- Top Bot Countries -->
+      <div class="geo-table-container">
+        <h4 class="geo-table-title">🌍 Top Țări Bot</h4>
+        <table class="geo-table">
+          <thead>
+            <tr>
+              <th>Țară & Oraș</th>
+              <th>Vizite</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @bot_countries.each do |row| %>
+              <tr>
+                <td class="city-name">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="location-icon" style="color: #dc2626;">
+                    <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
+                  </svg>
+                  <div>
+                    <div><%= row[:country] %></div>
+                    <div style="font-size: 0.75rem; color: #6b7280; margin-top: 2px;"><%= row[:city] || 'Unknown' %></div>
+                  </div>
+                </td>
+                <td class="city-count" style="color: #dc2626;"><%= number_with_delimiter(row[:visits]) %></td>
+              </tr>
+            <% end %>
+            <% if @bot_countries.empty? %>
+              <tr>
+                <td colspan="2" class="empty-state">Nu există bot traffic din țări suspecte</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Top Bot Referrers -->
+      <div class="geo-table-container">
+        <h4 class="geo-table-title">🔗 Top Surse Bot</h4>
+        <table class="geo-table">
+          <thead>
+            <tr>
+              <th>Sursă</th>
+              <th>Vizite</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @bot_referrers.each do |row| %>
+              <tr>
+                <td class="city-name">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="location-icon" style="color: #dc2626;">
+                    <path fill-rule="evenodd" d="M19.902 4.098a3.75 3.75 0 00-5.304 0l-4.5 4.5a3.75 3.75 0 001.035 6.037.75.75 0 01-.646 1.353 5.25 5.25 0 01-1.449-8.45l4.5-4.5a5.25 5.25 0 117.424 7.424l-1.757 1.757a.75.75 0 11-1.06-1.06l1.757-1.757a3.75 3.75 0 000-5.304zm-7.389 4.267a.75.75 0 011-.353 5.25 5.25 0 011.449 8.45l-4.5 4.5a5.25 5.25 0 11-7.424-7.424l1.757-1.757a.75.75 0 111.06 1.06l-1.757 1.757a3.75 3.75 0 105.304 5.304l4.5-4.5a3.75 3.75 0 00-1.035-6.037.75.75 0 01-.354-1z" clip-rule="evenodd" />
+                  </svg>
+                  <%= row[:domain].truncate(40) %>
+                </td>
+                <td class="city-count" style="color: #dc2626;"><%= number_with_delimiter(row[:visits]) %></td>
+              </tr>
+            <% end %>
+            <% if @bot_referrers.empty? %>
+              <tr>
+                <td colspan="2" class="empty-state">Nu există surse bot</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Bot User Agents Table -->
+    <div class="geo-table-container" style="margin-top: 2rem;">
+      <h4 class="geo-table-title">🤖 Top Bot User Agents</h4>
+      <table class="geo-table">
+        <thead>
+          <tr>
+            <th>User Agent</th>
+            <th>Vizite</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @bot_agents.each do |row| %>
+            <tr>
+              <td style="font-family: monospace; font-size: 0.8rem; color: #374151; max-width: 600px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <%= row[:agent] || 'Unknown' %>
+              </td>
+              <td class="city-count" style="color: #dc2626;"><%= number_with_delimiter(row[:visits]) %></td>
+            </tr>
+          <% end %>
+          <% if @bot_agents.empty? %>
+            <tr>
+              <td colspan="2" class="empty-state">Nu există bot user agents detectate</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Chart.js Script -->
+    <script>
+      (function() {
+        const ctx = document.getElementById('botDailyChart');
+        if (!ctx) return;
+
+        const data = <%= raw @bot_daily.to_json %>;
+        
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: data.map(d => d.date),
+            datasets: [{
+              label: 'Bot Visits',
+              data: data.map(d => d.count),
+              borderColor: '#dc2626',
+              backgroundColor: 'rgba(220, 38, 38, 0.1)',
+              tension: 0.3,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return context.parsed.y.toLocaleString() + ' bot visits';
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return value.toLocaleString();
+                  }
+                }
+              }
+            }
+          }
+        });
+      })();
+    </script>
+  </div>
+<% end %>

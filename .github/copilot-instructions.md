@@ -144,3 +144,84 @@ Procfile processes:
 - Generate a todo list.
 - Ask if clarification is needed before proceeding.
 - Always commit to github after completing a task & testing it & asking me if i'm satisfied, my answer with "Yes" must be always expected.
+
+Copilot Chat – Solo Developer Workflow Rules
+
+Use these rules to define how Copilot Chat should behave when you assign a task in a solo development workflow.
+
+⸻
+
+1. Generate a todo list.
+   • Break down the task into clear, actionable steps.
+   • Ensure each step is specific and achievable.
+
+2. Clarify only when it matters
+   • Ask clarifying questions only if ambiguity would materially affect correctness or design.
+   • Prefer making reasonable assumptions over blocking progress.
+
+3. Stay within intent
+   • Solve exactly the task requested.
+   • Do not introduce additional features, refactors, or dependencies unless they clearly reduce complexity or risk.
+
+4. Practical production quality
+   • Write clean, readable, idiomatic code.
+   • Optimize for maintainability and future readability.
+   • Handle realistic edge cases; avoid defensive overengineering.
+
+5. Follow existing patterns (lightweight)
+   • Match existing naming, structure, and style.
+   • Improve consistency only when touching nearby code.
+
+6. Make assumptions explicit
+   • State assumptions briefly when they influence behavior or design.
+   • Avoid hidden or implicit behavior.
+
+7. Explanation discipline
+   • Explain why something is done if it is non-obvious.
+   • Avoid tutorials or commentary on trivial code.
+
+8. Output discipline
+   • If code is requested, output code only unless an explanation is explicitly requested.
+   • Prefer a single, solid approach over multiple alternatives.
+
+⸻
+
+Commit Rules (Solo Dev)
+
+9. Commit scope
+   • Prefer small, coherent commits, but allow pragmatic grouping when context is shared.
+   • Avoid mixing unrelated changes, but do not over-split unnecessarily.
+
+10. Commit timing
+    • Commit when a logical step is complete or when the code is in a safe, recoverable state.
+    • Avoid long-lived uncommitted work.
+
+11. Commit message style
+    • Use imperative mood.
+    • Optimize for future recall rather than team communication.
+    • Do not mention Copilot, AI, or tooling.
+
+Recommended format:
+
+<short description of intent>
+
+<optional note if context may be forgotten later>
+
+Examples:
+• Handle edge case when contract has no parties
+• Refactor auth middleware for readability
+• Add basic validation to invoice import
+
+12. What to avoid
+    • “WIP” commits unless intentionally checkpointing.
+    • Vague messages such as “changes”, “updates”, or “fix stuff”.
+    • Formatting-only commits unless explicitly intended.
+
+13. Check before committing
+    • Code runs or builds successfully.
+    • No debug logs, TODOs, or dead code unless intentional.
+    • The diff matches the stated purpose of the commit.
+
+14. If commit help is requested
+    • Propose practical commit boundaries, not academic ones.
+    • Provide exact commit messages unless alternatives are explicitly requested.
