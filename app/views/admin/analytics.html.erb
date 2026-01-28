@@ -25,8 +25,7 @@
       <%= form_with url: dashboard_analytics_path, method: :get, class: 'period-form-new' do |f| %>
         <div class="filter-buttons" role="group" aria-label="Opțiuni perioadă predefinite">
           <%= button_tag 'Azi', type: 'submit', name: 'period', value: 'today', class: "filter-btn #{@period == 'today' ? 'active' : ''}", aria: { pressed: @period == 'today', label: 'Filtrează date pentru astăzi' } %>
-          <%= button_tag 'Săptămâna', type: 'submit', name: 'period', value: 'week', class: "filter-btn #{@period == 'week' ? 'active' : ''}", aria: { pressed: @period == 'week', label: 'Filtrează date pentru săptămâna curentă' } %>
-          <%= button_tag 'Luna', type: 'submit', name: 'period', value: 'month', class: "filter-btn #{@period == 'month' ? 'active' : ''}", aria: { pressed: @period == 'month', label: 'Filtrează date pentru luna curentă' } %>
+          <%= button_tag '3 zile', type: 'submit', name: 'period', value: '3', class: "filter-btn #{@period == '3' ? 'active' : ''}", aria: { pressed: @period == '3', label: 'Filtrează date pentru ultimele 3 zile' } %>
           <%= button_tag '7 zile', type: 'submit', name: 'period', value: '7', class: "filter-btn #{@period == '7' ? 'active' : ''}", aria: { pressed: @period == '7', label: 'Filtrează date pentru ultimele 7 zile' } %>
           <%= button_tag '30 zile', type: 'submit', name: 'period', value: '30', class: "filter-btn #{@period == '30' ? 'active' : ''}", aria: { pressed: @period == '30', label: 'Filtrează date pentru ultimele 30 zile' } %>
           <%= button_tag '90 zile', type: 'submit', name: 'period', value: '90', class: "filter-btn #{@period == '90' ? 'active' : ''}", aria: { pressed: @period == '90', label: 'Filtrează date pentru ultimele 90 zile' } %>

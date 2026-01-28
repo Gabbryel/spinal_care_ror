@@ -98,12 +98,10 @@ module AnalyticsFilterHelper
       end_date = Time.zone.now
       start_date = case period
                    when 'today' then end_date.beginning_of_day
-                   when 'week' then 1.week.ago(end_date)
-                   when 'month' then 1.month.ago(end_date)
+                   when '3' then 3.days.ago(end_date)
                    when '7' then 7.days.ago(end_date)
                    when '30' then 30.days.ago(end_date)
                    when '90' then 90.days.ago(end_date)
-                   when 'all' then 100.years.ago
                    else 30.days.ago(end_date)
                    end
     end

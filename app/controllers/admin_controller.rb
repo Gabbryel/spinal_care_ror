@@ -137,14 +137,23 @@ class AdminController < ApplicationController
   end
   
   def analytics_geography
-    start_date = calculate_period_dates[:start_date]
-    end_date = calculate_period_dates[:end_date]
+    dates = calculate_period_dates
+    start_date = dates[:start_date]
+    end_date = dates[:end_date]
+    filter_bots = params[:filter_bots] != 'false'
+    filter_geography = params[:filter_geography] == 'true'
+    
+    # Apply bot and geography filters
+    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+    
+    # Get filtered visit IDs for event filtering
+    filtered_visit_ids = public_visits.pluck(:id)
     
     events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
                         .where('time >= ? AND time <= ?', start_date, end_date)
-    
-    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+                        .where(visit_id: filtered_visit_ids)
     
     @total_visitors = public_visits.count
     @unique_visitors = public_visits.distinct.count(:visitor_token)
@@ -261,214 +270,6 @@ class AdminController < ApplicationController
     @unique_visitors = public_visits.distinct.count(:visitor_token)
     
     render partial: 'admin/analytics/pages'
-  end
-  
-  def analytics_user_journey
-    start_date = calculate_period_dates[:start_date]
-    end_date = calculate_period_dates[:end_date]
-    
-    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
-    
-    @total_visitors = public_visits.count
-    @unique_visitors = public_visits.distinct.count(:visitor_token)
-    
-    # Filter meaningful clicks (exclude GDPR, external, UI noise)
-    meaningful_clicks = Ahoy::Event
-      .where(name: '$click')
-      .where("properties->>'url' NOT LIKE '%privacy%'")
-      .where("properties->>'url' NOT LIKE '%cookie%'")
-      .where("properties->>'url' NOT LIKE '%gdpr%'")
-      .where("properties->>'name' NOT ILIKE '%Accept%Cookie%' OR properties->>'name' IS NULL")
-      .where("properties->>'name' NOT ILIKE '%Decline%' OR properties->>'name' IS NULL")
-      .where("properties->>'name' NOT ILIKE '%Close%' OR properties->>'name' IS NULL")
-      .where('time >= ? AND time <= ?', start_date, end_date)
-    
-    # User journey sequences
-    @user_journeys = meaningful_clicks
-      .select(:visit_id, Arel.sql("STRING_AGG(properties->>'url', ' → ' ORDER BY time) as path"))
-      .group(:visit_id)
-      .having('COUNT(*) > 1')
-      .limit(100)
-      .map { |j| j.path }
-      .group_by(&:itself)
-      .transform_values(&:count)
-      .sort_by { |_, count| -count }
-      .first(10)
-    
-    # Top navigation clicks (internal only)
-    @top_navigation_clicks = meaningful_clicks
-      .where("properties->>'url' LIKE '/echipa%' 
-              OR properties->>'url' LIKE '/servicii%' 
-              OR properties->>'url' LIKE '/specialitati%'
-              OR properties->>'url' LIKE '/informatii%'")
-      .group(Arel.sql("properties->>'url'"))
-      .order('count_all DESC')
-      .limit(15)
-      .count
-      .transform_keys { |url| normalize_url(url) }
-    
-    # Conversion clicks
-    @conversion_clicks = meaningful_clicks
-      .where("properties->>'name' ILIKE '%contact%' 
-              OR properties->>'name' ILIKE '%programare%'
-              OR properties->>'name' ILIKE '%apel%'
-              OR properties->>'url' LIKE 'tel:%'
-              OR properties->>'url' LIKE 'mailto:%'")
-      .group(Arel.sql("properties->>'name'"))
-      .order('count_all DESC')
-      .limit(10)
-      .count
-    
-    # Set view variables
-    @navigation_clicks = @top_navigation_clicks.map { |url, count| { 'name' => url, 'landing_page' => url, 'click_count' => count } }
-    @total_clicks = meaningful_clicks.count
-    @conversions_count = @conversion_clicks&.values&.sum || 0
-    @user_journey_paths = @user_journeys&.map { |path, count| { 'pages' => path.split(' → '), 'count' => count } } || []
-    
-    render partial: 'admin/analytics/user_journey'
-  end
-  
-  def analytics_content
-    start_date = calculate_period_dates[:start_date]
-    end_date = calculate_period_dates[:end_date]
-    
-    # Get all relevant events (both page views and clicks)
-    events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
-                        .where('time >= ? AND time <= ?', start_date, end_date)
-    
-    # Debug logging for production
-    Rails.logger.info "Analytics Content - Total events: #{events.count}"
-    Rails.logger.info "Analytics Content - Date range: #{start_date} to #{end_date}"
-    
-    # Top doctors by profile views (all event types with /echipa/ URLs)
-    doctor_events = events.where("properties->>'url' LIKE ?", '/echipa/%')
-                         .where("properties->>'url' NOT LIKE ?", '%/echipa#%')  # Exclude anchor links
-                         .group(Arel.sql("properties->>'url'"))
-                         .order('count_all DESC')
-                         .limit(10)
-                         .count
-    
-    Rails.logger.info "Analytics Content - Doctor events: #{doctor_events.inspect}"
-    
-    @top_doctors = doctor_events.map do |url, count|
-      slug = url.split('/').last&.split('?')&.first&.split('#')&.first  # Clean URL parameters and fragments
-      next if slug.blank?
-      member = Member.find_by(slug: slug) || Member.find_by("first_name || '-' || last_name = ?", slug)
-      [member&.name || slug, count]
-    end.compact
-    @total_doctor_views = doctor_events.values.sum
-    
-    # Top specialties
-    specialty_events = events.where("properties->>'url' LIKE ?", '/specialitati%')
-                            .where("properties->>'url' NOT LIKE ?", '%/specialitati#%')
-                            .group(Arel.sql("properties->>'url'"))
-                            .order('count_all DESC')
-                            .limit(10)
-                            .count
-    
-    Rails.logger.info "Analytics Content - Specialty events: #{specialty_events.inspect}"
-    
-    @top_specialties = specialty_events.map do |url, count|
-      slug = url.split('/').last&.split('?')&.first&.split('#')&.first
-      next if slug.blank?
-      specialty = Specialty.find_by(slug: slug)
-      [specialty&.name || slug, count]
-    end.compact
-    @total_specialty_views = specialty_events.values.sum
-    
-    # Top services
-    service_events = events.where("properties->>'url' LIKE ?", '/servicii%')
-                          .where("properties->>'url' NOT LIKE ?", '%/servicii#%')
-                          .group(Arel.sql("properties->>'url'"))
-                          .order('count_all DESC')
-                          .limit(10)
-                          .count
-    
-    Rails.logger.info "Analytics Content - Service events: #{service_events.inspect}"
-    
-    @top_services = service_events.map do |url, count|
-      slug = url.split('/').last&.split('?')&.first&.split('#')&.first
-      next if slug.blank?
-      service = MedicalService.find_by(slug: slug)
-      [service&.name || slug, count]
-    end.compact
-    @total_service_views = service_events.values.sum
-    
-    render partial: 'admin/analytics/content'
-  end
-
-  def analytics_debug
-    start_date = calculate_period_dates[:start_date]
-    end_date = calculate_period_dates[:end_date]
-
-    # Database Statistics
-    @debug_data = {
-      database_stats: {
-        total_visits: Ahoy::Visit.count,
-        total_events: Ahoy::Event.count,
-        visits_in_period: Ahoy::Visit.where('started_at >= ? AND started_at <= ?', start_date, end_date).count,
-        events_in_period: Ahoy::Event.where('time >= ? AND time <= ?', start_date, end_date).count
-      },
-      
-      # Geography Data
-      geography: {
-        visits_with_city: Ahoy::Visit.where.not(city: [nil, '']).count,
-        visits_with_country: Ahoy::Visit.where.not(country: [nil, '']).count,
-        unique_cities: Ahoy::Visit.where.not(city: [nil, '']).distinct.pluck(:city).count,
-        unique_countries: Ahoy::Visit.where.not(country: [nil, '']).distinct.pluck(:country).count,
-        sample_cities: Ahoy::Visit.where.not(city: [nil, '']).limit(10).pluck(:city, :country),
-        top_cities_query: Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                                     .where('started_at >= ? AND started_at <= ?', start_date, end_date)
-                                     .where.not(city: [nil, ''])
-                                     .group(:city, :country)
-                                     .order('count_all DESC')
-                                     .limit(10)
-                                     .count
-      },
-      
-      # Click Events Data
-      clicks: {
-        total_click_events: Ahoy::Event.where(name: ['$click', 'click']).count,
-        click_events_in_period: Ahoy::Event.where(name: ['$click', 'click'])
-                                           .where('time >= ? AND time <= ?', start_date, end_date).count,
-        events_with_url: Ahoy::Event.where("properties->>'url' IS NOT NULL")
-                                    .where("properties->>'url' != ''").count,
-        events_with_name: Ahoy::Event.where("properties->>'name' IS NOT NULL")
-                                     .where("properties->>'name' != ''").count,
-        sample_click_events: Ahoy::Event.where(name: ['$click', 'click'])
-                                        .limit(5)
-                                        .pluck(:name, :properties),
-        event_names: Ahoy::Event.group(:name).count,
-        sample_properties: Ahoy::Event.where.not(properties: {}).limit(10).pluck(:name, :properties)
-      },
-      
-      # Performance/Page Views
-      performance: {
-        view_events: Ahoy::Event.where(name: '$view').count,
-        view_events_in_period: Ahoy::Event.where(name: '$view')
-                                          .where('time >= ? AND time <= ?', start_date, end_date).count,
-        top_urls: Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
-                             .where('time >= ? AND time <= ?', start_date, end_date)
-                             .group(Arel.sql("properties->>'url'"))
-                             .order('count_all DESC')
-                             .limit(10)
-                             .count,
-        sample_view_events: Ahoy::Event.where(name: '$view')
-                                       .limit(5)
-                                       .pluck(:time, :properties)
-      },
-      
-      # Date Range Info
-      period_info: {
-        start_date: start_date,
-        end_date: end_date,
-        days_in_period: ((end_date - start_date) / 1.day).ceil,
-        current_period: params[:period] || '30'
-      }
-    }
-
-    render partial: 'admin/analytics/debug'
   end
   
   def edit_users
