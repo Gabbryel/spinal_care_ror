@@ -47,13 +47,15 @@ module AnalyticsFilterHelper
   private
 
   def bot_visit?(user_agent)
-    return true if user_agent.blank?
+    return false if user_agent.blank? # Don't treat missing user agents as bots
     BOT_PATTERNS.any? { |pattern| user_agent.match?(pattern) }
   end
 
   def filter_bot_visits(visits)
+    # Only filter visits that have user agents matching bot patterns
+    # Don't exclude visits with NULL user agents
     visits.where.not(
-      id: Ahoy::Visit.where(
+      id: Ahoy::Visit.where.not(user_agent: nil).where(
         "user_agent ~* ?",
         BOT_PATTERNS.map(&:source).join('|')
       ).select(:id)
