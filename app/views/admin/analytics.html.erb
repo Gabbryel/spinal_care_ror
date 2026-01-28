@@ -159,7 +159,7 @@
     </div>
 
     <!-- TIER 2: Daily Traffic Chart (Lazy Loaded) -->
-    <%= turbo_frame_tag "daily_chart", src: dashboard_analytics_daily_chart_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
+    <%= turbo_frame_tag "daily_chart", src: dashboard_analytics_daily_chart_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date, filter_bots: @filter_bots, filter_geography: @filter_geography), loading: :lazy do %>
       <div class="loading-section">
         <div class="skeleton skeleton-text"></div>
         <div class="skeleton skeleton-chart"></div>
@@ -182,7 +182,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
           </svg>
         </summary>
-        <%= turbo_frame_tag "bot_traffic", src: dashboard_analytics_bot_traffic_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
+        <%= turbo_frame_tag "bot_traffic", src: dashboard_analytics_bot_traffic_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date, filter_bots: @filter_bots, filter_geography: @filter_geography), loading: :lazy do %>
           <div class="loading-content">
             <div class="skeleton skeleton-table">
               <div class="skeleton skeleton-row"></div>
@@ -206,7 +206,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
           </svg>
         </summary>
-        <%= turbo_frame_tag "geography", src: dashboard_analytics_geography_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
+        <%= turbo_frame_tag "geography", src: dashboard_analytics_geography_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date, filter_bots: @filter_bots, filter_geography: @filter_geography), loading: :lazy do %>
           <div class="loading-content">
             <div class="skeleton skeleton-table">
               <div class="skeleton skeleton-row"></div>
@@ -230,7 +230,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
           </svg>
         </summary>
-        <%= turbo_frame_tag "hourly", src: dashboard_analytics_hourly_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
+        <%= turbo_frame_tag "hourly", src: dashboard_analytics_hourly_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date, filter_bots: @filter_bots, filter_geography: @filter_geography), loading: :lazy do %>
           <div class="loading-content">
             <div class="skeleton skeleton-chart"></div>
           </div>
@@ -250,7 +250,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
           </svg>
         </summary>
-        <%= turbo_frame_tag "geo_sources", src: dashboard_analytics_geo_sources_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
+        <%= turbo_frame_tag "geo_sources", src: dashboard_analytics_geo_sources_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date, filter_bots: @filter_bots, filter_geography: @filter_geography), loading: :lazy do %>
           <div class="loading-content">
             <div class="skeleton skeleton-table">
               <div class="skeleton skeleton-row"></div>
@@ -274,7 +274,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
           </svg>
         </summary>
-        <%= turbo_frame_tag "sources", src: dashboard_analytics_sources_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
+        <%= turbo_frame_tag "sources", src: dashboard_analytics_sources_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date, filter_bots: @filter_bots, filter_geography: @filter_geography), loading: :lazy do %>
           <div class="loading-content">
             <div class="skeleton skeleton-table">
               <div class="skeleton skeleton-row"></div>
@@ -298,7 +298,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
           </svg>
         </summary>
-        <%= turbo_frame_tag "pages", src: dashboard_analytics_pages_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date), loading: :lazy do %>
+        <%= turbo_frame_tag "pages", src: dashboard_analytics_pages_path(period: @period, custom_start_date: @custom_start_date, custom_end_date: @custom_end_date, filter_bots: @filter_bots, filter_geography: @filter_geography), loading: :lazy do %>
           <div class="loading-content">
             <div class="skeleton skeleton-table">
               <div class="skeleton skeleton-row"></div>
