@@ -459,6 +459,80 @@ class AdminController < ApplicationController
     @users = User.all.order(email: :asc)
   end
 
+  def analytics_hourly
+    start_date = calculate_period_dates[:start_date]
+    end_date = calculate_period_dates[:end_date]
+    
+    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    
+    # Group visits by hour of the day (0-23)
+    hourly_data = public_visits
+      .group("EXTRACT(HOUR FROM started_at)::integer")
+      .order("EXTRACT(HOUR FROM started_at)::integer")
+      .count
+    
+    # Fill in missing hours with 0
+    @hourly_visits = (0..23).map do |hour|
+      {
+        hour: hour,
+        label: "#{hour.to_s.rjust(2, '0')}:00",
+        count: hourly_data[hour] || 0
+      }
+    end
+    
+    @total_visits = public_visits.count
+    @peak_hour = @hourly_visits.max_by { |h| h[:count] }
+    @quiet_hour = @hourly_visits.min_by { |h| h[:count] }
+    
+    render partial: 'admin/analytics/hourly'
+  end
+
+  def analytics_geo_sources
+    start_date = calculate_period_dates[:start_date]
+    end_date = calculate_period_dates[:end_date]
+    
+    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    
+    # Traffic source (referrer domain or 'Direct') + City/Country
+    @geo_sources = public_visits
+      .where.not(city: [nil, ''])
+      .select(:referring_domain, :city, :country, 'COUNT(*) as visit_count')
+      .group(:referring_domain, :city, :country)
+      .order('visit_count DESC')
+      .limit(50)
+      .map do |row|
+        {
+          source: row.referring_domain.present? ? row.referring_domain : 'Direct',
+          city: row.city,
+          country: row.country,
+          visits: row.visit_count
+        }
+      end
+    
+    # Top sources overall
+    @top_sources = public_visits
+      .select(:referring_domain, 'COUNT(*) as visit_count')
+      .group(:referring_domain)
+      .order('visit_count DESC')
+      .limit(10)
+      .map { |row| { source: row.referring_domain.present? ? row.referring_domain : 'Direct', visits: row.visit_count } }
+    
+    # Top locations overall
+    @top_locations = public_visits
+      .where.not(city: [nil, ''])
+      .select(:city, :country, 'COUNT(*) as visit_count')
+      .group(:city, :country)
+      .order('visit_count DESC')
+      .limit(10)
+      .map { |row| { city: row.city, country: row.country, visits: row.visit_count } }
+    
+    @total_geo_visits = public_visits.where.not(city: [nil, '']).count
+    
+    render partial: 'admin/analytics/geo_sources'
+  end
+
   def personal
     @member = Member.new()
     @members = Member.all.order(last_name: :asc)

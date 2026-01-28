@@ -1,0 +1,125 @@
+<%= turbo_frame_tag "geo_sources" do %>
+  <div class="section-content">
+    <div class="stats-grid" style="margin-bottom: 2rem;">
+      <div class="stat-card">
+        <div class="stat-label">Vizite cu Geolocație</div>
+        <div class="stat-value"><%= number_with_delimiter(@total_geo_visits) %></div>
+      </div>
+      <div class="stat-card stat-success">
+        <div class="stat-label">Top Sursă</div>
+        <div class="stat-value"><%= @top_sources.first ? @top_sources.first[:source].truncate(20) : 'N/A' %></div>
+        <div class="stat-meta"><%= @top_sources.first ? number_with_delimiter(@top_sources.first[:visits]) : 0 %> vizite</div>
+      </div>
+      <div class="stat-card stat-info">
+        <div class="stat-label">Top Locație</div>
+        <div class="stat-value"><%= @top_locations.first ? @top_locations.first[:city] : 'N/A' %></div>
+        <div class="stat-meta"><%= @top_locations.first ? number_with_delimiter(@top_locations.first[:visits]) : 0 %> vizite</div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+      <!-- Top Sources -->
+      <div>
+        <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1f2937;">Top Surse de Trafic</h4>
+        <div class="simple-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Sursă</th>
+                <th style="text-align: right;">Vizite</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @top_sources.each do |source| %>
+                <tr>
+                  <td>
+                    <div style="font-weight: 500;"><%= source[:source].truncate(40) %></div>
+                  </td>
+                  <td style="text-align: right;">
+                    <span class="badge badge-primary"><%= number_with_delimiter(source[:visits]) %></span>
+                  </td>
+                </tr>
+              <% end %>
+              <% if @top_sources.empty? %>
+                <tr>
+                  <td colspan="2" class="empty-state">Nu există date disponibile</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Top Locations -->
+      <div>
+        <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1f2937;">Top Locații</h4>
+        <div class="simple-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Oraș, Țară</th>
+                <th style="text-align: right;">Vizite</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @top_locations.each do |location| %>
+                <tr>
+                  <td>
+                    <div style="font-weight: 500;"><%= location[:city] %></div>
+                    <div style="font-size: 0.875rem; color: #6b7280;"><%= location[:country] %></div>
+                  </td>
+                  <td style="text-align: right;">
+                    <span class="badge badge-success"><%= number_with_delimiter(location[:visits]) %></span>
+                  </td>
+                </tr>
+              <% end %>
+              <% if @top_locations.empty? %>
+                <tr>
+                  <td colspan="2" class="empty-state">Nu există date disponibile</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Combined Source + Location Table -->
+    <div>
+      <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1f2937;">Trafic pe Sursă și Locație</h4>
+      <div class="simple-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Sursă</th>
+              <th>Oraș</th>
+              <th>Țară</th>
+              <th style="text-align: right;">Vizite</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @geo_sources.first(20).each do |row| %>
+              <tr>
+                <td>
+                  <div style="font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <%= row[:source].truncate(40) %>
+                  </div>
+                </td>
+                <td><%= row[:city] %></td>
+                <td><%= row[:country] %></td>
+                <td style="text-align: right;">
+                  <span class="badge badge-info"><%= number_with_delimiter(row[:visits]) %></span>
+                </td>
+              </tr>
+            <% end %>
+            <% if @geo_sources.empty? %>
+              <tr>
+                <td colspan="4" class="empty-state">Nu există date disponibile</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% end %>

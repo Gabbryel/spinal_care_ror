@@ -1,0 +1,82 @@
+<%= turbo_frame_tag "hourly" do %>
+  <div class="section-content">
+    <div class="stats-grid" style="margin-bottom: 2rem;">
+      <div class="stat-card">
+        <div class="stat-label">Total Vizite</div>
+        <div class="stat-value"><%= number_with_delimiter(@total_visits) %></div>
+      </div>
+      <div class="stat-card stat-success">
+        <div class="stat-label">Ora de Vârf</div>
+        <div class="stat-value"><%= @peak_hour[:label] %></div>
+        <div class="stat-meta"><%= number_with_delimiter(@peak_hour[:count]) %> vizite</div>
+      </div>
+      <div class="stat-card stat-info">
+        <div class="stat-label">Ora Liniștită</div>
+        <div class="stat-value"><%= @quiet_hour[:label] %></div>
+        <div class="stat-meta"><%= number_with_delimiter(@quiet_hour[:count]) %> vizite</div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="hourlyChart" width="400" height="150"></canvas>
+    </div>
+
+    <script>
+      (function() {
+        const ctx = document.getElementById('hourlyChart');
+        if (!ctx) return;
+
+        const data = <%= raw @hourly_visits.to_json %>;
+        const labels = data.map(d => d.label);
+        const counts = data.map(d => d.count);
+        const maxCount = Math.max(...counts);
+
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Vizite',
+              data: counts,
+              backgroundColor: counts.map(count => {
+                const intensity = count / maxCount;
+                return `rgba(59, 130, 246, ${0.3 + intensity * 0.7})`;
+              }),
+              borderColor: 'rgb(59, 130, 246)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return 'Vizite: ' + context.parsed.y.toLocaleString();
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  precision: 0
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      })();
+    </script>
+  </div>
+<% end %>
