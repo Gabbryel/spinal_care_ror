@@ -24,11 +24,24 @@
     <div class="period-filter-new" role="region" aria-label="Filtru perioadă">
       <%= form_with url: dashboard_analytics_path, method: :get, class: 'period-form-new' do |f| %>
         <div class="filter-buttons" role="group" aria-label="Opțiuni perioadă predefinite">
-          <%= button_tag 'Azi', type: 'submit', name: 'period', value: 'today', class: "filter-btn #{@period == 'today' ? 'active' : ''}", aria: { pressed: @period == 'today', label: 'Filtrează date pentru astăzi' } %>
-          <%= button_tag '3 zile', type: 'submit', name: 'period', value: '3', class: "filter-btn #{@period == '3' ? 'active' : ''}", aria: { pressed: @period == '3', label: 'Filtrează date pentru ultimele 3 zile' } %>
-          <%= button_tag '7 zile', type: 'submit', name: 'period', value: '7', class: "filter-btn #{@period == '7' ? 'active' : ''}", aria: { pressed: @period == '7', label: 'Filtrează date pentru ultimele 7 zile' } %>
-          <%= button_tag '30 zile', type: 'submit', name: 'period', value: '30', class: "filter-btn #{@period == '30' ? 'active' : ''}", aria: { pressed: @period == '30', label: 'Filtrează date pentru ultimele 30 zile' } %>
-          <%= button_tag '90 zile', type: 'submit', name: 'period', value: '90', class: "filter-btn #{@period == '90' ? 'active' : ''}", aria: { pressed: @period == '90', label: 'Filtrează date pentru ultimele 90 zile' } %>
+          <% period_buttons = [
+            ['Azi', 'today'],
+            ['3 zile', '3'],
+            ['7 zile', '7'],
+            ['30 zile', '30'],
+            ['90 zile', '90']
+          ] %>
+          <% period_buttons.each do |label, value| %>
+            <%= link_to label, 
+                dashboard_analytics_path(
+                  period: value, 
+                  filter_bots: @filter_bots, 
+                  filter_geography: @filter_geography
+                ), 
+                class: "filter-btn #{@period == value ? 'active' : ''}", 
+                role: 'button',
+                aria: { pressed: @period == value, label: "Filtrează date pentru #{label.downcase}" } %>
+          <% end %>
         </div>
         <div class="custom-filter" data-controller="analytics-date-filter" role="group" aria-label="Filtru perioadă personalizată">
           <%= f.date_field :custom_start_date, value: @custom_start_date, class: 'date-input-new', placeholder: 'De la', aria: { label: 'Data de început' }, data: { analytics_date_filter_target: 'startDate', action: 'change->analytics-date-filter#validateDates' } %>
@@ -39,11 +52,11 @@
         <!-- Bot & Geography Filters -->
         <div style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center; padding: 0.75rem; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
           <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.875rem; color: #374151;">
-            <%= f.check_box :filter_bots, { checked: @filter_bots != false, onchange: 'this.form.submit()' }, true, false %>
+            <%= f.check_box :filter_bots, { checked: @filter_bots != false, onchange: 'this.form.submit()', include_hidden: true }, 'true', 'false' %>
             <span>🤖 Filtrează Bots</span>
           </label>
           <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.875rem; color: #374151;">
-            <%= f.check_box :filter_geography, { checked: @filter_geography == true, onchange: 'this.form.submit()' }, true, false %>
+            <%= f.check_box :filter_geography, { checked: @filter_geography == true, onchange: 'this.form.submit()', include_hidden: true }, 'true', 'false' %>
             <span>🌍 Doar România + Vecini</span>
           </label>
           <div style="margin-left: auto; font-size: 0.75rem; color: #6b7280;">
