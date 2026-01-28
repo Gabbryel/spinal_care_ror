@@ -18,16 +18,16 @@ module AnalyticsFilterHelper
     'Romania', 'România', 'RO',
     'Moldova', 'Republica Moldova', 'MD',
     'Italy', 'Italia', 'IT',
-    'Spain', 'España', 'ES',
-    'United Kingdom', 'UK', 'GB',
-    'Germany', 'Deutschland', 'DE',
-    'France', 'FR',
+    'Spain', 'España', 'Spania', 'ES',
+    'United Kingdom', 'UK', 'GB', 'Marea Britanie',
+    'Germany', 'Deutschland', 'Germania', 'DE',
+    'France', 'Franța', 'FR',
     'Austria', 'AT',
-    'Hungary', 'Magyarország', 'HU',
+    'Hungary', 'Magyarország', 'Ungaria', 'HU',
     'Bulgaria', 'България', 'BG',
-    'Greece', 'Ελλάδα', 'GR',
+    'Greece', 'Ελλάδα', 'Grecia', 'GR',
     'Serbia', 'Србија', 'RS',
-    'Ukraine', 'Україна', 'UA'
+    'Ukraine', 'Україна', 'Ucraina', 'UA'
   ].freeze
 
   # Bot-heavy countries (likely spam/scraper traffic)
@@ -81,11 +81,6 @@ module AnalyticsFilterHelper
     # Apply geographic filtering if requested
     if options[:relevant_countries_only]
       filtered = filter_relevant_countries(filtered)
-    end
-
-    # Exclude bot countries unless explicitly included
-    unless options[:include_bot_countries]
-      filtered = filtered.where.not(country: BOT_COUNTRIES)
     end
 
     filtered
