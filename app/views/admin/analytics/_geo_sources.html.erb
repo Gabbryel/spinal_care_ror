@@ -1,5 +1,7 @@
 <%= turbo_frame_tag "geo_sources" do %>
-  <div class="section-content">
+  <% if @geo_sources.any? || @top_sources.any? || @top_locations.any? %>
+  <div class="geography-section">
+    <!-- Summary Stats -->
     <div class="stats-grid" style="margin-bottom: 2rem;">
       <div class="stat-card">
         <div class="stat-label">Vizite cu Geolocație</div>
@@ -17,109 +19,112 @@
       </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+    <!-- Top Sources & Locations Grid -->
+    <div class="geo-grid">
       <!-- Top Sources -->
-      <div>
-        <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1f2937;">Top Surse de Trafic</h4>
-        <div class="simple-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Sursă</th>
-                <th style="text-align: right;">Vizite</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @top_sources.each do |source| %>
-                <tr>
-                  <td>
-                    <div style="font-weight: 500;"><%= source[:source].truncate(40) %></div>
-                  </td>
-                  <td style="text-align: right;">
-                    <span class="badge badge-primary"><%= number_with_delimiter(source[:visits]) %></span>
-                  </td>
-                </tr>
-              <% end %>
-              <% if @top_sources.empty? %>
-                <tr>
-                  <td colspan="2" class="empty-state">Nu există date disponibile</td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Top Locations -->
-      <div>
-        <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1f2937;">Top Locații</h4>
-        <div class="simple-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Oraș, Țară</th>
-                <th style="text-align: right;">Vizite</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @top_locations.each do |location| %>
-                <tr>
-                  <td>
-                    <div style="font-weight: 500;"><%= location[:city] %></div>
-                    <div style="font-size: 0.875rem; color: #6b7280;"><%= location[:country] %></div>
-                  </td>
-                  <td style="text-align: right;">
-                    <span class="badge badge-success"><%= number_with_delimiter(location[:visits]) %></span>
-                  </td>
-                </tr>
-              <% end %>
-              <% if @top_locations.empty? %>
-                <tr>
-                  <td colspan="2" class="empty-state">Nu există date disponibile</td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Combined Source + Location Table -->
-    <div>
-      <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: #1f2937;">Trafic pe Sursă și Locație</h4>
-      <div class="simple-table">
-        <table>
+      <div class="geo-table-container">
+        <h4 class="geo-table-title">Top Surse de Trafic</h4>
+        <table class="geo-table">
           <thead>
             <tr>
               <th>Sursă</th>
-              <th>Oraș</th>
-              <th>Țară</th>
-              <th style="text-align: right;">Vizite</th>
+              <th>Vizite</th>
             </tr>
           </thead>
           <tbody>
-            <% @geo_sources.first(20).each do |row| %>
+            <% @top_sources.each do |source| %>
               <tr>
-                <td>
-                  <div style="font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    <%= row[:source].truncate(40) %>
-                  </div>
+                <td class="city-name">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="location-icon">
+                    <path fill-rule="evenodd" d="M19.902 4.098a3.75 3.75 0 00-5.304 0l-4.5 4.5a3.75 3.75 0 001.035 6.037.75.75 0 01-.646 1.353 5.25 5.25 0 01-1.449-8.45l4.5-4.5a5.25 5.25 0 117.424 7.424l-1.757 1.757a.75.75 0 11-1.06-1.06l1.757-1.757a3.75 3.75 0 000-5.304zm-7.389 4.267a.75.75 0 011-.353 5.25 5.25 0 011.449 8.45l-4.5 4.5a5.25 5.25 0 11-7.424-7.424l1.757-1.757a.75.75 0 111.06 1.06l-1.757 1.757a3.75 3.75 0 105.304 5.304l4.5-4.5a3.75 3.75 0 00-1.035-6.037.75.75 0 01-.354-1z" clip-rule="evenodd" />
+                  </svg>
+                  <%= source[:source].truncate(35) %>
                 </td>
-                <td><%= row[:city] %></td>
-                <td><%= row[:country] %></td>
-                <td style="text-align: right;">
-                  <span class="badge badge-info"><%= number_with_delimiter(row[:visits]) %></span>
-                </td>
+                <td class="city-count"><%= number_with_delimiter(source[:visits]) %></td>
               </tr>
             <% end %>
-            <% if @geo_sources.empty? %>
+            <% if @top_sources.empty? %>
               <tr>
-                <td colspan="4" class="empty-state">Nu există date disponibile</td>
+                <td colspan="2" class="empty-state">Nu există date disponibile</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Top Locations -->
+      <div class="geo-table-container">
+        <h4 class="geo-table-title">Top Locații</h4>
+        <table class="geo-table">
+          <thead>
+            <tr>
+              <th>Oraș, Țară</th>
+              <th>Vizite</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @top_locations.each do |location| %>
+              <tr>
+                <td class="city-name">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="location-icon">
+                    <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
+                  </svg>
+                  <div>
+                    <div><%= location[:city] %></div>
+                    <div style="font-size: 0.75rem; color: #6b7280; margin-top: 2px;"><%= location[:country] %></div>
+                  </div>
+                </td>
+                <td class="city-count"><%= number_with_delimiter(location[:visits]) %></td>
+              </tr>
+            <% end %>
+            <% if @top_locations.empty? %>
+              <tr>
+                <td colspan="2" class="empty-state">Nu există date disponibile</td>
               </tr>
             <% end %>
           </tbody>
         </table>
       </div>
     </div>
+
+    <!-- Combined Source + Location Table -->
+    <div class="geo-table-container" style="margin-top: 2rem;">
+      <h4 class="geo-table-title">Trafic Combinat: Sursă × Locație</h4>
+      <table class="geo-table">
+        <thead>
+          <tr>
+            <th>Sursă</th>
+            <th>Oraș</th>
+            <th>Țară</th>
+            <th>Vizite</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @geo_sources.first(20).each do |row| %>
+            <tr>
+              <td class="city-name">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="location-icon">
+                  <path fill-rule="evenodd" d="M19.902 4.098a3.75 3.75 0 00-5.304 0l-4.5 4.5a3.75 3.75 0 001.035 6.037.75.75 0 01-.646 1.353 5.25 5.25 0 01-1.449-8.45l4.5-4.5a5.25 5.25 0 117.424 7.424l-1.757 1.757a.75.75 0 11-1.06-1.06l1.757-1.757a3.75 3.75 0 000-5.304zm-7.389 4.267a.75.75 0 011-.353 5.25 5.25 0 011.449 8.45l-4.5 4.5a5.25 5.25 0 11-7.424-7.424l1.757-1.757a.75.75 0 111.06 1.06l-1.757 1.757a3.75 3.75 0 105.304 5.304l4.5-4.5a3.75 3.75 0 00-1.035-6.037.75.75 0 01-.354-1z" clip-rule="evenodd" />
+                </svg>
+                <%= row[:source].truncate(35) %>
+              </td>
+              <td><%= row[:city] %></td>
+              <td><%= row[:country] %></td>
+              <td class="city-count"><%= number_with_delimiter(row[:visits]) %></td>
+            </tr>
+          <% end %>
+          <% if @geo_sources.empty? %>
+            <tr>
+              <td colspan="4" class="empty-state">Nu există date disponibile</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
+  <% else %>
+  <div class="empty-state">
+    <p>Nu există date de geolocație disponibile pentru perioada selectată.</p>
+  </div>
+  <% end %>
 <% end %>
