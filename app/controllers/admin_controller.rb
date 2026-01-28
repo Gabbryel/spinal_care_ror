@@ -468,8 +468,8 @@ class AdminController < ApplicationController
     
     # Group visits by hour of the day (0-23)
     hourly_data = public_visits
-      .group("EXTRACT(HOUR FROM started_at)::integer")
-      .order("EXTRACT(HOUR FROM started_at)::integer")
+      .group(Arel.sql("EXTRACT(HOUR FROM started_at)::integer"))
+      .order(Arel.sql("EXTRACT(HOUR FROM started_at)::integer"))
       .count
     
     # Fill in missing hours with 0
