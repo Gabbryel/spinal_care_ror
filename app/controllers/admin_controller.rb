@@ -112,11 +112,15 @@ class AdminController < ApplicationController
   
   # PHASE 2: Lazy-loaded sections
   def analytics_daily_chart
-    start_date = calculate_period_dates[:start_date]
-    end_date = calculate_period_dates[:end_date]
+    dates = calculate_period_dates
+    start_date = dates[:start_date]
+    end_date = dates[:end_date]
+    filter_bots = params[:filter_bots] != 'false'
+    filter_geography = params[:filter_geography] == 'true'
     
-    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
     
     days_count = ((end_date.to_date - start_date.to_date).to_i).abs
     daily_data = public_visits.group("DATE(started_at)").count
@@ -186,11 +190,15 @@ class AdminController < ApplicationController
   end
   
   def analytics_sources
-    start_date = calculate_period_dates[:start_date]
-    end_date = calculate_period_dates[:end_date]
+    dates = calculate_period_dates
+    start_date = dates[:start_date]
+    end_date = dates[:end_date]
+    filter_bots = params[:filter_bots] != 'false'
+    filter_geography = params[:filter_geography] == 'true'
     
-    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
     
     @total_visitors = public_visits.count
     @unique_visitors = public_visits.distinct.count(:visitor_token)
@@ -215,11 +223,21 @@ class AdminController < ApplicationController
   end
   
   def analytics_pages
-    start_date = calculate_period_dates[:start_date]
-    end_date = calculate_period_dates[:end_date]
+    dates = calculate_period_dates
+    start_date = dates[:start_date]
+    end_date = dates[:end_date]
+    filter_bots = params[:filter_bots] != 'false'
+    filter_geography = params[:filter_geography] == 'true'
+    
+    # Get filtered visit IDs
+    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    filtered_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+    filtered_visit_ids = filtered_visits.pluck(:id)
     
     events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
                         .where('time >= ? AND time <= ?', start_date, end_date)
+                        .where(visit_id: filtered_visit_ids)
     
     page_events = events.group(Arel.sql("properties->>'url'"))
                         .order('count_all DESC')
@@ -458,11 +476,15 @@ class AdminController < ApplicationController
   end
 
   def analytics_hourly
-    start_date = calculate_period_dates[:start_date]
-    end_date = calculate_period_dates[:end_date]
+    dates = calculate_period_dates
+    start_date = dates[:start_date]
+    end_date = dates[:end_date]
+    filter_bots = params[:filter_bots] != 'false'
+    filter_geography = params[:filter_geography] == 'true'
     
-    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
     
     # Group visits by hour of the day (0-23)
     hourly_data = public_visits
@@ -487,12 +509,15 @@ class AdminController < ApplicationController
   end
 
   def analytics_geo_sources
-    start_date = calculate_period_dates[:start_date]
-    end_date = calculate_period_dates[:end_date]
-    
-    public_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
-    
+    dates = calculate_period_dates
+    start_date = dates[:start_date]
+    end_date = dates[:end_date]
+    filter_bots = params[:filter_bots] != 'false'
+    filter_geography = params[:filter_geography] == 'true'
+
+    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+    public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
     # Traffic source (referrer domain or 'Direct') + City/Country
     @geo_sources = public_visits
       .where.not(city: [nil, ''])
