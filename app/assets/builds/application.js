@@ -22803,6 +22803,51 @@
     }
   };
 
+  // controllers/table_filter_controller.js
+  var table_filter_controller_exports = {};
+  __export(table_filter_controller_exports, {
+    default: () => table_filter_controller_default
+  });
+  var table_filter_controller_default = class extends Controller {
+    static targets = ["searchInput", "row", "clearButton", "emptyState", "table", "tbody"];
+    connect() {
+      this.filterTable();
+    }
+    filterTable() {
+      const searchTerm = this.searchInputTarget.value.toLowerCase().trim();
+      let visibleCount = 0;
+      this.rowTargets.forEach((row) => {
+        const source = row.dataset.source || "";
+        const city = row.dataset.city || "";
+        const country = row.dataset.country || "";
+        const matches = source.includes(searchTerm) || city.includes(searchTerm) || country.includes(searchTerm);
+        if (matches) {
+          row.style.display = "";
+          visibleCount++;
+        } else {
+          row.style.display = "none";
+        }
+      });
+      if (searchTerm.length > 0) {
+        this.clearButtonTarget.style.display = "block";
+      } else {
+        this.clearButtonTarget.style.display = "none";
+      }
+      if (visibleCount === 0) {
+        this.tableTarget.style.display = "none";
+        this.emptyStateTarget.style.display = "block";
+      } else {
+        this.tableTarget.style.display = "table";
+        this.emptyStateTarget.style.display = "none";
+      }
+    }
+    clearFilter() {
+      this.searchInputTarget.value = "";
+      this.filterTable();
+      this.searchInputTarget.focus();
+    }
+  };
+
   // controllers/tooltip_controller.js
   var tooltip_controller_exports = {};
   __export(tooltip_controller_exports, {
@@ -23353,7 +23398,7 @@
   };
 
   // rails:/Users/aquaman/Code/Projects/spinal/spinal_care_ror/app/javascript/controllers/**/*_controller.js
-  var modules = [{ name: "admin-modal", module: admin_modal_controller_exports, filename: "admin-modal_controller.js" }, { name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "analytics-charts", module: analytics_charts_controller_exports, filename: "analytics_charts_controller.js" }, { name: "analytics-date-filter", module: analytics_date_filter_controller_exports, filename: "analytics_date_filter_controller.js" }, { name: "analytics-period-filter", module: analytics_period_filter_controller_exports, filename: "analytics_period_filter_controller.js" }, { name: "analytics-refresh", module: analytics_refresh_controller_exports, filename: "analytics_refresh_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "click-tracker", module: click_tracker_controller_exports, filename: "click_tracker_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "landingimage", module: landingimage_controller_exports, filename: "landingimage_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFilter", module: memberFilter_controller_exports, filename: "memberFilter_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "member-height", module: member_height_controller_exports, filename: "member_height_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "richTextEditor", module: richTextEditor_controller_exports, filename: "richTextEditor_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
+  var modules = [{ name: "admin-modal", module: admin_modal_controller_exports, filename: "admin-modal_controller.js" }, { name: "adminLink", module: adminLink_controller_exports, filename: "adminLink_controller.js" }, { name: "analytics-charts", module: analytics_charts_controller_exports, filename: "analytics_charts_controller.js" }, { name: "analytics-date-filter", module: analytics_date_filter_controller_exports, filename: "analytics_date_filter_controller.js" }, { name: "analytics-period-filter", module: analytics_period_filter_controller_exports, filename: "analytics_period_filter_controller.js" }, { name: "analytics-refresh", module: analytics_refresh_controller_exports, filename: "analytics_refresh_controller.js" }, { name: "animation", module: animation_controller_exports, filename: "animation_controller.js" }, { name: "bio", module: bio_controller_exports, filename: "bio_controller.js" }, { name: "click-tracker", module: click_tracker_controller_exports, filename: "click_tracker_controller.js" }, { name: "gdpr", module: gdpr_controller_exports, filename: "gdpr_controller.js" }, { name: "hello", module: hello_controller_exports, filename: "hello_controller.js" }, { name: "landingimage", module: landingimage_controller_exports, filename: "landingimage_controller.js" }, { name: "masonry", module: masonry_controller_exports, filename: "masonry_controller.js" }, { name: "memberFilter", module: memberFilter_controller_exports, filename: "memberFilter_controller.js" }, { name: "memberFormSpecialty", module: memberFormSpecialty_controller_exports, filename: "memberFormSpecialty_controller.js" }, { name: "memberIndexFilter", module: memberIndexFilter_controller_exports, filename: "memberIndexFilter_controller.js" }, { name: "member-height", module: member_height_controller_exports, filename: "member_height_controller.js" }, { name: "navbarFixed", module: navbarFixed_controller_exports, filename: "navbarFixed_controller.js" }, { name: "reviews", module: reviews_controller_exports, filename: "reviews_controller.js" }, { name: "richTextEditor", module: richTextEditor_controller_exports, filename: "richTextEditor_controller.js" }, { name: "searchTeam", module: searchTeam_controller_exports, filename: "searchTeam_controller.js" }, { name: "sidemenu-toggle", module: sidemenu_toggle_controller_exports, filename: "sidemenu_toggle_controller.js" }, { name: "table-filter", module: table_filter_controller_exports, filename: "table_filter_controller.js" }, { name: "tooltip", module: tooltip_controller_exports, filename: "tooltip_controller.js" }, { name: "vh", module: vh_controller_exports, filename: "vh_controller.js" }];
   var controller_default = modules;
 
   // controllers/index.js

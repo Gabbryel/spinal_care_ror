@@ -100,9 +100,27 @@
     </div>
 
     <!-- Combined Source + Location Table -->
-    <div class="geo-table-container" style="margin-top: 2rem;">
-      <h4 class="geo-table-title">Trafic Combinat: Sursă × Locație</h4>
-      <table class="geo-table">
+    <div class="geo-table-container" style="margin-top: 2rem;" data-controller="table-filter">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h4 class="geo-table-title" style="margin: 0;">Trafic Combinat: Sursă × Locație</h4>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <input 
+            type="text" 
+            placeholder="🔍 Caută sursă, oraș, țară..." 
+            data-table-filter-target="searchInput"
+            data-action="input->table-filter#filterTable"
+            style="padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.875rem; width: 250px;"
+          />
+          <button 
+            data-action="click->table-filter#clearFilter"
+            style="padding: 0.5rem 0.75rem; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.875rem; cursor: pointer; display: none;"
+            data-table-filter-target="clearButton"
+          >
+            ✕ Șterge
+          </button>
+        </div>
+      </div>
+      <table class="geo-table" data-table-filter-target="table">
         <thead>
           <tr>
             <th>Sursă</th>
@@ -111,9 +129,12 @@
             <th>Vizite</th>
           </tr>
         </thead>
-        <tbody>
-          <% @geo_sources.first(20).each do |row| %>
-            <tr>
+        <tbody data-table-filter-target="tbody">
+          <% @geo_sources.first(50).each do |row| %>
+            <tr data-table-filter-target="row" 
+                data-source="<%= row[:source].downcase %>" 
+                data-city="<%= row[:city].downcase %>" 
+                data-country="<%= row[:country].downcase %>">
               <td class="city-name">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="location-icon">
                   <path fill-rule="evenodd" d="M19.902 4.098a3.75 3.75 0 00-5.304 0l-4.5 4.5a3.75 3.75 0 001.035 6.037.75.75 0 01-.646 1.353 5.25 5.25 0 01-1.449-8.45l4.5-4.5a5.25 5.25 0 117.424 7.424l-1.757 1.757a.75.75 0 11-1.06-1.06l1.757-1.757a3.75 3.75 0 000-5.304zm-7.389 4.267a.75.75 0 011-.353 5.25 5.25 0 011.449 8.45l-4.5 4.5a5.25 5.25 0 11-7.424-7.424l1.757-1.757a.75.75 0 111.06 1.06l-1.757 1.757a3.75 3.75 0 105.304 5.304l4.5-4.5a3.75 3.75 0 00-1.035-6.037.75.75 0 01-.354-1z" clip-rule="evenodd" />
@@ -125,13 +146,11 @@
               <td class="city-count"><%= number_with_delimiter(row[:visits]) %></td>
             </tr>
           <% end %>
-          <% if @geo_sources.empty? %>
-            <tr>
-              <td colspan="4" class="empty-state">Nu există date disponibile</td>
-            </tr>
-          <% end %>
         </tbody>
       </table>
+      <div data-table-filter-target="emptyState" style="display: none; padding: 2rem; text-align: center; color: #6b7280; font-size: 0.875rem;">
+        Nu s-au găsit rezultate pentru căutarea ta.
+      </div>
     </div>
   </div>
   <% else %>
