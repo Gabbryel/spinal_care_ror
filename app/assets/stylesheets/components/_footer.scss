@@ -232,15 +232,27 @@
   background: rgba(74, 103, 117, 0.1);
   border-radius: 12px;
   border: 1px solid rgba(74, 103, 117, 0.2);
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(74, 103, 117, 0.2);
+  -webkit-touch-callout: default;
+  touch-action: auto;
   
   @media (max-width: 768px) {
     margin: 0 auto;
+    min-height: 44px;
   }
   
   svg {
     width: 20px;
     height: 20px;
     color: #4A6775;
+    pointer-events: none;
+  }
+  
+  span {
+    pointer-events: none;
   }
   
   &:hover {
