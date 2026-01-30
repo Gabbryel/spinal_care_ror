@@ -75,8 +75,9 @@
         <%= f.label :specialty_id, 'Specialitate medicală', class: 'form-label' %>
         <%= f.association :specialty, 
             label: false, 
-            prompt: 'Selectează specialitatea',
+            include_blank: 'Fără specialitate',
             wrapper_html: { class: 'form-input-wrapper' } %>
+        <p class="form-hint">Lasă gol dacă membrul nu are specialitate</p>
       </div>
 
       <div class="form-group form-checkbox">
