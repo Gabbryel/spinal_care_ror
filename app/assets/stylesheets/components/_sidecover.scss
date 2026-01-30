@@ -20,7 +20,9 @@
   left: 0;
   background-color: $color-1-90;
   opacity: 0;
-  z-index: 0;
+  z-index: -1;
+  pointer-events: none;
+  
   .sidecover-green-cover {
     position: absolute;
     display: inline-block;
@@ -42,5 +44,6 @@
   transform: translate(0);
   opacity: 1;
   backdrop-filter: blur(12px);
+  pointer-events: auto;
   
 }
