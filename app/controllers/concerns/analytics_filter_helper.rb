@@ -95,14 +95,14 @@ module AnalyticsFilterHelper
       start_date = Time.zone.parse(custom_start_date).beginning_of_day
       end_date = Time.zone.parse(custom_end_date).end_of_day
     else
-      end_date = Time.zone.now
+      end_date = Time.zone.now.end_of_day
       start_date = case period
                    when 'today' then end_date.beginning_of_day
-                   when '3' then 3.days.ago(end_date).beginning_of_day
-                   when '7' then 7.days.ago(end_date).beginning_of_day
-                   when '30' then 30.days.ago(end_date).beginning_of_day
-                   when '90' then 90.days.ago(end_date).beginning_of_day
-                   else 30.days.ago(end_date).beginning_of_day
+                   when '3' then (end_date - 3.days).beginning_of_day
+                   when '7' then (end_date - 7.days).beginning_of_day
+                   when '30' then (end_date - 30.days).beginning_of_day
+                   when '90' then (end_date - 90.days).beginning_of_day
+                   else (end_date - 30.days).beginning_of_day
                    end
     end
     

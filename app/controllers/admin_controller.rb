@@ -122,10 +122,11 @@ class AdminController < ApplicationController
                               .where('started_at >= ? AND started_at <= ?', start_date, end_date)
     public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
     
-    days_count = ((end_date.to_date - start_date.to_date).to_i).abs
+    # Calculate number of days in period (inclusive)
+    days_count = ((end_date.to_date - start_date.to_date).to_i + 1)
     daily_data = public_visits.group("DATE(started_at)").count
     
-    daily_visits = (0..days_count).map do |i|
+    daily_visits = (0...days_count).map do |i|
       date = (start_date.to_date + i.days)
       { date: date, label: date.strftime('%d %b'), count: daily_data[date] || 0 }
     end
