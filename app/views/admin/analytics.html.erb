@@ -22,6 +22,21 @@
 
     <!-- Period Filter -->
     <div class="period-filter-new" role="region" aria-label="Filtru perioadă">
+      
+      <!-- DEBUG INFO -->
+      <div data-turbo-permanent style="background:#fff3cd;border:2px solid #856404;padding:15px;margin-bottom:20px;border-radius:8px;font-family:monospace;font-size:12px;">
+        <strong style="color:#856404;display:block;margin-bottom:10px;">🐛 DEBUG (Production)</strong>
+        <table style="width:100%;border-collapse:collapse;">
+          <tr><td style="padding:4px;font-weight:bold;">Period:</td><td style="padding:4px;"><%= params[:period].inspect %></td></tr>
+          <tr><td style="padding:4px;font-weight:bold;">Custom Start:</td><td style="padding:4px;"><%= params[:custom_start_date].inspect %></td></tr>
+          <tr><td style="padding:4px;font-weight:bold;">Custom End:</td><td style="padding:4px;"><%= params[:custom_end_date].inspect %></td></tr>
+          <tr><td style="padding:4px;font-weight:bold;">@period:</td><td style="padding:4px;"><%= @period.inspect %></td></tr>
+          <tr><td style="padding:4px;font-weight:bold;">Start Date:</td><td style="padding:4px;color:#dc3545;font-weight:bold;"><%= @start_date.strftime('%d.%m.%Y %H:%M:%S') rescue 'ERROR' %></td></tr>
+          <tr><td style="padding:4px;font-weight:bold;">End Date:</td><td style="padding:4px;color:#dc3545;font-weight:bold;"><%= @end_date.strftime('%d.%m.%Y %H:%M:%S') rescue 'ERROR' %></td></tr>
+          <tr><td style="padding:4px;font-weight:bold;color:#28a745;">EXPECTED (3d):</td><td style="padding:4px;color:#28a745;"><%= (Time.zone.now.end_of_day - 3.days).beginning_of_day.strftime('%d.%m.%Y %H:%M') %> - <%= Time.zone.now.end_of_day.strftime('%d.%m.%Y %H:%M') %></td></tr>
+        </table>
+      </div>
+      
       <%= form_with url: dashboard_analytics_path, method: :get, class: 'period-form-new', id: 'analytics-filter-form' do |f| %>
         <%= f.hidden_field :period, value: @period, id: 'period-input' %>
         <div class="filter-buttons" role="group" aria-label="Opțiuni perioadă predefinite">
