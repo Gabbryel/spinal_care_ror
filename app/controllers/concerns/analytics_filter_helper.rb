@@ -91,10 +91,12 @@ module AnalyticsFilterHelper
     custom_start_date = params[:custom_start_date]
     custom_end_date = params[:custom_end_date]
     
-    if period == 'custom' && custom_start_date.present? && custom_end_date.present?
+    # Only use custom dates if period is explicitly 'custom' AND dates are actually present (not empty strings)
+    if period == 'custom' && custom_start_date.to_s.strip.present? && custom_end_date.to_s.strip.present?
       start_date = Time.zone.parse(custom_start_date).beginning_of_day
       end_date = Time.zone.parse(custom_end_date).end_of_day
     else
+      # Use preset periods - ignore any custom date values
       end_date = Time.zone.now.end_of_day
       start_date = case period
                    when 'today' then end_date.beginning_of_day
