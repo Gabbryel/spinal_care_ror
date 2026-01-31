@@ -222,6 +222,7 @@ Examples:
     • No debug logs, TODOs, or dead code unless intentional.
     • The diff matches the stated purpose of the commit.
 
-14. If commit help is requested
-    • Propose practical commit boundaries, not academic ones.
+14. Commit philosophy
     • Provide exact commit messages unless alternatives are explicitly requested.
+    • After completing a task, test it thoroughly before asking for my satisfaction confirmation.
+    • Always expect my approval before committing, with my answer being "Yes".

@@ -22809,7 +22809,14 @@
     default: () => table_filter_controller_default
   });
   var table_filter_controller_default = class extends Controller {
-    static targets = ["searchInput", "row", "clearButton", "emptyState", "table", "tbody"];
+    static targets = [
+      "searchInput",
+      "row",
+      "clearButton",
+      "emptyState",
+      "table",
+      "tbody"
+    ];
     connect() {
       this.filterTable();
     }
