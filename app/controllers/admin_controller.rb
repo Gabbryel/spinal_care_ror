@@ -30,11 +30,6 @@ class AdminController < ApplicationController
     @start_date = dates[:start_date]
     @end_date = dates[:end_date]
     
-    # DEBUG: Log what we actually got
-    Rails.logger.info "🔍 AFTER calculate_period_dates:"
-    Rails.logger.info "   @start_date = #{@start_date.inspect}"
-    Rails.logger.info "   @end_date = #{@end_date.inspect}"
-    
     # PHASE 1: HERO KPIs ONLY - Optimize for <1s load
     # Base query for public visits (with bot and geo filtering)
     base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
@@ -597,31 +592,6 @@ class AdminController < ApplicationController
   end
   
   private
-  
-  def calculate_period_dates
-    period = params[:period] || '30'
-    custom_start = params[:custom_start_date]
-    custom_end = params[:custom_end_date]
-    
-    if period == 'custom' && custom_start.present? && custom_end.present?
-      start_date = Time.zone.parse(custom_start).beginning_of_day
-      end_date = Time.zone.parse(custom_end).end_of_day
-    else
-      end_date = Time.zone.now
-      start_date = case period
-                   when 'today' then end_date.beginning_of_day
-                   when 'week' then 1.week.ago(end_date)
-                   when 'month' then 1.month.ago(end_date)
-                   when '7' then 7.days.ago(end_date)
-                   when '30' then 30.days.ago(end_date)
-                   when '90' then 90.days.ago(end_date)
-                   when 'all' then 100.years.ago
-                   else 30.days.ago(end_date)
-                   end
-    end
-    
-    { start_date: start_date, end_date: end_date }
-  end
   
   def normalize_url(url)
     return 'Homepage' if url.nil? || url == '/' || url.empty?

@@ -22,47 +22,6 @@
 
     <!-- Period Filter -->
     <div class="period-filter-new" role="region" aria-label="Filtru perioadă">
-      
-      <!-- DEBUG SECTION -->
-      <div style="background: #f8f9fa; border: 2px solid #dc3545; border-radius: 8px; padding: 16px; margin-bottom: 20px; font-family: monospace; font-size: 13px;">
-        <h3 style="margin: 0 0 12px 0; color: #dc3545; font-size: 16px;">🐛 DEBUG INFO</h3>
-        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 8px;">
-          <strong>Period param:</strong>
-          <span><%= params[:period].inspect %></span>
-          
-          <strong>Custom start param:</strong>
-          <span><%= params[:custom_start_date].inspect %></span>
-          
-          <strong>Custom end param:</strong>
-          <span><%= params[:custom_end_date].inspect %></span>
-          
-          <strong>@period instance var:</strong>
-          <span><%= @period.inspect %></span>
-          
-          <strong>@custom_start_date:</strong>
-          <span><%= @custom_start_date.inspect %></span>
-          
-          <strong>@custom_end_date:</strong>
-          <span><%= @custom_end_date.inspect %></span>
-          
-          <strong>Calculated start_date:</strong>
-          <span><%= @start_date.strftime('%d.%m.%Y %H:%M:%S') rescue 'N/A' %></span>
-          
-          <strong>Calculated end_date:</strong>
-          <span><%= @end_date.strftime('%d.%m.%Y %H:%M:%S') rescue 'N/A' %></span>
-          
-          <strong style="color: #dc3545;">LIVE CALCULATION TEST:</strong>
-          <span style="color: #dc3545;">
-            <% test_end = Time.zone.now.end_of_day %>
-            <% test_start = (test_end - 3.days).beginning_of_day %>
-            <%= test_start.strftime('%d.%m.%Y %H:%M:%S') %> → <%= test_end.strftime('%d.%m.%Y %H:%M:%S') %>
-          </span>
-          
-          <strong style="color: #28a745;">Expected for period=3:</strong>
-          <span style="color: #28a745;"><%= (Time.zone.now.end_of_day - 3.days).beginning_of_day.strftime('%d.%m.%Y') %> - <%= Time.zone.now.end_of_day.strftime('%d.%m.%Y') %></span>
-        </div>
-      </div>
-      
       <%= form_with url: dashboard_analytics_path, method: :get, class: 'period-form-new', id: 'analytics-filter-form' do |f| %>
         <%= f.hidden_field :period, value: @period, id: 'period-input' %>
         <div class="filter-buttons" role="group" aria-label="Opțiuni perioadă predefinite">
