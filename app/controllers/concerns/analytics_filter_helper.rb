@@ -91,10 +91,20 @@ module AnalyticsFilterHelper
     custom_start_date = params[:custom_start_date]
     custom_end_date = params[:custom_end_date]
     
+    # DEBUG LOGGING
+    Rails.logger.info "=" * 80
+    Rails.logger.info "ANALYTICS FILTER DEBUG"
+    Rails.logger.info "Period param: #{period.inspect}"
+    Rails.logger.info "Custom start date param: #{custom_start_date.inspect}"
+    Rails.logger.info "Custom end date param: #{custom_end_date.inspect}"
+    Rails.logger.info "Custom start present?: #{custom_start_date.to_s.strip.present?}"
+    Rails.logger.info "Custom end present?: #{custom_end_date.to_s.strip.present?}"
+    
     # Only use custom dates if period is explicitly 'custom' AND dates are actually present (not empty strings)
     if period == 'custom' && custom_start_date.to_s.strip.present? && custom_end_date.to_s.strip.present?
       start_date = Time.zone.parse(custom_start_date).beginning_of_day
       end_date = Time.zone.parse(custom_end_date).end_of_day
+      Rails.logger.info "Using CUSTOM dates: #{start_date} to #{end_date}"
     else
       # Use preset periods - ignore any custom date values
       end_date = Time.zone.now.end_of_day
@@ -106,7 +116,9 @@ module AnalyticsFilterHelper
                    when '90' then (end_date - 90.days).beginning_of_day
                    else (end_date - 30.days).beginning_of_day
                    end
+      Rails.logger.info "Using PRESET period '#{period}': #{start_date} to #{end_date}"
     end
+    Rails.logger.info "=" * 80
     
     { start_date: start_date, end_date: end_date }
   end
