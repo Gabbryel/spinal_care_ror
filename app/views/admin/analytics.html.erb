@@ -46,10 +46,20 @@
           <span><%= @custom_end_date.inspect %></span>
           
           <strong>Calculated start_date:</strong>
-          <span><%= @start_date.strftime('%d.%m.%Y %H:%M') rescue 'N/A' %></span>
+          <span><%= @start_date.strftime('%d.%m.%Y %H:%M:%S') rescue 'N/A' %></span>
           
           <strong>Calculated end_date:</strong>
-          <span><%= @end_date.strftime('%d.%m.%Y %H:%M') rescue 'N/A' %></span>
+          <span><%= @end_date.strftime('%d.%m.%Y %H:%M:%S') rescue 'N/A' %></span>
+          
+          <strong style="color: #dc3545;">LIVE CALCULATION TEST:</strong>
+          <span style="color: #dc3545;">
+            <% test_end = Time.zone.now.end_of_day %>
+            <% test_start = (test_end - 3.days).beginning_of_day %>
+            <%= test_start.strftime('%d.%m.%Y %H:%M:%S') %> → <%= test_end.strftime('%d.%m.%Y %H:%M:%S') %>
+          </span>
+          
+          <strong style="color: #28a745;">Expected for period=3:</strong>
+          <span style="color: #28a745;"><%= (Time.zone.now.end_of_day - 3.days).beginning_of_day.strftime('%d.%m.%Y') %> - <%= Time.zone.now.end_of_day.strftime('%d.%m.%Y') %></span>
         </div>
       </div>
       
