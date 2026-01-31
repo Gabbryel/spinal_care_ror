@@ -30,6 +30,11 @@ class AdminController < ApplicationController
     @start_date = dates[:start_date]
     @end_date = dates[:end_date]
     
+    # DEBUG: Log what we actually got
+    Rails.logger.info "🔍 AFTER calculate_period_dates:"
+    Rails.logger.info "   @start_date = #{@start_date.inspect}"
+    Rails.logger.info "   @end_date = #{@end_date.inspect}"
+    
     # PHASE 1: HERO KPIs ONLY - Optimize for <1s load
     # Base query for public visits (with bot and geo filtering)
     base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
