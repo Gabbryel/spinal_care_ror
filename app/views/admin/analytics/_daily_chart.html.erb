@@ -1,20 +1,5 @@
 <%= turbo_frame_tag "daily_chart" do %>
   <div class="chart-section">
-    <!-- DEBUG for Daily Chart -->
-    <div style="background:#e7f3ff;border:2px solid #0066cc;padding:10px;margin-bottom:15px;border-radius:6px;font-family:monospace;font-size:11px;">
-      <strong style="color:#0066cc;display:block;margin-bottom:8px;">📊 DAILY CHART DEBUG</strong>
-      <table style="width:100%;font-size:11px;">
-        <tr><td style="padding:2px;"><strong>Period param:</strong></td><td style="padding:2px;"><%= params[:period].inspect %></td></tr>
-        <tr><td style="padding:2px;"><strong>Start date (chart):</strong></td><td style="padding:2px;color:#dc3545;font-weight:bold;"><%= @start_date.strftime('%d.%m.%Y %H:%M:%S') rescue 'ERROR' %></td></tr>
-        <tr><td style="padding:2px;"><strong>End date (chart):</strong></td><td style="padding:2px;color:#dc3545;font-weight:bold;"><%= @end_date.strftime('%d.%m.%Y %H:%M:%S') rescue 'ERROR' %></td></tr>
-        <tr><td style="padding:2px;"><strong>Labels count:</strong></td><td style="padding:2px;"><%= @daily_labels.count %></td></tr>
-        <tr><td style="padding:2px;"><strong>Labels array:</strong></td><td style="padding:2px;color:#0066cc;"><%= @daily_labels.inspect %></td></tr>
-        <tr><td style="padding:2px;"><strong>Data array:</strong></td><td style="padding:2px;"><%= @daily_data.inspect %></td></tr>
-        <tr><td style="padding:2px;"><strong>Data sum:</strong></td><td style="padding:2px;"><%= @daily_data.sum %></td></tr>
-        <tr><td style="padding:2px;color:#28a745;"><strong>EXPECTED (3d):</strong></td><td style="padding:2px;color:#28a745;"><%= (Time.zone.now.end_of_day - 3.days).beginning_of_day.strftime('%d.%m.%Y') %> - <%= Time.zone.now.end_of_day.strftime('%d.%m.%Y') %></td></tr>
-      </table>
-    </div>
-    
     <h3 class="chart-title">Trafic Zilnic</h3>
     <!-- Debug: <%= @daily_data.inspect %> -->
     <!-- Sum: <%= @daily_data.sum %> -->
