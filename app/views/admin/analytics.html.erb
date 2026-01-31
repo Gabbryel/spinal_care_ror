@@ -22,7 +22,8 @@
 
     <!-- Period Filter -->
     <div class="period-filter-new" role="region" aria-label="Filtru perioadă">
-      <%= form_with url: dashboard_analytics_path, method: :get, class: 'period-form-new' do |f| %>
+      <%= form_with url: dashboard_analytics_path, method: :get, class: 'period-form-new', id: 'analytics-filter-form' do |f| %>
+        <%= f.hidden_field :period, value: @period, id: 'period-input' %>
         <div class="filter-buttons" role="group" aria-label="Opțiuni perioadă predefinite">
           <% period_buttons = [
             ['Azi', 'today'],
@@ -32,21 +33,20 @@
             ['90 zile', '90']
           ] %>
           <% period_buttons.each do |label, value| %>
-            <%= link_to label, 
-                dashboard_analytics_path(
-                  period: value, 
-                  filter_bots: @filter_bots, 
-                  filter_geography: @filter_geography
-                ), 
-                class: "filter-btn #{@period == value ? 'active' : ''}", 
-                role: 'button',
-                aria: { pressed: @period == value, label: "Filtrează date pentru #{label.downcase}" } %>
+            <button type="button"
+                    onclick="document.getElementById('period-input').value='<%= value %>'; document.getElementById('analytics-filter-form').submit();"
+                    class="filter-btn <%= @period == value ? 'active' : '' %>" 
+                    role="button"
+                    aria-pressed="<%= @period == value %>"
+                    aria-label="Filtrează date pentru <%= label.downcase %>">
+              <%= label %>
+            </button>
           <% end %>
         </div>
         <div class="custom-filter" data-controller="analytics-date-filter" role="group" aria-label="Filtru perioadă personalizată">
           <%= f.date_field :custom_start_date, value: @custom_start_date, class: 'date-input-new', placeholder: 'De la', aria: { label: 'Data de început' }, data: { analytics_date_filter_target: 'startDate', action: 'change->analytics-date-filter#validateDates' } %>
           <%= f.date_field :custom_end_date, value: @custom_end_date, class: 'date-input-new', placeholder: 'Până la', aria: { label: 'Data de sfârșit' }, data: { analytics_date_filter_target: 'endDate', action: 'change->analytics-date-filter#validateDates' } %>
-          <%= f.submit 'Aplică', class: 'btn-apply-new', aria: { label: 'Aplică filtru perioadă personalizată' }, data: { analytics_date_filter_target: 'applyButton', action: 'click->analytics-date-filter#handleApply' } %>
+          <%= f.submit 'Aplică', class: 'btn-apply-new', aria: { label: 'Aplică filtru perioadă personalizată' }, data: { analytics_date_filter_target: 'applyButton', action: 'click->analytics-date-filter#handleApply' }, onclick: "document.getElementById('period-input').value='custom';" %>
         </div>
         
         <!-- Bot & Geography Filters -->
