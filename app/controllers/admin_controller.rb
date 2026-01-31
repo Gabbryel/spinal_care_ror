@@ -113,21 +113,21 @@ class AdminController < ApplicationController
   # PHASE 2: Lazy-loaded sections
   def analytics_daily_chart
     dates = calculate_period_dates
-    start_date = dates[:start_date]
-    end_date = dates[:end_date]
+    @start_date = dates[:start_date]
+    @end_date = dates[:end_date]
     filter_bots = params[:filter_bots] != 'false'
     filter_geography = params[:filter_geography] == 'true'
     
     base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+                              .where('started_at >= ? AND started_at <= ?', @start_date, @end_date)
     public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
     
     # Calculate number of days in period (inclusive)
-    days_count = ((end_date.to_date - start_date.to_date).to_i + 1)
+    days_count = ((@end_date.to_date - @start_date.to_date).to_i + 1)
     daily_data = public_visits.group("DATE(started_at)").count
     
     daily_visits = (0...days_count).map do |i|
-      date = (start_date.to_date + i.days)
+      date = (@start_date.to_date + i.days)
       { date: date, label: date.strftime('%d %b'), count: daily_data[date] || 0 }
     end
     
