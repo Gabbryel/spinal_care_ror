@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  # Public Cariere routes
+  get 'cariere', to: 'job_postings#index', as: 'cariere'
+  get 'cariere/:id', to: 'job_postings#show', as: 'cariera'
+
   get 'dashboard', to: 'admin#dashboard'
   get 'dashboard/analytics', to: 'admin#analytics'
   get 'dashboard/analytics/daily_chart', to: 'admin#analytics_daily_chart'

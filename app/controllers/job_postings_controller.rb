@@ -1,6 +1,16 @@
 class JobPostingsController < ApplicationController
-  before_action :set_job_posting, only: [:update, :destroy]
-  layout 'dashboard'
+  skip_before_action :authenticate_user!, only: [:index, :show]
+  skip_after_action :verify_policy_scoped, only: [:index]
+  skip_after_action :verify_authorized, only: [:show]
+  before_action :set_job_posting, only: [:show, :update, :destroy]
+  before_action :set_dashboard_layout, only: [:create, :update, :destroy]
+  
+  def index
+    @job_postings = JobPosting.active.recent
+  end
+  
+  def show
+  end
 
   def create
     @job_posting = JobPosting.new(job_posting_params)
@@ -37,5 +47,9 @@ class JobPostingsController < ApplicationController
   
   def job_posting_params
     params.require(:job_posting).permit(:name, :valid_until, :description)
+  end
+  
+  def set_dashboard_layout
+    self.class.layout 'dashboard'
   end
 end
