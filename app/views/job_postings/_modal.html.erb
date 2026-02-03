@@ -1,0 +1,51 @@
+<div class="modal fade" id="<%= modal_id %>" tabindex="-1" aria-labelledby="<%= modal_id %>Label" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <%= simple_form_for job_posting, html: { data: { turbo: false } } do |f| %>
+        <div class="modal-header">
+          <h5 class="modal-title" id="<%= modal_id %>Label">
+            <% if new %>
+              Adaugă postare nouă
+            <% else %>
+              Editează postarea
+            <% end %>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body">
+          <%= f.input :name, 
+            label: 'Titlu postare *',
+            placeholder: 'ex: Asistent Medical Generalist',
+            input_html: { class: 'form-control' } %>
+          
+          <%= f.input :valid_until,
+            as: :date,
+            label: 'Valabil până la *',
+            html5: true,
+            input_html: { 
+              min: Date.today,
+              class: 'form-control'
+            } %>
+          
+          <%= f.input :description,
+            as: :rich_text_area,
+            label: 'Descriere postare *',
+            input_html: { 
+              rows: 10,
+              placeholder: 'Descrierea completă a postării...'
+            } %>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+          <% if new %>
+            <%= f.button :submit, 'Creează postarea', class: 'btn btn-primary' %>
+          <% else %>
+            <%= f.button :submit, 'Actualizează postarea', class: 'btn btn-primary' %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

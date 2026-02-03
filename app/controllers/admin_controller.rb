@@ -466,6 +466,11 @@ class AdminController < ApplicationController
     @facts = Fact.all.order(updated_at: :desc)
   end
   
+  def job_postings
+    @job_posting = JobPosting.new
+    @job_postings = JobPosting.all.order(created_at: :desc)
+  end
+  
   def medicines_consumption
     @medicines_consumption = MedicinesConsumption.new
     @consumptions = MedicinesConsumption.all.order(year: :desc, month: :desc)

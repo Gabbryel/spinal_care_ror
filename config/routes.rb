@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   get 'dashboard', to: 'admin#dashboard'
   get 'dashboard/analytics', to: 'admin#analytics'
   get 'dashboard/analytics/daily_chart', to: 'admin#analytics_daily_chart'
@@ -22,7 +21,9 @@ Rails.application.routes.draw do
 
   get 'dashboard/info-pacient', to: 'admin#info_pacient'
   get 'dashboard/consum-medicamente', to: 'admin#medicines_consumption'
+  get 'dashboard/cariere', to: 'admin#job_postings', as: 'admin_job_postings'
 
+  resources :job_postings, only: %i[create update destroy]
   resources :medicines_consumptions, only: %i[create update destroy]
 
 
