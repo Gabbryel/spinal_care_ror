@@ -3,7 +3,8 @@ class JobPostingsController < ApplicationController
   skip_after_action :verify_policy_scoped, only: [:index]
   skip_after_action :verify_authorized, only: [:show]
   before_action :set_job_posting, only: [:show, :update, :destroy]
-  before_action :set_dashboard_layout, only: [:create, :update, :destroy]
+  
+  layout :resolve_layout
   
   def index
     @job_postings = JobPosting.active.recent
@@ -49,7 +50,7 @@ class JobPostingsController < ApplicationController
     params.require(:job_posting).permit(:name, :valid_until, :description)
   end
   
-  def set_dashboard_layout
-    self.class.layout 'dashboard'
+  def resolve_layout
+    action_name.in?(%w[create update destroy]) ? 'dashboard' : 'application'
   end
 end
