@@ -471,6 +471,11 @@ class AdminController < ApplicationController
     @job_postings = JobPosting.all.order(created_at: :desc)
   end
   
+  def promo_packages
+    @promo_package = PromoPackage.new
+    @promo_packages = PromoPackage.all.order(created_at: :desc)
+  end
+  
   def medicines_consumption
     @medicines_consumption = MedicinesConsumption.new
     @consumptions = MedicinesConsumption.all.order(year: :desc, month: :desc)

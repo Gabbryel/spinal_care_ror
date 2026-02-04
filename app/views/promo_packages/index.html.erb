@@ -1,0 +1,313 @@
+<div class="modern-consumption-page">
+  <div class="consumption-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 00-.584.859 6.753 6.753 0 006.138 5.6 6.73 6.73 0 002.743 1.346A6.707 6.707 0 019.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 00-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 00.75-.75 2.25 2.25 0 00-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 01-1.112-3.173 6.73 6.73 0 002.743-1.347 6.753 6.753 0 006.139-5.6.75.75 0 00-.585-.858 47.077 47.077 0 00-3.07-.543V2.62a.75.75 0 00-.658-.744 49.22 49.22 0 00-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 00-.657.744zm0 2.629c0 1.196.312 2.32.857 3.294A5.266 5.266 0 013.16 5.337a45.6 45.6 0 012.006-.343v.256zm13.5 0v-.256c.674.1 1.343.214 2.006.343a5.265 5.265 0 01-2.863 3.207 6.72 6.72 0 00.857-3.294z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div>
+        <h1>Pachete promoționale</h1>
+        <p>Descoperă ofertele noastre speciale!</p>
+      </div>
+    </div>
+    <%= link_to root_path, class: 'back-link' do %>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+      </svg>
+      Înapoi
+    <% end %>
+  </div>
+
+  <% if @promo_packages.empty? %>
+    <div class="empty-state">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 00-.584.859 6.753 6.753 0 006.138 5.6 6.73 6.73 0 002.743 1.346A6.707 6.707 0 019.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 00-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 00.75-.75 2.25 2.25 0 00-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 01-1.112-3.173 6.73 6.73 0 002.743-1.347 6.753 6.753 0 006.139-5.6.75.75 0 00-.585-.858 47.077 47.077 0 00-3.07-.543V2.62a.75.75 0 00-.658-.744 49.22 49.22 0 00-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 00-.657.744zm0 2.629c0 1.196.312 2.32.857 3.294A5.266 5.266 0 013.16 5.337a45.6 45.6 0 012.006-.343v.256zm13.5 0v-.256c.674.1 1.343.214 2.006.343a5.265 5.265 0 01-2.863 3.207 6.72 6.72 0 00.857-3.294z" clip-rule="evenodd" />
+      </svg>
+      <h3>Momentan nu avem pachete promoționale</h3>
+      <p>Verifică mai târziu pentru noi oferte!</p>
+    </div>
+  <% else %>
+    <div class="consumption-year-section">
+      <div class="year-header">
+        <h2>Oferte disponibile</h2>
+        <div class="year-total">
+          <span class="label">Total:</span>
+          <span class="value"><%= @promo_packages.count %> <%= @promo_packages.count == 1 ? 'pachet' : 'pachete' %></span>
+        </div>
+      </div>
+
+      <div class="promo-packages-grid" data-controller="animation" data-action="scroll@window->animation#fadeInElements">
+        <% @promo_packages.each_with_index do |promo_package, index| %>
+          <div class="promo-package-card" data-animation-target="element" style="animation-delay: <%= index * 0.1 %>s;">
+            <% if promo_package.photo.attached? %>
+              <div class="promo-photo">
+                <%= cl_image_tag(promo_package.photo.key, quality: 80, width: 600, crop: "fill", gravity: "auto") %>
+              </div>
+            <% else %>
+              <div class="promo-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 00-.584.859 6.753 6.753 0 006.138 5.6 6.73 6.73 0 002.743 1.346A6.707 6.707 0 019.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 00-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 00.75-.75 2.25 2.25 0 00-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 01-1.112-3.173 6.73 6.73 0 002.743-1.347 6.753 6.753 0 006.139-5.6.75.75 0 00-.585-.858 47.077 47.077 0 00-3.07-.543V2.62a.75.75 0 00-.658-.744 49.22 49.22 0 00-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 00-.657.744zm0 2.629c0 1.196.312 2.32.857 3.294A5.266 5.266 0 013.16 5.337a45.6 45.6 0 012.006-.343v.256zm13.5 0v-.256c.674.1 1.343.214 2.006.343a5.265 5.265 0 01-2.863 3.207 6.72 6.72 0 00.857-3.294z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            <% end %>
+
+            <div class="promo-content">
+              <h3 class="promo-title"><%= promo_package.name %></h3>
+              <% if promo_package.sub_name.present? %>
+                <p class="promo-subtitle"><%= promo_package.sub_name %></p>
+              <% end %>
+              
+              <% if promo_package.initial_price.present? || promo_package.discounted_price.present? %>
+                <div class="promo-pricing">
+                  <% if promo_package.initial_price.present? && promo_package.discounted_price.present? %>
+                    <span class="price-original"><%= number_to_currency(promo_package.initial_price, unit: 'RON', separator: ',', delimiter: '.', format: '%n %u') %></span>
+                    <span class="price-discounted"><%= number_to_currency(promo_package.discounted_price, unit: 'RON', separator: ',', delimiter: '.', format: '%n %u') %></span>
+                  <% elsif promo_package.discounted_price.present? %>
+                    <span class="price-discounted"><%= number_to_currency(promo_package.discounted_price, unit: 'RON', separator: ',', delimiter: '.', format: '%n %u') %></span>
+                  <% elsif promo_package.initial_price.present? %>
+                    <span class="price-discounted"><%= number_to_currency(promo_package.initial_price, unit: 'RON', separator: ',', delimiter: '.', format: '%n %u') %></span>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <% if promo_package.benefits.present? %>
+                <div class="promo-benefits">
+                  <%= promo_package.benefits %>
+                </div>
+              <% end %>
+              
+              <div class="promo-meta">
+                <div class="meta-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clip-rule="evenodd" />
+                  </svg>
+                  <span>Până la <%= promo_package.valid_until.strftime('%d.%m.%Y') %></span>
+                </div>
+                
+                <% if promo_package.expired? && promo_package.expired_recently? %>
+                  <span class="status-badge expired">Expirat</span>
+                <% elsif promo_package.valid_until <= Date.today + 7.days && promo_package.active? %>
+                  <span class="status-badge expiring">Expiră în curând</span>
+                <% else %>
+                  <span class="status-badge active">Activ</span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  .promo-packages-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 2rem;
+    justify-content: center;
+  }
+
+  .promo-package-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: 2px solid transparent;
+    opacity: 0;
+    transform: translateY(30px);
+    width: 100%;
+    max-width: 380px;
+    flex: 1 1 320px;
+    display: flex;
+    flex-direction: column;
+    height: 700px;
+  }
+
+  .promo-package-card.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .promo-package-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(249, 115, 22, 0.2);
+    border-color: #f97316;
+  }
+
+  .promo-photo {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    flex: 2;
+    min-height: 0;
+  }
+
+  .promo-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+
+  .promo-package-card:hover .promo-photo img {
+    transform: scale(1.1);
+  }
+
+  .promo-icon {
+    width: 100%;
+    flex: 2;
+    min-height: 0;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .promo-icon svg {
+    width: 80px;
+    height: 80px;
+    color: white;
+    opacity: 0.9;
+  }
+
+  .promo-content {
+    padding: 1.25rem;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .promo-title {
+    font-size: 1.1875rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.3;
+  }
+
+  .promo-pricing {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .price-original {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    text-decoration: line-through;
+    line-height: 1.3;
+  }
+
+  .price-discounted {
+    font-size: 1.425rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+
+  .promo-benefits {
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    border-left: 3px solid #f97316;
+  }
+
+  .promo-benefits ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .promo-benefits li {
+    color: #4b5563;
+    font-size: 0.83rem;
+    line-height: 1.5;
+    margin-bottom: 0.15rem;
+  }
+
+  .promo-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: auto;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.83rem;
+    color: #6b7280;
+    line-height: 1.3;
+    padding-bottom: 0.5rem;
+  }
+
+  .meta-item svg {
+    width: 18px;
+    height: 18px;
+    color: #9ca3af;
+  }
+
+  .status-badge {
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .status-badge.active {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    color: #15803d;
+  }
+
+  .status-badge.expiring {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #a16207;
+  }
+
+  .status-badge.expired {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #b91c1c;
+  }
+
+  @media (max-width: 768px) {
+    .promo-packages-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .promo-photo,
+    .promo-icon {
+      height: 200px;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

@@ -1,0 +1,87 @@
+<div class="modal fade" id="<%= modal_id %>" tabindex="-1" aria-labelledby="<%= modal_id %>Label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="<%= modal_id %>Label">
+          <%= new ? 'Pachet promoțional nou' : 'Editează pachetul promoțional' %>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= simple_form_for promo_package, data: { turbo: false } do |f| %>
+          <%= f.input :name, 
+              label: 'Nume pachet', 
+              placeholder: 'Ex: Pachet Anti-Aging Premium',
+              required: true,
+              input_html: { class: 'form-control' } %>
+          
+          <%= f.input :sub_name, 
+              label: 'Subtitlu pachet', 
+              placeholder: 'Ex: Tratament complet pentru înfrumusețare',
+              input_html: { class: 'form-control' } %>
+          
+          <%= f.input :valid_until, 
+              as: :date,
+              label: 'Valabil până la', 
+              required: true,
+              html5: true,
+              input_html: { 
+                class: 'form-control',
+                min: Date.today
+              } %>
+
+          <%= f.input :initial_price,
+              label: 'Preț inițial (RON)',
+              placeholder: 'Ex: 500.00',
+              input_html: { 
+                class: 'form-control',
+                step: '0.01',
+                min: '0'
+              } %>
+
+          <%= f.input :discounted_price,
+              label: 'Preț redus (RON)',
+              placeholder: 'Ex: 350.00',
+              input_html: { 
+                class: 'form-control',
+                step: '0.01',
+                min: '0'
+              } %>
+
+          <%= f.input :photo,
+              as: :file,
+              label: 'Fotografie pachet',
+              hint: promo_package.photo.attached? ? 'Fotografie actuală va fi înlocuită' : 'Selectează o imagine pentru pachetul promoțional',
+              input_html: {
+                accept: 'image/*',
+                class: 'form-control'
+              } %>
+
+          <% if !new && promo_package.photo.attached? %>
+            <div class="current-photo mt-2">
+              <%= cl_image_tag(promo_package.photo.key, quality: 60, width: 300, crop: "fill", gravity: "auto", class: 'img-thumbnail') %>
+            </div>
+          <% end %>
+
+          <%= f.input :benefits,
+              as: :rich_text_area,
+              label: 'Beneficii pachet',
+              hint: 'Descrie beneficiile incluse în acest pachet promoțional',
+              input_html: {
+                class: 'form-control',
+                rows: 6
+              } %>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+            <% if new %>
+              <%= f.button :submit, 'Creează pachetul', class: 'btn btn-primary' %>
+            <% else %>
+              <%= f.button :submit, 'Actualizează pachetul', class: 'btn btn-primary' %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

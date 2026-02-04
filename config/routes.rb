@@ -2,6 +2,9 @@ Rails.application.routes.draw do
   # Public Cariere routes
   get 'cariere', to: 'job_postings#index', as: 'cariere'
   get 'cariere/:id', to: 'job_postings#show', as: 'cariera'
+  
+  # Public Promotii route
+  get 'promotii', to: 'promo_packages#index', as: 'promotii'
 
   get 'dashboard', to: 'admin#dashboard'
   get 'dashboard/analytics', to: 'admin#analytics'
@@ -26,8 +29,10 @@ Rails.application.routes.draw do
   get 'dashboard/info-pacient', to: 'admin#info_pacient'
   get 'dashboard/consum-medicamente', to: 'admin#medicines_consumption'
   get 'dashboard/cariere', to: 'admin#job_postings', as: 'admin_job_postings'
+  get 'dashboard/promotii', to: 'admin#promo_packages', as: 'admin_promo_packages'
 
   resources :job_postings, only: %i[create update destroy]
+  resources :promo_packages, only: %i[create update destroy]
   resources :medicines_consumptions, only: %i[create update destroy]
 
 

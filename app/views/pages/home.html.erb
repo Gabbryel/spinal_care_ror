@@ -2,6 +2,7 @@
   <!-- <iframe src="https://programari.spinalcare.ro" frameborder="0"></iframe> -->
   <%#= motto('Clinica Spinal Care este împlinirea visului unui tânăr care și-a dorit o lume fără durere.', 'page-motto mt-[15rem]') %>
   <%= render 'pages/home_partials/home_specialities' %>
+  <%= render 'pages/home_partials/promo_packages' if @promo_packages.any? %>
   <%#= motto('Pune accent pe prevenție și cere sfatul unui medic cu experiență!', 'page-motto my-[15rem]') %>
   <%= motto('Pune accentul pe prevenție și cere sfatul unui medic cu experiență!', 'row-span-1 row-start-4 col-span-full col-start-1') %>
   <%= render 'pages/home_partials/home_specialists' %>

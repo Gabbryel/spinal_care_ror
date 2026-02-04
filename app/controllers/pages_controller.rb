@@ -11,6 +11,7 @@ class PagesController < ApplicationController
     @kinetos_to_show = @kinetos.select { |k| k.selected }.sort_by { |k| k.order }
     @schroths = @kinetos.select {|k| k.schroth }
     @beauties = @members.select {|m| m.profession.slug == 'tehnician-estetica-medicala'}
+    @promo_packages = PromoPackage.active.limit(3)
   end
 
   def medical_team
