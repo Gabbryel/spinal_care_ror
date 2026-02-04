@@ -1,5 +1,5 @@
-<section class="promo-packages-home-section relative w-full px-0 mt-[12rem] row-span-1 col-span-full col-start-1">
-  <div class="relative <%= "#{div_widths} #{gaps_for_indexes}" %> my-0 mx-auto grid grid-cols-[repeat(auto-fit,minmax(290px,1fr))] justify-center px-3 gap-6">
+<section class="promo-packages-home-section relative w-full px-0 max-sm:mt-[8rem] mt-[12rem] max-sm:mb-[6rem] row-span-1 col-span-full col-start-1">
+  <div class="relative <%= "#{div_widths} #{gaps_for_indexes}" %> my-0 mx-auto grid grid-cols-[repeat(auto-fit,minmax(290px,1fr))] justify-center max-sm:px-4 px-3 max-sm:gap-8 gap-6">
     <div class="promo-home-card promo-title-card">
       <div class="promo-home-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -347,7 +347,7 @@
 
   @media (max-width: 768px) {
     .promo-packages-home-section {
-      margin: 4rem auto;
+      padding: 2rem 0;
     }
 
     .promo-header .header-content h2 {
@@ -356,7 +356,11 @@
 
     .promo-packages-home-grid {
       grid-template-columns: 1fr;
-      gap: 1.5rem;
+      gap: 2rem;
+    }
+
+    .promo-home-card {
+      margin-bottom: 1rem;
     }
 
     .promo-home-photo {

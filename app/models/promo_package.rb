@@ -1,4 +1,6 @@
 class PromoPackage < ApplicationRecord
+  include Auditable
+  
   has_one_attached :photo
   has_rich_text :benefits
   
