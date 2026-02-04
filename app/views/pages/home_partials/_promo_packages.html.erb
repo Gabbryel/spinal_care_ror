@@ -13,7 +13,7 @@
     </div>
     
     <% @promo_packages.each_with_index do |promo_package, index| %>
-      <div class="promo-home-card" style="animation-delay: <%= index * 0.15 %>s;">
+      <div class="promo-home-card" style="animation-delay: <%= index * 0.15 %>s;" data-bs-toggle="modal" data-bs-target="#promoPhotoModal<%= promo_package.id %>">
         <% if promo_package.photo.attached? %>
           <div class="promo-home-photo">
             <%= cl_image_tag(promo_package.photo.key, quality: 85, width: 600, crop: "fill", gravity: "auto") %>
@@ -80,6 +80,24 @@
     <% end %>
   </div>
 </section>
+
+<!-- Promo Photo Modals -->
+<% @promo_packages.each do |promo_package| %>
+  <% if promo_package.photo.attached? %>
+    <div class="modal fade" id="promoPhotoModal<%= promo_package.id %>" tabindex="-1" aria-labelledby="promoPhotoModalLabel<%= promo_package.id %>" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg" style="max-height: 80vh;">
+        <div class="modal-content" style="background: transparent; border: none; height: 80vh;">
+          <div class="modal-header" style="border: none; padding: 0; position: absolute; top: -50px; right: 0; z-index: 1051;">
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));"></button>
+          </div>
+          <div class="modal-body" style="padding: 0; height: 100%; display: flex; align-items: center; justify-content: center;">
+            <%= cl_image_tag(promo_package.photo.key, quality: 95, width: 1200, crop: "limit", class: "rounded-3", style: "max-height: 100%; max-width: 100%; object-fit: contain;") %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
 
 <style>
 
@@ -341,7 +359,10 @@
       gap: 1.5rem;
     }
 
-    .promo-home-photo,
+    .promo-home-photo {
+      height: 360px;
+    }
+
     .promo-home-icon {
       height: 220px;
     }
