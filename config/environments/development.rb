@@ -10,7 +10,7 @@ Rails.application.configure do
     # Bullet.add_footer    = true
   end
 
-  config.action_mailer.default_url_options = { host: "http://localhost:3002" }
+  config.action_mailer.default_url_options = { host: "spinalcare.home:3000" }
   config.action_mailer.delivery_method = :letter_opener
   # Settings specified here will take precedence over those in config/application.rb.
 

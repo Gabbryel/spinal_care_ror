@@ -22,12 +22,12 @@ export default class extends Controller {
 
   updateProfessionSections() {
     const professionSections = document.querySelectorAll(
-      ".personal-profession-section"
+      ".personal-profession-section",
     );
 
     professionSections.forEach((section) => {
       const visibleMembers = section.querySelectorAll(
-        '.modern-member-card:not([style*="display: none"])'
+        '[data-memberfilter-target="card"]:not([style*="display: none"])',
       );
 
       if (visibleMembers.length === 0) {
