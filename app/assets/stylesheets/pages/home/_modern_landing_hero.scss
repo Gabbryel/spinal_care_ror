@@ -273,3 +273,16 @@
     }
   }
 }
+
+.hero-stamp-15years {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  width: 172px;
+  height: 172px;
+  object-fit: contain;
+  transform: rotate(-15deg);
+  z-index: 10;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
