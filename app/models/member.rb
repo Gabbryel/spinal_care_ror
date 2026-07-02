@@ -23,11 +23,11 @@ class Member < ApplicationRecord
   end
 
   def profession_name
-    "#{Profession.find(self.profession_id).name}" if self.profession_id
+    profession&.name
   end
 
   def specialty_name
-    self.specialty_id ? "#{Specialty.find(self.specialty_id).name}" : ''
+    specialty&.name || ''
   end
 
   private
