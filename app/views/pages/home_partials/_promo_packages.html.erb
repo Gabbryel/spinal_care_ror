@@ -1,22 +1,24 @@
 <section class="promo-packages-home-section relative w-full px-0 max-sm:mt-[8rem] mt-[12rem] max-sm:mb-[6rem] row-span-1 col-span-full col-start-1">
-  <div class="relative <%= "#{div_widths} #{gaps_for_indexes}" %> my-0 mx-auto grid grid-cols-[repeat(auto-fit,minmax(290px,1fr))] justify-center max-sm:px-4 px-3 max-sm:gap-8 gap-6">
-    <div class="promo-home-card promo-title-card">
-      <div class="promo-home-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          <text x="12" y="17" text-anchor="middle" font-size="18" font-weight="bold" fill="white">%</text>
-        </svg>
-      </div>
-      <div class="promo-home-content promo-title-content">
-        <h2 class="promo-home-title">Pachete promoționale</h2>
-      </div>
-    </div>
-    
+  <div class="<%= div_widths %> my-0 mx-auto max-sm:px-4 px-3">
+    <h2 class="text-center text-4xl word-wrap font-bold px-2 py-2 font-poppins">Pachete promoționale</h2>
+    <p class="promo-section-lead">Oferte cu durată limitată, pregătite de echipa Spinal Care.</p>
+  </div>
+
+  <div class="relative <%= "#{div_widths} #{gaps_for_indexes}" %> mt-10 mb-0 mx-auto grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] justify-center max-sm:px-4 px-3 max-sm:gap-8 gap-6">
     <% @promo_packages.each_with_index do |promo_package, index| %>
-      <div class="promo-home-card" style="animation-delay: <%= index * 0.15 %>s;" data-bs-toggle="modal" data-bs-target="#promoPhotoModal<%= promo_package.id %>">
+      <div class="promo-home-card" style="animation-delay: <%= index * 0.12 %>s;" data-bs-toggle="modal" data-bs-target="#promoPhotoModal<%= promo_package.id %>">
+        <% discount_percent =
+             if promo_package.initial_price.to_f > 0 && promo_package.discounted_price.to_f > 0 &&
+                promo_package.discounted_price < promo_package.initial_price
+               (100 - (promo_package.discounted_price * 100.0 / promo_package.initial_price)).round
+             end %>
+
         <% if promo_package.photo.attached? %>
           <div class="promo-home-photo">
             <%= cl_image_tag(promo_package.photo.key, quality: 85, width: 600, crop: "fill", gravity: "auto") %>
+            <% if discount_percent %>
+              <span class="promo-discount-ribbon">-<%= discount_percent %>%</span>
+            <% end %>
             <div class="promo-overlay">
               <% if promo_package.active? %>
                 <span class="promo-badge active">
@@ -35,6 +37,9 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path fill-rule="evenodd" d="M5.166 2.621v.858c-1.035.148-2.059.33-3.071.543a.75.75 0 00-.584.859 6.753 6.753 0 006.138 5.6 6.73 6.73 0 002.743 1.346A6.707 6.707 0 019.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 00-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 00.75-.75 2.25 2.25 0 00-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.706 6.706 0 01-1.112-3.173 6.73 6.73 0 002.743-1.347 6.753 6.753 0 006.139-5.6.75.75 0 00-.585-.858 47.077 47.077 0 00-3.07-.543V2.62a.75.75 0 00-.658-.744 49.22 49.22 0 00-6.093-.377c-2.063 0-4.096.128-6.093.377a.75.75 0 00-.657.744zm0 2.629c0 1.196.312 2.32.857 3.294A5.266 5.266 0 013.16 5.337a45.6 45.6 0 012.006-.343v.256zm13.5 0v-.256c.674.1 1.343.214 2.006.343a5.265 5.265 0 01-2.863 3.207 6.72 6.72 0 00.857-3.294z" clip-rule="evenodd" />
             </svg>
+            <% if discount_percent %>
+              <span class="promo-discount-ribbon">-<%= discount_percent %>%</span>
+            <% end %>
           </div>
         <% end %>
         
@@ -63,11 +68,16 @@
             </div>
           <% end %>
 
-          <div class="promo-home-date">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clip-rule="evenodd" />
-            </svg>
-            <span>Până la <%= promo_package.valid_until.strftime('%d.%m.%Y') %></span>
+          <div class="promo-home-footer">
+            <div class="promo-home-date">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clip-rule="evenodd" />
+              </svg>
+              <span>Până la <%= promo_package.valid_until.strftime('%d.%m.%Y') %></span>
+            </div>
+            <% if promo_package.photo.attached? %>
+              <span class="promo-home-cta">Detalii →</span>
+            <% end %>
           </div>
         </div>
       </div>
@@ -87,11 +97,15 @@
     <div class="modal fade" id="promoPhotoModal<%= promo_package.id %>" tabindex="-1" aria-labelledby="promoPhotoModalLabel<%= promo_package.id %>" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg" style="max-height: 80vh;">
         <div class="modal-content" style="background: transparent; border: none; height: 80vh;">
-          <div class="modal-header" style="border: none; padding: 0; position: absolute; top: -50px; right: 0; z-index: 1051;">
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));"></button>
-          </div>
-          <div class="modal-body" style="padding: 0; height: 100%; display: flex; align-items: center; justify-content: center;">
-            <%= cl_image_tag(promo_package.photo.key, quality: 95, width: 1200, crop: "limit", class: "rounded-3", style: "max-height: 100%; max-width: 100%; object-fit: contain;") %>
+          <div class="modal-body promo-modal-body">
+            <div class="promo-modal-figure">
+              <%= cl_image_tag(promo_package.photo.key, quality: 95, width: 1200, crop: "limit", class: "rounded-3 promo-modal-image") %>
+              <button type="button" class="promo-modal-close" data-bs-dismiss="modal" aria-label="Închide">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -100,86 +114,136 @@
 <% end %>
 
 <style>
+  /* Close control for the promo photo modal: opaque so it stays legible
+     against both the dark backdrop and any light area of the poster. */
+  .promo-modal-body {
+    padding: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-  .promo-home-card {
-    background: white;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Shrink-wraps the poster so the close control can sit on the image's
+     own corner rather than the much wider modal-lg box. */
+  .promo-modal-figure {
+    position: relative;
+    display: inline-flex;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .promo-modal-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .promo-modal-close {
+    position: absolute;
+    top: -0.75rem;
+    right: -0.75rem;
+    z-index: 1051;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    background: #1f2937;
+    color: #fff;
     cursor: pointer;
-    width: 100%;
-    min-width: 290px;
-    max-width: 300px;
-    justify-self: center;
-    display: flex;
-    flex-direction: column;
-    min-height: 600px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    transition: background 0.2s ease, transform 0.2s ease;
   }
 
-
-  .promo-home-card:hover {
-    transform: translateY(-12px) scale(1.03);
-    box-shadow: 0 20px 40px rgba(249, 115, 22, 0.25);
+  .promo-modal-close svg {
+    width: 20px;
+    height: 20px;
   }
 
-  .promo-title-card {
-    cursor: default;
+  .promo-modal-close:hover {
+    background: #ea580c;
+    transform: scale(1.06);
   }
 
-  .promo-title-card:hover {
-    transform: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  .promo-modal-close:focus-visible {
+    outline: 3px solid #f97316;
+    outline-offset: 2px;
   }
 
-  .promo-title-card .promo-home-icon {
-    background: #4A6775;
-    font-size: 120px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 360px;
-    flex-shrink: 0;
-  }
-
-  .promo-title-card .promo-home-icon::after {
-    content: "%";
-    font-size: 120px;
-    color: white;
-  }
-
-  .promo-title-card .promo-home-icon svg {
-    display: none;
-  }
-
-  .promo-title-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
-    padding: 1.5rem;
-  }
-
-  .promo-title-card .promo-home-title {
-    font-size: 1.5rem;
-    margin: 0;
-    text-align: center;
-  }
-
-  @media (min-width: 768px) {
-    .promo-title-card .promo-home-title {
-      font-size: 1.75rem;
+  @media (max-width: 575.98px) {
+    .promo-modal-close {
+      top: -0.25rem;
+      right: -0.25rem;
+      width: 40px;
+      height: 40px;
     }
   }
 
-  .promo-home-photo {
-    width: 100%;
-    overflow: hidden;
+  .promo-section-lead {
+    margin: 0.35rem auto 0;
+    max-width: 34rem;
+    text-align: center;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #6b7280;
+  }
+
+  .promo-home-card {
     position: relative;
-    height: 360px;
-    flex-shrink: 0;
+    background: #fff;
+    border: 1px solid #eceff3;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px -12px rgba(16, 24, 40, 0.12);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.35s ease;
+    cursor: pointer;
+    width: 100%;
+    min-width: 0;
+    max-width: 340px;
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    animation: promoCardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes promoCardIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .promo-home-card { animation: none; }
+    .promo-home-card,
+    .promo-home-photo img,
+    .promo-home-cta { transition: none; }
+  }
+
+  .promo-home-card:hover {
+    transform: translateY(-6px);
+    border-color: #fed7aa;
+    box-shadow: 0 2px 4px rgba(16, 24, 40, 0.04), 0 24px 40px -20px rgba(234, 88, 12, 0.45);
+  }
+
+  .promo-home-card:focus-visible {
+    outline: 2px solid #f97316;
+    outline-offset: 3px;
+  }
+
+  /* ---- media ---- */
+
+  .promo-home-photo {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #f3f4f6;
   }
 
   .promo-home-photo img {
@@ -187,95 +251,128 @@
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.5s ease;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .promo-home-card:hover .promo-home-photo img {
-    transform: scale(1.15) rotate(2deg);
-  }
-
-  .promo-overlay {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    z-index: 1;
-  }
-
-  .promo-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 1rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    backdrop-filter: blur(10px);
-  }
-
-  .promo-badge.active {
-    background: rgba(220, 252, 231, 0.95);
-    color: #15803d;
-    box-shadow: 0 2px 8px rgba(21, 128, 61, 0.3);
-  }
-
-  .promo-badge svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  .promo-badge.expired {
-    background: rgba(254, 226, 226, 0.95);
-    color: #b91c1c;
-    box-shadow: 0 2px 8px rgba(185, 28, 28, 0.3);
+    transform: scale(1.06);
   }
 
   .promo-home-icon {
+    position: relative;
     width: 100%;
-    height: 200px;
-    flex-shrink: 0;
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%);
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   .promo-home-icon svg {
-    width: 100px;
-    height: 100px;
-    color: white;
-    opacity: 0.9;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    width: 84px;
+    height: 84px;
+    color: #fff;
+    opacity: 0.92;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
   }
 
+  /* ---- badges ---- */
+
+  .promo-discount-ribbon {
+    position: absolute;
+    top: 0.875rem;
+    left: 0.875rem;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.7rem;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    box-shadow: 0 6px 14px -4px rgba(234, 88, 12, 0.65);
+  }
+
+  .promo-overlay {
+    position: absolute;
+    top: 0.875rem;
+    right: 0.875rem;
+    z-index: 2;
+  }
+
+  .promo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    backdrop-filter: blur(10px);
+  }
+
+  .promo-badge svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .promo-badge.active {
+    background: rgba(255, 255, 255, 0.94);
+    color: #15803d;
+    box-shadow: 0 2px 8px rgba(16, 24, 40, 0.16);
+  }
+
+  .promo-badge.expired {
+    background: rgba(255, 255, 255, 0.94);
+    color: #b91c1c;
+    box-shadow: 0 2px 8px rgba(16, 24, 40, 0.16);
+  }
+
+  /* ---- content ---- */
+
   .promo-home-content {
-    padding: .8rem;
+    padding: 1.15rem 1.15rem 0.9rem;
     flex: 1;
     display: flex;
     flex-direction: column;
   }
 
   .promo-home-title {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 700;
-    color: #1f2937;
-    margin: 0 0 0.5rem 0;
+    color: #111827;
+    margin: 0;
     line-height: 1.3;
+    letter-spacing: -0.01em;
   }
 
   .promo-home-subtitle {
     font-size: 0.875rem;
     color: #6b7280;
-    margin: 0 0 0.75rem 0;
-    line-height: 1.3;
+    margin: 0.3rem 0 0;
+    line-height: 1.45;
   }
 
   .promo-home-pricing {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin: 0.85rem 0 0;
+  }
+
+  .home-price-discounted {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #ea580c;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
   }
 
   .home-price-original {
@@ -283,66 +380,87 @@
     color: #9ca3af;
     text-decoration: line-through;
     line-height: 1.3;
-  }
-
-  .home-price-discounted {
-    font-size: 1.306rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.2;
+    order: 2;
   }
 
   .promo-home-benefits {
-    margin-bottom: 0.5rem;
-    padding: 0.75rem;
-    background: #f9fafb;
-    border-radius: 8px;
-    border-left: 3px solid #f97316;
-    font-size: 0.83rem;
+    margin: 0.9rem 0 0;
+    padding: 0.8rem 0.9rem;
+    background: #fafafa;
+    border: 1px solid #f1f2f4;
+    border-radius: 12px;
+    font-size: 0.85rem;
     color: #4b5563;
-    line-height: 1.5;
+    line-height: 1.55;
   }
+
+  .promo-home-benefits p { margin: 0; }
 
   .promo-home-benefits ul {
     margin: 0;
-    padding-left: 1.25rem;
+    padding-left: 1.1rem;
+    list-style: none;
   }
 
   .promo-home-benefits li {
-    margin-bottom: 0.25rem;
+    position: relative;
+    margin-bottom: 0.3rem;
+    padding-left: 0.1rem;
   }
 
-  .promo-home-benefits p {
-    margin: 0;
+  .promo-home-benefits li::before {
+    content: "";
+    position: absolute;
+    left: -0.85rem;
+    top: 0.55em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #f97316;
   }
 
-  .promo-home-benefits ul {
-    margin: 0;
-    padding-left: 1.25rem;
-  }
+  .promo-home-benefits li:last-child { margin-bottom: 0; }
 
-  .promo-home-benefits li {
-    margin-bottom: 0.15rem;
+  /* ---- footer ---- */
+
+  .promo-home-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 0.9rem;
+    border-top: 1px solid #f1f2f4;
   }
 
   .promo-home-date {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
-    font-size: 0.89rem;
+    gap: 0.4rem;
+    font-size: 0.82rem;
     color: #6b7280;
     line-height: 1.3;
-    padding-bottom: 0.5rem;
-    margin-top: auto;
   }
 
   .promo-home-date svg {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     color: #f97316;
+    flex-shrink: 0;
+  }
+
+  .promo-home-cta {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #ea580c;
+    white-space: nowrap;
+    opacity: 0.75;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .promo-home-card:hover .promo-home-cta {
+    opacity: 1;
+    transform: translateX(2px);
   }
 
   @media (max-width: 768px) {
@@ -350,25 +468,12 @@
       padding: 2rem 0;
     }
 
-    .promo-header .header-content h2 {
-      font-size: 2rem;
-    }
-
-    .promo-packages-home-grid {
-      grid-template-columns: 1fr;
-      gap: 2rem;
+    .promo-section-lead {
+      font-size: 0.95rem;
     }
 
     .promo-home-card {
-      margin-bottom: 1rem;
-    }
-
-    .promo-home-photo {
-      height: 360px;
-    }
-
-    .promo-home-icon {
-      height: 220px;
+      max-width: 100%;
     }
   }
 </style>
