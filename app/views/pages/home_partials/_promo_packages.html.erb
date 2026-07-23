@@ -238,10 +238,12 @@
 
   /* ---- media ---- */
 
+  /* Posters are portrait, so a taller window shows far more of the
+     artwork before `cover` crops it. */
   .promo-home-photo {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 3 / 4;
     overflow: hidden;
     background: #f3f4f6;
   }
@@ -250,6 +252,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center top;
     display: block;
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -261,7 +264,7 @@
   .promo-home-icon {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 3 / 4;
     background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%);
     display: flex;
     align-items: center;
