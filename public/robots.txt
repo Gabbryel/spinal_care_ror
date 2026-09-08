@@ -1,2 +1,22 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
-Sitemap: http://www.example.com/sitemap.xml.gz
+# www.spinalcare.ro
+User-agent: *
+Allow: /
+
+# Authenticated / admin areas
+Disallow: /dashboard
+Disallow: /users/
+Disallow: /members
+Disallow: /professions
+Disallow: /specialties
+Disallow: /medical_services
+Disallow: /medicines_consumptions
+Disallow: /facts
+Disallow: /reviews
+Disallow: /job_postings
+Disallow: /promo_packages
+
+# Tracking and framework internals
+Disallow: /ahoy/
+Disallow: /rails/
+
+Sitemap: https://www.spinalcare.ro/sitemap.xml
