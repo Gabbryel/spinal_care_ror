@@ -1,7 +1,9 @@
 <%= content_for :meta_title, page_title(@specialty.name) %>
 <%= content_for :meta_description, meta_description_for(@specialty.description, "#{@specialty.name} la Clinica Spinal Care Bacău#{@specialty.medical_services.any? ? ". Servicii: #{@specialty.medical_services.sort_by(&:name).map(&:name).join(', ')}" : ''}.") %>
 <%= content_for :json_ld, json_ld_tag(breadcrumb_json_ld([["Acasă", "/"], ["Specialități medicale", "/specialitati-medicale"], [@specialty.name, "/specialitati-medicale/#{@specialty.slug}"]])) %>
-<%= content_for :json_ld, json_ld_tag(specialty_procedures_json_ld(@specialty)) %>
+<% if (procedures = specialty_procedures_json_ld(@specialty)) %>
+  <%= content_for :json_ld, json_ld_tag(procedures) %>
+<% end %>
 
 <div class="modern-specialty-page">
   <!-- Hero Section -->
