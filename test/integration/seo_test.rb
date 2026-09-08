@@ -285,8 +285,7 @@ class SeoTest < ActionDispatch::IntegrationTest
     assert_response :moved_permanently
 
     get "/servicii-medicale/nu-exista"
-    assert_redirected_to "/servicii-medicale"
-    assert_response :moved_permanently
+    assert_response :not_found
 
     get "/servicii-medicale"
     assert_response :success
@@ -429,6 +428,114 @@ class SeoTest < ActionDispatch::IntegrationTest
     end
     assert clean, "seo:audit found issues:\n#{output.string}"
     assert_match(%r{Summary: (\d+) clean / \1 total}, output.string)
+  end
+
+  # --- real 404s and legacy 301s ---------------------------------------------
+
+  test "unknown paths answer a real 404 page, never a redirect to the homepage" do
+    get "/pagina-inexistenta-test-404"
+    assert_response :not_found
+    assert_select "h1", count: 1
+    assert_select "h1", text: "Pagina căutată nu există"
+    assert_select "meta[name=robots][content='noindex, follow']", count: 1
+    assert_select "a[href='/echipa']"
+
+    %w[/contact /despre-noi /blog /preturi].each do |path|
+      get path
+      assert_response :not_found, path
+    end
+  end
+
+  test "file-like probes get a bare 404 without rendering the site" do
+    %w[/wp-login.php /.env /.git/config /wp-content/plugins/x/y.js /apple-touch-icon-120x120.png].each do |path|
+      get path
+      assert_response :not_found, path
+      assert_empty response.body, path
+    end
+  end
+
+  test "unknown slugs under a section answer 404, with suggestions when there are near matches" do
+    get "/echipa/inexistent-xyz"
+    assert_response :not_found
+    assert_select "h1", text: "Pagina căutată nu există"
+
+    get "/echipa/moise"
+    assert_response :not_found
+    assert_select "meta[name=robots][content='noindex, follow']"
+    assert_select "a[href='/echipa/#{@member.slug}']", minimum: 1
+
+    get "/specialitati-medicale/xyz"
+    assert_response :not_found
+    get "/info-pacient/xyz"
+    assert_response :not_found
+    get "/info-pacient/drept"
+    assert_response :not_found
+    get "/servicii-medicale/xyz"
+    assert_response :not_found
+  end
+
+  test "old root-level slugs and renamed slugs answer 301 to the current page" do
+    get "/#{@cardio.slug}"
+    assert_redirected_to "/specialitati-medicale/#{@cardio.slug}"
+    assert_response :moved_permanently
+
+    get "/#{@member.slug}"
+    assert_redirected_to "/echipa/#{@member.slug}"
+    assert_response :moved_permanently
+
+    @cardio.update_column(:slug, "cardiologie-interven-ionala")
+    Rails.application.load_tasks unless Rake::Task.task_defined?("seo:fix_slugs")
+    silence_stream($stdout) { Rake::Task["seo:fix_slugs"].execute }
+    get "/cardiologie-interven-ionala?utm=x"
+    assert_redirected_to "/specialitati-medicale/cardiologie-interventionala?utm=x"
+    assert_response :moved_permanently
+  end
+
+  test "paths produced by old relative links are repaired with a 301" do
+    get "/echipa/specialitati-medicale"
+    assert_redirected_to "/specialitati-medicale"
+    assert_response :moved_permanently
+
+    get "/specialitati-medicale/specialitati-medicale/#{@cardio.slug}"
+    assert_redirected_to "/specialitati-medicale/#{@cardio.slug}"
+    assert_response :moved_permanently
+
+    get "/info-pacient/info-pacient-index"
+    assert_redirected_to "/info-pacient-index"
+    assert_response :moved_permanently
+
+    get "/echipa/info-pacient/#{@fact.slug}"
+    assert_redirected_to "/info-pacient/#{@fact.slug}"
+    assert_response :moved_permanently
+  end
+
+  test "static legacy map and old per-service URLs redirect to their equivalents" do
+    get "/specialitati"
+    assert_redirected_to "/specialitati-medicale"
+    assert_response :moved_permanently
+
+    get "/programeaza-te"
+    assert_redirected_to "https://www.programari.spinalcare.ro/"
+    assert_response :moved_permanently
+
+    service = @cardio.medical_services.first
+    get "/servicii-medicale/#{service.slug}"
+    assert_redirected_to "/specialitati-medicale/#{@cardio.slug}"
+    assert_response :moved_permanently
+  end
+
+  test "inactive members are not redirect targets" do
+    gone = Member.create!(first_name: "Andreea", last_name: "Zediu", profession: @medic, is_active: false)
+    get "/#{gone.slug}"
+    assert_response :not_found
+  end
+
+  test "internal links are root-relative" do
+    ["/", "/specialitati-medicale", "/echipa", "/servicii-medicale", "/specialitati-medicale/#{@cardio.slug}", "/info-pacient-index"].each do |path|
+      get path
+      relative = css_select("a[href]").map { |a| a["href"] }.reject { |h| h.start_with?("/", "http", "#", "mailto:", "tel:", "javascript:") }
+      assert_empty relative, "relative links on #{path}: #{relative.uniq.inspect}"
+    end
   end
 
   private
