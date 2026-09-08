@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_08_062407) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_08_101007) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -155,6 +155,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_08_062407) do
     t.string "modified_by"
     t.string "created_by"
     t.string "custom_width", default: "f"
+    t.string "seo_title"
   end
 
   create_table "job_postings", force: :cascade do |t|
@@ -207,6 +208,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_08_062407) do
     t.boolean "has_day_hospitalization", default: false
     t.boolean "is_active", default: true
     t.boolean "specialty_favored", default: false
+    t.string "seo_title"
     t.index ["profession_id"], name: "index_members_on_profession_id"
     t.index ["specialty_id"], name: "index_members_on_specialty_id"
   end
@@ -259,6 +261,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_08_062407) do
     t.boolean "is_day_hospitalize", default: false
     t.boolean "is_active", default: true
     t.integer "medical_services_count"
+    t.string "seo_title"
   end
 
   create_table "users", force: :cascade do |t|

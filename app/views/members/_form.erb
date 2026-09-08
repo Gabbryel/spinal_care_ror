@@ -29,6 +29,11 @@
       </div>
 
       <div class="form-group">
+        <%= f.label :seo_title, 'Titlu SEO (opțional, max 40 caractere)', class: 'form-label' %>
+        <%= f.input :seo_title, label: false, placeholder: 'ex: dr. Ion Popescu, cardiolog', hint: 'Înlocuiește numele în <title>: „<titlu SEO> Bacău | Spinal Care”. Gol = titlul academic + numele.', input_html: { maxlength: 40 }, wrapper_html: { class: 'form-input-wrapper' } %>
+      </div>
+
+      <div class="form-group">
         <%= f.label :photo, 'Fotografie', class: 'form-label' %>
         <%= f.input :photo, label: false, wrapper_html: { class: 'form-input-wrapper' } %>
         <% if member.photo.attached? %>

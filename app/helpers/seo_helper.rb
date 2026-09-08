@@ -25,6 +25,7 @@ end
 module SeoHelper
   CLINIC_NAME = "Clinica Spinal Care Bacău".freeze
   CLINIC_PHONE = "+40374554344".freeze
+  CLINIC_PHONE_DISPLAY = "0374 554 344".freeze
   SOCIAL_PROFILES = [
     "https://www.facebook.com/SpinalCareBacau",
     "https://www.instagram.com/spinalcarebacau"
@@ -35,33 +36,54 @@ module SeoHelper
   # ---------------------------------------------------------------------------
 
   BRAND = "Clinica Spinal Care".freeze
+  TITLE_MAX = 65
+  TITLE_TRAILING_STOPWORDS = /\s+(de|și|si|pentru|a|la|cu|în|in|pe|din|sau|prin|al|ale)\z/i
+  DESCRIPTION_MIN = 70
+  DESCRIPTION_MAX = 155
 
-  # "<Subject> Bacău | Clinica Spinal Care", shortened step by step when the
-  # subject is long so the title stays around 60 characters.
-  def page_title(subject)
-    subject = subject.to_s.squish
-    candidates = ["#{subject} Bacău | #{BRAND}", "#{subject} | #{BRAND}", "#{subject} | Spinal Care"]
-    candidates.find { |title| title.length <= 60 } || candidates.last
+  # "<Subject> Bacău | Clinica Spinal Care". "Bacău" is never dropped: when
+  # the subject is long the brand is shortened to "Spinal Care", then the
+  # subject itself is cut at a word boundary (never ending on a stopword) so
+  # the whole title stays within TITLE_MAX. An explicit seo_title (short,
+  # editor-provided) replaces the subject entirely.
+  def page_title(subject, seo_title: nil)
+    subject = seo_title.to_s.squish.presence || subject.to_s.squish
+    full = "#{subject} Bacău | #{BRAND}"
+    return full if full.length <= 60
+
+    short = "#{subject} Bacău | Spinal Care"
+    return short if short.length <= TITLE_MAX
+
+    room = TITLE_MAX - " Bacău | Spinal Care".length
+    "#{shorten_at_word(subject, room)} Bacău | Spinal Care"
   end
 
   # Meta description derived from a record's own rich text (first ~155
-  # characters, cut at a word boundary); falls back to the given text when the
-  # record has no description.
+  # characters, cut at a word boundary). When the record's own text is
+  # missing or too short to be useful (< 70 chars, e.g. image-only content),
+  # the record-specific fallback is used, with the short own text appended.
   def meta_description_for(rich_text, fallback = nil)
-    excerpt = plain_text_excerpt(rich_text, 155)
-    excerpt.presence || plain_text_excerpt(fallback, 155)
+    excerpt = plain_text_excerpt(rich_text, DESCRIPTION_MAX)
+    return excerpt if excerpt.length >= DESCRIPTION_MIN
+
+    base = plain_text_excerpt(fallback, DESCRIPTION_MAX)
+    return base if excerpt.empty?
+
+    truncate("#{base} #{excerpt}".squish, length: DESCRIPTION_MAX, separator: " ", omission: "…")
   end
 
-  # cl_image_tag for images below the fold: deferred loading, async decoding.
-  # Never use it for the LCP image or anything in the first viewport.
-  def cl_lazy_image_tag(source, **options)
-    cl_image_tag(source, loading: "lazy", decoding: "async", **options)
-  end
+  # Cuts text at a word boundary within `limit` characters, no ellipsis,
+  # dropping a dangling stopword ("... de", "... și").
+  def shorten_at_word(text, limit)
+    text = text.to_s.squish
+    return text if text.length <= limit
 
-  # Alt text for a team member's photo: name + profession + specialty.
-  def member_photo_alt(member)
-    [full_name_with_title(member), translate_profession(member.profession_name), member.specialty&.name]
-      .map { |part| part.to_s.squish }.reject(&:empty?).join(", ")
+    cut = text[0, limit + 1]
+    cut = cut[0, cut.rindex(" ") || limit]
+    cut = cut[0, cut.rindex("(")] if cut.count("(") > cut.count(")")
+    cut = cut.sub(/[\s,;:–-]+\z/, "")
+    cut = cut.sub(TITLE_TRAILING_STOPWORDS, "") while cut =~ TITLE_TRAILING_STOPWORDS
+    cut
   end
 
   # ---------------------------------------------------------------------------
@@ -178,7 +200,8 @@ module SeoHelper
   # collapsed, cut at a word boundary.
   def plain_text_excerpt(rich_text, limit)
     text = rich_text.respond_to?(:to_plain_text) ? rich_text.to_plain_text : strip_tags(rich_text.to_s)
-    text = text.to_s.squish
+    # ActionText renders attachments as "[Image]" / "[file.pdf]" placeholders.
+    text = text.to_s.gsub(/\[[^\]]*\]/, " ").squish
     return "" if text.empty?
 
     truncate(text, length: limit, separator: " ", omission: "…")

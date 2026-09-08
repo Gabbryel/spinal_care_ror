@@ -18,6 +18,11 @@
       </div>
 
       <div class="form-group">
+        <%= f.label :seo_title, 'Titlu SEO (opțional, max 40 caractere)', class: 'form-label' %>
+        <%= f.input :seo_title, label: false, placeholder: 'Ex: Drepturile pacientului', hint: 'Înlocuiește titlul lung în <title>: „<titlu SEO> Bacău | Spinal Care”. Gol = titlul informației, scurtat automat.', input_html: { maxlength: 40 }, wrapper_html: { class: 'form-input-wrapper' } %>
+      </div>
+
+      <div class="form-group">
         <%= f.label :custom_width, 'Lățime personalizată', class: 'form-label' %>
         <%= f.input :custom_width, label: false, wrapper_html: { class: 'form-input-wrapper' } %>
         <p class="form-hint">Lăsați gol pentru lățime standard</p>

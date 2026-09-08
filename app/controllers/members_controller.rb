@@ -77,6 +77,6 @@ class MembersController < ApplicationController
   end
 
   def member_params
-    params.require(:member).permit(:first_name, :last_name, :profession_id, :specialty_id, :photo, :description, :slug, :academic_title, :doctor_grade, :has_own_page, :has_prices, :selected, :order, :schroth, :founder, :has_day_hospitalization, :is_active, :specialty_favored)
+    params.require(:member).permit(:first_name, :last_name, :seo_title, :profession_id, :specialty_id, :photo, :description, :slug, :academic_title, :doctor_grade, :has_own_page, :has_prices, :selected, :order, :schroth, :founder, :has_day_hospitalization, :is_active, :specialty_favored)
   end
 end
