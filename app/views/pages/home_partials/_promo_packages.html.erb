@@ -15,7 +15,7 @@
 
         <% if promo_package.photo.attached? %>
           <div class="promo-home-photo">
-            <%= cl_image_tag(promo_package.photo.key, quality: 85, width: 600, crop: "fill", gravity: "auto") %>
+            <%= cl_image_tag(promo_package.photo.key, quality: 85, width: 600, crop: "fill", gravity: "auto", alt: promo_package.name) %>
             <% if discount_percent %>
               <span class="promo-discount-ribbon">-<%= discount_percent %>%</span>
             <% end %>
@@ -99,7 +99,7 @@
         <div class="modal-content" style="background: transparent; border: none; height: 80vh;">
           <div class="modal-body promo-modal-body">
             <div class="promo-modal-figure">
-              <%= cl_image_tag(promo_package.photo.key, quality: 95, width: 1200, crop: "limit", class: "rounded-3 promo-modal-image") %>
+              <%= cl_image_tag(promo_package.photo.key, quality: 95, width: 1200, crop: "limit", class: "rounded-3 promo-modal-image", alt: promo_package.name) %>
               <button type="button" class="promo-modal-close" data-bs-dismiss="modal" aria-label="Închide">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
                   <path d="M6 6l12 12M18 6L6 18" />

@@ -59,7 +59,7 @@
 
           <% if !new && promo_package.photo.attached? %>
             <div class="current-photo mt-2">
-              <%= cl_image_tag(promo_package.photo.key, quality: 60, width: 300, crop: "fill", gravity: "auto", class: 'img-thumbnail') %>
+              <%= cl_image_tag(promo_package.photo.key, quality: 60, width: 300, crop: "fill", gravity: "auto", class: 'img-thumbnail', alt: promo_package.name) %>
             </div>
           <% end %>
 

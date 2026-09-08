@@ -52,6 +52,12 @@ module SeoHelper
     excerpt.presence || plain_text_excerpt(fallback, 155)
   end
 
+  # Alt text for a team member's photo: name + profession + specialty.
+  def member_photo_alt(member)
+    [full_name_with_title(member), translate_profession(member.profession_name), member.specialty&.name]
+      .map { |part| part.to_s.squish }.reject(&:empty?).join(", ")
+  end
+
   # ---------------------------------------------------------------------------
   # JSON-LD
   # ---------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 <figure class="attachment">
   <% if blob.representable? %>
-    <%= cl_image_tag blob.key %>
+    <%= cl_image_tag blob.key, alt: blob.filename.base.humanize %>
   <% end %>
 </figure>
