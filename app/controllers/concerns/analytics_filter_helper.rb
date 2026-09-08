@@ -53,14 +53,11 @@ module AnalyticsFilterHelper
   end
 
   def filter_bot_visits(visits)
-    # Only filter visits that have user agents matching bot patterns
-    # Don't exclude visits with NULL user agents
-    visits.where.not(
-      id: Ahoy::Visit.where.not(user_agent: nil).where(
-        "user_agent ~* ?",
-        BOT_PATTERNS.map(&:source).join('|')
-      ).select(:id)
-    )
+    # A direct predicate on the (already period-scoped) relation. The previous
+    # `where.not(id: <unscoped subquery>)` regex-scanned all ~400k visits for
+    # every KPI query (~5s each) and pushed the analytics page past Heroku's
+    # 30s request timeout. Visits without a user agent are kept.
+    visits.where("user_agent IS NULL OR user_agent !~* ?", BOT_PATTERNS.map(&:source).join('|'))
   end
 
   def filter_relevant_countries(visits)
