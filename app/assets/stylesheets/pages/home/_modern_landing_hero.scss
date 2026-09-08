@@ -26,12 +26,22 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  will-change: background-image;
-  transition: background-image 3990ms ease-in-out;
+  overflow: hidden;
   z-index: 1;
+}
+
+// Slideshow layers: real <img> elements (the first one is the LCP image),
+// crossfaded by landingimage_controller.js via opacity.
+.hero-image-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
 }
 
 .hero-overlay {

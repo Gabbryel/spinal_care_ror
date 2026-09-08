@@ -1,5 +1,10 @@
 <div class="modern-landing-hero">
-  <div class="hero-background" id="landing-image" data-controller="landingimage"></div>
+  <div class="hero-background" id="landing-image" data-controller="landingimage"
+       data-landingimage-images-value="<%= HeroHelper::HERO_SLIDES.to_json %>"
+       data-landingimage-captions-value="<%= HeroHelper::HERO_CAPTIONS.to_json %>">
+    <%# LCP image: a real <img>, eager, high priority, present in the HTML before any JS runs. %>
+    <img class="hero-image-layer" src="<%= hero_first_slide %>" alt="Clinica Spinal Care Bacău" fetchpriority="high" loading="eager" decoding="async">
+  </div>
   
   <div class="hero-overlay"></div>
 

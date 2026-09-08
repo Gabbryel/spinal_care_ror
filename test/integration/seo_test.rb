@@ -337,6 +337,11 @@ class SeoTest < ActionDispatch::IntegrationTest
     get "/"
     assert_select "link[rel=preload][as=image][fetchpriority=high]", count: 1
     images = css_select("img")
+    lcp = images.select { |img| img["fetchpriority"] == "high" }
+    assert_equal 1, lcp.size, "exactly one fetchpriority=high image (the hero LCP)"
+    assert_equal "eager", lcp.first["loading"]
+    assert_equal css_select("link[rel=preload][as=image]").first["href"], lcp.first["src"]
+    assert lcp.first["alt"].present?
     lazy = images.select { |img| img["loading"] == "lazy" }
     assert lazy.size >= 2, "expected lazy images on the homepage"
     assert lazy.all? { |img| img["decoding"] == "async" }

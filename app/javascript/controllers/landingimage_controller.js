@@ -1,40 +1,27 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
+  static values = { images: Array, captions: Array };
+
   connect() {
-    this.mainContainer = document.getElementById("landing-image");
+    this.mainContainer = this.element;
     this.imageText = document.getElementById("landing-image-description");
     this.currentIndex = 0;
 
-    this.images = [
+    // Slides and captions come from HeroHelper via data attributes; the
+    // fallbacks keep the slideshow alive if the attributes are missing.
+    this.images = this.imagesValue.length ? this.imagesValue : [
       "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1653807781/development/0236_cu8xqs.webp",
-      [
-        "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1654329520/development/btcfrzj088gsc9vxau9n1aeta4g2.webp",
-        "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776716/cabinets/www.sysphotodesign.ro_156_b2vhwx.webp",
-        "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776632/cabinets/www.sysphotodesign.ro_19_bihpcn.webp",
-      ],
-      "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1654682878/production/zg9bn5picn9m1th7e5narlkjej8u.webp",
-      "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776716/cabinets/www.sysphotodesign.ro_157_gxykxx.webp",
-      "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1718358055/cabinets/0126_vmwegk.webp",
-      "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1699776672/cabinets/www.sysphotodesign.ro_91_af55tg.webp",
     ];
+    this.texts = this.captionsValue.length ? this.captionsValue : ["clinică medicală multidisciplinară"];
 
-    this.texts = [
-      "clinică medicală multidisciplinară",
-      "medici experimentați",
-      "kinetoterapeuți dedicați",
-      "aparatură medicală performantă",
-      "spitalizare de zi",
-      "gratuit 100% prin CAS",
-    ];
-
-    // Create two layers for crossfading
     this.createImageLayers();
 
-    // Show first image immediately
-    this.showImage(0);
+    // The first slide is already rendered server-side as the LCP <img>;
+    // only the caption needs to appear.
+    this.imageText.innerText = this.texts[0];
+    this.imageText.style.opacity = "1";
 
-    // Start the slideshow
     this.intervalId = setInterval(() => this.nextImage(), 4000);
   }
 
@@ -45,45 +32,29 @@ export default class extends Controller {
   }
 
   createImageLayers() {
-    // Clear existing content
-    this.mainContainer.innerHTML = "";
+    // Layer 1 is the server-rendered <img class="hero-image-layer"> (eager,
+    // fetchpriority=high). Layer 2 is created here for the crossfade.
+    this.layer1 = this.mainContainer.querySelector("img.hero-image-layer");
+    if (!this.layer1) {
+      this.layer1 = this.createLayer();
+      this.layer1.src = this.getImageUrl(this.images[0]);
+      this.mainContainer.appendChild(this.layer1);
+    }
 
-    // Create two image layers for crossfading
-    this.layer1 = document.createElement("div");
-    this.layer1.className = "hero-image-layer";
-    this.layer1.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      opacity: 1;
-      transition: opacity 1s ease-in-out;
-    `;
-
-    this.layer2 = document.createElement("div");
-    this.layer2.className = "hero-image-layer";
-    this.layer2.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    `;
-
-    this.mainContainer.appendChild(this.layer1);
+    this.layer2 = this.createLayer();
+    this.layer2.style.opacity = "0";
     this.mainContainer.appendChild(this.layer2);
 
     this.activeLayer = this.layer1;
     this.inactiveLayer = this.layer2;
+  }
+
+  createLayer() {
+    const img = document.createElement("img");
+    img.className = "hero-image-layer";
+    img.alt = "";
+    img.decoding = "async";
+    return img;
   }
 
   getImageUrl(image) {
@@ -99,25 +70,21 @@ export default class extends Controller {
     // Fade out text first
     this.imageText.style.opacity = "0";
 
-    // Preload the next image
+    // Preload the next image, then swap it into the hidden layer and crossfade
     const img = new Image();
     img.src = imageUrl;
 
     img.onload = () => {
-      // Set image on inactive layer
-      this.inactiveLayer.style.backgroundImage = `url(${imageUrl})`;
+      this.inactiveLayer.src = imageUrl;
 
-      // Crossfade images
       this.activeLayer.style.opacity = "0";
       this.inactiveLayer.style.opacity = "1";
 
-      // Update text after brief delay and fade in
       setTimeout(() => {
-        this.imageText.innerText = this.texts[index];
+        this.imageText.innerText = this.texts[index % this.texts.length];
         this.imageText.style.opacity = "1";
       }, 500);
 
-      // Swap active/inactive layers
       [this.activeLayer, this.inactiveLayer] = [
         this.inactiveLayer,
         this.activeLayer,
