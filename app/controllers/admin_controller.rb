@@ -610,8 +610,9 @@ class AdminController < ApplicationController
   private
   
   def normalize_url(url)
-    return 'Homepage' if url.nil? || url == '/' || url.empty?
-    url.gsub(/^https?:\/\/[^\/]+/, '').presence || '/'
+    path = url.to_s.gsub(/^https?:\/\/[^\/]+/, '')
+    return 'Homepage' if path.blank? || path == '/'
+    path
   end
 
   def calculate_start_date(period)
