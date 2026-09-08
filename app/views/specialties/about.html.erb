@@ -17,7 +17,7 @@
           </button>
           <ul class="dropdown-menu">
             <% @all_specialties.each do |spec| %>
-              <li><%= link_to spec.name, "#{spec.slug}", class: 'dropdown-item' %></li>
+              <li><%= link_to spec.name, "/specialitati-medicale/#{spec.slug}", class: 'dropdown-item' %></li>
             <% end %>
           </ul>
         </div>
