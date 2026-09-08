@@ -42,6 +42,12 @@ Rails.application.configure do
   # Store uploaded files on the local file system in a temporary directory.
   config.active_storage.service = :test
 
+  # sassc-rails turns on the :sass CSS compressor outside development, which
+  # makes every request test re-minify the locally built tailwind.css. Tests
+  # do not need minified CSS, and the local Tailwind build can contain
+  # candidates (e.g. a JS template literal) that Sass refuses to parse.
+  config.assets.css_compressor = nil
+
   config.action_mailer.perform_caching = false
 
   # Tell Action Mailer not to deliver emails to the real world.
