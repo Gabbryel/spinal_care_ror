@@ -57,6 +57,8 @@ Rails.application.routes.draw do
   get 'servicii-medicale', to: 'medical_services#index'
   get 'servicii-medicale/:id', to: 'medical_services#show_by_specialty'
 
+  get 'sitemap.xml', to: 'sitemaps#show', defaults: { format: :xml }, as: 'sitemap'
+
   get "*any", to: "errors#not_found", via: :all
   get "/500", to: "errors#internal_server_error", via: :all
 end
