@@ -113,21 +113,29 @@ module SeoHelper
     { "@type" => "MedicalClinic", "@id" => clinic_json_ld_id, "name" => CLINIC_NAME, "url" => "#{canonical_origin}/" }
   end
 
-  # Profile pages: Physician for doctors, plain Person for the rest of the team.
+  # Profile pages. Doctors are a single-typed Physician (schema.org's
+  # Physician is a MedicalBusiness, so it carries the academic title in the
+  # name and links to the clinic via parentOrganization); the rest of the
+  # team is a Person with jobTitle/worksFor.
   def member_json_ld(member)
     physician = member.profession&.slug == "medic"
+    title = member.academic_title.to_s.strip
+    title = "" if title == "-"
     data = {
       "@context" => "https://schema.org",
-      "@type" => physician ? %w[Physician Person] : "Person",
-      "name" => full_name(member),
-      "url" => canonical_url,
-      "worksFor" => clinic_json_ld_reference
+      "@type" => physician ? "Physician" : "Person",
+      "name" => physician ? [title, full_name(member)].reject(&:empty?).join(" ") : full_name(member),
+      "url" => canonical_url
     }
-    title = member.academic_title.to_s.strip
-    data["honorificPrefix"] = title if title.present? && title != "-"
-    job_title = [translate_profession(member.profession_name), member.doctor_grade].map(&:to_s).map(&:strip).reject(&:empty?).join(" ")
-    data["jobTitle"] = job_title if job_title.present?
-    data["medicalSpecialty"] = member.specialty.name if physician && member.specialty
+    if physician
+      data["medicalSpecialty"] = member.specialty.name if member.specialty
+      data["parentOrganization"] = clinic_json_ld_reference
+    else
+      data["honorificPrefix"] = title if title.present?
+      job_title = [translate_profession(member.profession_name), member.doctor_grade].map(&:to_s).map(&:strip).reject(&:empty?).join(" ")
+      data["jobTitle"] = job_title if job_title.present?
+      data["worksFor"] = clinic_json_ld_reference
+    end
     data["image"] = cl_image_path(member.photo.key, width: 600, crop: :limit, fetch_format: :auto) if member.photo.attached?
     description = plain_text_excerpt(member.description, 300)
     data["description"] = description if description.present?

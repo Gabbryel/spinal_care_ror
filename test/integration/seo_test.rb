@@ -141,17 +141,32 @@ class SeoTest < ActionDispatch::IntegrationTest
   test "doctor profile emits Physician and BreadcrumbList" do
     get "/echipa/#{@member.slug}"
     blocks = json_ld_blocks
-    physician = blocks.find { |b| Array(b["@type"]).include?("Physician") }
-    assert physician, "no Physician block"
-    assert_equal "Ștefan Moisei", physician["name"]
+    physician = blocks.find { |b| b["@type"] == "Physician" }
+    assert physician, "no single-typed Physician block"
+    assert_equal 1, blocks.count { |b| Array(b["@type"]).intersect?(%w[Physician Person]) }, "one entity block per profile"
+    assert_equal "dr. Ștefan Moisei", physician["name"]
     assert_equal "Cardiologie intervențională", physician["medicalSpecialty"]
-    assert_equal "dr.", physician["honorificPrefix"]
     assert_match %r{res\.cloudinary\.com}, physician["image"]
-    assert_equal "MedicalClinic", physician.dig("worksFor", "@type")
+    assert_equal "MedicalClinic", physician.dig("parentOrganization", "@type")
+    assert_equal "#{CANONICAL}/#clinic", physician.dig("parentOrganization", "@id")
+    assert_nil physician["worksFor"]
+    assert_nil physician["honorificPrefix"]
 
     crumbs = blocks.find { |b| b["@type"] == "BreadcrumbList" }
     assert_equal ["Acasă", "Echipa medicală", "dr. Ștefan Moisei"], crumbs["itemListElement"].map { |i| i["name"] }
     assert_equal "#{CANONICAL}/echipa/#{@member.slug}", crumbs["itemListElement"].last["item"]
+  end
+
+  test "non-doctor profiles emit a Person with jobTitle and worksFor" do
+    kineto = Profession.find_by!(name: "fiziokinetoterapeut")
+    member = Member.create!(first_name: "Andreea", last_name: "Popa", profession: kineto, has_own_page: true)
+    get "/echipa/#{member.slug}"
+    person = json_ld_blocks.find { |b| b["@type"] == "Person" }
+    assert person, "no Person block"
+    assert_equal "Andreea Popa", person["name"]
+    assert_equal "Fiziokinetoterapeut", person["jobTitle"]
+    assert_equal "#{CANONICAL}/#clinic", person.dig("worksFor", "@id")
+    assert_nil person["medicalSpecialty"]
   end
 
   test "specialty page emits BreadcrumbList and MedicalProcedure entries" do
