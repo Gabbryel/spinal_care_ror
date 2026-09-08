@@ -1,5 +1,5 @@
-<%= content_for :meta_title, 'Echipa medicală Spinal Care Bacău' %>
-<%= content_for :meta_keywords, @team_members.map{|tm| full_name_with_title(tm)}.join(', ') %>
+<%= content_for :meta_title, page_title("Echipa medicală") %>
+<%= content_for :meta_description, meta_description_for(nil, "Echipa medicală a Clinicii Spinal Care Bacău: #{@team_members.count { |m| m.profession&.slug == 'medic' }} medici și #{@team_members.count { |m| m.profession&.slug != 'medic' }} fiziokinetoterapeuți și asistenți medicali, în #{@specialties.size} specialități medicale.") %>
 
 <div class="modern-team-page" data-controller="memberIndexFilter">
   <!-- Hero Section -->

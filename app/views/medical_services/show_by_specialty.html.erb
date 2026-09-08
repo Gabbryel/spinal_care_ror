@@ -1,3 +1,5 @@
+<%= content_for :meta_title, page_title("Servicii #{@specialty.name}") %>
+<%= content_for :meta_description, meta_description_for(nil, "Servicii medicale #{@specialty.name} la Clinica Spinal Care Bacău#{@specialty.medical_services.any? ? ": #{@specialty.medical_services.sort_by(&:name).map(&:name).join(', ')}" : ''}.") %>
 <%= content_for :json_ld, json_ld_tag(breadcrumb_json_ld([["Acasă", "/"], ["Servicii medicale", "/servicii-medicale"], [@specialty.name, "/servicii-medicale/#{@specialty.slug}"]])) %>
 <div class="modern-specialty-services-page">
   <%= render partial: "specialty_prices_nav" %>

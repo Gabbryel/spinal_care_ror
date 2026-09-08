@@ -1,5 +1,5 @@
-<%= content_for :meta_title, 'Informații pentru Pacient - Spinal Care Bacău' %>
-<%= content_for :meta_keywords, @facts.pluck(:name).sample(4).join(', ') %>
+<%= content_for :meta_title, page_title("Informații pentru pacient") %>
+<%= content_for :meta_description, meta_description_for(nil, "Informații pentru pacienții Clinicii Spinal Care Bacău: #{@facts.map { |f| f.name.to_s.strip }.join(', ')}.") %>
 
 <div class="modern-pacient-page">
   <!-- Hero Section -->

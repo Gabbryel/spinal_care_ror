@@ -31,6 +31,28 @@ module SeoHelper
   ].freeze
 
   # ---------------------------------------------------------------------------
+  # Titles and descriptions
+  # ---------------------------------------------------------------------------
+
+  BRAND = "Clinica Spinal Care".freeze
+
+  # "<Subject> Bacău | Clinica Spinal Care", shortened step by step when the
+  # subject is long so the title stays around 60 characters.
+  def page_title(subject)
+    subject = subject.to_s.squish
+    candidates = ["#{subject} Bacău | #{BRAND}", "#{subject} | #{BRAND}", "#{subject} | Spinal Care"]
+    candidates.find { |title| title.length <= 60 } || candidates.last
+  end
+
+  # Meta description derived from a record's own rich text (first ~155
+  # characters, cut at a word boundary); falls back to the given text when the
+  # record has no description.
+  def meta_description_for(rich_text, fallback = nil)
+    excerpt = plain_text_excerpt(rich_text, 155)
+    excerpt.presence || plain_text_excerpt(fallback, 155)
+  end
+
+  # ---------------------------------------------------------------------------
   # JSON-LD
   # ---------------------------------------------------------------------------
 
@@ -91,7 +113,7 @@ module SeoHelper
     }
     title = member.academic_title.to_s.strip
     data["honorificPrefix"] = title if title.present? && title != "-"
-    job_title = [translate_profession(member.profession_name), member.doctor_grade].map(&:to_s).map(&:strip).reject(&:empty?).join(", ")
+    job_title = [translate_profession(member.profession_name), member.doctor_grade].map(&:to_s).map(&:strip).reject(&:empty?).join(" ")
     data["jobTitle"] = job_title if job_title.present?
     data["medicalSpecialty"] = member.specialty.name if physician && member.specialty
     data["image"] = cl_image_path(member.photo.key, width: 600, crop: :limit, fetch_format: :auto) if member.photo.attached?

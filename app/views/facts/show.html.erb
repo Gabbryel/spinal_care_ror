@@ -1,5 +1,5 @@
-<%= content_for :meta_title, "#{@fact.name} - Informații pentru pacient Spinal Care Bacău" %>
-<%= content_for :meta_keywords, @facts.pluck(:name).sample(4).join(', ') %>
+<%= content_for :meta_title, page_title(@fact.name) %>
+<%= content_for :meta_description, meta_description_for(@fact.description, "#{@fact.name.to_s.strip} – informații pentru pacienții Clinicii Spinal Care Bacău.") %>
 <%= content_for :json_ld, json_ld_tag(breadcrumb_json_ld([["Acasă", "/"], ["Informații pentru pacient", "/info-pacient-index"], [@fact.name.to_s.strip, "/info-pacient/#{@fact.slug}"]])) %>
 
 <div class="modern-fact-page">

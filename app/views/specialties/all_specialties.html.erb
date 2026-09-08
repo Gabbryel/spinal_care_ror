@@ -1,5 +1,5 @@
-<%= content_for :meta_title, 'Specialități Medicale Spinal Care Bacău' %>
-<%= content_for :meta_keywords, @specialties.select(&:is_active).map(&:name).join(', ') %>
+<%= content_for :meta_title, page_title("Specialități medicale") %>
+<%= content_for :meta_description, meta_description_for(nil, "Specialități medicale la Clinica Spinal Care Bacău: #{@specialties.select(&:is_active).map(&:name).join(', ')}.") %>
 
 <div class="modern-specialties-page">
   <!-- Hero Section -->

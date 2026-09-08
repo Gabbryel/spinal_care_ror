@@ -1,3 +1,5 @@
+<%= content_for :meta_title, page_title("Cariere") %>
+<%= content_for :meta_description, meta_description_for(nil, @job_postings.any? ? "Posturi disponibile la Clinica Spinal Care Bacău: #{@job_postings.map(&:name).join(', ')}." : "Oportunități de carieră la Clinica Spinal Care Bacău.") %>
 <div class="modern-consumption-page">
   <div class="consumption-header">
     <div class="header-content">
