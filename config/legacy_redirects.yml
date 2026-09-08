@@ -1,0 +1,10 @@
+# Old URLs (WordPress era and early Rails routes) that have a current
+# equivalent. Anything not listed here and not resolvable by LegacyRedirect's
+# rules (root-level slugs, doubled prefixes, renamed slugs) gets a real 404.
+/informatii-pacient: /info-pacient-index
+/specialitati: /specialitati-medicale
+/departamente: /specialitati-medicale
+/servicii: /servicii-medicale
+/legea-nr-46-2003: /info-pacient/legea-nr-46-2003-privind-drepturile-pacientului
+/obligatiile-si-drepturile-pacientilor: /info-pacient-index
+/programeaza-te: https://www.programari.spinalcare.ro/

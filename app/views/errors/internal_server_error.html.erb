@@ -1,2 +1,13 @@
-<h1>Errors#internal_server_error</h1>
-<p>Find me in app/views/errors/internal_server_error.html.erb</p>
+<%= content_for :meta_title, "Eroare temporară | Clinica Spinal Care Bacău" %>
+<%= content_for :head, tag.meta(name: "robots", content: "noindex") %>
+<div class="all-specialties__container">
+  <div class="error-messages">
+    <h1>A apărut o eroare temporară</h1>
+    <p>Încearcă din nou în câteva momente sau sună-ne la <a href="tel:0374554344">0374 554 344</a>.</p>
+    <div class="escape-btns">
+      <%= link_to root_path, class: "btn box-shadow", title: "Pagina principală" do %>
+        <i class="fas fa-home"></i>
+      <% end %>
+    </div>
+  </div>
+</div>

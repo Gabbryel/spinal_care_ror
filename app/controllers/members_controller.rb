@@ -4,14 +4,10 @@ class MembersController < ApplicationController
   before_action :set_member, only: %i[edit update show destroy]
   rescue_from ActiveRecord::RecordNotFound do |exception|
     next if redirect_retired_slug(Member)
+    next if redirect_legacy_path
 
-    @members = Member.where("slug LIKE ?", "%#{params[:id]}%")
-    if @members.empty?
-      redirect_to echipa_path
-      flash.alert = 'Adresă greșită! V-am redirecționat către pagina cu echipa medicală a Clinicii Spinal Care'
-    else
-      render action: :search_when_error
-    end
+    @members = Member.where(is_active: true).where("slug LIKE ?", "%#{params[:id]}%")
+    render_not_found(:search_when_error, suggestions: @members)
   end
   
   def new

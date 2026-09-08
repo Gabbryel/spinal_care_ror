@@ -61,10 +61,19 @@ class MedicalServicesController < ApplicationController
   # /servicii-medicale/<slug> used to duplicate the specialty page (same
   # services, same prices, grouped by doctor). Retired: 301 to the specialty
   # page, resolving renamed slugs too; unknown slugs go to the services index.
+  # Also covers the 2023 routes, where /servicii-medicale/<slug> was a single
+  # medical service: those go to the specialty that lists the service.
   def legacy_specialty_redirect
     slug = params[:id].to_s
-    slug = SlugRedirect.lookup(Specialty, slug)&.new_slug || slug
-    target = Specialty.exists?(slug: slug) ? "/specialitati-medicale/#{slug}" : servicii_medicale_path
+    specialty_slug = SlugRedirect.lookup(Specialty, slug)&.new_slug || slug
+    target =
+      if Specialty.exists?(slug: specialty_slug)
+        "/specialitati-medicale/#{specialty_slug}"
+      elsif (service = MedicalService.find_by(slug: SlugRedirect.lookup(MedicalService, slug)&.new_slug || slug))
+        "/specialitati-medicale/#{service.specialty.slug}"
+      end
+    return render_not_found unless target
+
     target = "#{target}?#{request.query_string}" if request.query_string.present?
     redirect_to target, status: :moved_permanently
   end

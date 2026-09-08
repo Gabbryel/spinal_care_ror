@@ -6,14 +6,10 @@ class SpecialtiesController < ApplicationController
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
     next if redirect_retired_slug(Specialty)
+    next if redirect_legacy_path
 
-    @specialties = Specialty.where("slug LIKE ?", "%#{params[:id]}%")
-    if @specialties.empty?
-      redirect_to specialitati_medicale_path
-      flash.alert = 'Adresă greșită! V-am redirecționat către pagina cu specialitățile medicale din cadrul Clinicii Spinal Care'
-    else
-      render action: :search_when_error
-    end
+    @specialties = Specialty.where(is_active: true).where("slug LIKE ?", "%#{params[:id]}%")
+    render_not_found(:search_when_error, suggestions: @specialties)
   end
   
   def new

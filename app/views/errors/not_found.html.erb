@@ -1,2 +1,25 @@
-<h1>Errors#not_found</h1>
-<p>Find me in app/views/errors/not_found.html.erb</p>
+<%= content_for :meta_title, "Pagina nu există | Clinica Spinal Care Bacău" %>
+<%= content_for :meta_description, "Adresa accesată nu există pe www.spinalcare.ro. Vezi specialitățile medicale, echipa și serviciile Clinicii Spinal Care Bacău." %>
+<%= content_for :head, tag.meta(name: "robots", content: "noindex, follow") %>
+
+<div class="all-specialties__container">
+  <div class="error-messages">
+    <h1>Pagina căutată nu există</h1>
+    <p>Adresa poate fi greșită sau pagina a fost mutată. Iată de unde poți continua:</p>
+    <div class="escape-btns">
+      <%= link_to root_path, class: "btn box-shadow", title: "Pagina principală" do %>
+        <i class="fas fa-home"></i>
+      <% end %>
+      <%= link_to echipa_path, class: "btn box-shadow", title: "Echipa medicală" do %>
+        <i class="fas fa-user-md"></i>
+      <% end %>
+      <%= link_to specialitati_medicale_path, class: "btn box-shadow", title: "Specialități medicale" do %>
+        <i class="fas fa-briefcase-medical"></i>
+      <% end %>
+      <%= link_to servicii_medicale_path, class: "btn box-shadow", title: "Servicii medicale și prețuri" do %>
+        <i class="fas fa-list"></i>
+      <% end %>
+    </div>
+  </div>
+  <%= render partial: 'pages/home_partials/home_specialities' %>
+</div>
