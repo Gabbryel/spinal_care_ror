@@ -21,7 +21,7 @@ class SeoTest < ActionDispatch::IntegrationTest
     @medic = Profession.create!(name: "medic")
     Profession.create!(name: "fiziokinetoterapeut")
     @cardio = Specialty.create!(name: "Cardiologie intervențională",
-                                description: "<p>Proceduri minim invazive pentru afecțiuni ale inimii.</p>")
+                                description: "<p>Proceduri minim invazive pentru afecțiuni ale inimii, realizate de cardiologi intervenționiști cu experiență.</p>")
     @cardio.photo.attach(io: StringIO.new(GIF), filename: "cardio.gif", content_type: "image/gif")
     Specialty.create!(name: "Nutriție")
     MedicalService.create!(name: "Consultație și diagnostic", price: 200, specialty: @cardio)
@@ -345,6 +345,85 @@ class SeoTest < ActionDispatch::IntegrationTest
     assert_includes eager_alts, "15 ani Spinal Care"
     specialty_img = images.find { |img| img["alt"] == @cardio.name }
     assert specialty_img && specialty_img["loading"] == "lazy", "specialty card image should be lazy"
+  end
+
+  # --- round 3 ----------------------------------------------------------------
+
+  test "image-only and very short descriptions fall back to record data" do
+    image_only = Member.create!(first_name: "Georgeta", last_name: "Huszar", profession: @medic, specialty: @cardio,
+                                academic_title: "dr.", doctor_grade: "primar", has_own_page: true,
+                                description: '<action-text-attachment content-type="image/png" filename="x.png"></action-text-attachment>')
+    get "/echipa/#{image_only.slug}"
+    description = css_select("meta[name=description]").first["content"]
+    refute_includes description, "[Image]"
+    assert_includes description, "dr. Georgeta Huszar"
+    assert_includes description, "Bacău"
+    assert description.length.between?(70, 155), description
+
+    short = Member.create!(first_name: "Danisia", last_name: "Butăcel", profession: @medic, academic_title: "dr.", has_own_page: true,
+                           description: "<p>Atestat somnologie.</p>")
+    get "/echipa/#{short.slug}"
+    description = css_select("meta[name=description]").first["content"]
+    assert_includes description, "Atestat somnologie."
+    assert_includes description, "Clinica Spinal Care Bacău"
+    assert description.length >= 70
+
+    fact = Fact.create!(name: "Organigrama", description: '<action-text-attachment content-type="image/png" filename="o.png"></action-text-attachment>')
+    get "/info-pacient/#{fact.slug}"
+    description = css_select("meta[name=description]").first["content"]
+    refute_includes description, "[Image]"
+    assert_match(/\AOrganigrama: informații utile/, description)
+  end
+
+  test "titles always contain Bacău and long names are shortened at a word boundary" do
+    long = Fact.create!(name: "Asistența medicală ambulatorie de specialitate pentru specialitatea clinică recuperare, medicină fizică și balneologie", description: "<p>Text</p>")
+    get "/info-pacient/#{long.slug}"
+    title = css_select("title").first.text
+    assert title.length <= 65, title
+    assert_includes title, "Bacău | Spinal Care"
+    refute_match(/\s(de|și|pentru)\sBacău/, title)
+
+    schroth = Specialty.create!(name: "Terapie Schroth (Terapie pentru deviații de coloană)")
+    get "/specialitati-medicale/#{schroth.slug}"
+    title = css_select("title").first.text
+    assert title.length <= 65, title
+    assert_equal title.count("("), title.count(")"), "no unclosed parenthesis: #{title}"
+    assert_includes title, "Bacău"
+
+    member = Member.create!(first_name: "Lucian Daniel", last_name: "Dobreci", profession: @medic, academic_title: "conf. univ. dr. kt.", has_own_page: true)
+    get "/echipa/#{member.slug}"
+    assert_equal "conf. univ. dr. kt. Lucian Daniel Dobreci Bacău | Spinal Care", css_select("title").first.text
+  end
+
+  test "seo_title overrides the generated title subject" do
+    @cardio.update!(seo_title: "Cardiologie intervențională minim invazivă")
+    get "/specialitati-medicale/#{@cardio.slug}"
+    assert_equal "Cardiologie intervențională minim invazivă Bacău | Spinal Care", css_select("title").first.text
+    assert_select "meta[property='og:title'][content=?]", "Cardiologie intervențională minim invazivă Bacău | Spinal Care"
+  end
+
+  test "headings inside rich text content are demoted so the page keeps one h1" do
+    @member.update!(description: "<h1>2009</h1><p>Medic primar</p><h2>Studii</h2><h3>Detalii</h3>")
+    get "/echipa/#{@member.slug}"
+    assert_select "h1", count: 1
+    assert_select "h1", text: "dr. Ștefan Moisei"
+    assert_select ".member-content h2", text: "2009"
+    assert_select "h3", text: "Studii"
+    assert_select "h4", text: "Detalii"
+  end
+
+  test "seo:audit reports every sitemap page as clean" do
+    Rails.application.load_tasks unless defined?(SeoAudit)
+    output = StringIO.new
+    clean = nil
+    $stdout = output
+    begin
+      clean = SeoAudit.new(nil).run
+    ensure
+      $stdout = STDOUT
+    end
+    assert clean, "seo:audit found issues:\n#{output.string}"
+    assert_match(%r{Summary: (\d+) clean / \1 total}, output.string)
   end
 
   private
