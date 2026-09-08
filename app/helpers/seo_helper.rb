@@ -139,7 +139,7 @@ module SeoHelper
       item = {
         "@type" => "MedicalProcedure",
         "name" => service.name.to_s.strip,
-        "url" => canonical_url_for("/servicii-medicale/#{specialty.slug}")
+        "url" => canonical_url_for("/specialitati-medicale/#{specialty.slug}")
       }
       description = plain_text_excerpt(service.description, 300)
       item["description"] = description if description.present?

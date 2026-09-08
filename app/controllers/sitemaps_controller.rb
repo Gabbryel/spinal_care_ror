@@ -25,9 +25,6 @@ class SitemapsController < ApplicationController
 
     specialties.each do |specialty|
       add "/specialitati-medicale/#{specialty.slug}", lastmod: specialty.updated_at, changefreq: "monthly", priority: 0.7
-      if specialty.medical_services_count.to_i.positive?
-        add "/servicii-medicale/#{specialty.slug}", lastmod: specialty.updated_at, changefreq: "monthly", priority: 0.6
-      end
     end
 
     members.each do |member|

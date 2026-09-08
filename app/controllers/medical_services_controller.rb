@@ -1,8 +1,8 @@
 class MedicalServicesController < ApplicationController
   include SlugRedirectable
-  before_action :skip_authorization, only: %i[index show_by_specialty]
-  skip_before_action :authenticate_user!, only: %i[index show_by_specialty]
-  skip_after_action :verify_policy_scoped, only: %i[index show_by_specialty]
+  before_action :skip_authorization, only: %i[index legacy_specialty_redirect]
+  skip_before_action :authenticate_user!, only: %i[index legacy_specialty_redirect]
+  skip_after_action :verify_policy_scoped, only: %i[index legacy_specialty_redirect]
   before_action :set_medical_service, only: %i[edit update destroy]
 
   def new
@@ -58,14 +58,15 @@ class MedicalServicesController < ApplicationController
   def show
   end
 
-  def show_by_specialty
-    @specialty = Specialty.find_by(slug: params[:id])
-    if @specialty.nil?
-      return if redirect_retired_slug(Specialty)
-
-      return redirect_to servicii_medicale_path
-    end
-    @specialties = Specialty.all.order(name: :asc)
+  # /servicii-medicale/<slug> used to duplicate the specialty page (same
+  # services, same prices, grouped by doctor). Retired: 301 to the specialty
+  # page, resolving renamed slugs too; unknown slugs go to the services index.
+  def legacy_specialty_redirect
+    slug = params[:id].to_s
+    slug = SlugRedirect.lookup(Specialty, slug)&.new_slug || slug
+    target = Specialty.exists?(slug: slug) ? "/specialitati-medicale/#{slug}" : servicii_medicale_path
+    target = "#{target}?#{request.query_string}" if request.query_string.present?
+    redirect_to target, status: :moved_permanently
   end
 
   def destroy

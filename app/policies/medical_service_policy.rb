@@ -17,7 +17,7 @@ class MedicalServicePolicy < ApplicationPolicy
   def show?
     new?
   end
-  def show_by_specialty?
+  def legacy_specialty_redirect?
     true
   end
   def destroy?

@@ -55,7 +55,8 @@ Rails.application.routes.draw do
   get '/consum', to: 'pages#consum'
   resources :medical_services, except: %i[index show]
   get 'servicii-medicale', to: 'medical_services#index'
-  get 'servicii-medicale/:id', to: 'medical_services#show_by_specialty'
+  # Retired per-specialty price pages: 301 to the specialty page, which lists the same services and prices.
+  get 'servicii-medicale/:id', to: 'medical_services#legacy_specialty_redirect'
 
   get 'sitemap.xml', to: 'sitemaps#show', defaults: { format: :xml }, as: 'sitemap'
 
