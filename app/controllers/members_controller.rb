@@ -1,7 +1,10 @@
 class MembersController < ApplicationController
+  include SlugRedirectable
   skip_before_action :authenticate_user!, except: %i[new create edit update destroy]
   before_action :set_member, only: %i[edit update show destroy]
   rescue_from ActiveRecord::RecordNotFound do |exception|
+    next if redirect_retired_slug(Member)
+
     @members = Member.where("slug LIKE ?", "%#{params[:id]}%")
     if @members.empty?
       redirect_to echipa_path

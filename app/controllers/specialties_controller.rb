@@ -1,9 +1,12 @@
 class SpecialtiesController < ApplicationController
+  include SlugRedirectable
   before_action :skip_authorization, only: %i[about all_specialties]
   skip_before_action :authenticate_user!, only: %i[about all_specialties]
   before_action :set_specialty, only: %i[show about edit update destroy about]
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
+    next if redirect_retired_slug(Specialty)
+
     @specialties = Specialty.where("slug LIKE ?", "%#{params[:id]}%")
     if @specialties.empty?
       redirect_to specialitati_medicale_path

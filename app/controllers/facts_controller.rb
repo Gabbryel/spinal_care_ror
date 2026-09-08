@@ -1,11 +1,14 @@
 class FactsController < ApplicationController
+  include SlugRedirectable
   skip_before_action :authenticate_user!, only: %i[ show ]
   before_action :set_fact, only: %i[edit update show about destroy]
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
+    next if redirect_retired_slug(Fact)
+
     @facts = Fact.where("slug LIKE ?", "%#{params[:id]}%")
     if @facts.empty?
-      redirect_to informatii_pacient_path
+      redirect_to info_pacient_index_path
       flash.alert = 'Adresă greșită! V-am redirecționat către pagina cu informații pentru pacient a Clinicii Spinal Care'
     else
       render action: :search_when_error

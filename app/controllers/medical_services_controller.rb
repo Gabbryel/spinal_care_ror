@@ -1,4 +1,5 @@
 class MedicalServicesController < ApplicationController
+  include SlugRedirectable
   before_action :skip_authorization, only: %i[index show_by_specialty]
   skip_before_action :authenticate_user!, only: %i[index show_by_specialty]
   skip_after_action :verify_policy_scoped, only: %i[index show_by_specialty]
@@ -59,6 +60,11 @@ class MedicalServicesController < ApplicationController
 
   def show_by_specialty
     @specialty = Specialty.find_by(slug: params[:id])
+    if @specialty.nil?
+      return if redirect_retired_slug(Specialty)
+
+      return redirect_to servicii_medicale_path
+    end
     @specialties = Specialty.all.order(name: :asc)
   end
 

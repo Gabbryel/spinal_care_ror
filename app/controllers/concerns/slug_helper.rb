@@ -1,5 +1,7 @@
 module SlugHelper
   def slugify
+    previous_slug = self[:slug].presence
+
     if self[:name]
       future_slug = "#{self[:name]}".parameterize
     elsif self[:first_name] && self[:last_name]
@@ -17,5 +19,8 @@ module SlugHelper
         self.save
       end
     end
+
+    # Keep old, already indexed URLs working with a 301 to the new slug.
+    SlugRedirect.record(self, previous_slug) if previous_slug && previous_slug != self[:slug]
   end
 end

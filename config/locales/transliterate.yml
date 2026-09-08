@@ -1,0 +1,39 @@
+# Romanian letters with comma below (ș ț, U+0219/U+021B) are missing from
+# Rails' default transliteration table, so `"Nutriție".parameterize` used to
+# give "nutri-ie". Both cedilla and comma-below forms map to plain ASCII.
+en:
+  i18n:
+    transliterate:
+      rule:
+        "ă": "a"
+        "â": "a"
+        "î": "i"
+        "ș": "s"
+        "ş": "s"
+        "ț": "t"
+        "ţ": "t"
+        "Ă": "A"
+        "Â": "A"
+        "Î": "I"
+        "Ș": "S"
+        "Ş": "S"
+        "Ț": "T"
+        "Ţ": "T"
+ro:
+  i18n:
+    transliterate:
+      rule:
+        "ă": "a"
+        "â": "a"
+        "î": "i"
+        "ș": "s"
+        "ş": "s"
+        "ț": "t"
+        "ţ": "t"
+        "Ă": "A"
+        "Â": "A"
+        "Î": "I"
+        "Ș": "S"
+        "Ş": "S"
+        "Ț": "T"
+        "Ţ": "T"
