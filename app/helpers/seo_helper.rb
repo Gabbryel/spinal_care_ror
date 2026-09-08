@@ -21,3 +21,142 @@ module SeoHelper
     normalized == "/" ? "#{canonical_origin}/" : "#{canonical_origin}#{normalized}"
   end
 end
+
+module SeoHelper
+  CLINIC_NAME = "Clinica Spinal Care Bacău".freeze
+  CLINIC_PHONE = "+40374554344".freeze
+  SOCIAL_PROFILES = [
+    "https://www.facebook.com/SpinalCareBacau",
+    "https://www.instagram.com/spinalcarebacau"
+  ].freeze
+
+  # ---------------------------------------------------------------------------
+  # JSON-LD
+  # ---------------------------------------------------------------------------
+
+  # Renders a <script type="application/ld+json"> tag. "</" is escaped so a
+  # description containing "</script>" cannot break out of the tag.
+  def json_ld_tag(data)
+    return if data.blank?
+
+    json = JSON.generate(data).gsub("</", "<\\/")
+    content_tag(:script, json.html_safe, type: "application/ld+json")
+  end
+
+  def clinic_json_ld_id
+    "#{canonical_origin}/#clinic"
+  end
+
+  # Organisation block emitted on every page. Locations come from
+  # ContactCardsHelper#contact_cards, the same source the footer uses.
+  # Opening hours are not stored anywhere in the app, so no
+  # openingHoursSpecification is emitted rather than inventing one.
+  def clinic_json_ld
+    departments = contact_cards.map do |card|
+      {
+        "@type" => "MedicalClinic",
+        "name" => "#{CLINIC_NAME} – #{card[:name]}",
+        "telephone" => e164_phone(card[:tel_fix]),
+        "address" => postal_address(card[:address])
+      }
+    end
+
+    {
+      "@context" => "https://schema.org",
+      "@type" => "MedicalClinic",
+      "@id" => clinic_json_ld_id,
+      "name" => CLINIC_NAME,
+      "url" => "#{canonical_origin}/",
+      "telephone" => CLINIC_PHONE,
+      "image" => DEFAULT_META["meta_image"],
+      "sameAs" => SOCIAL_PROFILES,
+      "address" => departments.first["address"],
+      "department" => departments
+    }
+  end
+
+  def clinic_json_ld_reference
+    { "@type" => "MedicalClinic", "@id" => clinic_json_ld_id, "name" => CLINIC_NAME, "url" => "#{canonical_origin}/" }
+  end
+
+  # Profile pages: Physician for doctors, plain Person for the rest of the team.
+  def member_json_ld(member)
+    physician = member.profession&.slug == "medic"
+    data = {
+      "@context" => "https://schema.org",
+      "@type" => physician ? %w[Physician Person] : "Person",
+      "name" => full_name(member),
+      "url" => canonical_url,
+      "worksFor" => clinic_json_ld_reference
+    }
+    title = member.academic_title.to_s.strip
+    data["honorificPrefix"] = title if title.present? && title != "-"
+    job_title = [translate_profession(member.profession_name), member.doctor_grade].map(&:to_s).map(&:strip).reject(&:empty?).join(", ")
+    data["jobTitle"] = job_title if job_title.present?
+    data["medicalSpecialty"] = member.specialty.name if physician && member.specialty
+    data["image"] = cl_image_path(member.photo.key, width: 600, crop: :limit, fetch_format: :auto) if member.photo.attached?
+    description = plain_text_excerpt(member.description, 300)
+    data["description"] = description if description.present?
+    data
+  end
+
+  # Specialty pages: one MedicalProcedure per medical service the clinic
+  # actually lists for that specialty. Nothing is emitted for a specialty
+  # without services.
+  def specialty_procedures_json_ld(specialty)
+    services = specialty.medical_services.sort_by(&:name)
+    return if services.empty?
+
+    procedures = services.map do |service|
+      item = {
+        "@type" => "MedicalProcedure",
+        "name" => service.name.to_s.strip,
+        "url" => canonical_url_for("/servicii-medicale/#{specialty.slug}")
+      }
+      description = plain_text_excerpt(service.description, 300)
+      item["description"] = description if description.present?
+      item
+    end
+
+    { "@context" => "https://schema.org", "@graph" => procedures }
+  end
+
+  # crumbs: [[name, path], ...] in order, the current page last.
+  def breadcrumb_json_ld(crumbs)
+    {
+      "@context" => "https://schema.org",
+      "@type" => "BreadcrumbList",
+      "itemListElement" => crumbs.each_with_index.map do |(name, path), index|
+        { "@type" => "ListItem", "position" => index + 1, "name" => name, "item" => canonical_url_for(path) }
+      end
+    }
+  end
+
+  # Plain-text excerpt of an ActionText rich text (or a string), whitespace
+  # collapsed, cut at a word boundary.
+  def plain_text_excerpt(rich_text, limit)
+    text = rich_text.respond_to?(:to_plain_text) ? rich_text.to_plain_text : strip_tags(rich_text.to_s)
+    text = text.to_s.squish
+    return "" if text.empty?
+
+    truncate(text, length: limit, separator: " ", omission: "…")
+  end
+
+  private
+
+  def postal_address(street)
+    {
+      "@type" => "PostalAddress",
+      "streetAddress" => street.to_s.sub(/,?\s*Bacău\z/, "").strip,
+      "addressLocality" => "Bacău",
+      "addressRegion" => "Bacău",
+      "addressCountry" => "RO"
+    }
+  end
+
+  def e164_phone(number)
+    digits = number.to_s.gsub(/\D/, "")
+    digits = digits.sub(/\A0/, "40") if digits.start_with?("0")
+    "+#{digits}"
+  end
+end

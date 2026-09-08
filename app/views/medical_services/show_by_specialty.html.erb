@@ -1,3 +1,4 @@
+<%= content_for :json_ld, json_ld_tag(breadcrumb_json_ld([["Acasă", "/"], ["Servicii medicale", "/servicii-medicale"], [@specialty.name, "/servicii-medicale/#{@specialty.slug}"]])) %>
 <div class="modern-specialty-services-page">
   <%= render partial: "specialty_prices_nav" %>
   
