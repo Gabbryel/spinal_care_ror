@@ -71,7 +71,7 @@
     // below the min-content of its items, so one long nowrap title in the
     // activity card (e.g. a patient-info name) widened its column and
     // squeezed the others to ~80px, stretching every card to ~1000px tall.
-    grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
 
     @media (min-width: 1400px) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
