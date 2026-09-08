@@ -22,3 +22,29 @@ namespace :seo do
     puts "#{changed} slug(s) #{dry_run ? 'would be' : ''} regenerated; redirects stored in slug_redirects."
   end
 end
+
+namespace :seo do
+  desc "Retire the empty 'Fiziokinetoterapie' specialty (301 -> Fizioterapie și Recuperare medicală) and attach unassigned physiotherapists to it. Idempotent."
+  task restructure_recovery: :environment do
+    target = Specialty.find_by!(slug: "fizioterapie-si-recuperare-medicala")
+    retired = Specialty.find_by(slug: "fiziokinetoterapie")
+
+    if retired
+      if retired.members.any? || retired.medical_services.any?
+        abort "fiziokinetoterapie still has #{retired.members.count} member(s) / #{retired.medical_services.count} service(s); move them first."
+      end
+      redirect = SlugRedirect.find_or_initialize_by(sluggable_type: "Specialty", old_slug: retired.slug)
+      redirect.update!(new_slug: target.slug, sluggable_id: target.id)
+      retired.destroy!
+      puts "Specialty 'fiziokinetoterapie' removed; 301 -> /specialitati-medicale/#{target.slug}"
+    else
+      puts "Specialty 'fiziokinetoterapie' already gone."
+    end
+
+    unassigned = Member.joins(:profession)
+                       .where(professions: { slug: %w[fiziokinetoterapeut asistent-medical-bfkt] }, specialty_id: nil, is_active: true)
+    names = unassigned.map(&:name)
+    moved = unassigned.update_all(specialty_id: target.id, updated_at: Time.current)
+    puts "#{moved} team member(s) attached to '#{target.name}': #{names.join(', ')}"
+  end
+end
