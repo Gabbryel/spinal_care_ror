@@ -24,7 +24,7 @@
   <!-- Google tag (gtag.js) --> 
     <meta charset="UTF-8">
     <title><%= meta_title %></title>
-    <link rel="canonical" href="https://spinalcare.ro">
+    <link rel="canonical" href="<%= canonical_url %>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name='description' content="<%= meta_description %>" >
     <meta name='keywords' content="<%= "#{meta_keywords} #{MedicalService.pluck(:name).join(', ')}" %>">
@@ -36,7 +36,7 @@
     <!-- Facebook Open Graph data -->
     <meta property="og:title" content="<%= meta_title %>" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="<%= request.original_url %>" />
+    <meta property="og:url" content="<%= canonical_url %>" />
     <meta property="og:image" content="<%= meta_image %>" />
     <meta property="og:image:secure_url" content="<%= meta_image %>" />
     <meta property="og:image:type" content="image/png" />

@@ -9,7 +9,11 @@ class ApplicationController < ActionController::Base
   after_action :verify_policy_scoped, only: :index, unless: :skip_pundit?
 
   def default_url_options
-    { host: ENV["DOMAIN"] || "localhost:3000" }
+    if Rails.env.production?
+      { host: ENV["DOMAIN"].presence || Rails.application.config.x.canonical_host, protocol: "https" }
+    else
+      { host: ENV["DOMAIN"].presence || "localhost:3000" }
+    end
   end
 
   private
