@@ -444,6 +444,15 @@ class SeoTest < ActionDispatch::IntegrationTest
       get path
       assert_response :not_found, path
     end
+
+    # curl / generic crawlers send Accept: */* and must still get the page
+    get "/pagina-inexistenta", headers: { "Accept" => "*/*" }
+    assert_response :not_found
+    assert_select "h1", text: "Pagina căutată nu există"
+
+    get "/pagina-inexistenta.json"
+    assert_response :not_found
+    assert_empty response.body
   end
 
   test "file-like probes get a bare 404 without rendering the site" do

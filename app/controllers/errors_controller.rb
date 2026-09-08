@@ -19,10 +19,21 @@ class ErrorsController < ApplicationController
       return redirect_to target, status: :moved_permanently, allow_other_host: true
     end
 
-    return head :not_found, content_type: "text/plain" if request.path.match?(FILE_LIKE) || !request.format.html?
+    return head :not_found, content_type: "text/plain" if request.path.match?(FILE_LIKE) || wants_non_html?
 
     render_not_found
   end
+
+  private
+
+  # Only an explicit non-HTML format (JSON, XML, JS…) gets the bare 404.
+  # "Accept: */*" (curl, many crawlers) is not a request for something else.
+  def wants_non_html?
+    format = request.format
+    format.present? && !format.html? && format != Mime::ALL
+  end
+
+  public
 
   def internal_server_error
     render "errors/internal_server_error", status: :internal_server_error
