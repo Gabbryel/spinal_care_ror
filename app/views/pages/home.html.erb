@@ -1,4 +1,6 @@
 <%= content_for :meta_title, "Kinetoterapie și recuperare medicală în Bacău | Spinal Care" %>
+<%# First hero background from landingimage_controller.js: it is the LCP image and is set from JS, so preload it. %>
+<%= content_for :head, tag.link(rel: "preload", as: "image", fetchpriority: "high", href: "https://res.cloudinary.com/www-spinalcare-ro/image/upload/c_scale,q_auto:good,w_1500/v1653807781/development/0236_cu8xqs.webp") %>
 <%= content_for :meta_description, "Clinica Spinal Care Bacău: recuperare medicală, kinetoterapie, terapie Schroth, consultații de specialitate și spitalizare de zi. Gratuit prin CAS." %>
   <%= render 'pages/home_partials/home_main_landing_v1' %>
   <!-- <iframe src="https://programari.spinalcare.ro" frameborder="0"></iframe> -->

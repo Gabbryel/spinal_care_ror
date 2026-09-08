@@ -46,7 +46,7 @@
           <div class="promo-package-card" data-animation-target="element" style="animation-delay: <%= index * 0.1 %>s;">
             <% if promo_package.photo.attached? %>
               <div class="promo-photo">
-                <%= cl_image_tag(promo_package.photo.key, quality: 80, width: 600, crop: "fill", gravity: "auto", alt: promo_package.name) %>
+                <%= cl_lazy_image_tag(promo_package.photo.key, quality: 80, width: 600, crop: "fill", gravity: "auto", alt: promo_package.name) %>
               </div>
             <% else %>
               <div class="promo-icon">

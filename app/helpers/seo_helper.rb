@@ -52,6 +52,12 @@ module SeoHelper
     excerpt.presence || plain_text_excerpt(fallback, 155)
   end
 
+  # cl_image_tag for images below the fold: deferred loading, async decoding.
+  # Never use it for the LCP image or anything in the first viewport.
+  def cl_lazy_image_tag(source, **options)
+    cl_image_tag(source, loading: "lazy", decoding: "async", **options)
+  end
+
   # Alt text for a team member's photo: name + profession + specialty.
   def member_photo_alt(member)
     [full_name_with_title(member), translate_profession(member.profession_name), member.specialty&.name]
