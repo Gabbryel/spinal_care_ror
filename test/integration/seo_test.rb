@@ -22,6 +22,7 @@ class SeoTest < ActionDispatch::IntegrationTest
     Profession.create!(name: "fiziokinetoterapeut")
     @cardio = Specialty.create!(name: "Cardiologie intervențională",
                                 description: "<p>Proceduri minim invazive pentru afecțiuni ale inimii.</p>")
+    @cardio.photo.attach(io: StringIO.new(GIF), filename: "cardio.gif", content_type: "image/gif")
     Specialty.create!(name: "Nutriție")
     MedicalService.create!(name: "Consultație și diagnostic", price: 200, specialty: @cardio)
     @member = Member.create!(first_name: "Ștefan", last_name: "Moisei", profession: @medic, specialty: @cardio,
@@ -79,6 +80,9 @@ class SeoTest < ActionDispatch::IntegrationTest
     assert_equal titles.values.uniq.size, titles.size, "duplicate titles: #{titles}"
     assert_equal descriptions.values.uniq.size, descriptions.size, "duplicate descriptions: #{descriptions}"
     assert_equal "Servicii medicale Bacău | Clinica Spinal Care", titles["/servicii-medicale"]
+    assert_equal "Kinetoterapie și recuperare medicală în Bacău | Spinal Care", titles["/"]
+    assert_match(/recuperare medicală, kinetoterapie/, descriptions["/"])
+    assert descriptions["/"].length.between?(120, 155)
     assert_equal "Cardiologie intervențională Bacău | Clinica Spinal Care", titles["/specialitati-medicale/#{@cardio.slug}"]
     assert_match(/Proceduri minim invazive/, descriptions["/specialitati-medicale/#{@cardio.slug}"])
   end
@@ -193,6 +197,7 @@ class SeoTest < ActionDispatch::IntegrationTest
     assert_includes locs, "#{CANONICAL}/specialitati-medicale/#{@cardio.slug}"
     assert_includes locs, "#{CANONICAL}/echipa/#{@member.slug}"
     assert_includes locs, "#{CANONICAL}/info-pacient/#{@fact.slug}"
+    assert_empty locs.grep(%r{/servicii-medicale/.}), "retired per-specialty price pages must not be in the sitemap"
 
     assert_empty urls.map { |u| u.at("changefreq").text }.select { |f| f == "daily" }
     member_entry = urls.find { |u| u.at("loc").text.end_with?("/echipa/#{@member.slug}") }
@@ -221,7 +226,7 @@ class SeoTest < ActionDispatch::IntegrationTest
     assert_response :moved_permanently
 
     get "/servicii-medicale/cardiologie-interven-ionala?ref=x"
-    assert_redirected_to "/servicii-medicale/cardiologie-interventionala?ref=x"
+    assert_redirected_to "/specialitati-medicale/cardiologie-interventionala?ref=x"
     assert_response :moved_permanently
 
     get "/echipa/tefan-moisei"
@@ -245,6 +250,86 @@ class SeoTest < ActionDispatch::IntegrationTest
     get "/specialitati-medicale/cardiologie-interventionala"
     assert_redirected_to "/specialitati-medicale/cardiologie"
     assert_response :moved_permanently
+  end
+
+  # --- round 2 ----------------------------------------------------------------
+
+  test "specialties without services emit exactly one BreadcrumbList and no procedures" do
+    empty = Specialty.create!(name: "Pneumologie")
+    get "/specialitati-medicale/#{empty.slug}"
+    assert_response :success
+    blocks = json_ld_blocks
+    assert_equal 1, blocks.count { |b| b["@type"] == "BreadcrumbList" }
+    assert_equal 0, blocks.count { |b| b["@graph"] }
+    assert_equal 1, response.body.scan("BreadcrumbList").size
+  end
+
+  test "retired /servicii-medicale/<slug> answers 301 to the specialty page" do
+    get "/servicii-medicale/#{@cardio.slug}"
+    assert_redirected_to "/specialitati-medicale/#{@cardio.slug}"
+    assert_response :moved_permanently
+
+    get "/servicii-medicale/nu-exista"
+    assert_redirected_to "/servicii-medicale"
+    assert_response :moved_permanently
+
+    get "/servicii-medicale"
+    assert_response :success
+  end
+
+  test "MedicalProcedure entries point at the specialty page" do
+    get "/specialitati-medicale/#{@cardio.slug}"
+    procedures = json_ld_blocks.find { |b| b["@graph"] }
+    assert_equal ["#{CANONICAL}/specialitati-medicale/#{@cardio.slug}"], procedures["@graph"].map { |p| p["url"] }.uniq
+  end
+
+  test "seo:restructure_recovery retires Fiziokinetoterapie with a 301 and attaches physiotherapists" do
+    kineto = Profession.find_by!(name: "fiziokinetoterapeut")
+    target = Specialty.create!(name: "Fizioterapie și Recuperare medicală")
+    retired = Specialty.create!(name: "Fiziokinetoterapie")
+    unassigned = Member.create!(first_name: "Ioana", last_name: "Măciucă", profession: kineto)
+    inactive = Member.create!(first_name: "Anca", last_name: "Veche", profession: kineto, is_active: false)
+
+    Rails.application.load_tasks unless Rake::Task.task_defined?("seo:restructure_recovery")
+    silence_stream($stdout) { Rake::Task["seo:restructure_recovery"].execute }
+
+    assert_nil Specialty.find_by(slug: retired.slug)
+    assert_equal target, unassigned.reload.specialty
+    assert_nil inactive.reload.specialty
+    assert_equal @cardio, @member.reload.specialty, "members that already have a specialty are untouched"
+
+    get "/specialitati-medicale/fiziokinetoterapie"
+    assert_redirected_to "/specialitati-medicale/#{target.slug}"
+    assert_response :moved_permanently
+    get "/servicii-medicale/fiziokinetoterapie"
+    assert_redirected_to "/specialitati-medicale/#{target.slug}"
+    assert_response :moved_permanently
+  end
+
+  test "profiles without their own page are noindex, real profiles are not" do
+    bare = Member.create!(first_name: "Adrian", last_name: "Popa", profession: @medic, has_own_page: false)
+    get "/echipa/#{bare.slug}"
+    assert_response :success
+    assert_select "meta[name=robots][content='noindex, follow']", count: 1
+
+    get "/echipa/#{@member.slug}"
+    assert_select "meta[name=robots]", count: 0
+    get "/"
+    assert_select "meta[name=robots]", count: 0
+  end
+
+  test "below-the-fold images are lazy and the hero image is preloaded" do
+    get "/"
+    assert_select "link[rel=preload][as=image][fetchpriority=high]", count: 1
+    images = css_select("img")
+    lazy = images.select { |img| img["loading"] == "lazy" }
+    assert lazy.size >= 2, "expected lazy images on the homepage"
+    assert lazy.all? { |img| img["decoding"] == "async" }
+    eager_alts = images.reject { |img| img["loading"] == "lazy" }.map { |img| img["alt"] }
+    assert_includes eager_alts, "Spinal Care logo"
+    assert_includes eager_alts, "15 ani Spinal Care"
+    specialty_img = images.find { |img| img["alt"] == @cardio.name }
+    assert specialty_img && specialty_img["loading"] == "lazy", "specialty card image should be lazy"
   end
 
   private
