@@ -30,251 +30,256 @@ class AdminController < ApplicationController
     @start_date = dates[:start_date]
     @end_date = dates[:end_date]
     
-    # PHASE 1: HERO KPIs ONLY - Optimize for <1s load
-    # Base query for public visits (with bot and geo filtering)
-    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                              .where('started_at >= ? AND started_at <= ?', @start_date, @end_date)
+    # KPIs are cached per period/filter set (see AnalyticsFilterHelper).
+    kpis = cached_analytics(:kpis) do
+      # PHASE 1: HERO KPIs ONLY - Optimize for <1s load
+      # Base query for public visits (with bot and geo filtering)
+      base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', @start_date, @end_date)
     
-    public_visits = apply_analytics_filters(base_visits, 
+      public_visits = apply_analytics_filters(base_visits, 
+                                             include_bots: !@filter_bots,
+                                             relevant_countries_only: @filter_geography)
+    
+      # Critical metrics
+      @total_visitors = public_visits.count
+      @unique_visitors = public_visits.distinct.count(:visitor_token)
+      days_in_period = ((@end_date - @start_date) / 1.day).ceil
+      @daily_average = days_in_period > 0 ? (@total_visitors / days_in_period).round : 0
+    
+      # Previous period comparison (single efficient query)
+      prev_start = @start_date - (@end_date - @start_date)
+      prev_end = @start_date
+      prev_base = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                             .where('started_at >= ? AND started_at < ?', prev_start, prev_end)
+      prev_visits = apply_analytics_filters(prev_base,
                                            include_bots: !@filter_bots,
                                            relevant_countries_only: @filter_geography)
+      prev_count = prev_visits.count
+      @visitors_change_pct = prev_count > 0 ? (((@total_visitors - prev_count).to_f / prev_count) * 100).round(1) : 0
     
-    # Critical metrics
-    @total_visitors = public_visits.count
-    @unique_visitors = public_visits.distinct.count(:visitor_token)
-    days_in_period = ((@end_date - @start_date) / 1.day).ceil
-    @daily_average = days_in_period > 0 ? (@total_visitors / days_in_period).round : 0
+      prev_unique = prev_visits.distinct.count(:visitor_token)
+      @unique_change_pct = prev_unique > 0 ? (((@unique_visitors - prev_unique).to_f / prev_unique) * 100).round(1) : 0
     
-    # Previous period comparison (single efficient query)
-    prev_start = @start_date - (@end_date - @start_date)
-    prev_end = @start_date
-    prev_base = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                           .where('started_at >= ? AND started_at < ?', prev_start, prev_end)
-    prev_visits = apply_analytics_filters(prev_base,
-                                         include_bots: !@filter_bots,
-                                         relevant_countries_only: @filter_geography)
-    prev_count = prev_visits.count
-    @visitors_change_pct = prev_count > 0 ? (((@total_visitors - prev_count).to_f / prev_count) * 100).round(1) : 0
+      prev_daily = prev_count / days_in_period.to_f
+      @daily_change_pct = prev_daily > 0 ? (((@daily_average - prev_daily) / prev_daily) * 100).round(1) : 0
     
-    prev_unique = prev_visits.distinct.count(:visitor_token)
-    @unique_change_pct = prev_unique > 0 ? (((@unique_visitors - prev_unique).to_f / prev_unique) * 100).round(1) : 0
+      # Top 3 metrics (LIMIT 1 for performance)
+      @top_location = public_visits.where.not(city: [nil, ''])
+                                    .group(:city)
+                                    .order('count_all DESC')
+                                    .limit(1)
+                                    .count
+                                    .first
     
-    prev_daily = prev_count / days_in_period.to_f
-    @daily_change_pct = prev_daily > 0 ? (((@daily_average - prev_daily) / prev_daily) * 100).round(1) : 0
+      # Calculate trend for top location (compare current count vs previous period count for same location)
+      if @top_location
+        prev_location_count = prev_visits.where(city: @top_location[0]).count
+        @location_change_pct = prev_location_count > 0 ? (((@top_location[1] - prev_location_count).to_f / prev_location_count) * 100).round(1) : 0
+      else
+        @location_change_pct = 0
+      end
     
-    # Top 3 metrics (LIMIT 1 for performance)
-    @top_location = public_visits.where.not(city: [nil, ''])
-                                  .group(:city)
+      @top_source = public_visits.group(:referring_domain)
                                   .order('count_all DESC')
                                   .limit(1)
                                   .count
                                   .first
+      @top_source = @top_source ? [@top_source[0] || 'Direct', @top_source[1]] : ['Direct', @total_visitors]
     
-    # Calculate trend for top location (compare current count vs previous period count for same location)
-    if @top_location
-      prev_location_count = prev_visits.where(city: @top_location[0]).count
-      @location_change_pct = prev_location_count > 0 ? (((@top_location[1] - prev_location_count).to_f / prev_location_count) * 100).round(1) : 0
-    else
-      @location_change_pct = 0
+      # Calculate trend for top source
+      prev_source_count = prev_visits.where(referring_domain: @top_source[0]).count
+      @source_change_pct = prev_source_count > 0 ? (((@top_source[1] - prev_source_count).to_f / prev_source_count) * 100).round(1) : 0
+    
+      # Page views only ($view, not $click), and only from the same filtered
+      # visits as the visitor KPIs, so the "Top pagină" card agrees with them.
+      events = Ahoy::Event.where(name: "$view")
+                          .where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
+                          .where('time >= ? AND time <= ?', @start_date, @end_date)
+                          .where(visit_id: public_visits.select(:id))
+    
+      top_page_raw = events.group(Arel.sql("properties->>'url'"))
+                           .order('count_all DESC')
+                           .limit(1)
+                           .count
+                           .first
+      @top_page = top_page_raw ? [normalize_url(top_page_raw[0]), top_page_raw[1]] : ['/', 0]
+    
+      # Trend: same URL (raw, not normalized), same filters, previous period
+      prev_events = Ahoy::Event.where(name: "$view")
+                                .where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
+                                .where('time >= ? AND time < ?', prev_start, @start_date)
+                                .where(visit_id: prev_visits.select(:id))
+      prev_page_count = top_page_raw ? prev_events.where("properties->>'url' = ?", top_page_raw[0]).count : 0
+      @page_change_pct = prev_page_count > 0 ? (((@top_page[1] - prev_page_count).to_f / prev_page_count) * 100).round(1) : 0
+      { total_visitors: @total_visitors, unique_visitors: @unique_visitors, daily_average: @daily_average, visitors_change_pct: @visitors_change_pct, unique_change_pct: @unique_change_pct, daily_change_pct: @daily_change_pct, top_location: @top_location, location_change_pct: @location_change_pct, top_source: @top_source, source_change_pct: @source_change_pct, top_page: @top_page, page_change_pct: @page_change_pct }
     end
-    
-    @top_source = public_visits.group(:referring_domain)
-                                .order('count_all DESC')
-                                .limit(1)
-                                .count
-                                .first
-    @top_source = @top_source ? [@top_source[0] || 'Direct', @top_source[1]] : ['Direct', @total_visitors]
-    
-    # Calculate trend for top source
-    prev_source_count = prev_visits.where(referring_domain: @top_source[0]).count
-    @source_change_pct = prev_source_count > 0 ? (((@top_source[1] - prev_source_count).to_f / prev_source_count) * 100).round(1) : 0
-    
-    # Page views only ($view, not $click), and only from the same filtered
-    # visits as the visitor KPIs, so the "Top pagină" card agrees with them.
-    events = Ahoy::Event.where(name: "$view")
-                        .where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
-                        .where('time >= ? AND time <= ?', @start_date, @end_date)
-                        .where(visit_id: public_visits.select(:id))
-    
-    top_page_raw = events.group(Arel.sql("properties->>'url'"))
-                         .order('count_all DESC')
-                         .limit(1)
-                         .count
-                         .first
-    @top_page = top_page_raw ? [normalize_url(top_page_raw[0]), top_page_raw[1]] : ['/', 0]
-    
-    # Trend: same URL (raw, not normalized), same filters, previous period
-    prev_events = Ahoy::Event.where(name: "$view")
-                              .where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
-                              .where('time >= ? AND time < ?', prev_start, @start_date)
-                              .where(visit_id: prev_visits.select(:id))
-    prev_page_count = top_page_raw ? prev_events.where("properties->>'url' = ?", top_page_raw[0]).count : 0
-    @page_change_pct = prev_page_count > 0 ? (((@top_page[1] - prev_page_count).to_f / prev_page_count) * 100).round(1) : 0
-    
-    # Store base queries for lazy-loaded sections
-    @public_visits_query = public_visits
-    @events_query = events
+    kpis.each { |name, value| instance_variable_set("@#{name}", value) }
   end
   
   # PHASE 2: Lazy-loaded sections
   def analytics_daily_chart
-    dates = calculate_period_dates
-    @start_date = dates[:start_date]
-    @end_date = dates[:end_date]
-    filter_bots = params[:filter_bots] != 'false'
-    filter_geography = params[:filter_geography] == 'true'
+    render_cached_analytics_section(:daily_chart, 'admin/analytics/daily_chart') do
+      dates = calculate_period_dates
+      @start_date = dates[:start_date]
+      @end_date = dates[:end_date]
+      filter_bots = params[:filter_bots] != 'false'
+      filter_geography = params[:filter_geography] == 'true'
     
-    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                              .where('started_at >= ? AND started_at <= ?', @start_date, @end_date)
-    public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+      base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', @start_date, @end_date)
+      public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
     
-    # Calculate number of days in period (inclusive)
-    days_count = ((@end_date.to_date - @start_date.to_date).to_i + 1)
-    daily_data = public_visits.group("DATE(started_at)").count
+      # Calculate number of days in period (inclusive)
+      days_count = ((@end_date.to_date - @start_date.to_date).to_i + 1)
+      daily_data = public_visits.group("DATE(started_at)").count
     
-    daily_visits = (0...days_count).map do |i|
-      date = (@start_date.to_date + i.days)
-      { date: date, label: date.strftime('%d %b'), count: daily_data[date] || 0 }
+      daily_visits = (0...days_count).map do |i|
+        date = (@start_date.to_date + i.days)
+        { date: date, label: date.strftime('%d %b'), count: daily_data[date] || 0 }
+      end
+    
+      @daily_labels = daily_visits.map { |d| d[:label] }
+      @daily_data = daily_visits.map { |d| d[:count] }
+    
     end
-    
-    @daily_labels = daily_visits.map { |d| d[:label] }
-    @daily_data = daily_visits.map { |d| d[:count] }
-    
-    render partial: 'admin/analytics/daily_chart'
   end
   
   def analytics_geography
-    dates = calculate_period_dates
-    start_date = dates[:start_date]
-    end_date = dates[:end_date]
-    filter_bots = params[:filter_bots] != 'false'
-    filter_geography = params[:filter_geography] == 'true'
+    render_cached_analytics_section(:geography, 'admin/analytics/geography') do
+      dates = calculate_period_dates
+      start_date = dates[:start_date]
+      end_date = dates[:end_date]
+      filter_bots = params[:filter_bots] != 'false'
+      filter_geography = params[:filter_geography] == 'true'
     
-    # Apply bot and geography filters
-    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
-    public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+      # Apply bot and geography filters
+      base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+      public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
     
-    # Get filtered visit IDs for event filtering
-    filtered_visit_ids = public_visits.pluck(:id)
+      # Get filtered visit IDs for event filtering
+      filtered_visit_ids = public_visits.pluck(:id)
     
-    events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
-                        .where('time >= ? AND time <= ?', start_date, end_date)
-                        .where(visit_id: filtered_visit_ids)
+      events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
+                          .where('time >= ? AND time <= ?', start_date, end_date)
+                          .where(visit_id: filtered_visit_ids)
     
-    @total_visitors = public_visits.count
-    @unique_visitors = public_visits.distinct.count(:visitor_token)
+      @total_visitors = public_visits.count
+      @unique_visitors = public_visits.distinct.count(:visitor_token)
     
-    @top_cities = public_visits.where.not(city: [nil, ''])
-                                    .group(:city)
-                                    .order('count_all DESC')
-                                    .limit(20)
-                                    .count
+      @top_cities = public_visits.where.not(city: [nil, ''])
+                                      .group(:city)
+                                      .order('count_all DESC')
+                                      .limit(20)
+                                      .count
     
-    @top_exit_pages = events.group("properties->>'url'")
-                            .order('count_all DESC')
-                            .limit(10)
-                            .count
-                            .transform_keys { |url| normalize_url(url) }
+      @top_exit_pages = events.group("properties->>'url'")
+                              .order('count_all DESC')
+                              .limit(10)
+                              .count
+                              .transform_keys { |url| normalize_url(url) }
     
-    # Click Analytics (LIMIT 10 each)
-    click_events = events.where(name: ['click', '$click'])
-    @total_clicks = click_events.count
+      # Click Analytics (LIMIT 10 each)
+      click_events = events.where(name: ['click', '$click'])
+      @total_clicks = click_events.count
     
-    # Use 'url' field for automatic $click events (most common)
-    @top_click_destinations = click_events.where("properties->>'url' IS NOT NULL AND properties->>'url' != ''")
-                                          .group("properties->>'url'")
+      # Use 'url' field for automatic $click events (most common)
+      @top_click_destinations = click_events.where("properties->>'url' IS NOT NULL AND properties->>'url' != ''")
+                                            .group("properties->>'url'")
+                                            .order('count_all DESC')
+                                            .limit(10)
+                                            .count
+                                            .transform_keys { |dest| normalize_url(dest) }
+    
+      # Use 'name' field for link text from automatic tracking, fallback to 'text' for custom events
+      @top_clicked_elements = click_events.where("(properties->>'name' IS NOT NULL AND properties->>'name' != '') OR (properties->>'text' IS NOT NULL AND properties->>'text' != '')")
+                                          .group(Arel.sql("COALESCE(properties->>'name', properties->>'text')"))
                                           .order('count_all DESC')
                                           .limit(10)
                                           .count
-                                          .transform_keys { |dest| normalize_url(dest) }
     
-    # Use 'name' field for link text from automatic tracking, fallback to 'text' for custom events
-    @top_clicked_elements = click_events.where("(properties->>'name' IS NOT NULL AND properties->>'name' != '') OR (properties->>'text' IS NOT NULL AND properties->>'text' != '')")
-                                        .group(Arel.sql("COALESCE(properties->>'name', properties->>'text')"))
-                                        .order('count_all DESC')
-                                        .limit(10)
-                                        .count
+      @top_countries = public_visits.where.not(country: [nil, ''])
+                                          .group(:country)
+                                          .order('count_all DESC')
+                                          .limit(10)
+                                          .count
     
-    @top_countries = public_visits.where.not(country: [nil, ''])
-                                        .group(:country)
-                                        .order('count_all DESC')
-                                        .limit(10)
-                                        .count
-    
-    render partial: 'admin/analytics/geography'
+    end
   end
   
   def analytics_sources
-    dates = calculate_period_dates
-    start_date = dates[:start_date]
-    end_date = dates[:end_date]
-    filter_bots = params[:filter_bots] != 'false'
-    filter_geography = params[:filter_geography] == 'true'
+    render_cached_analytics_section(:sources, 'admin/analytics/sources') do
+      dates = calculate_period_dates
+      start_date = dates[:start_date]
+      end_date = dates[:end_date]
+      filter_bots = params[:filter_bots] != 'false'
+      filter_geography = params[:filter_geography] == 'true'
     
-    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
-    public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+      base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+      public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
     
-    @total_visitors = public_visits.count
-    @unique_visitors = public_visits.distinct.count(:visitor_token)
+      @total_visitors = public_visits.count
+      @unique_visitors = public_visits.distinct.count(:visitor_token)
     
-    traffic_data = public_visits.group(:referrer, :referring_domain).count
-    @traffic_sources = {
-      'Direct' => traffic_data.select { |k, _| k[0].nil? }.values.sum,
-      'Google' => traffic_data.select { |k, _| k[1]&.include?('google') }.values.sum,
-      'Facebook' => traffic_data.select { |k, _| k[1]&.include?('facebook') }.values.sum,
-      'Instagram' => traffic_data.select { |k, _| k[1]&.include?('instagram') }.values.sum
-    }
-    total = public_visits.count
-    @traffic_sources['Alte surse'] = total - @traffic_sources.values.sum
+      traffic_data = public_visits.group(:referrer, :referring_domain).count
+      @traffic_sources = {
+        'Direct' => traffic_data.select { |k, _| k[0].nil? }.values.sum,
+        'Google' => traffic_data.select { |k, _| k[1]&.include?('google') }.values.sum,
+        'Facebook' => traffic_data.select { |k, _| k[1]&.include?('facebook') }.values.sum,
+        'Instagram' => traffic_data.select { |k, _| k[1]&.include?('instagram') }.values.sum
+      }
+      total = public_visits.count
+      @traffic_sources['Alte surse'] = total - @traffic_sources.values.sum
     
-    @top_referrers = public_visits.where.not(referring_domain: nil)
-                                  .group(:referring_domain)
-                                  .order('count_all DESC')
-                                  .limit(15)
-                                  .count
+      @top_referrers = public_visits.where.not(referring_domain: nil)
+                                    .group(:referring_domain)
+                                    .order('count_all DESC')
+                                    .limit(15)
+                                    .count
     
-    render partial: 'admin/analytics/sources'
+    end
   end
   
   def analytics_pages
-    dates = calculate_period_dates
-    start_date = dates[:start_date]
-    end_date = dates[:end_date]
-    filter_bots = params[:filter_bots] != 'false'
-    filter_geography = params[:filter_geography] == 'true'
+    render_cached_analytics_section(:pages, 'admin/analytics/pages') do
+      dates = calculate_period_dates
+      start_date = dates[:start_date]
+      end_date = dates[:end_date]
+      filter_bots = params[:filter_bots] != 'false'
+      filter_geography = params[:filter_geography] == 'true'
     
-    # Get filtered visit IDs
-    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
-    filtered_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
-    filtered_visit_ids = filtered_visits.pluck(:id)
+      # Get filtered visit IDs
+      base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+      filtered_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+      filtered_visit_ids = filtered_visits.pluck(:id)
     
-    events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
-                        .where('time >= ? AND time <= ?', start_date, end_date)
-                        .where(visit_id: filtered_visit_ids)
+      events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
+                          .where('time >= ? AND time <= ?', start_date, end_date)
+                          .where(visit_id: filtered_visit_ids)
     
-    page_events = events.group(Arel.sql("properties->>'url'"))
-                        .order('count_all DESC')
-                        .limit(20)
-                        .count
+      page_events = events.group(Arel.sql("properties->>'url'"))
+                          .order('count_all DESC')
+                          .limit(20)
+                          .count
     
-    @most_viewed_pages = page_events.transform_keys { |url| normalize_url(url) }
-    @total_page_views = page_events.values.sum
-    @unique_pages_count = page_events.keys.count
+      @most_viewed_pages = page_events.transform_keys { |url| normalize_url(url) }
+      @total_page_views = page_events.values.sum
+      @unique_pages_count = page_events.keys.count
     
-    # Use the already filtered visits for entry pages
-    @top_entry_pages = filtered_visits.where.not(landing_page: [nil, ''])
-                                      .group(:landing_page)
-                                      .order('count_all DESC')
-                                      .limit(15)
-                                      .count
-                                      .transform_keys { |url| normalize_url(url) }
+      # Use the already filtered visits for entry pages
+      @top_entry_pages = filtered_visits.where.not(landing_page: [nil, ''])
+                                        .group(:landing_page)
+                                        .order('count_all DESC')
+                                        .limit(15)
+                                        .count
+                                        .transform_keys { |url| normalize_url(url) }
     
-    @unique_visitors = filtered_visits.distinct.count(:visitor_token)
+      @unique_visitors = filtered_visits.distinct.count(:visitor_token)
     
-    render partial: 'admin/analytics/pages'
+    end
   end
   
   def edit_users
@@ -282,149 +287,151 @@ class AdminController < ApplicationController
   end
 
   def analytics_hourly
-    dates = calculate_period_dates
-    start_date = dates[:start_date]
-    end_date = dates[:end_date]
-    filter_bots = params[:filter_bots] != 'false'
-    filter_geography = params[:filter_geography] == 'true'
+    render_cached_analytics_section(:hourly, 'admin/analytics/hourly') do
+      dates = calculate_period_dates
+      start_date = dates[:start_date]
+      end_date = dates[:end_date]
+      filter_bots = params[:filter_bots] != 'false'
+      filter_geography = params[:filter_geography] == 'true'
     
-    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
-    public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+      base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+      public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
     
-    # Group visits by hour of the day (0-23)
-    hourly_data = public_visits
-      .group(Arel.sql("EXTRACT(HOUR FROM started_at)::integer"))
-      .order(Arel.sql("EXTRACT(HOUR FROM started_at)::integer"))
-      .count
+      # Group visits by hour of the day (0-23)
+      hourly_data = public_visits
+        .group(Arel.sql("EXTRACT(HOUR FROM started_at)::integer"))
+        .order(Arel.sql("EXTRACT(HOUR FROM started_at)::integer"))
+        .count
     
-    # Fill in missing hours with 0
-    @hourly_visits = (0..23).map do |hour|
-      {
-        hour: hour,
-        label: "#{hour.to_s.rjust(2, '0')}:00",
-        count: hourly_data[hour] || 0
-      }
-    end
-    
-    @total_visits = public_visits.count
-    @peak_hour = @hourly_visits.max_by { |h| h[:count] }
-    @quiet_hour = @hourly_visits.min_by { |h| h[:count] }
-    
-    render partial: 'admin/analytics/hourly'
-  end
-
-  def analytics_geo_sources
-    dates = calculate_period_dates
-    start_date = dates[:start_date]
-    end_date = dates[:end_date]
-    filter_bots = params[:filter_bots] != 'false'
-    filter_geography = params[:filter_geography] == 'true'
-
-    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
-    public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
-    # Traffic source (referrer domain or 'Direct') + City/Country
-    @geo_sources = public_visits
-      .where.not(city: [nil, ''])
-      .select(:referring_domain, :city, :country, 'COUNT(*) as visit_count')
-      .group(:referring_domain, :city, :country)
-      .order('visit_count DESC')
-      .limit(50)
-      .map do |row|
+      # Fill in missing hours with 0
+      @hourly_visits = (0..23).map do |hour|
         {
-          source: row.referring_domain.present? ? row.referring_domain : 'Direct',
-          city: row.city,
-          country: row.country,
-          visits: row.visit_count
+          hour: hour,
+          label: "#{hour.to_s.rjust(2, '0')}:00",
+          count: hourly_data[hour] || 0
         }
       end
     
-    # Top sources overall
-    @top_sources = public_visits
-      .select(:referring_domain, 'COUNT(*) as visit_count')
-      .group(:referring_domain)
-      .order('visit_count DESC')
-      .limit(10)
-      .map { |row| { source: row.referring_domain.present? ? row.referring_domain : 'Direct', visits: row.visit_count } }
+      @total_visits = public_visits.count
+      @peak_hour = @hourly_visits.max_by { |h| h[:count] }
+      @quiet_hour = @hourly_visits.min_by { |h| h[:count] }
     
-    # Top locations overall
-    @top_locations = public_visits
-      .where.not(city: [nil, ''])
-      .select(:city, :country, 'COUNT(*) as visit_count')
-      .group(:city, :country)
-      .order('visit_count DESC')
-      .limit(10)
-      .map { |row| { city: row.city, country: row.country, visits: row.visit_count } }
+    end
+  end
+
+  def analytics_geo_sources
+    render_cached_analytics_section(:geo_sources, 'admin/analytics/geo_sources') do
+      dates = calculate_period_dates
+      start_date = dates[:start_date]
+      end_date = dates[:end_date]
+      filter_bots = params[:filter_bots] != 'false'
+      filter_geography = params[:filter_geography] == 'true'
+
+      base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+      public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+      # Traffic source (referrer domain or 'Direct') + City/Country
+      @geo_sources = public_visits
+        .where.not(city: [nil, ''])
+        .select(:referring_domain, :city, :country, 'COUNT(*) as visit_count')
+        .group(:referring_domain, :city, :country)
+        .order('visit_count DESC')
+        .limit(50)
+        .map do |row|
+          {
+            source: row.referring_domain.present? ? row.referring_domain : 'Direct',
+            city: row.city,
+            country: row.country,
+            visits: row.visit_count
+          }
+        end
     
-    @total_geo_visits = public_visits.where.not(city: [nil, '']).count
+      # Top sources overall
+      @top_sources = public_visits
+        .select(:referring_domain, 'COUNT(*) as visit_count')
+        .group(:referring_domain)
+        .order('visit_count DESC')
+        .limit(10)
+        .map { |row| { source: row.referring_domain.present? ? row.referring_domain : 'Direct', visits: row.visit_count } }
     
-    render partial: 'admin/analytics/geo_sources'
+      # Top locations overall
+      @top_locations = public_visits
+        .where.not(city: [nil, ''])
+        .select(:city, :country, 'COUNT(*) as visit_count')
+        .group(:city, :country)
+        .order('visit_count DESC')
+        .limit(10)
+        .map { |row| { city: row.city, country: row.country, visits: row.visit_count } }
+    
+      @total_geo_visits = public_visits.where.not(city: [nil, '']).count
+    
+    end
   end
 
   def analytics_bot_traffic
-    dates = calculate_period_dates
-    start_date = dates[:start_date]
-    end_date = dates[:end_date]
+    render_cached_analytics_section(:bot_traffic, 'admin/analytics/bot_traffic') do
+      dates = calculate_period_dates
+      start_date = dates[:start_date]
+      end_date = dates[:end_date]
 
-    base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
-                              .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+      base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                                .where('started_at >= ? AND started_at <= ?', start_date, end_date)
 
-    # Bot visits based on user agent
-    bot_user_agent_visits = base_visits.where(
-      "user_agent ~* ?",
-      BOT_PATTERNS.map(&:source).join('|')
-    )
+      # Bot visits based on user agent
+      bot_user_agent_visits = base_visits.where(
+        "user_agent ~* ?",
+        BOT_PATTERNS.map(&:source).join('|')
+      )
 
-    # Visits from bot-heavy countries
-    bot_country_visits = base_visits.where(country: BOT_COUNTRIES)
+      # Visits from bot-heavy countries
+      bot_country_visits = base_visits.where(country: BOT_COUNTRIES)
 
-    # Combined: visits that are EITHER bots OR from bot countries
-    all_bot_visits = base_visits.where(
-      "user_agent ~* ? OR country IN (?)",
-      BOT_PATTERNS.map(&:source).join('|'),
-      BOT_COUNTRIES
-    )
+      # Combined: visits that are EITHER bots OR from bot countries
+      all_bot_visits = base_visits.where(
+        "user_agent ~* ? OR country IN (?)",
+        BOT_PATTERNS.map(&:source).join('|'),
+        BOT_COUNTRIES
+      )
 
-    # Statistics
-    @total_bot_visits = all_bot_visits.count
-    @bot_agent_count = bot_user_agent_visits.count
-    @bot_country_count = bot_country_visits.count
-    @total_visits = base_visits.count
-    @bot_percentage = @total_visits > 0 ? ((@total_bot_visits.to_f / @total_visits) * 100).round(1) : 0
+      # Statistics
+      @total_bot_visits = all_bot_visits.count
+      @bot_agent_count = bot_user_agent_visits.count
+      @bot_country_count = bot_country_visits.count
+      @total_visits = base_visits.count
+      @bot_percentage = @total_visits > 0 ? ((@total_bot_visits.to_f / @total_visits) * 100).round(1) : 0
 
-    # Top bot countries
-    @bot_countries = bot_country_visits
-                       .group(:country, :city)
-                       .order('count_all DESC')
-                       .limit(15)
-                       .count
-                       .map { |k, v| { country: k[0], city: k[1], visits: v } }
+      # Top bot countries
+      @bot_countries = bot_country_visits
+                         .group(:country, :city)
+                         .order('count_all DESC')
+                         .limit(15)
+                         .count
+                         .map { |k, v| { country: k[0], city: k[1], visits: v } }
 
-    # Top bot user agents
-    @bot_agents = bot_user_agent_visits
-                    .group(:user_agent)
-                    .order('count_all DESC')
-                    .limit(10)
-                    .count
-                    .map { |agent, count| { agent: agent, visits: count } }
+      # Top bot user agents
+      @bot_agents = bot_user_agent_visits
+                      .group(:user_agent)
+                      .order('count_all DESC')
+                      .limit(10)
+                      .count
+                      .map { |agent, count| { agent: agent, visits: count } }
 
-    # Bot referrers
-    @bot_referrers = all_bot_visits
-                       .group(:referring_domain)
-                       .order('count_all DESC')
-                       .limit(10)
-                       .count
-                       .map { |domain, count| { domain: domain || 'Direct', visits: count } }
+      # Bot referrers
+      @bot_referrers = all_bot_visits
+                         .group(:referring_domain)
+                         .order('count_all DESC')
+                         .limit(10)
+                         .count
+                         .map { |domain, count| { domain: domain || 'Direct', visits: count } }
 
-    # Daily bot traffic trend
-    @bot_daily = all_bot_visits
-                   .group(Arel.sql("DATE(started_at)"))
-                   .order(Arel.sql("DATE(started_at)"))
-                   .count
-                   .map { |date, count| { date: date.to_s, count: count } }
-
-    render partial: 'admin/analytics/bot_traffic'
+      # Daily bot traffic trend
+      @bot_daily = all_bot_visits
+                     .group(Arel.sql("DATE(started_at)"))
+                     .order(Arel.sql("DATE(started_at)"))
+                     .count
+                     .map { |date, count| { date: date.to_s, count: count } }
+    end
   end
 
   def personal

@@ -45,7 +45,35 @@ module AnalyticsFilterHelper
     'Thailand', 'TH'
   ].freeze
 
+  ANALYTICS_CACHE_TTL = 10.minutes
+
   private
+
+  # Cache key for one analytics section under the current filters. The page
+  # auto-refreshes every 20 minutes; a 10-minute TTL keeps it current while
+  # serving repeated loads (and the seven lazy sections) without re-running
+  # the visit/event aggregations.
+  def analytics_cache_key(section)
+    [
+      "analytics", section,
+      params[:period] || "30", params[:custom_start_date].presence, params[:custom_end_date].presence,
+      params[:filter_bots] != "false", params[:filter_geography] == "true"
+    ]
+  end
+
+  def cached_analytics(section, &block)
+    Rails.cache.fetch(analytics_cache_key(section), expires_in: ANALYTICS_CACHE_TTL, &block)
+  end
+
+  # Lazy-loaded section: runs the block (which sets the instance variables the
+  # partial needs) and caches the rendered partial HTML.
+  def render_cached_analytics_section(section, partial)
+    html = cached_analytics(section) do
+      yield
+      render_to_string(partial: partial, layout: false)
+    end
+    render html: html.html_safe
+  end
 
   def bot_visit?(user_agent)
     return false if user_agent.blank? # Don't treat missing user agents as bots

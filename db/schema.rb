@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_08_141848) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_08_142826) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -62,6 +62,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_08_141848) do
     t.index ["name", "time"], name: "index_ahoy_events_on_name_and_time"
     t.index ["properties"], name: "index_ahoy_events_on_properties", opclass: :jsonb_path_ops, using: :gin
     t.index ["user_id"], name: "index_ahoy_events_on_user_id"
+    t.index ["visit_id", "name"], name: "index_ahoy_events_on_visit_id_and_name"
     t.index ["visit_id"], name: "index_ahoy_events_on_visit_id"
   end
 
