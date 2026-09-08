@@ -89,20 +89,26 @@ class AdminController < ApplicationController
     prev_source_count = prev_visits.where(referring_domain: @top_source[0]).count
     @source_change_pct = prev_source_count > 0 ? (((@top_source[1] - prev_source_count).to_f / prev_source_count) * 100).round(1) : 0
     
-    events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
+    # Page views only ($view, not $click), and only from the same filtered
+    # visits as the visitor KPIs, so the "Top pagină" card agrees with them.
+    events = Ahoy::Event.where(name: "$view")
+                        .where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
                         .where('time >= ? AND time <= ?', @start_date, @end_date)
+                        .where(visit_id: public_visits.select(:id))
     
-    @top_page = events.group(Arel.sql("properties->>'url'"))
-                     .order('count_all DESC')
-                     .limit(1)
-                     .count
-                     .first
-    @top_page = @top_page ? [normalize_url(@top_page[0]), @top_page[1]] : ['/', 0]
+    top_page_raw = events.group(Arel.sql("properties->>'url'"))
+                         .order('count_all DESC')
+                         .limit(1)
+                         .count
+                         .first
+    @top_page = top_page_raw ? [normalize_url(top_page_raw[0]), top_page_raw[1]] : ['/', 0]
     
-    # Calculate trend for top page
-    prev_events = Ahoy::Event.where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
+    # Trend: same URL (raw, not normalized), same filters, previous period
+    prev_events = Ahoy::Event.where(name: "$view")
+                              .where("properties->>'url' NOT LIKE ? OR properties->>'url' IS NULL", '%/dashboard%')
                               .where('time >= ? AND time < ?', prev_start, @start_date)
-    prev_page_count = prev_events.where("properties->>'url' = ?", @top_page[0]).count
+                              .where(visit_id: prev_visits.select(:id))
+    prev_page_count = top_page_raw ? prev_events.where("properties->>'url' = ?", top_page_raw[0]).count : 0
     @page_change_pct = prev_page_count > 0 ? (((@top_page[1] - prev_page_count).to_f / prev_page_count) * 100).round(1) : 0
     
     # Store base queries for lazy-loaded sections
