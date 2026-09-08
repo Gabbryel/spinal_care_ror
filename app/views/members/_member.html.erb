@@ -1,6 +1,6 @@
 <%= content_for :meta_title, page_title(full_name_with_title(@member)) %>
 <%= content_for :meta_description, meta_description_for(@member.description, "#{translate_profession(@member.profession.name)} #{@member.doctor_grade} #{full_name(@member)}#{", #{@member.specialty.name.downcase}" if @member.specialty} la Clinica Spinal Care Bacău.") %>
-<%= content_for :meta_image, cl_image_path(@member.photo.key), :quality=>60, :fetch_format=>:webp, :width=>100 %>
+<%= content_for :meta_image, cl_image_path(@member.photo.key, quality: 60, fetch_format: :webp, width: 600) if @member.photo.attached? %>
 <%= content_for :json_ld, json_ld_tag(member_json_ld(@member)) %>
 <% unless @member.has_own_page && @member.is_active %>
   <%# Bare profiles (no description, not linked from anywhere) stay reachable but out of the index. %>
