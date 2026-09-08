@@ -6,7 +6,8 @@ module AnalyticsFilterHelper
     /bot/i, /crawl/i, /spider/i, /slurp/i, /scraper/i,
     /headless/i, /phantom/i, /puppeteer/i, /selenium/i,
     /curl/i, /wget/i, /python/i, /java/i, /perl/i,
-    /ahrefs/i, /semrush/i, /moz/i, /majestic/i, /dotbot/i,
+    # Moz's crawler is "rogerbot"; a bare /moz/ would match "Mozilla/5.0", i.e. every real browser.
+    /ahrefs/i, /semrush/i, /rogerbot/i, /majestic/i, /dotbot/i,
     /petalbot/i, /bingpreview/i, /yandex/i, /baidu/i,
     /dataforseo/i, /uptimerobot/i, /pingdom/i, /statuscode/i,
     /archive\.org/i, /wayback/i, /mediapartners/i,
