@@ -86,6 +86,30 @@ module SeoHelper
     cut
   end
 
+  # Rich text from the admin editor, rendered with its headings demoted one
+  # level (h1 -> h2 ... h5 -> h6) so the page's own <h1> stays the only one.
+  def rich_text_html(rich_text)
+    return if rich_text.blank?
+
+    fragment = Nokogiri::HTML::DocumentFragment.parse(rich_text.to_s)
+    %w[h5 h4 h3 h2 h1].each do |tag|
+      fragment.css(tag).each { |node| node.name = "h#{tag[1].to_i + 1}" }
+    end
+    fragment.to_html.html_safe
+  end
+
+  # cl_image_tag for images below the fold: deferred loading, async decoding.
+  # Never use it for the LCP image or anything in the first viewport.
+  def cl_lazy_image_tag(source, **options)
+    cl_image_tag(source, loading: "lazy", decoding: "async", **options)
+  end
+
+  # Alt text for a team member's photo: name + profession + specialty.
+  def member_photo_alt(member)
+    [full_name_with_title(member), translate_profession(member.profession_name), member.specialty&.name]
+      .map { |part| part.to_s.squish }.reject(&:empty?).join(", ")
+  end
+
   # ---------------------------------------------------------------------------
   # JSON-LD
   # ---------------------------------------------------------------------------

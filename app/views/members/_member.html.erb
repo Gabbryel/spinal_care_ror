@@ -56,7 +56,7 @@
             <div class="bio-line"></div>
           </div>
           <div class="member-bio-content" data-controller="bio" data-bio-target="bio">
-            <%= @member.description %>
+            <%= rich_text_html(@member.description) %>
           </div>
         </div>
       <% end %>

@@ -28,7 +28,7 @@
   <!-- Specialty Description -->
   <div class="specialty-content">
     <div class="specialty-description">
-      <%= @specialty.description %>
+      <%= rich_text_html(@specialty.description) %>
     </div>
 
     <!-- Day Hospitalization Specialties Section -->

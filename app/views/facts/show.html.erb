@@ -49,7 +49,7 @@
           <h2><%= @fact.name %></h2>
         </div>
         <div class="fact-article-body img-w-<%= @fact.custom_width %>">
-          <%= @fact.description %>
+          <%= rich_text_html(@fact.description) %>
         </div>
       </article>
     </div>
