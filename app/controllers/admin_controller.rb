@@ -2,6 +2,12 @@ class AdminController < ApplicationController
   include AnalyticsFilterHelper
   
   layout "dashboard"
+
+  # The analytics page checks `access` in its view, but the lazy-loaded
+  # sections are separate requests that rendered their data to any signed-in
+  # user. Keep the whole analytics surface admin-only.
+  before_action :require_admin_for_analytics, if: -> { action_name.start_with?("analytics") }
+
   def dashboard
     @m = Member.new()
     @professions = Profession.all
@@ -180,25 +186,6 @@ class AdminController < ApplicationController
                               .count
                               .transform_keys { |url| normalize_url(url) }
     
-      # Click Analytics (LIMIT 10 each)
-      click_events = events.where(name: ['click', '$click'])
-      @total_clicks = click_events.count
-    
-      # Use 'url' field for automatic $click events (most common)
-      @top_click_destinations = click_events.where("properties->>'url' IS NOT NULL AND properties->>'url' != ''")
-                                            .group("properties->>'url'")
-                                            .order('count_all DESC')
-                                            .limit(10)
-                                            .count
-                                            .transform_keys { |dest| normalize_url(dest) }
-    
-      # Use 'name' field for link text from automatic tracking, fallback to 'text' for custom events
-      @top_clicked_elements = click_events.where("(properties->>'name' IS NOT NULL AND properties->>'name' != '') OR (properties->>'text' IS NOT NULL AND properties->>'text' != '')")
-                                          .group(Arel.sql("COALESCE(properties->>'name', properties->>'text')"))
-                                          .order('count_all DESC')
-                                          .limit(10)
-                                          .count
-    
       @top_countries = public_visits.where.not(country: [nil, ''])
                                           .group(:country)
                                           .order('count_all DESC')
@@ -284,6 +271,110 @@ class AdminController < ApplicationController
   
   def edit_users
     @users = User.all.order(email: :asc)
+  end
+
+  # Labels for the `category` property of "$click" events (set by
+  # click_tracker_controller.js, backfilled by CleanUpClickEvents).
+  CLICK_CATEGORY_LABELS = {
+    'call' => 'Apel telefonic',
+    'booking' => 'Programare',
+    'email' => 'Email',
+    'whatsapp' => 'WhatsApp',
+    'social' => 'Social media',
+    'map' => 'Hartă',
+    'nav' => 'Navigare în site',
+    'external' => 'Link extern'
+  }.freeze
+
+  CONVERSION_TILES = [
+    { label: 'Apeluri telefonice', categories: %w[call], css: 'kpi-success',
+      tooltip: 'Apăsări pe numărul de telefon (link tel:) din meniu, subsol și pagini' },
+    { label: 'Programări (buton)', categories: %w[booking], css: 'kpi-primary',
+      tooltip: 'Apăsări pe butonul „Programare” / „Programează-te”, care deschide site-ul de programări' },
+    { label: 'Email + WhatsApp', categories: %w[email whatsapp], css: 'kpi-info',
+      tooltip: 'Apăsări pe adrese de email și link-uri WhatsApp' },
+    { label: 'Social + Hartă', categories: %w[social map], css: 'kpi-warning',
+      tooltip: 'Apăsări pe Facebook, Instagram și link-uri către hartă' }
+  ].freeze
+
+  DAILY_CHART_CATEGORIES = %w[call booking].freeze
+
+  # Clicks & conversions section. `page` narrows the per-page table; it is
+  # part of the cache key so each selection is cached separately.
+  def analytics_clicks
+    @selected_page = params[:page].presence
+    render_cached_analytics_section([:clicks, @selected_page], 'admin/analytics/clicks') do
+      dates = calculate_period_dates
+      start_date = dates[:start_date]
+      end_date = dates[:end_date]
+      filter_bots = params[:filter_bots] != 'false'
+      filter_geography = params[:filter_geography] == 'true'
+
+      base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                               .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+      public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+
+      prev_start = start_date - (end_date - start_date)
+      prev_base = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                             .where('started_at >= ? AND started_at < ?', prev_start, start_date)
+      prev_visits = apply_analytics_filters(prev_base, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+
+      clicks = Ahoy::Event.where(name: '$click')
+                          .where('time >= ? AND time <= ?', start_date, end_date)
+                          .where(visit_id: public_visits.select(:id))
+      prev_clicks = Ahoy::Event.where(name: '$click')
+                               .where('time >= ? AND time < ?', prev_start, start_date)
+                               .where(visit_id: prev_visits.select(:id))
+
+      @unique_visitors = public_visits.distinct.count(:visitor_token)
+      by_category = clicks.group(Arel.sql("properties->>'category'")).count
+      prev_by_category = prev_clicks.group(Arel.sql("properties->>'category'")).count
+      @total_clicks = by_category.values.sum
+
+      @conversion_tiles = CONVERSION_TILES.map do |tile|
+        count = tile[:categories].sum { |c| by_category[c] || 0 }
+        prev = tile[:categories].sum { |c| prev_by_category[c] || 0 }
+        tile.merge(
+          count: count,
+          change_pct: prev > 0 ? (((count - prev).to_f / prev) * 100).round(1) : 0,
+          per_100_visitors: @unique_visitors > 0 ? (count * 100.0 / @unique_visitors).round(1) : 0
+        )
+      end
+
+      days_count = (end_date.to_date - start_date.to_date).to_i + 1
+      daily = clicks.where("properties->>'category' IN (?)", DAILY_CHART_CATEGORIES)
+                    .group(Arel.sql("properties->>'category'"), Arel.sql("DATE(time)"))
+                    .count
+      days = (0...days_count).map { |i| start_date.to_date + i.days }
+      @daily_labels = days.map { |d| d.strftime('%d %b') }
+      @daily_series = DAILY_CHART_CATEGORIES.map do |category|
+        { label: CLICK_CATEGORY_LABELS[category], data: days.map { |d| daily[[category, d]] || 0 } }
+      end
+
+      @top_destinations = clicks.group(Arel.sql("properties->>'category'"), Arel.sql("properties->>'destination'"))
+                                .order('count_all DESC')
+                                .limit(15)
+                                .count
+                                .map { |(category, destination), count| { category: category, destination: pretty_destination(destination), count: count } }
+
+      @top_pages = clicks.group(Arel.sql("properties->>'page'"))
+                         .order('count_all DESC')
+                         .limit(20)
+                         .count
+                         .map { |path, count| { path: path, label: normalize_url(path), count: count } }
+      @selected_page ||= @top_pages.first&.dig(:path)
+      page_clicks = @selected_page ? clicks.where("properties->>'page' = ?", @selected_page) : clicks.none
+      # Clicks recorded before the tracker collapsed whitespace carry the
+      # element's raw text (newlines, indentation); group on the squished form.
+      @page_clicks = page_clicks.group(Arel.sql("properties->>'category'"), Arel.sql("properties->>'destination'"),
+                                       Arel.sql("regexp_replace(trim(properties->>'text'), '\\s+', ' ', 'g')"))
+                                .order('count_all DESC')
+                                .limit(20)
+                                .count
+                                .map { |(category, destination, text), count| { category: category, destination: pretty_destination(destination), text: text.to_s.truncate(60), count: count } }
+      @page_total = page_clicks.count
+      @selected_page_label = @selected_page ? normalize_url(@selected_page) : nil
+    end
   end
 
   def analytics_hourly
@@ -616,10 +707,23 @@ class AdminController < ApplicationController
   
   private
   
+  def require_admin_for_analytics
+    head :forbidden unless current_user&.admin
+  end
+
   def normalize_url(url)
     path = url.to_s.gsub(/^https?:\/\/[^\/]+/, '')
     return 'Homepage' if path.blank? || path == '/'
     path
+  end
+
+  # Short label for a "$click" destination: site links become paths, tel:/mailto:
+  # lose their scheme, everything else keeps host + path.
+  def pretty_destination(destination)
+    d = destination.to_s
+    return d.sub(/\A(tel|mailto):/i, '') if d.match?(/\A(tel|mailto):/i)
+    return normalize_url(d) if d.match?(%r{\Ahttps?://(www\.)?spinalcare\.ro(/|\z)}i)
+    d.sub(%r{\Ahttps?://(www\.)?}i, '').sub(/\?.*\z/, '').truncate(70)
   end
 
   def calculate_start_date(period)

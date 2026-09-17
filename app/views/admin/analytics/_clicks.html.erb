@@ -1,0 +1,190 @@
+<%= turbo_frame_tag "clicks" do %>
+  <% if @total_clicks > 0 %>
+  <div class="clicks-section">
+    <!-- Conversions -->
+    <div class="hero-kpis clicks-kpis" role="region" aria-label="Conversii">
+      <% @conversion_tiles.each do |tile| %>
+        <div class="kpi-card <%= tile[:css] %>" role="article" aria-label="<%= tile[:label] %>">
+          <div class="kpi-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 7.28a.75.75 0 00-1.06-1.06L11 12.69l-2.22-2.22a.75.75 0 10-1.06 1.06l2.75 2.75a.75.75 0 001.06 0l4.75-4.75z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <div class="kpi-label" data-controller="tooltip" data-tooltip-text-value="<%= tile[:tooltip] %>">
+              <%= tile[:label] %>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tooltip-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+              </svg>
+            </div>
+            <div class="kpi-value"><%= number_with_delimiter(tile[:count]) %></div>
+            <div class="kpi-trend <%= tile[:change_pct] >= 0 ? 'positive' : 'negative' %>">
+              <%= tile[:change_pct] >= 0 ? '↑' : '↓' %> <%= tile[:change_pct].abs %>% vs perioada anterioară
+            </div>
+            <div class="kpi-subvalue"><%= tile[:per_100_visitors] %> la 100 de vizitatori unici</div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Calls and bookings per day -->
+    <div class="chart-section">
+      <h4 class="pages-title">Apeluri și programări pe zi</h4>
+      <% if @daily_series.any? { |s| s[:data].sum > 0 } %>
+        <canvas id="conversionsChart" height="100"></canvas>
+      <% else %>
+        <div class="empty-state"><p>Niciun apel sau programare în perioada selectată.</p></div>
+      <% end %>
+    </div>
+
+    <div class="pages-grid">
+      <!-- Top destinations -->
+      <div class="pages-table-container">
+        <h4 class="pages-title">Unde dau click vizitatorii</h4>
+        <table class="pages-table">
+          <thead>
+            <tr>
+              <th>Destinație</th>
+              <th>Click-uri</th>
+              <th>% vizitatori</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @top_destinations.each_with_index do |row, index| %>
+              <tr>
+                <td class="page-url">
+                  <div class="page-rank"><%= index + 1 %></div>
+                  <div class="page-details">
+                    <div class="page-path"><%= row[:destination] %></div>
+                    <span class="click-badge click-badge-<%= row[:category] %>"><%= AdminController::CLICK_CATEGORY_LABELS[row[:category]] || row[:category] %></span>
+                  </div>
+                </td>
+                <td class="page-count"><%= number_with_delimiter(row[:count]) %></td>
+                <td class="page-percent"><%= @unique_visitors > 0 ? (row[:count] * 100.0 / @unique_visitors).round(1) : 0 %>%</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Per-page breakdown -->
+      <div class="pages-table-container">
+        <h4 class="pages-title">Ce se apasă pe o pagină</h4>
+        <%= form_with url: dashboard_analytics_clicks_path, method: :get, class: 'clicks-page-form', data: { turbo_frame: 'clicks' } do %>
+          <%= hidden_field_tag :period, params[:period] %>
+          <%= hidden_field_tag :custom_start_date, params[:custom_start_date] %>
+          <%= hidden_field_tag :custom_end_date, params[:custom_end_date] %>
+          <%= hidden_field_tag :filter_bots, params[:filter_bots] %>
+          <%= hidden_field_tag :filter_geography, params[:filter_geography] %>
+          <%= label_tag :page, 'Pagina', class: 'clicks-page-label' %>
+          <%= select_tag :page,
+                         options_for_select(@top_pages.map { |p| ["#{p[:label]} (#{number_with_delimiter(p[:count])})", p[:path]] }, @selected_page),
+                         class: 'date-input-new clicks-page-select', onchange: 'this.form.requestSubmit()', aria: { label: 'Alege pagina' } %>
+        <% end %>
+        <% if @page_clicks.any? %>
+          <table class="pages-table">
+            <thead>
+              <tr>
+                <th>Element</th>
+                <th>Click-uri</th>
+                <th>%</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @page_clicks.each_with_index do |row, index| %>
+                <tr>
+                  <td class="page-url">
+                    <div class="page-rank entry"><%= index + 1 %></div>
+                    <div class="page-details">
+                      <div class="page-path"><%= row[:text].presence || row[:destination] %></div>
+                      <span class="click-badge click-badge-<%= row[:category] %>"><%= AdminController::CLICK_CATEGORY_LABELS[row[:category]] || row[:category] %></span>
+                      <% if row[:text].present? %><span class="click-destination"><%= row[:destination] %></span><% end %>
+                    </div>
+                  </td>
+                  <td class="page-count"><%= number_with_delimiter(row[:count]) %></td>
+                  <td class="page-percent"><%= @page_total > 0 ? (row[:count] * 100.0 / @page_total).round(1) : 0 %>%</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <div class="empty-state"><p>Niciun click înregistrat pe această pagină.</p></div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="pages-summary">
+      <div class="summary-card">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="summary-icon">
+          <path fill-rule="evenodd" d="M12 1.5a.75.75 0 01.75.75V4.5a.75.75 0 01-1.5 0V2.25A.75.75 0 0112 1.5zM5.636 4.136a.75.75 0 011.06 0l1.592 1.591a.75.75 0 01-1.061 1.06l-1.591-1.59a.75.75 0 010-1.061zm12.728 0a.75.75 0 010 1.06l-1.591 1.592a.75.75 0 01-1.06-1.061l1.59-1.591a.75.75 0 011.061 0zm-6.816 4.496a.75.75 0 01.82.311l5.228 7.917a.75.75 0 01-.777 1.148l-2.097-.43 1.045 3.9a.75.75 0 01-1.45.388l-1.044-3.899-1.601 1.42a.75.75 0 01-1.247-.606l.569-9.47a.75.75 0 01.554-.68z" clip-rule="evenodd" />
+        </svg>
+        <div>
+          <div class="summary-label">Total click-uri înregistrate</div>
+          <div class="summary-value"><%= number_with_delimiter(@total_clicks) %></div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="summary-icon">
+          <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM3.087 17.87a.563.563 0 01.563-.563h6a.563.563 0 01.563.563 6.94 6.94 0 01-7.126 0z"/>
+        </svg>
+        <div>
+          <div class="summary-label">Click-uri / vizitator unic</div>
+          <div class="summary-value"><%= @unique_visitors > 0 ? (@total_clicks.to_f / @unique_visitors).round(1) : 0 %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @daily_series.any? { |s| s[:data].sum > 0 } %>
+  <script>
+    (function() {
+      const initChart = () => {
+        if (typeof Chart === 'undefined') { setTimeout(initChart, 50); return; }
+        const canvas = document.getElementById('conversionsChart');
+        if (!canvas) return;
+        if (canvas.chart) canvas.chart.destroy();
+
+        const colors = ['#10b981', '#3b82f6'];
+        const series = <%= raw @daily_series.to_json %>;
+        canvas.chart = new Chart(canvas, {
+          type: 'line',
+          data: {
+            labels: <%= raw @daily_labels.to_json %>,
+            datasets: series.map((s, i) => ({
+              label: s.label,
+              data: s.data,
+              borderColor: colors[i],
+              backgroundColor: colors[i] + '1a',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4,
+              pointRadius: 3,
+              pointHoverRadius: 5
+            }))
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 3,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: true, position: 'top' },
+              tooltip: { backgroundColor: 'rgba(0, 0, 0, 0.8)', padding: 12, cornerRadius: 8 }
+            },
+            scales: {
+              y: { beginAtZero: true, ticks: { precision: 0, font: { size: 12 } }, grid: { color: '#e5e7eb' } },
+              x: { ticks: { maxRotation: 45, minRotation: 45, font: { size: 11 } }, grid: { display: false } }
+            }
+          }
+        });
+      };
+      initChart();
+    })();
+  </script>
+  <% end %>
+  <% else %>
+  <div class="empty-state">
+    <p>Nu există click-uri înregistrate pentru perioada selectată.</p>
+  </div>
+  <% end %>
+<% end %>

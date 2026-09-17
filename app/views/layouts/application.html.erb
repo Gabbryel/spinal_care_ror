@@ -77,7 +77,11 @@
           visitsUrl: "/ahoy/visits",
           eventsUrl: "/ahoy/events"
         });
-        ahoy.trackView();
+        // One $view per page shown. turbo:load fires on the initial load and
+        // after every Turbo Drive navigation; without this, only full page
+        // loads were counted.
+        document.addEventListener("turbo:load", function () { ahoy.trackView(); });
+        document.addEventListener("DOMContentLoaded", function () { if (!window.Turbo) ahoy.trackView(); });
       </script>
       <%= yield :head %>
   </head>
