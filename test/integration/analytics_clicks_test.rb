@@ -106,6 +106,22 @@ class AnalyticsClicksTest < ActionDispatch::IntegrationTest
     end
   end
 
+  # Turbo parses each response with DOMParser (scripting disabled), where an
+  # <img> or <iframe> inside <head> implicitly opens <body>. Everything after
+  # it is then treated as body content and re-executed on every Turbo visit,
+  # which doubled $view events. Nokogiri::HTML5 parses the same way.
+  test "tracking scripts stay inside head under an HTML5 parser" do
+    get "/"
+    assert_response :success
+    doc = Nokogiri::HTML5(response.body)
+    assert_empty doc.css("head img, head iframe"), "head must not contain img/iframe (noscript pixels go in body)"
+    assert doc.at_css("head script[src*='ahoy']"), "ahoy.js must be in head"
+    ahoy_config = doc.css("head script:not([src])").find { |s| s.text.include?("ahoy.configure") }
+    assert ahoy_config, "ahoy config script must be in head"
+    assert_includes ahoy_config.text, "ahoyViewTrackingBound"
+    assert_equal 1, response.body.scan('addEventListener("turbo:load"').size, "one turbo:load view listener"
+  end
+
   private
 
   def visit(started_at:, visitor:, user_agent: BROWSER)

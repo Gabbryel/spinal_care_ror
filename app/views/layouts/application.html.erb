@@ -70,7 +70,9 @@
       fbq('init', '623596673860745');
       fbq('track', 'PageView');
       </script>
-      <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=623596673860745&ev=PageView&noscript=1"/></noscript>
+      <%# The Facebook pixel <noscript><img> lives in <body> (below): an <img> inside
+          <head> makes Turbo's DOMParser close the head early, so every tag after it
+          (Ahoy, this config) was re-executed on each Turbo visit and views doubled. %>
       <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/ahoy.js@0.4.2/dist/ahoy.min.js" %>
       <script>
         ahoy.configure({
@@ -79,9 +81,13 @@
         });
         // One $view per page shown. turbo:load fires on the initial load and
         // after every Turbo Drive navigation; without this, only full page
-        // loads were counted.
-        document.addEventListener("turbo:load", function () { ahoy.trackView(); });
-        document.addEventListener("DOMContentLoaded", function () { if (!window.Turbo) ahoy.trackView(); });
+        // loads were counted. Guarded so a re-executed script cannot add a
+        // second listener.
+        if (!window.ahoyViewTrackingBound) {
+          window.ahoyViewTrackingBound = true;
+          document.addEventListener("turbo:load", function () { ahoy.trackView(); });
+          document.addEventListener("DOMContentLoaded", function () { if (!window.Turbo) ahoy.trackView(); });
+        }
       </script>
       <%= yield :head %>
   </head>
@@ -92,6 +98,7 @@
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TVX66CLN"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+    <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=623596673860745&ev=PageView&noscript=1"/></noscript>
   
       <%= render "shared/before_nav" %>
       <%= render "shared/navbar" %>
