@@ -12,7 +12,7 @@
             <% end %>
           </span>
         </h4>
-        <p class="audit-intro">Verificări că cifrele de mai sus pot fi luate în serios.</p>
+        <p class="audit-intro">Verificări ale calității datelor pentru perioada selectată.</p>
         <% @audit.each do |f| %>
           <%= render 'admin/analytics/finding', finding: f %>
         <% end %>
