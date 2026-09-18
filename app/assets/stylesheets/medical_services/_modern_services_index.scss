@@ -422,3 +422,23 @@ body:has(.modern-medical-services-page) .main {
     }
   }
 }
+
+
+// "Sună pentru preț" is a real tel: link (tracked as a call); keep the badge
+// look, add the link affordances.
+a.price-contact,
+a.price-contact-public {
+  text-decoration: none;
+  min-height: 2.75rem;
+  border-radius: 0.375rem;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #1d4ed8;
+    outline-offset: 2px;
+  }
+}

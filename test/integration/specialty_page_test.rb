@@ -13,6 +13,7 @@ class SpecialtyPageTest < ActionDispatch::IntegrationTest
     medic = Profession.create!(name: "medic")
     @specialty = Specialty.create!(name: "Cardiologie intervențională", description: "<p>Proceduri minim invazive.</p>")
     MedicalService.create!(name: "Consultație", price: 250, specialty: @specialty)
+    MedicalService.create!(name: "Coronarografie", price: 0, specialty: @specialty)
     Member.create!(first_name: "Ștefan", last_name: "Moisei", profession: medic, specialty: @specialty,
                    has_own_page: true, selected: true, order: 1)
   end
@@ -45,6 +46,11 @@ class SpecialtyPageTest < ActionDispatch::IntegrationTest
     assert_operator body.index("Servicii Medicale"), :<, body.index("specialty-cta--bottom")
     assert_operator body.index("specialty-cta--bottom"), :<, body.index("Specialiști cardiologie")
     assert_nil body.index("btn-action !bg-orange-600"), "the old mid-page button is gone"
+
+    call_for_price = css_select("a.price-contact-public")
+    assert_equal 1, call_for_price.size, "a service without a price shows a phone link"
+    assert_equal "tel:0374554344", call_for_price.first["href"]
+    assert_includes call_for_price.first.text, "Sună pentru preț"
   end
 
   test "the price list page gets the same actions under the hero and after the list" do
@@ -57,6 +63,10 @@ class SpecialtyPageTest < ActionDispatch::IntegrationTest
     assert_equal "Programează-te acum", ctas[1].at_css(".specialty-cta-title").text.strip
     assert_equal 2, css_select(".specialty-cta button[data-bs-target='#promoModal']").size
     assert_equal 2, css_select(".specialty-cta a[href='tel:0374554344']").size
+
+    call_for_price = css_select("a.price-contact")
+    assert_equal 1, call_for_price.size
+    assert_equal "tel:0374554344", call_for_price.first["href"]
 
     body = response.body
     assert_operator body.index("specialty-cta--top"), :<, body.index("Cardiologie intervențională")
