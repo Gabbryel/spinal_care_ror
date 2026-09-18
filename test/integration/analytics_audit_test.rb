@@ -48,6 +48,26 @@ class AnalyticsAuditTest < ActionDispatch::IntegrationTest
     assert_includes insights["Zile atipice"], "Cea mai bună zi"
   end
 
+  test "views and clicks on a retired slug are merged into the current page" do
+    cardio = Specialty.create!(name: "Cardiologie intervențională")
+    SlugRedirect.record(cardio, "cardiologie-interven-ionala")
+    old_path = "/specialitati-medicale/cardiologie-interven-ionala"
+    new_path = "/specialitati-medicale/#{cardio.slug}"
+
+    40.times do |i|
+      v = visit(started_at: @now - (i % 7).days - 2.hours)
+      view(v, i < 25 ? old_path : new_path, @now - (i % 7).days - 1.hour)
+      click(v, "call", "tel:0374554344", i < 2 ? old_path : new_path, @now - (i % 7).days - 1.hour) if i < 4
+    end
+
+    get "/dashboard/analytics/audit", params: { period: "7" }
+    assert_response :success
+    insights = findings(1)
+    assert_includes insights["Paginile care duc cel mai des la contact"], "#{new_path} (10.0% din 40 vizualizări)"
+    assert_nil insights["Pagini vizitate des, fără nicio acțiune de contact"]
+    assert_not_includes response.body, old_path
+  end
+
   test "dead tracking is reported as a problem and an empty period says so" do
     old_visit = visit(started_at: @now - 20.days)
     old_visit.events.create!(name: "$view", time: @now - 20.days, properties: { url: "https://www.spinalcare.ro/", page: "/" })

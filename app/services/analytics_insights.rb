@@ -357,10 +357,13 @@ class AnalyticsInsights
 
   def page_conversion_rates
     @page_conversion_rates ||= begin
+      # Retired URLs (old slugs, structural leftovers) are merged into the page
+      # they now redirect to, so a renamed page is not reported twice, once as
+      # a "dead end" under its old slug.
       views_by_page = views.group(Arel.sql("properties->>'url'")).count
-                           .each_with_object(Hash.new(0)) { |(url, n), h| h[path_of(url)] += n }
+                           .each_with_object(Hash.new(0)) { |(url, n), h| h[current_path(url)] += n }
       conv_by_page = conversion_clicks.group(Arel.sql("properties->>'page'")).count
-                                .each_with_object(Hash.new(0)) { |(page, n), h| h[path_of(page)] += n }
+                                .each_with_object(Hash.new(0)) { |(page, n), h| h[current_path(page)] += n }
       views_by_page.select { |_, n| n >= MIN_PAGE_VIEWS }.map do |page, n|
         c = conv_by_page[page]
         { page: page, views: n, conversions: c, rate: pct(c, n) }
@@ -374,6 +377,18 @@ class AnalyticsInsights
              else SOURCE_BUCKETS.find { |_, re| domain.match?(re) }&.first || 'Altele'
              end
       h[name] += n
+    end
+  end
+
+  # The path a URL resolves to today: itself, or its redirect target.
+  def current_path(url)
+    path = path_of(url)
+    return path if path == 'Homepage'
+
+    @current_path ||= {}
+    @current_path[path] ||= begin
+      target = LegacyRedirect.resolve(path)
+      target.is_a?(String) && target.start_with?('/') ? target : path
     end
   end
 
