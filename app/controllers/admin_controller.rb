@@ -377,6 +377,32 @@ class AdminController < ApplicationController
     end
   end
 
+  # Audit (can the data be trusted?) and interpretation (what does it say?)
+  # of the period, produced by AnalyticsInsights.
+  def analytics_audit
+    render_cached_analytics_section(:audit, 'admin/analytics/audit') do
+      dates = calculate_period_dates
+      start_date = dates[:start_date]
+      end_date = dates[:end_date]
+      filter_bots = params[:filter_bots] != 'false'
+      filter_geography = params[:filter_geography] == 'true'
+
+      base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                               .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+      public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+      prev_start = start_date - (end_date - start_date)
+      prev_base = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                             .where('started_at >= ? AND started_at < ?', prev_start, start_date)
+      prev_visits = apply_analytics_filters(prev_base, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+
+      insights = AnalyticsInsights.new(visits: public_visits, prev_visits: prev_visits, all_visits: base_visits,
+                                       start_date: start_date, end_date: end_date)
+      @audit = insights.audit
+      @insights = insights.insights
+      @audit_summary = @audit.group_by(&:level).transform_values(&:size)
+    end
+  end
+
   def analytics_hourly
     render_cached_analytics_section(:hourly, 'admin/analytics/hourly') do
       dates = calculate_period_dates

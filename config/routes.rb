@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get 'dashboard/analytics/sources', to: 'admin#analytics_sources'
   get 'dashboard/analytics/pages', to: 'admin#analytics_pages'
   get 'dashboard/analytics/clicks', to: 'admin#analytics_clicks'
+  get 'dashboard/analytics/audit', to: 'admin#analytics_audit'
   get 'dashboard/analytics/hourly', to: 'admin#analytics_hourly'
   get 'dashboard/analytics/geo_sources', to: 'admin#analytics_geo_sources'
   get 'dashboard/analytics/bot_traffic', to: 'admin#analytics_bot_traffic'

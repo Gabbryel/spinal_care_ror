@@ -1,0 +1,11 @@
+<% icons = { 'bad' => '✕', 'warn' => '!', 'info' => 'i', 'ok' => '✓' } %>
+<div class="finding finding-<%= finding.level %>">
+  <span class="finding-icon" aria-hidden="true"><%= icons[finding.level] %></span>
+  <div class="finding-body">
+    <div class="finding-title"><%= finding.title %></div>
+    <div class="finding-text"><%= finding.text %></div>
+    <% if finding.hint.present? %>
+      <div class="finding-hint"><%= finding.hint %></div>
+    <% end %>
+  </div>
+</div>

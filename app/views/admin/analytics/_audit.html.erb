@@ -1,0 +1,29 @@
+<%= turbo_frame_tag "audit" do %>
+  <div class="audit-section">
+    <div class="audit-grid">
+      <div class="audit-column">
+        <h4 class="pages-title">
+          Audit date
+          <span class="audit-summary">
+            <% { 'bad' => 'probleme', 'warn' => 'atenționări', 'ok' => 'ok' }.each do |level, label| %>
+              <% if (@audit_summary[level] || 0) > 0 %>
+                <span class="audit-pill audit-pill-<%= level %>"><%= @audit_summary[level] %> <%= label %></span>
+              <% end %>
+            <% end %>
+          </span>
+        </h4>
+        <p class="audit-intro">Verificări că cifrele de mai sus pot fi luate în serios.</p>
+        <% @audit.each do |f| %>
+          <%= render 'admin/analytics/finding', finding: f %>
+        <% end %>
+      </div>
+      <div class="audit-column">
+        <h4 class="pages-title">Interpretare</h4>
+        <p class="audit-intro">Ce spun datele din perioada selectată, cu filtrele active.</p>
+        <% @insights.each do |f| %>
+          <%= render 'admin/analytics/finding', finding: f %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
