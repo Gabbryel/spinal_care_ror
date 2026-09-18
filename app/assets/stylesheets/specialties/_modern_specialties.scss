@@ -353,8 +353,8 @@
 // ---------------------------------------------------------------------------
 // Contact call-to-action on the specialty page (specialties/_contact_cta).
 // One primary action (book online) and one secondary (call), both ≥ 48px tall,
-// side by side from 640px and stacked below. Colours keep AA contrast: white
-// on #c2410c is 5.0:1, #1f2937 on white is 14.7:1.
+// side by side from 640px and stacked below. #1f2937 on white is 14.7:1; the
+// primary button's contrast note is below.
 // ---------------------------------------------------------------------------
 .specialty-cta {
   display: flex;
@@ -364,7 +364,7 @@
   gap: 1.25rem 2rem;
   background: white;
   border: 1px solid #e5e7eb;
-  border-left: 5px solid #c2410c;
+  border-left: 5px solid #ea580c;
   border-radius: 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   padding: 1.5rem 2rem;
@@ -470,23 +470,27 @@
   }
 }
 
+// Same orange gradient as the navbar "Programare" button. White on #ea580c
+// is 3.6:1, so the label is set as large text (≥ 18.66px bold), where the
+// AA threshold is 3:1.
 .specialty-cta-primary {
-  background: #c2410c;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   color: white;
-  border: 2px solid #c2410c;
-  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.3);
+  border: none;
+  font-size: 1.1875rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
 
   &:hover {
-    background: #9a3412;
-    border-color: #9a3412;
+    background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
     color: white;
-    box-shadow: 0 6px 16px rgba(194, 65, 12, 0.35);
+    box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
     transform: translateY(-1px);
   }
 
   &:active {
     transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(194, 65, 12, 0.3);
+    box-shadow: 0 2px 6px rgba(249, 115, 22, 0.3);
   }
 
   @media (prefers-reduced-motion: reduce) {
