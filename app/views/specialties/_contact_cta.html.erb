@@ -1,0 +1,30 @@
+<%# Contact call-to-action for a specialty page.
+    placement: "top" (under the hero) or "bottom" (after the price list).
+    The button opens the booking modal (tracked as a booking click) and the
+    phone link is a tel: link (tracked as a call). %>
+<% top = placement == "top" %>
+<aside class="specialty-cta specialty-cta--<%= placement %>" aria-labelledby="specialty-cta-<%= placement %>-title">
+  <div class="specialty-cta-text">
+    <p class="specialty-cta-title" id="specialty-cta-<%= placement %>-title">
+      <%= top ? "Programează o consultație de #{specialty.name.downcase}" : "Ai văzut prețurile. Următorul pas:" %>
+    </p>
+    <p class="specialty-cta-subtitle">
+      <%= top ? "Online, în câteva minute, sau telefonic." : "Programează-te online sau sună-ne pentru detalii și disponibilitate." %>
+    </p>
+  </div>
+  <div class="specialty-cta-actions">
+    <button type="button" class="specialty-cta-primary" data-bs-toggle="modal" data-bs-target="#promoModal">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+        <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z" clip-rule="evenodd" />
+      </svg>
+      Programează-te online
+    </button>
+    <a href="tel:0374554344" class="specialty-cta-secondary">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+        <path fill-rule="evenodd" d="M1.5 4.5a3 3 0 013-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 01-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 006.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 011.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 01-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5z" clip-rule="evenodd" />
+      </svg>
+      <span class="specialty-cta-phone">0374 554 344</span>
+      <span class="visually-hidden">, sună acum</span>
+    </a>
+  </div>
+</aside>

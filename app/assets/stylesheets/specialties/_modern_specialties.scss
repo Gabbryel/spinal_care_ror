@@ -349,3 +349,164 @@
   }
 }
 
+
+// ---------------------------------------------------------------------------
+// Contact call-to-action on the specialty page (specialties/_contact_cta).
+// One primary action (book online) and one secondary (call), both ≥ 48px tall,
+// side by side from 640px and stacked below. Colours keep AA contrast: white
+// on #c2410c is 5.0:1, #1f2937 on white is 14.7:1.
+// ---------------------------------------------------------------------------
+.specialty-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem 2rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-left: 5px solid #c2410c;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem 2rem;
+  margin-bottom: 2.5rem;
+
+  @media (max-width: 768px) {
+    padding: 1.25rem 1.25rem;
+    margin-bottom: 2rem;
+  }
+}
+
+// Under the hero: pulled up over the hero's bottom edge so the actions sit
+// in the first screen on every device.
+.specialty-cta--top {
+  margin-top: -4.5rem;
+  position: relative;
+  z-index: 1;
+
+  @media (max-width: 768px) {
+    margin-top: -3.5rem;
+  }
+}
+
+.specialty-cta--bottom {
+  margin-top: -1rem;
+  margin-bottom: 4rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 3rem;
+  }
+}
+
+.specialty-cta-text {
+  flex: 1 1 18rem;
+  min-width: 0;
+}
+
+.specialty-cta-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #1f2937;
+
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+  }
+}
+
+.specialty-cta-subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #4b5563;
+}
+
+.specialty-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  flex: 0 1 auto;
+
+  @media (max-width: 640px) {
+    width: 100%;
+    flex-direction: column;
+  }
+}
+
+.specialty-cta-primary,
+.specialty-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.625rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: none;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #1d4ed8;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 640px) {
+    width: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.specialty-cta-primary {
+  background: #c2410c;
+  color: white;
+  border: 2px solid #c2410c;
+  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.3);
+
+  &:hover {
+    background: #9a3412;
+    border-color: #9a3412;
+    color: white;
+    box-shadow: 0 6px 16px rgba(194, 65, 12, 0.35);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(194, 65, 12, 0.3);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:hover { transform: none; }
+  }
+}
+
+.specialty-cta-secondary {
+  background: white;
+  color: #1f2937;
+  border: 2px solid #4A6775;
+
+  &:hover {
+    background: #f1f5f9;
+    color: #1f2937;
+    border-color: #3a5463;
+  }
+
+  .specialty-cta-phone {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+}
