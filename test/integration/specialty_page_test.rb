@@ -47,6 +47,22 @@ class SpecialtyPageTest < ActionDispatch::IntegrationTest
     assert_nil body.index("btn-action !bg-orange-600"), "the old mid-page button is gone"
   end
 
+  test "the price list page gets the same actions under the hero and after the list" do
+    get "/servicii-medicale"
+    assert_response :success
+
+    ctas = css_select(".specialty-cta")
+    assert_equal 2, ctas.size
+    assert_equal "Programează o consultație", ctas[0].at_css(".specialty-cta-title").text.strip
+    assert_equal "Programează-te acum", ctas[1].at_css(".specialty-cta-title").text.strip
+    assert_equal 2, css_select(".specialty-cta button[data-bs-target='#promoModal']").size
+    assert_equal 2, css_select(".specialty-cta a[href='tel:0374554344']").size
+
+    body = response.body
+    assert_operator body.index("specialty-cta--top"), :<, body.index("Cardiologie intervențională")
+    assert_operator body.index("Consultație"), :<, body.index("specialty-cta--bottom")
+  end
+
   test "a specialty without services still gets both actions and no empty price section" do
     bare = Specialty.create!(name: "Nutriție")
     get "/specialitati-medicale/#{bare.slug}"

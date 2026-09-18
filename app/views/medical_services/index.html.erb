@@ -10,6 +10,8 @@
   </div>
 
   <div class="services-container" data-controller="tooltip">
+    <%= render partial: "specialties/contact_cta", locals: { placement: "top" } %>
+
     <% @specialties.each do |specialty| %>
       <section class="specialty-section" id="specialty-<%= specialty.id %>">
         <div class="specialty-header">
@@ -142,5 +144,7 @@
         </div>
       </section>
     <% end %>
+
+    <%= render partial: "specialties/contact_cta", locals: { placement: "bottom" } %>
   </div>
 </div>
