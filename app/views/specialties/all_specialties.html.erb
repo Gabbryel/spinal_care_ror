@@ -12,11 +12,15 @@
 
   <!-- Specialties Grid -->
   <div class="specialties-content">
+    <%= render partial: "specialties/contact_cta", locals: { placement: "top" } %>
+
     <div class="specialties-grid">
       <% @specialties.select(&:is_active).each do |specialty| %>
         <%= render partial: 'specialties/modern_specialty_card', locals: {specialty: specialty} %>
       <% end %>
     </div>
+
+    <%= render partial: "specialties/contact_cta", locals: { placement: "bottom" } %>
   </div>
 
   <!-- Feature Section -->

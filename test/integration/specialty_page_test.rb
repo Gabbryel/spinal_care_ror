@@ -89,6 +89,18 @@ class SpecialtyPageTest < ActionDispatch::IntegrationTest
     assert_operator body.index("member-content-inner"), :<, body.index("specialty-cta--bottom")
   end
 
+  test "the specialties index gets the actions under the hero and after the grid" do
+    get "/specialitati-medicale"
+    assert_response :success
+    ctas = css_select(".specialty-cta")
+    assert_equal 2, ctas.size
+    assert_equal "Programează o consultație", ctas[0].at_css(".specialty-cta-title").text.strip
+    assert_equal 2, css_select(".specialty-cta a[href='tel:0374554344']").size
+    body = response.body
+    assert_operator body.index("specialty-cta--top"), :<, body.index("specialties-grid")
+    assert_operator body.index("specialties-grid"), :<, body.index("specialty-cta--bottom")
+  end
+
   test "a specialty without services still gets both actions and no empty price section" do
     bare = Specialty.create!(name: "Nutriție")
     get "/specialitati-medicale/#{bare.slug}"
