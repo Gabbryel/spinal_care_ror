@@ -402,3 +402,43 @@
   color: #6b7280;
   min-width: 6rem;
 }
+
+
+// Global search (all users, all time)
+.journal-global-search {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 0 0 1.25rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+
+  .journal-search-field { max-width: 40rem; }
+}
+
+.journal-search-hint {
+  flex-basis: 100%;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+a.journal-search-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.audit-entry-user {
+  font-weight: 600;
+  color: #4a6775;
+  text-decoration: none;
+  margin-right: 0.25rem;
+
+  &:hover { text-decoration: underline; }
+}
+
+.audit-entry--view .audit-entry-icon { background: #f3f4f6; color: #6b7280; }

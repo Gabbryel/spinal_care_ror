@@ -46,8 +46,8 @@ class AuditUserReport
   WEEKDAYS = %w[Duminică Luni Marți Miercuri Joi Vineri Sâmbătă].freeze
   MONTHS = %w[ianuarie februarie martie aprilie mai iunie iulie august septembrie octombrie noiembrie decembrie].freeze
 
-  Entry = Struct.new(:time, :kind, :text, :details, :meta, keyword_init: true)
-  View = Struct.new(:time, :path, :duration_ms, :status_code, keyword_init: true)
+  Entry = Struct.new(:time, :kind, :text, :details, :meta, :user, keyword_init: true)
+  View = Struct.new(:time, :path, :duration_ms, :status_code, :user, keyword_init: true)
   Day = Struct.new(:date, :label, :entries, :views, keyword_init: true)
 
   attr_reader :user
@@ -83,7 +83,7 @@ class AuditUserReport
         date: date,
         label: day_label(date),
         entries: rows.reject { |l| l.action == 'view' }.map { |l| entry(l) },
-        views: rows.select { |l| l.action == 'view' }.map { |l| View.new(time: l.created_at, path: l.request_path, duration_ms: l.duration_ms, status_code: l.status_code) }
+        views: rows.select { |l| l.action == 'view' }.map { |l| View.new(time: l.created_at, path: l.request_path, duration_ms: l.duration_ms, status_code: l.status_code, user: l.user) }
       )
     end
   end
@@ -92,13 +92,24 @@ class AuditUserReport
     "#{WEEKDAYS[date.wday]}, #{date.day} #{MONTHS[date.month - 1]} #{date.year}"
   end
 
+  # One log row as a sentence, for callers outside a per-user report.
+  def self.entry_for(log)
+    new(log.user, []).entry(log)
+  end
+
+  def entry(log)
+    entry = build_entry(log)
+    entry.user = log.user
+    entry
+  end
+
   private
 
   def day_label(date)
     self.class.day_label(date)
   end
 
-  def entry(log)
+  def build_entry(log)
     case log.action
     when 'create'
       Entry.new(time: log.created_at, kind: 'create', text: "a creat #{label(log)} #{quoted(name_of(log))}",
@@ -114,6 +125,8 @@ class AuditUserReport
       Entry.new(time: log.created_at, kind: 'login', text: 's-a autentificat', details: [], meta: meta(log, device: true))
     when 'logout'
       Entry.new(time: log.created_at, kind: 'logout', text: 's-a deconectat', details: [], meta: meta(log, device: true))
+    when 'view'
+      Entry.new(time: log.created_at, kind: 'view', text: "a vizualizat #{log.request_path.presence || label(log)}", details: [], meta: meta(log))
     else
       Entry.new(time: log.created_at, kind: log.action, text: log.full_description, details: [], meta: meta(log))
     end

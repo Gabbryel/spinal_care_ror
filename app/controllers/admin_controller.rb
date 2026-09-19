@@ -636,11 +636,17 @@ class AdminController < ApplicationController
       { user: user, last_at: at, changes: changes, logins: by_action['login'] || 0, views: by_action['view'] || 0 }
     end.compact
 
-    @selected_user = params[:user].present? ? User.find_by(id: params[:user]) : @user_cards.first&.dig(:user)
-    return unless @selected_user
+    # Global search ("who changed X?"): every user, all time, replaces the
+    # per-user report while a query is present.
+    @q = params[:q].to_s.squish
+    @search = AuditSearch.new(@q) if @q.present?
 
-    @report = AuditUserReport.new(@selected_user,
-                                  logs.where(user_id: @selected_user.id).includes(:auditable).order(created_at: :desc))
+    @selected_user = params[:user].present? ? User.find_by(id: params[:user]) : @user_cards.first&.dig(:user)
+    return unless @selected_user && @search.nil?
+
+    user_logs = logs.where(user_id: @selected_user.id).includes(:user).order(created_at: :desc).to_a
+    AuditSearch.preload_auditables(user_logs)
+    @report = AuditUserReport.new(@selected_user, user_logs)
   end
 
   def test

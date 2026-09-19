@@ -21,6 +21,26 @@
       <% end %>
     </nav>
 
+    <%= form_with url: dashboard_audit_path, method: :get, class: 'journal-global-search', role: 'search',
+                  data: { controller: 'global-search', turbo_frame: 'audit-results', turbo_action: 'advance' } do |f| %>
+      <%= hidden_field_tag :period, @period %>
+      <%= hidden_field_tag :user, @selected_user&.id %>
+      <label for="journal-global-q" class="journal-search-label">Caută în tot jurnalul</label>
+      <div class="journal-search-field">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false" class="journal-search-icon">
+          <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+        </svg>
+        <input type="search" name="q" id="journal-global-q" class="journal-search-input" value="<%= @q %>"
+               placeholder="cine a modificat „Terapie manuală”, un IP, o adresă, „șters”…"
+               autocomplete="off" spellcheck="false"
+               data-global-search-target="input" data-action="input->global-search#search keydown->global-search#keydown">
+        <% if @q.present? %>
+          <%= link_to '×', dashboard_audit_path(period: @period, user: @selected_user&.id), class: 'journal-search-clear', aria: { label: 'Șterge căutarea' }, data: { turbo_frame: 'audit-results', turbo_action: 'advance' } %>
+        <% end %>
+      </div>
+      <span class="journal-search-hint">Toți utilizatorii, toată perioada. Enter sau tastează și așteaptă.</span>
+    <% end %>
+
     <% if @user_cards.empty? %>
       <div class="empty-state"><p>Nicio activitate înregistrată în perioada selectată.</p></div>
     <% else %>
@@ -47,7 +67,41 @@
       </div>
     <% end %>
 
-    <% if @report %>
+    <%= turbo_frame_tag 'audit-results' do %>
+    <% if @search %>
+      <section class="audit-user-report audit-search-results" aria-labelledby="audit-search-heading">
+        <h2 id="audit-search-heading" class="audit-report-user">
+          <%= @search.total %> <%= @search.total == 1 ? 'rezultat' : 'rezultate' %> pentru „<%= @q %>”
+          <span class="audit-report-period">toți utilizatorii, toată perioada<%= ", primele #{@search.logs.size} afișate" if @search.truncated? %></span>
+        </h2>
+        <% if @search.days.empty? %>
+          <div class="empty-state"><p>Niciun rezultat. Încearcă numele înregistrării, o adresă de pagină, un IP, un email sau un verb: „șters”, „creat”, „modificat”.</p></div>
+        <% end %>
+        <% @search.days.each do |day| %>
+          <article class="audit-day">
+            <h3 class="audit-day-title"><%= day.label %><span class="audit-day-count"><%= day.entries.size %> <%= day.entries.size == 1 ? 'rezultat' : 'rezultate' %></span></h3>
+            <ol class="audit-entries">
+              <% day.entries.each do |e| %>
+                <li class="audit-entry audit-entry--<%= e.kind %>">
+                  <time class="audit-entry-time" datetime="<%= e.time.iso8601 %>"><%= e.time.strftime('%H:%M') %></time>
+                  <span class="audit-entry-icon" aria-hidden="true"><%= { 'create' => '+', 'update' => '✎', 'destroy' => '−', 'login' => '→', 'logout' => '←', 'view' => '◦' }[e.kind] || '•' %></span>
+                  <div class="audit-entry-body">
+                    <div class="audit-entry-text">
+                      <%= link_to (e.user.alias.presence || e.user.email), dashboard_audit_path(period: 'all', user: e.user.id), class: 'audit-entry-user', data: { turbo_frame: '_top' } %>
+                      <%= e.text %>
+                    </div>
+                    <% if e.details.any? %>
+                      <ul class="audit-entry-details"><% e.details.each do |d| %><li><%= d %></li><% end %></ul>
+                    <% end %>
+                    <% if e.meta.present? %><div class="audit-entry-meta"><%= e.meta %></div><% end %>
+                  </div>
+                </li>
+              <% end %>
+            </ol>
+          </article>
+        <% end %>
+      </section>
+    <% elsif @report %>
       <% s = @report.summary %>
       <section class="audit-user-report" aria-labelledby="audit-report-heading" data-controller="journal-search">
         <h2 id="audit-report-heading" class="audit-report-user">
@@ -150,6 +204,7 @@
           </article>
         <% end %>
       </section>
+    <% end %>
     <% end %>
   </div>
 <% else %>

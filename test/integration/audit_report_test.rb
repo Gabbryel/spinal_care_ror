@@ -83,6 +83,47 @@ class AuditReportTest < ActionDispatch::IntegrationTest
     assert_includes active_pill["href"], "user=#{@admin.id}"
   end
 
+  test "global search finds who changed a record, across users and all time" do
+    get "/dashboard/audit", params: { q: "terapie" }
+    assert_response :success
+    assert_includes css_select("#audit-search-heading").first.text.squish, "1 rezultat pentru „terapie”"
+    entry = css_select(".audit-search-results .audit-entry").first
+    assert_includes entry.at_css(".audit-entry-user").text, "Ancuța"
+    assert_includes entry.at_css(".audit-entry-text").text.squish, "a modificat serviciul medical „Terapie manuală”"
+    assert_includes entry.css(".audit-entry-details li").map(&:text), "preț: 120 → 220"
+    assert_empty css_select(".audit-summary"), "the per-user report is replaced by the results"
+
+    get "/dashboard/audit", params: { q: "Ioan" }
+    assert_includes css_select(".audit-search-results .audit-entry-text").map { |e| e.text.squish }, "admin@spinalcare.ro a modificat membrul echipei „Ioan”", "40-day-old edit is found: search ignores the period"
+  end
+
+  test "global search understands verbs, sections, IPs and emails, without diacritics" do
+    get "/dashboard/audit", params: { q: "sters" }
+    texts = css_select(".audit-search-results .audit-entry-text").map { |e| e.text.squish }
+    assert_equal ["Ancuța a șters serviciul medical „TAPE”"], texts
+
+    get "/dashboard/audit", params: { q: "ȘTERS tape" }
+    assert_equal 1, css_select(".audit-search-results .audit-entry").size
+
+    get "/dashboard/audit", params: { q: "cariere" }
+    assert_includes css_select(".audit-search-results .audit-entry-text").map { |e| e.text.squish }, "Ancuța a creat anunțul de carieră „Medic”"
+
+    get "/dashboard/audit", params: { q: "10.0.0.7" }
+    assert_equal ["Ancuța s-a autentificat"], css_select(".audit-search-results .audit-entry-text").map { |e| e.text.squish }
+
+    get "/dashboard/audit", params: { q: "editor@spinalcare.ro servicii" }
+    assert_equal 5, css_select(".audit-search-results .audit-entry").size, "the editor's medical-service rows: update, delete and 3 views"
+  end
+
+  test "global search with no match says so and the form keeps the query" do
+    get "/dashboard/audit", params: { q: "nimic-de-gasit" }
+    assert_response :success
+    assert_includes css_select("#audit-search-heading").first.text.squish, "0 rezultate"
+    assert_includes response.body, "Niciun rezultat"
+    assert_equal "nimic-de-gasit", css_select("#journal-global-q").first["value"]
+    assert css_select("turbo-frame#audit-results").any?
+  end
+
   test "an empty period shows an empty state" do
     AuditLog.delete_all
     get "/dashboard/audit"
