@@ -612,116 +612,35 @@ class AdminController < ApplicationController
     @years = @consumptions.pluck(:year).uniq.sort.reverse
   end
   
+  # Activity journal: one card per user, and the selected user's report
+  # (summary + day-by-day sentences) built by AuditUserReport.
+  PERIODS = { '7' => '7 zile', '30' => '30 zile', '90' => '90 zile', 'all' => 'Tot' }.freeze
+
   def audit
-    @audit_logs = AuditLog.includes(:user).recent
-    
-    # Filter by date range if provided
-    if params[:start_date].present?
-      start_date = Date.parse(params[:start_date]).beginning_of_day
-      @audit_logs = @audit_logs.where('audit_logs.created_at >= ?', start_date)
-    end
-    
-    if params[:end_date].present?
-      end_date = Date.parse(params[:end_date]).end_of_day
-      @audit_logs = @audit_logs.where('audit_logs.created_at <= ?', end_date)
-    end
-    
-    # Filter by action if provided
-    @audit_logs = @audit_logs.by_action(params[:action_filter]) if params[:action_filter].present?
-    
-    # Filter by model type if provided
-    @audit_logs = @audit_logs.by_type(params[:type_filter]) if params[:type_filter].present?
-    
-    # Filter by user if provided
-    @audit_logs = @audit_logs.by_user(params[:user_filter]) if params[:user_filter].present?
-    
-    # Filter by controller if provided
-    @audit_logs = @audit_logs.by_controller(params[:controller_filter]) if params[:controller_filter].present?
-    
-    # Filter by request method if provided
-    @audit_logs = @audit_logs.by_request_method(params[:method_filter]) if params[:method_filter].present?
-    
-    # Exclude view actions if requested
-    @audit_logs = @audit_logs.excluding_views if params[:exclude_views] == '1'
-    
-    # Paginate
-    @audit_logs = @audit_logs.page(params[:page]).per(50)
-    
-    # Enhanced Statistics
-    @total_logs = AuditLog.count
-    @logs_today = AuditLog.today.count
-    @logs_this_week = AuditLog.this_week.count
-    @logs_this_month = AuditLog.this_month.count
-    
-    # Activity by action (including views)
-    @activity_by_action = AuditLog.group(:action).count
-    
-    # Activity by model
-    @activity_by_model = AuditLog.group(:auditable_type).count
-    
-    # Activity by controller
-    @activity_by_controller = AuditLog.where.not(controller_name: nil)
-                                      .group(:controller_name)
-                                      .count
-                                      .sort_by { |_, count| -count }
-                                      .first(10)
-    
-    # Activity by request method
-    @activity_by_method = AuditLog.where.not(request_method: nil)
-                                  .group(:request_method)
-                                  .count
-    
-    # Most active users with detailed stats
-    @most_active_users = User.joins(:audit_logs)
-                            .select('users.*, COUNT(audit_logs.id) as actions_count,
-                                     MAX(audit_logs.created_at) as last_action_at')
-                            .group('users.id')
-                            .order('actions_count DESC')
-                            .limit(10)
-    
-    # Recent significant actions (excluding views)
-    @recent_significant = AuditLog.excluding_views
-                                 .includes(:user)
-                                 .recent
-                                 .limit(20)
-    
-    # Recent activity timeline (all actions)
-    @recent_activity = AuditLog.includes(:user).recent.limit(50)
-    
-    # Average response times
-    @avg_duration = AuditLog.where.not(duration_ms: nil)
-                           .where('created_at >= ?', 1.day.ago)
-                           .average(:duration_ms)
-                           &.round(0)
-    
-    # Most time-consuming actions
-    @slowest_actions = AuditLog.where.not(duration_ms: nil)
-                              .where('created_at >= ?', 1.day.ago)
-                              .order(duration_ms: :desc)
-                              .limit(10)
-    
-    # Error tracking (4xx, 5xx status codes)
-    @error_logs = AuditLog.where('status_code >= ?', 400)
-                         .where('created_at >= ?', 1.day.ago)
-                         .count
-    
-    # Browser and device statistics (optimized to avoid loading all records)
-    week_logs = AuditLog.where('created_at >= ?', 7.days.ago).select(:user_agent).to_a
-    
-    @browser_stats = week_logs.group_by { |log| log.browser_info }
-                              .transform_values(&:count)
-                              .sort_by { |_, count| -count }
-    
-    @device_stats = week_logs.group_by { |log| log.device_info }
-                             .transform_values(&:count)
-                             .sort_by { |_, count| -count }
-    
-    # Available filters
-    @available_actions = AuditLog.distinct.pluck(:action).compact.sort
-    @available_types = AuditLog.distinct.pluck(:auditable_type).compact.sort
-    @available_controllers = AuditLog.distinct.pluck(:controller_name).compact.sort
-    @available_methods = AuditLog.distinct.pluck(:request_method).compact.sort
-    @available_users = User.where(id: AuditLog.distinct.pluck(:user_id)).order(:email)
+    # Non-admins get the view's no-access block; skip the queries (Bullet
+    # flags eager loads that are never rendered).
+    @user_cards = []
+    return unless current_user&.admin
+
+    @period = PERIODS.key?(params[:period].to_s) ? params[:period].to_s : '30'
+    logs = AuditLog.all
+    logs = logs.where('created_at >= ?', @period.to_i.days.ago.beginning_of_day) unless @period == 'all'
+
+    counts = logs.group(:user_id, :action).count
+    last_seen = logs.group(:user_id).maximum(:created_at)
+    users = User.where(id: counts.keys.map(&:first).uniq).index_by(&:id)
+    @user_cards = last_seen.sort_by { |_, at| -at.to_i }.map do |user_id, at|
+      user = users[user_id] or next
+      by_action = counts.select { |(uid, _), _| uid == user_id }.transform_keys(&:last)
+      changes = by_action.sum { |action, n| action.in?(%w[view login logout]) ? 0 : n }
+      { user: user, last_at: at, changes: changes, logins: by_action['login'] || 0, views: by_action['view'] || 0 }
+    end.compact
+
+    @selected_user = params[:user].present? ? User.find_by(id: params[:user]) : @user_cards.first&.dig(:user)
+    return unless @selected_user
+
+    @report = AuditUserReport.new(@selected_user,
+                                  logs.where(user_id: @selected_user.id).includes(:auditable).order(created_at: :desc))
   end
 
   def test
