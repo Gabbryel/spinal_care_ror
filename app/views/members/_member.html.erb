@@ -41,6 +41,8 @@
 
   <!-- Main Content -->
   <div class="member-content">
+    <%= render partial: "specialties/contact_cta", locals: { placement: "top", flush: true, title: "Programează o consultație cu #{full_name_with_title(@member).squish}" } %>
+
     <div class="member-content-inner" data-controller="member-height">
       <!-- Member Card Section -->
       <div class="member-card-section">
@@ -76,5 +78,7 @@
         </div>
       <% end %>
     </div>
+
+    <%= render partial: "specialties/contact_cta", locals: { placement: "bottom" } %>
   </div>
 </div>

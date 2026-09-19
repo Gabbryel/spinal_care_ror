@@ -388,6 +388,15 @@
   }
 }
 
+// Containers that already overlap the hero (member page) keep their own offset.
+.specialty-cta--flush {
+  margin-top: 0;
+
+  @media (max-width: 768px) {
+    margin-top: 0;
+  }
+}
+
 .specialty-cta--bottom {
   margin-top: -1rem;
   margin-bottom: 4rem;

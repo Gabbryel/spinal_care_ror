@@ -2,12 +2,13 @@
     placement: "top" (under the hero) or "bottom" (after the price list).
     specialty: optional, names the consultation in the top title.
     title: optional override for the title.
+    flush: true when the container already overlaps the hero (member page).
     The button opens the booking modal (tracked as a booking click) and the
     phone link is a tel: link (tracked as a call). %>
 <% top = placement == "top" %>
 <% specialty = local_assigns[:specialty] %>
 <% title = local_assigns[:title] || (top && specialty ? "Programează o consultație de #{specialty.name.downcase}" : (top ? "Programează o consultație" : "Programează-te acum")) %>
-<aside class="specialty-cta specialty-cta--<%= placement %>" aria-labelledby="specialty-cta-<%= placement %>-title">
+<aside class="specialty-cta specialty-cta--<%= placement %><%= ' specialty-cta--flush' if local_assigns[:flush] %>" aria-labelledby="specialty-cta-<%= placement %>-title">
   <div class="specialty-cta-text">
     <p class="specialty-cta-title" id="specialty-cta-<%= placement %>-title">
       <%= title %>
