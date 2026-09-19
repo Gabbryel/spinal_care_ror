@@ -1,0 +1,31 @@
+<%# One journal entry. locals: entry (AuditUserReport::Entry), show_user (true in search results) %>
+<li class="audit-entry audit-entry--<%= entry.kind %>">
+  <time class="audit-entry-time" datetime="<%= entry.time.iso8601 %>"><%= entry.time.strftime('%H:%M') %></time>
+  <span class="audit-entry-icon" aria-hidden="true"><%= { 'create' => '+', 'update' => '✎', 'destroy' => '−', 'login' => '→', 'logout' => '←', 'view' => '◦' }[entry.kind] || '•' %></span>
+  <div class="audit-entry-body">
+    <div class="audit-entry-text">
+      <% if show_user && entry.user %>
+        <%= link_to (entry.user.alias.presence || entry.user.email), dashboard_audit_path(period: 'all', user: entry.user.id), class: 'audit-entry-user', data: { turbo_frame: '_top' } %>
+      <% end %>
+      <%= entry.text %>
+      <% if entry.record_id %><span class="audit-entry-id" title="ID înregistrare">#<%= entry.record_id %></span><% end %>
+      <% if entry.record_path %>
+        <%= link_to 'vezi pagina', entry.record_path, class: 'audit-entry-record', target: '_blank', rel: 'noopener' %>
+      <% end %>
+    </div>
+    <% if entry.details.any? %>
+      <ul class="audit-entry-details"><% entry.details.each do |d| %><li><%= d %></li><% end %></ul>
+    <% end %>
+    <% if entry.attributes.any? %>
+      <ul class="audit-entry-attrs" aria-label="<%= entry.kind == 'destroy' ? 'Datele înregistrării șterse' : 'Câmpurile setate' %>">
+        <% entry.attributes.each do |a| %><li><%= a %></li><% end %>
+      </ul>
+    <% end %>
+    <% if entry.request.present? || entry.meta.present? %>
+      <div class="audit-entry-meta">
+        <% if entry.request.present? %><code class="audit-entry-request"><%= entry.request %></code><% end %>
+        <% if entry.meta.present? %><span><%= entry.meta %></span><% end %>
+      </div>
+    <% end %>
+  </div>
+</li>

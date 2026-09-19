@@ -37,8 +37,15 @@ class AuditUserReport
     'academic_title' => 'titlu academic', 'doctor_grade' => 'grad', 'sub_name' => 'subtitlu',
     'has_day_hospitalization' => 'spitalizare de zi', 'founder' => 'fondator',
     'specialty_favored' => 'favorit în specialitate', 'is_day_hospitalize' => 'spitalizare de zi',
-    'quantity' => 'cantitate', 'date' => 'dată', 'valid_until' => 'valabil până la', 'benefits' => 'beneficii'
+    'quantity' => 'cantitate', 'date' => 'dată', 'valid_until' => 'valabil până la', 'benefits' => 'beneficii',
+    'has_prices' => 'are prețuri', 'schroth' => 'Schroth', 'position' => 'poziție', 'department' => 'departament',
+    'requirements' => 'cerințe', 'location' => 'locație', 'contact_email' => 'email de contact', 'phone' => 'telefon',
+    'alias' => 'alias', 'medicine' => 'medicament', 'unit' => 'unitate', 'notes' => 'note', 'content' => 'conținut',
+    'body' => 'conținut', 'rating' => 'notă', 'author' => 'autor', 'text' => 'text', 'published' => 'publicat',
+    'visible' => 'vizibil', 'featured' => 'evidențiat'
   }.freeze
+
+  PUBLIC_PATHS = { 'Specialty' => '/specialitati-medicale', 'Member' => '/echipa', 'Fact' => '/info-pacient' }.freeze
 
   IGNORED_FIELDS = %w[id created_at updated_at encrypted_password reset_password_token
                       reset_password_sent_at remember_created_at].freeze
@@ -46,7 +53,7 @@ class AuditUserReport
   WEEKDAYS = %w[Duminică Luni Marți Miercuri Joi Vineri Sâmbătă].freeze
   MONTHS = %w[ianuarie februarie martie aprilie mai iunie iulie august septembrie octombrie noiembrie decembrie].freeze
 
-  Entry = Struct.new(:time, :kind, :text, :details, :meta, :user, keyword_init: true)
+  Entry = Struct.new(:time, :kind, :text, :details, :attributes, :meta, :request, :record_path, :record_id, :user, keyword_init: true)
   View = Struct.new(:time, :path, :duration_ms, :status_code, :user, keyword_init: true)
   Day = Struct.new(:date, :label, :entries, :views, keyword_init: true)
 
@@ -100,6 +107,10 @@ class AuditUserReport
   def entry(log)
     entry = build_entry(log)
     entry.user = log.user
+    entry.request = request_line(log)
+    entry.record_id = log.auditable_id if log.action.in?(%w[create update destroy]) && log.auditable_id.to_i.positive?
+    entry.record_path = record_path(log)
+    entry.attributes ||= []
     entry
   end
 
@@ -113,18 +124,19 @@ class AuditUserReport
     case log.action
     when 'create'
       Entry.new(time: log.created_at, kind: 'create', text: "a creat #{label(log)} #{quoted(name_of(log))}",
-                details: [], meta: meta(log))
+                details: [], attributes: attribute_details(log), meta: meta(log))
     when 'update'
       details = change_details(log)
+      details = ['salvat fără modificări de conținut'] if details.empty?
       Entry.new(time: log.created_at, kind: 'update', text: "a modificat #{label(log)} #{quoted(name_of(log))}",
-                details: details.presence || [log.changes_summary.presence].compact, meta: meta(log))
+                details: details, meta: meta(log))
     when 'destroy'
       Entry.new(time: log.created_at, kind: 'destroy', text: "a șters #{label(log)} #{quoted(name_of(log))}",
-                details: [], meta: meta(log))
+                details: [], attributes: attribute_details(log), meta: meta(log))
     when 'login'
-      Entry.new(time: log.created_at, kind: 'login', text: 's-a autentificat', details: [], meta: meta(log, device: true))
+      Entry.new(time: log.created_at, kind: 'login', text: 's-a autentificat', details: [], meta: meta(log))
     when 'logout'
-      Entry.new(time: log.created_at, kind: 'logout', text: 's-a deconectat', details: [], meta: meta(log, device: true))
+      Entry.new(time: log.created_at, kind: 'logout', text: 's-a deconectat', details: [], meta: meta(log))
     when 'view'
       Entry.new(time: log.created_at, kind: 'view', text: "a vizualizat #{log.request_path.presence || label(log)}", details: [], meta: meta(log))
     else
@@ -161,15 +173,46 @@ class AuditUserReport
     name.to_s.start_with?('#') ? name : "„#{name.to_s.truncate(60)}”"
   end
 
+  # "câmp: vechi → nou" for every real change (nil → "" is not one).
   def change_details(log)
-    log.parsed_changes.reject { |field, _| IGNORED_FIELDS.include?(field) }.map do |field, value|
-      field_label = FIELD_LABELS[field] || field.humanize.downcase
+    log.parsed_changes.reject { |field, _| IGNORED_FIELDS.include?(field) }.filter_map do |field, value|
       if value.is_a?(Array) && value.size == 2
-        "#{field_label}: #{show(value[0])} → #{show(value[1])}"
+        before, after = show(value[0]), show(value[1])
+        next if before == after
+        "#{field_label(field)}: #{before} → #{after}"
       else
-        "#{field_label}: #{show(value)}"
+        "#{field_label(field)}: #{show(value)}"
       end
     end
+  end
+
+  # The record's fields as captured at creation or deletion, non-empty ones.
+  def attribute_details(log)
+    log.parsed_changes.reject { |field, _| IGNORED_FIELDS.include?(field) || field.end_with?('_token', '_password') }.filter_map do |field, value|
+      value = value.last if value.is_a?(Array) && value.size == 2
+      next if value.nil? || value == '' || value == false
+      "#{field_label(field)}: #{show(value)}"
+    end
+  end
+
+  def field_label(field)
+    FIELD_LABELS[field] || field.delete_suffix('_id').humanize.downcase
+  end
+
+  def request_line(log)
+    return nil if log.request_method.blank? && log.request_path.blank?
+    [log.request_method, log.request_path.to_s.truncate(90)].compact.join(' ').strip
+  end
+
+  # Public page of the record when it still exists and has one.
+  def record_path(log)
+    prefix = PUBLIC_PATHS[log.auditable_type]
+    return nil unless prefix && log.action.in?(%w[create update])
+    record = log.auditable rescue nil
+    slug = record.try(:slug)
+    return nil if slug.blank?
+    return nil if log.auditable_type == 'Member' && !(record.try(:has_own_page) && record.try(:is_active))
+    "#{prefix}/#{slug}"
   end
 
   def show(value)
@@ -181,12 +224,24 @@ class AuditUserReport
     end
   end
 
-  def meta(log, device: false)
+  # Where the action came from: device, IP, the admin page it was done from,
+  # response time and any error status.
+  def meta(log)
     parts = []
-    parts << "#{log.browser_info} / #{log.device_info}" if device && log.browser_info != 'Unknown'
-    parts << "IP #{log.ip_address}" if device && log.ip_address.present?
+    parts << "#{log.browser_info} / #{log.device_info}" if log.browser_info != 'Unknown'
+    parts << "IP #{log.ip_address}" if log.ip_address.present?
+    from = referer_path(log)
+    parts << "din #{from}" if from
     parts << "#{log.duration_ms} ms" if log.duration_ms.present?
     parts << "eroare #{log.status_code}" if log.status_code.to_i >= 400
     parts.join(' · ')
+  end
+
+  def referer_path(log)
+    return nil if log.referer.blank?
+    path = URI.parse(log.referer).path.presence
+    path && path != '/' ? path.truncate(70) : nil
+  rescue URI::InvalidURIError
+    nil
   end
 end

@@ -21,7 +21,8 @@ class AuditReportTest < ActionDispatch::IntegrationTest
 
     log(@editor, "login", "User", @editor.id, at: @now - 2.hours, data: { email: @editor.email }, ua: "Mozilla/5.0 Chrome/128 Safari/537.36", ip: "10.0.0.7")
     log(@editor, "update", "MedicalService", @service.id, at: @now - 1.hour,
-        data: { price: [120, 220], updated_at: ["2025-01-08", "2026-09-08"] }, summary: "Price: 120 → 220", path: "/medical_services/terapie-manuala", method: "POST")
+        data: { price: [120, 220], updated_at: ["2025-01-08", "2026-09-08"] }, summary: "Price: 120 → 220", path: "/medical_services/terapie-manuala", method: "POST",
+        referer: "https://www.spinalcare.ro/dashboard/servicii-medicale/fizioterapie")
     log(@editor, "destroy", "MedicalService", 999, at: @now - 50.minutes, data: { id: 999, name: "TAPE", price: 30 }, summary: "TAPE")
     log(@editor, "create", "JobPosting", 5, at: @now - 3.days, data: { title: "Medic", id: 5 })
     3.times { |i| log(@editor, "view", "MedicalService", 0, at: @now - 40.minutes + i.minutes, path: "/servicii-medicale", method: "GET", duration: 120 + i) }
@@ -58,9 +59,15 @@ class AuditReportTest < ActionDispatch::IntegrationTest
     today = days[0]
     assert_includes today.at_css(".audit-day-title").text, AuditUserReport.day_label(@now.to_date)
     texts = today.css(".audit-entry-text").map { |e| e.text.squish }
-    assert_equal ["a șters serviciul medical „TAPE”", "a modificat serviciul medical „Terapie manuală”", "s-a autentificat"], texts
+    assert_equal ["a șters serviciul medical „TAPE” #999", "a modificat serviciul medical „Terapie manuală” ##{@service.id}", "s-a autentificat"], texts
     assert_includes today.css(".audit-entry-details li").map(&:text), "preț: 120 → 220"
     assert_includes today.css(".audit-entry-meta").map(&:text).join, "Chrome / Desktop · IP 10.0.0.7"
+    update = today.css(".audit-entry--update").first
+    assert_equal "POST /medical_services/terapie-manuala", update.at_css(".audit-entry-request").text
+    assert_includes update.at_css(".audit-entry-meta").text, "din /dashboard/servicii-medicale"
+    assert_equal "##{@service.id}", update.at_css(".audit-entry-id").text
+    destroy = today.css(".audit-entry--destroy").first
+    assert_equal ["nume: TAPE", "preț: 30"], destroy.css(".audit-entry-attrs li").map(&:text)
     assert_includes today.at_css(".audit-views summary").text, "a vizualizat 3 pagini"
 
     # Live search wiring (filtering itself runs in the browser)
@@ -71,13 +78,14 @@ class AuditReportTest < ActionDispatch::IntegrationTest
     assert_equal 4, section.css("[data-journal-search-target='entry']").size
     assert_equal 3, section.css("[data-journal-search-target='view']").size
     assert_equal 3, today.css(".audit-views-list li").size
-    assert_includes days[1].css(".audit-entry-text").map { |e| e.text.squish }, "a creat anunțul de carieră „Medic”"
+    assert_includes days[1].css(".audit-entry-text").map { |e| e.text.squish }, "a creat anunțul de carieră „Medic” #5"
+    assert_equal ["titlu: Medic"], days[1].css(".audit-entry--create .audit-entry-attrs li").map(&:text)
   end
 
   test "the period filter widens the window and keeps the user" do
     get "/dashboard/audit", params: { user: @admin.id, period: "90" }
     assert_response :success
-    assert_includes css_select(".audit-entry-text").map { |e| e.text.squish }, "a modificat membrul echipei „Ioan”"
+    assert_includes css_select(".audit-entry-text").map { |e| e.text.squish }, "a modificat membrul echipei „Ioan” #1"
     active_pill = css_select(".audit-period-pill.active").first
     assert_equal "90 zile", active_pill.text.strip
     assert_includes active_pill["href"], "user=#{@admin.id}"
@@ -94,19 +102,19 @@ class AuditReportTest < ActionDispatch::IntegrationTest
     assert_empty css_select(".audit-summary"), "the per-user report is replaced by the results"
 
     get "/dashboard/audit", params: { q: "Ioan" }
-    assert_includes css_select(".audit-search-results .audit-entry-text").map { |e| e.text.squish }, "admin@spinalcare.ro a modificat membrul echipei „Ioan”", "40-day-old edit is found: search ignores the period"
+    assert_includes css_select(".audit-search-results .audit-entry-text").map { |e| e.text.squish }, "admin@spinalcare.ro a modificat membrul echipei „Ioan” #1", "40-day-old edit is found: search ignores the period"
   end
 
   test "global search understands verbs, sections, IPs and emails, without diacritics" do
     get "/dashboard/audit", params: { q: "sters" }
     texts = css_select(".audit-search-results .audit-entry-text").map { |e| e.text.squish }
-    assert_equal ["Ancuța a șters serviciul medical „TAPE”"], texts
+    assert_equal ["Ancuța a șters serviciul medical „TAPE” #999"], texts
 
     get "/dashboard/audit", params: { q: "ȘTERS tape" }
     assert_equal 1, css_select(".audit-search-results .audit-entry").size
 
     get "/dashboard/audit", params: { q: "cariere" }
-    assert_includes css_select(".audit-search-results .audit-entry-text").map { |e| e.text.squish }, "Ancuța a creat anunțul de carieră „Medic”"
+    assert_includes css_select(".audit-search-results .audit-entry-text").map { |e| e.text.squish }, "Ancuța a creat anunțul de carieră „Medic” #5"
 
     get "/dashboard/audit", params: { q: "10.0.0.7" }
     assert_equal ["Ancuța s-a autentificat"], css_select(".audit-search-results .audit-entry-text").map { |e| e.text.squish }
@@ -141,9 +149,9 @@ class AuditReportTest < ActionDispatch::IntegrationTest
 
   private
 
-  def log(user, action, type, id, at:, data: nil, summary: nil, path: nil, method: nil, ua: nil, ip: nil, duration: nil)
+  def log(user, action, type, id, at:, data: nil, summary: nil, path: nil, method: nil, ua: nil, ip: nil, duration: nil, referer: nil)
     AuditLog.create!(user: user, action: action, auditable_type: type, auditable_id: id, created_at: at, updated_at: at,
                      change_data: data&.to_json, changes_summary: summary, request_path: path, request_method: method,
-                     user_agent: ua, ip_address: ip, duration_ms: duration)
+                     user_agent: ua, ip_address: ip, duration_ms: duration, referer: referer)
   end
 end

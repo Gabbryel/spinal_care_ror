@@ -81,22 +81,7 @@
           <article class="audit-day">
             <h3 class="audit-day-title"><%= day.label %><span class="audit-day-count"><%= day.entries.size %> <%= day.entries.size == 1 ? 'rezultat' : 'rezultate' %></span></h3>
             <ol class="audit-entries">
-              <% day.entries.each do |e| %>
-                <li class="audit-entry audit-entry--<%= e.kind %>">
-                  <time class="audit-entry-time" datetime="<%= e.time.iso8601 %>"><%= e.time.strftime('%H:%M') %></time>
-                  <span class="audit-entry-icon" aria-hidden="true"><%= { 'create' => '+', 'update' => '✎', 'destroy' => '−', 'login' => '→', 'logout' => '←', 'view' => '◦' }[e.kind] || '•' %></span>
-                  <div class="audit-entry-body">
-                    <div class="audit-entry-text">
-                      <%= link_to (e.user.alias.presence || e.user.email), dashboard_audit_path(period: 'all', user: e.user.id), class: 'audit-entry-user', data: { turbo_frame: '_top' } %>
-                      <%= e.text %>
-                    </div>
-                    <% if e.details.any? %>
-                      <ul class="audit-entry-details"><% e.details.each do |d| %><li><%= d %></li><% end %></ul>
-                    <% end %>
-                    <% if e.meta.present? %><div class="audit-entry-meta"><%= e.meta %></div><% end %>
-                  </div>
-                </li>
-              <% end %>
+              <%= render partial: 'admin/audit/entry', collection: day.entries, as: :entry, locals: { show_user: true } %>
             </ol>
           </article>
         <% end %>
@@ -170,19 +155,7 @@
             <% if day.entries.any? %>
               <ol class="audit-entries">
                 <% day.entries.each do |e| %>
-                  <li class="audit-entry audit-entry--<%= e.kind %>" data-journal-search-target="entry">
-                    <time class="audit-entry-time" datetime="<%= e.time.iso8601 %>"><%= e.time.strftime('%H:%M') %></time>
-                    <span class="audit-entry-icon" aria-hidden="true"><%= { 'create' => '+', 'update' => '✎', 'destroy' => '−', 'login' => '→', 'logout' => '←' }[e.kind] || '•' %></span>
-                    <div class="audit-entry-body">
-                      <div class="audit-entry-text"><%= e.text %></div>
-                      <% if e.details.any? %>
-                        <ul class="audit-entry-details">
-                          <% e.details.each do |d| %><li><%= d %></li><% end %>
-                        </ul>
-                      <% end %>
-                      <% if e.meta.present? %><div class="audit-entry-meta"><%= e.meta %></div><% end %>
-                    </div>
-                  </li>
+                  <div data-journal-search-target="entry" class="audit-entry-wrap"><%= render partial: 'admin/audit/entry', locals: { entry: e, show_user: false } %></div>
                 <% end %>
               </ol>
             <% end %>
