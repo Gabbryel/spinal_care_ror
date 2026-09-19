@@ -42,7 +42,8 @@ class AuditUserReport
     'requirements' => 'cerințe', 'location' => 'locație', 'contact_email' => 'email de contact', 'phone' => 'telefon',
     'alias' => 'alias', 'medicine' => 'medicament', 'unit' => 'unitate', 'notes' => 'note', 'content' => 'conținut',
     'body' => 'conținut', 'rating' => 'notă', 'author' => 'autor', 'text' => 'text', 'published' => 'publicat',
-    'visible' => 'vizibil', 'featured' => 'evidențiat'
+    'visible' => 'vizibil', 'featured' => 'evidențiat', 'discounted_price' => 'preț redus', 'full_price' => 'preț întreg',
+    'discount' => 'reducere', 'sessions' => 'ședințe', 'duration' => 'durată', 'image' => 'imagine', 'photo' => 'fotografie'
   }.freeze
 
   PUBLIC_PATHS = { 'Specialty' => '/specialitati-medicale', 'Member' => '/echipa', 'Fact' => '/info-pacient' }.freeze
