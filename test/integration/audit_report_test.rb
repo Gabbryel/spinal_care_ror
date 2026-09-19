@@ -62,6 +62,14 @@ class AuditReportTest < ActionDispatch::IntegrationTest
     assert_includes today.css(".audit-entry-details li").map(&:text), "preț: 120 → 220"
     assert_includes today.css(".audit-entry-meta").map(&:text).join, "Chrome / Desktop · IP 10.0.0.7"
     assert_includes today.at_css(".audit-views summary").text, "a vizualizat 3 pagini"
+
+    # Live search wiring (filtering itself runs in the browser)
+    section = css_select("section[data-controller='journal-search']").first
+    assert section, "report section drives the search controller"
+    assert_equal 1, section.css("input[type=search][data-journal-search-target='input']").size
+    assert_equal 2, section.css("[data-journal-search-target='day']").size
+    assert_equal 4, section.css("[data-journal-search-target='entry']").size
+    assert_equal 3, section.css("[data-journal-search-target='view']").size
     assert_equal 3, today.css(".audit-views-list li").size
     assert_includes days[1].css(".audit-entry-text").map { |e| e.text.squish }, "a creat anunțul de carieră „Medic”"
   end
