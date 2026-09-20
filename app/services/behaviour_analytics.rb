@@ -46,7 +46,8 @@ class BehaviourAnalytics
       )
       SELECT visit_id, string_agg(p, ' → ' ORDER BY rn DESC) AS path FROM v WHERE rn <= 3 GROUP BY visit_id
     SQL
-    rows.group_by { |r| r['path'].to_s.split(' → ').map { |p| p == '/' ? 'Homepage' : p }.join(' → ') }
+    # Consecutive repeats (reloads, the pre-September duplicate views) are one step.
+    rows.group_by { |r| r['path'].to_s.split(' → ').map { |p| p == '/' ? 'Homepage' : p }.chunk_while { |a, b| a == b }.map(&:first).join(' → ') }
         .map { |path, rs| { path: path, count: rs.size } }.sort_by { |r| -r[:count] }.first(10)
   end
 
