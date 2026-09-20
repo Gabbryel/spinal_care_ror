@@ -1,0 +1,180 @@
+<%= turbo_frame_tag "behaviour" do %>
+  <% if @total_visits.zero? %>
+    <div class="empty-state"><p>Nu există vizite în perioada selectată.</p></div>
+  <% else %>
+  <div class="behaviour-grid">
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">1. Drumul până la contact</h4>
+      <p class="behaviour-hint">Ultimele trei pagini văzute înainte de primul apel sau prima programare.</p>
+      <% if @paths.any? %>
+        <table class="pages-table"><thead><tr><th>Parcurs</th><th>Contacte</th></tr></thead><tbody>
+          <% @paths.each do |r| %><tr><td class="behaviour-path"><%= r[:path] %></td><td class="page-count"><%= r[:count] %></td></tr><% end %>
+        </tbody></table>
+      <% else %><p class="behaviour-empty">Niciun contact cu pagini văzute înainte în această perioadă.</p><% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">2. Timpul până la decizie</h4>
+      <% if @decision %>
+        <div class="behaviour-stats">
+          <div><strong><%= @decision[:median_seconds] %> s</strong><span>median, de la prima pagină la contact</span></div>
+          <div><strong><%= @decision[:p25] %>–<%= @decision[:p75] %> s</strong><span>jumătatea din mijloc</span></div>
+          <div><strong><%= @decision[:under_minute_share] %>%</strong><span>decid sub un minut</span></div>
+        </div>
+        <p class="behaviour-hint">Pagini văzute înainte de contact: <% @decision[:pages_before].each do |k, v| %><span class="audit-chip"><%= k %> <strong><%= v %></strong></span> <% end %></p>
+      <% else %><p class="behaviour-empty">Niciun contact în perioadă.</p><% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">3. Ce caută cei veniți din Google</h4>
+      <p class="behaviour-hint">Pagina pe care aterizează, primul lucru pe care apasă, cât de des ajung la contact.</p>
+      <% if @landing.any? %>
+        <table class="pages-table"><thead><tr><th>Pagină de intrare</th><th>Vizite</th><th>Primul click</th><th>Contact</th></tr></thead><tbody>
+          <% @landing.each do |r| %><tr><td class="page-path"><%= r[:landing] %></td><td class="page-count"><%= r[:visits] %></td><td><%= r[:next_step] || '—' %></td><td class="page-percent"><%= r[:conversion_rate] %>%</td></tr><% end %>
+        </tbody></table>
+      <% else %><p class="behaviour-empty">Nicio vizită din Google în perioadă.</p><% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">4. Vizitatori care revin</h4>
+      <% if @returning %>
+        <div class="behaviour-stats">
+          <div><strong><%= @returning[:returning_share] %>%</strong><span>din vizite sunt reveniri (<%= @returning[:returning_visits] %> din <%= @returning[:visits] %>)</span></div>
+          <div><strong><%= @returning[:median_days_between] || '—' %></strong><span>zile între vizite, median</span></div>
+          <div><strong><%= @returning[:rate_first] %>% / <%= @returning[:rate_returning] %>%</strong><span>contact la prima vizită / la revenire</span></div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">5. Paginile medicilor</h4>
+      <% if @doctors %>
+        <div class="behaviour-stats">
+          <div><strong><%= @doctors[:share] %>%</strong><span>din vizite văd un profil (<%= @doctors[:profile_visits] %>)</span></div>
+          <div><strong><%= @doctors[:rate_with] %>% / <%= @doctors[:rate_without] %>%</strong><span>contact cu / fără profil văzut</span></div>
+        </div>
+        <p class="behaviour-hint">Cele mai văzute: <% @doctors[:top_profiles].each do |path, n| %><span class="audit-chip"><%= path.sub('/echipa/', '') %> <strong><%= n %></strong></span> <% end %></p>
+        <% if @doctors[:from_pages].any? %><p class="behaviour-hint">De unde ajung la profil: <% @doctors[:from_pages].each do |path, n| %><span class="audit-chip"><%= path %> <strong><%= n %></strong></span> <% end %></p><% end %>
+      <% else %><p class="behaviour-empty">Niciun profil văzut în perioadă.</p><% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">6. Fundături și bucle</h4>
+      <% if @dead_ends %>
+        <div class="behaviour-stats">
+          <div><strong><%= @dead_ends[:looping_visits] %></strong><span>vizite cu 5+ click-uri de navigare și niciun contact (<%= @dead_ends[:share] %>%)</span></div>
+        </div>
+        <p class="behaviour-hint">Ultimul click al vizitelor fără contact, pe zonă: <% @dead_ends[:exit_sections].each do |sec, n| %><span class="audit-chip"><%= { 'nav' => 'meniu', 'header' => 'antet', 'footer' => 'subsol', 'main' => 'conținut', 'body' => 'conținut', 'modal' => 'fereastră', 'aside' => 'lateral' }[sec] || sec %> <strong><%= n %></strong></span> <% end %></p>
+      <% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">7. Pe dispozitive</h4>
+      <table class="pages-table"><thead><tr><th>Dispozitiv</th><th>Vizite</th><th>Pagini/vizită</th><th>Contact /100</th><th>Apeluri</th><th>Programări</th></tr></thead><tbody>
+        <% @devices.each do |r| %><tr><td class="page-path"><%= r[:device] %></td><td class="page-count"><%= number_with_delimiter(r[:visits]) %></td><td><%= r[:views_per_visit] %></td><td class="page-percent"><%= r[:per_100] %></td><td><%= r[:calls] %></td><td><%= r[:bookings] %></td></tr><% end %>
+      </tbody></table>
+    </div>
+
+    <div class="behaviour-block behaviour-block--wide">
+      <h4 class="pages-title">8. Când contactează, pe zile și ore</h4>
+      <% if @heat %>
+        <div class="heat-scroll">
+          <table class="heat-table" aria-label="Apeluri și programări pe zi a săptămânii și oră">
+            <thead><tr><th></th><% (0..23).each do |h| %><th><%= h %></th><% end %></tr></thead>
+            <tbody>
+              <% [1, 2, 3, 4, 5, 6, 0].each do |dow| %>
+                <tr><th><%= @weekdays[dow][0, 2] %></th>
+                  <% @heat[:grid][dow].each do |n| %><td class="heat-cell" style="--heat: <%= @heat[:max].positive? ? (n.to_f / @heat[:max]).round(2) : 0 %>" title="<%= n %>"><%= n.positive? ? n : '' %></td><% end %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <p class="behaviour-hint">Vârfuri: <% @heat[:top].each do |t| %><span class="audit-chip"><%= t[:day] %> <%= t[:hour] %>:00 <strong><%= t[:count] %></strong></span> <% end %></p>
+      <% else %><p class="behaviour-empty">Niciun contact în perioadă.</p><% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">9. Campanii (UTM)</h4>
+      <% if @campaigns.any? %>
+        <table class="pages-table"><thead><tr><th>Sursă / mediu / campanie</th><th>Vizite</th><th>Contacte</th></tr></thead><tbody>
+          <% @campaigns.each do |r| %><tr><td class="page-path"><%= [r[:source], r[:medium], r[:campaign]].compact.join(' / ') %></td><td class="page-count"><%= r[:visits] %></td><td><%= r[:conversions] %></td></tr><% end %>
+        </tbody></table>
+      <% else %><p class="behaviour-empty">Nicio vizită cu etichete UTM. Adaugă <code>?utm_source=…&utm_medium=…&utm_campaign=…</code> la linkurile din anunțuri și postări.</p><% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">10. Cât citesc și dacă văd butonul</h4>
+      <% if @engagement.any? %>
+        <table class="pages-table"><thead><tr><th>Pagină</th><th>Vizualizări</th><th>Secunde</th><th>Derulat</th><th>Au văzut butonul</th></tr></thead><tbody>
+          <% @engagement.each do |r| %><tr><td class="page-path"><%= r[:page] %></td><td class="page-count"><%= r[:views] %></td><td><%= r[:avg_seconds] %> s</td><td><%= r[:avg_depth] %>%</td><td class="page-percent"><%= r[:cta_seen_share] ? "#{r[:cta_seen_share]}%" : '—' %></td></tr><% end %>
+        </tbody></table>
+      <% else %><p class="behaviour-empty">Se adună de la publicarea acestei secțiuni: timp activ pe pagină, adâncimea derulării și dacă rândul de programare a intrat în ecran.</p><% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">11. Programarea, pas cu pas</h4>
+      <div class="behaviour-stats">
+        <div><strong><%= @booking[:opens] %></strong><span>deschideri ale ferestrei de programări</span></div>
+        <div><strong><%= @booking[:reporting] ? @booking[:started] : '—' %></strong><span>programări începute</span></div>
+        <div><strong><%= @booking[:reporting] ? @booking[:completed] : '—' %></strong><span>programări finalizate</span></div>
+      </div>
+      <% unless @booking[:reporting] %>
+        <p class="behaviour-hint">Site-ul de programări nu raportează încă pașii. Trebuie să trimită din iframe, la început și la final: <code>window.parent.postMessage({ type: "spinalcare:booking", step: "completed" }, "https://www.spinalcare.ro")</code>. Până atunci, „programare” înseamnă doar deschiderea ferestrei.</p>
+      <% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">12. Apeluri: click-uri vs. apeluri primite</h4>
+      <% if @tally[:ratio] %>
+        <p class="behaviour-hint">În zilele notate, un click pe telefon a însemnat în medie <strong><%= @tally[:ratio] %></strong> apeluri primite (<%= @tally[:days_with_tally] %> zile cu date).</p>
+      <% else %>
+        <p class="behaviour-hint">Notează câte apeluri a primit recepția într-o zi; după câteva zile vezi câte click-uri devin apeluri reale.</p>
+      <% end %>
+      <%= form_with url: dashboard_analytics_call_tally_path, method: :post, class: 'tally-form', data: { turbo: false } do |f| %>
+        <%= hidden_field_tag :period, params[:period] %>
+        <%= f.date_field :date, value: Date.current, class: 'date-input-new', required: true, aria: { label: 'Ziua' } %>
+        <%= f.number_field :calls, min: 0, step: 1, placeholder: 'apeluri', class: 'date-input-new tally-calls', required: true, aria: { label: 'Apeluri primite' } %>
+        <%= f.text_field :note, placeholder: 'notă (opțional)', class: 'date-input-new', aria: { label: 'Notă' } %>
+        <%= f.submit 'Notează', class: 'btn-apply-new' %>
+      <% end %>
+      <% if @tally[:rows].any? %>
+        <table class="pages-table"><thead><tr><th>Zi</th><th>Click-uri tel:</th><th>Apeluri primite</th></tr></thead><tbody>
+          <% @tally[:rows].each do |r| %><tr><td><%= r[:date].strftime('%d.%m') %></td><td class="page-count"><%= r[:clicks] %></td><td><%= r[:calls] || '—' %></td></tr><% end %>
+        </tbody></table>
+      <% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">13. Ce caută în echipă</h4>
+      <% if @searches.any? %>
+        <table class="pages-table"><thead><tr><th>Termen</th><th>Căutări</th><th>Fără rezultat</th></tr></thead><tbody>
+          <% @searches.each do |r| %><tr><td class="page-path"><%= r[:term] %></td><td class="page-count"><%= r[:count] %></td><td><%= r[:zero].positive? ? "#{r[:zero]} ✕" : '' %></td></tr><% end %>
+        </tbody></table>
+      <% else %><p class="behaviour-empty">Se adună de la publicarea acestei secțiuni: termenii tastați în căutarea din pagina echipei.</p><% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">14. Lista de prețuri</h4>
+      <% if @price_list[:sections].any? %>
+        <p class="behaviour-hint">Secțiuni ajunse în ecran: <% @price_list[:sections].each do |name, n| %><span class="audit-chip"><%= name %> <strong><%= n %></strong></span> <% end %></p>
+      <% else %><p class="behaviour-empty">Se adună de la publicarea acestei secțiuni: ce secțiuni ale listei de prețuri ajung în ecran.</p><% end %>
+      <% if @price_list[:call_for_price].any? %>
+        <p class="behaviour-hint">„Sună pentru preț” apăsat pentru: <% @price_list[:call_for_price].each do |name, n| %><span class="audit-chip"><%= name %> <strong><%= n %></strong></span> <% end %></p>
+        <p class="behaviour-hint">Acestea sunt serviciile pentru care oamenii vor un preț și nu îl găsesc.</p>
+      <% end %>
+    </div>
+
+    <div class="behaviour-block">
+      <h4 class="pages-title">15. Linkuri moarte (404)</h4>
+      <% if @not_found.any? %>
+        <table class="pages-table"><thead><tr><th>Adresă</th><th>Accesări</th><th>De unde</th></tr></thead><tbody>
+          <% @not_found.each do |r| %><tr><td class="page-path"><%= r[:path] %></td><td class="page-count"><%= r[:count] %></td><td class="behaviour-referers"><%= r[:referers].join(', ').presence || 'direct' %></td></tr><% end %>
+        </tbody></table>
+      <% else %><p class="behaviour-empty">Niciun 404 accesat de vizitatori reali în perioadă.</p><% end %>
+    </div>
+
+  </div>
+  <% end %>
+<% end %>

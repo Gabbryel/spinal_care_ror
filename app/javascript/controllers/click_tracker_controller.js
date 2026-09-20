@@ -34,9 +34,11 @@ export default class extends Controller {
     const click = this.classify(element);
     if (!click || !window.ahoy) return;
 
+    const labelled = element.closest("[data-track-label]");
     ahoy.track("$click", {
       category: click.category,
       destination: click.destination,
+      label: labelled ? labelled.dataset.trackLabel.slice(0, 100) : undefined,
       element_type: element.tagName === "A" ? "link" : "button",
       text: element.textContent.trim().replace(/\s+/g, " ").substring(0, 100),
       element_id: element.id,

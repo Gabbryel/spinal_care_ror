@@ -21,10 +21,19 @@ class ErrorsController < ApplicationController
 
     return head :not_found, content_type: "text/plain" if request.path.match?(FILE_LIKE) || wants_non_html?
 
+    track_not_found
     render_not_found
   end
 
   private
+
+  # Dead links reached by people (Ahoy drops bots) show up in the analytics
+  # "Parcurs & Comportament" section with the page that linked to them.
+  def track_not_found
+    ahoy.track("$not_found", path: request.path.to_s.first(200), referer: request.referer.to_s.first(300).presence)
+  rescue StandardError => e
+    Rails.logger.warn "not_found tracking failed: #{e.message}"
+  end
 
   # Only an explicit non-HTML format (JSON, XML, JS…) gets the bare 404.
   # "Accept: */*" (curl, many crawlers) is not a request for something else.

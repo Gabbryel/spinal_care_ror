@@ -403,6 +403,54 @@ class AdminController < ApplicationController
     end
   end
 
+  # Visitor behaviour: paths to contact, decision time, returning visitors,
+  # doctor pages, dead ends, devices, timing, campaigns, engagement, booking
+  # funnel, call tallies, search terms, price list, 404s (BehaviourAnalytics).
+  def analytics_behaviour
+    render_cached_analytics_section(:behaviour, 'admin/analytics/behaviour') do
+      dates = calculate_period_dates
+      start_date = dates[:start_date]
+      end_date = dates[:end_date]
+      filter_bots = params[:filter_bots] != 'false'
+      filter_geography = params[:filter_geography] == 'true'
+      base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                               .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+      public_visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography)
+      b = BehaviourAnalytics.new(visits: public_visits, start_date: start_date, end_date: end_date)
+      @total_visits = b.total_visits
+      @paths = b.paths_to_contact
+      @decision = b.decision_time
+      @landing = b.landing_intent
+      @returning = b.returning
+      @doctors = b.doctor_funnel
+      @dead_ends = b.dead_ends
+      @devices = b.devices
+      @heat = b.heat
+      @campaigns = b.campaigns
+      @engagement = b.engagement
+      @booking = b.booking_funnel
+      @tally = b.call_tally
+      @searches = b.search_terms
+      @price_list = b.price_list
+      @not_found = b.not_found
+      @weekdays = BehaviourAnalytics::WEEKDAYS
+    end
+  end
+
+  # Reception types in how many calls came in on a day (see BehaviourAnalytics#call_tally).
+  def analytics_call_tally
+    tally = CallTally.find_or_initialize_by(date: params[:date])
+    tally.calls = params[:calls].to_i
+    tally.note = params[:note].presence
+    if tally.save
+      Rails.cache.delete_matched('analytics/behaviour*') rescue nil
+      flash[:notice] = "Apeluri notate pentru #{tally.date.strftime('%d.%m.%Y')}: #{tally.calls}."
+    else
+      flash[:alert] = "Nu am putut salva: #{tally.errors.full_messages.join(', ')}"
+    end
+    redirect_to dashboard_analytics_path(period: params[:period].presence || '30')
+  end
+
   def analytics_hourly
     render_cached_analytics_section(:hourly, 'admin/analytics/hourly') do
       dates = calculate_period_dates

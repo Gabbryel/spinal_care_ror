@@ -12,6 +12,21 @@ export default class extends Controller {
   filterByName(event) {
     this.currentNameFilter = event.target.value.toLowerCase().trim();
     this.applyFilters();
+    this.trackSearch();
+  }
+
+  // One $search event per term, 800 ms after the last keystroke, with the
+  // number of cards it left visible (0 = "could not find").
+  trackSearch() {
+    clearTimeout(this.searchTimer);
+    const term = this.currentNameFilter;
+    if (term.length < 2) return;
+    this.searchTimer = setTimeout(() => {
+      if (term === this.lastTrackedTerm || !window.ahoy) return;
+      this.lastTrackedTerm = term;
+      const results = this.cardTargets.filter((card) => card.style.display !== "none").length;
+      ahoy.track("$search", { page: window.location.pathname, term: term.slice(0, 80), results: results });
+    }, 800);
   }
 
   filterByProfession(event) {
