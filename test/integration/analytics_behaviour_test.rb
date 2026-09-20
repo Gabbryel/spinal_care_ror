@@ -31,24 +31,23 @@ class AnalyticsBehaviourTest < ActionDispatch::IntegrationTest
     assert_includes text.(1), "Pagini văzute înainte de contact:"
     assert_includes text.(2), "/specialitati-medicale/ortopedie"
     assert_includes text.(2), "Programare"          # first click of the Google lander
-    assert_includes text.(3), "din vizite sunt reveniri (1 din 9)"
+    assert_includes text.(3), "din vizite sunt reveniri (1 din 10)"
     assert_includes text.(4), "contact cu / fără profil văzut"
     assert_includes text.(4), "ion-popescu 1"
     assert_includes text.(5), "vizite cu 5+ click-uri de navigare și niciun contact"
-    assert_includes text.(5), "1 vizite" # the looping visit
+    assert_includes text.(5), "(10.0%)" # the one looping visit out of ten
     assert_includes text.(6), "Mobile"
     assert_includes text.(6), "Desktop"
     assert_includes text.(7), "Vârfuri:"
-    assert_includes text.(8), "facebook / cpc / toamna 1 1"
-    assert_includes text.(9), "/specialitati-medicale/ortopedie 5 42 s 75% 80.0%"
+    assert_equal ["facebook / cpc / toamna", "1", "1"], blocks[8].css("tbody tr td").map { |td| td.text.strip }
+    assert_equal ["/specialitati-medicale/ortopedie", "5", "42 s", "75%", "80.0%"], blocks[9].css("tbody tr td").map { |td| td.text.strip }
     assert_includes text.(10), "deschideri ale ferestrei de programări"
-    assert_includes text.(10), "1 programări finalizate"
+    assert_equal ["2", "1", "1"], blocks[10].css(".behaviour-stats strong").map(&:text), "opens, started, completed"
     assert_includes text.(11), "click-uri devin apeluri reale"
-    assert_includes text.(12), "popesc 2 1 ✕"
+    assert_equal ["popesc", "2", "1 ✕"], blocks[12].css("tbody tr td").map { |td| td.text.strip }
     assert_includes text.(13), "Ortopedie 2"
     assert_includes text.(13), "Consultație 1"
-    assert_includes text.(14), "/pagina-veche 2"
-    assert_includes text.(14), "spinalcare.ro/servicii-medicale"
+    assert_equal ["/pagina-veche", "2", "spinalcare.ro/servicii-medicale"], blocks[14].css("tbody tr td").map { |td| td.text.strip }
   end
 
   test "reception can note received calls and the ratio appears" do
@@ -94,6 +93,7 @@ class AnalyticsBehaviourTest < ActionDispatch::IntegrationTest
   #  A (mobile, Google, returning): / -> ortopedie -> profile ion-popescu -> call, 90 s in, plus a booking open and a completed booking message
   #  B (desktop, Google, first): ortopedie landing, first click "Programare" (booking), 30 s
   #  C (desktop, direct, first): 5 nav clicks, no contact (looping), last click in footer, searched the team twice
+  #  E (mobile, direct): price list, tapped "Sună pentru preț" on Consultație
   #  D (mobile, facebook/cpc/toamna, first): / -> call
   # plus an older visit of A's visitor (for "returning"), 5 $leave rows on ortopedie, section views, labelled call, 404s.
   def seed
@@ -118,7 +118,9 @@ class AnalyticsBehaviourTest < ActionDispatch::IntegrationTest
     event(c, "$search", { page: "/echipa", term: "popesc", results: 0 }, t + 2.hours + 70)
     event(c, "$section_view", { page: "/servicii-medicale", section: "Ortopedie" }, t + 2.hours + 80)
     event(c, "$section_view", { page: "/servicii-medicale", section: "Ortopedie" }, t + 2.hours + 81) # same section again counts as a view row
-    click(c, "call", "tel:0374554344", "/servicii-medicale", t + 2.hours + 90, text: "Sună pentru preț", label: "Consultație", section: "main")
+    e = visit(started_at: t + 2.hours + 30.minutes, device: "Mobile", landing: "https://www.spinalcare.ro/servicii-medicale")
+    view(e, "/servicii-medicale", t + 2.hours + 30.minutes)
+    click(e, "call", "tel:0374554344", "/servicii-medicale", t + 2.hours + 31.minutes, text: "Sună pentru preț", label: "Consultație", section: "main")
 
     d = visit(started_at: t + 3.hours, device: "Mobile", referrer: "m.facebook.com", landing: "https://www.spinalcare.ro/?utm_source=facebook",
               utm: { utm_source: "facebook", utm_medium: "cpc", utm_campaign: "toamna" })
