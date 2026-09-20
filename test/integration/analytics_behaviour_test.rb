@@ -31,7 +31,7 @@ class AnalyticsBehaviourTest < ActionDispatch::IntegrationTest
     assert_includes text.(1), "Pagini văzute înainte de contact:"
     assert_includes text.(2), "/specialitati-medicale/ortopedie"
     assert_includes text.(2), "Programare"          # first click of the Google lander
-    assert_includes text.(3), "din vizite sunt reveniri (1 din 4)"
+    assert_includes text.(3), "din vizite sunt reveniri (1 din 9)"
     assert_includes text.(4), "contact cu / fără profil văzut"
     assert_includes text.(4), "ion-popescu 1"
     assert_includes text.(5), "vizite cu 5+ click-uri de navigare și niciun contact"
