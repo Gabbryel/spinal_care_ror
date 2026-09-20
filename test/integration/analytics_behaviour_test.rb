@@ -21,32 +21,34 @@ class AnalyticsBehaviourTest < ActionDispatch::IntegrationTest
   test "all fifteen blocks render with the seeded behaviour" do
     get "/dashboard/analytics/behaviour", params: { period: "7" }
     assert_response :success
-    blocks = css_select(".behaviour-block")
-    assert_equal 15, blocks.size
+    all = css_select(".behaviour-block")
+    assert_equal 15, all.size
+    # blocks are grouped by theme on the page; find them by their number
+    blocks = all.each_with_object({}) { |b, h| h[b.at_css(".bh-no").text.to_i - 1] = b }
     text = ->(i) { blocks[i].text.squish }
 
-    paths = blocks[0].css("tbody tr").map { |tr| [tr.at_css(".behaviour-path").text.strip, tr.at_css(".page-count").text.strip] }
+    paths = blocks[0].css("tbody tr").map { |tr| tr.css("td").map { |td| td.text.strip } }
     assert_includes paths, ["Homepage → /specialitati-medicale/ortopedie → /echipa/ion-popescu", "1"]
-    assert_includes text.(1), "decid sub un minut"
-    assert_includes text.(1), "Pagini văzute înainte de contact:"
+    assert_includes text.(1), "în sub un minut"
+    assert_includes text.(1), "Pagini văzute înainte de contact"
     assert_includes text.(2), "/specialitati-medicale/ortopedie"
     assert_includes text.(2), "Programare"          # first click of the Google lander
     assert_includes text.(3), "din vizite sunt reveniri (1 din 10)"
-    assert_includes text.(4), "contact cu / fără profil văzut"
-    assert_includes text.(4), "ion-popescu 1"
-    assert_includes text.(5), "vizite cu 5+ click-uri de navigare și niciun contact"
-    assert_includes text.(5), "(10.0%)" # the one looping visit out of ten
+    assert_includes text.(3), "Cei care revin contactează de"
+    assert_includes text.(4), "Cine deschide un profil de medic contactează de"
+    assert_includes blocks[4].css("tbody tr").map { |tr| tr.css("td").map { |td| td.text.strip } }, ["ion-popescu", "1"]
+    assert_includes text.(5), "1 vizite (10.0%) au dat cinci sau mai multe click-uri de navigare fără să contacteze; cele fără contact pleacă cel mai des din subsol"
     assert_includes text.(6), "Mobile"
     assert_includes text.(6), "Desktop"
-    assert_includes text.(7), "Vârfuri:"
+    assert_includes text.(7), "Cele mai multe contacte vin"
     assert_equal ["facebook / cpc / toamna", "1", "1"], blocks[8].css("tbody tr td").map { |td| td.text.strip }
     assert_equal ["/specialitati-medicale/ortopedie", "5", "42 s", "75%", "80.0%"], blocks[9].css("tbody tr td").map { |td| td.text.strip }
-    assert_includes text.(10), "deschideri ale ferestrei de programări"
+    assert_includes text.(10), "au finalizat-o"
     assert_equal ["2", "1", "1"], blocks[10].css(".behaviour-stats strong").map(&:text), "opens, started, completed"
-    assert_includes text.(11), "click-uri devin apeluri reale"
-    assert_equal ["popesc", "2", "1 ✕"], blocks[12].css("tbody tr td").map { |td| td.text.strip }
-    assert_includes text.(13), "Ortopedie 2"
-    assert_includes text.(13), "Consultație 1"
+    assert_includes text.(11), "devin apeluri reale"
+    assert_equal ["popesc", "2", "1"], blocks[12].css("tbody tr td").map { |td| td.text.strip }
+    assert_includes text.(13), "Secțiunea la care ajung cel mai des: Ortopedie"
+    assert_includes text.(13), "Cer prețul telefonic mai ales pentru Consultație"
     assert_equal ["/pagina-veche", "2", "spinalcare.ro/servicii-medicale"], blocks[14].css("tbody tr td").map { |td| td.text.strip }
   end
 
@@ -57,7 +59,7 @@ class AnalyticsBehaviourTest < ActionDispatch::IntegrationTest
     assert_equal 6, CallTally.find_by(date: day).calls
 
     get "/dashboard/analytics/behaviour", params: { period: "7" }
-    tally = css_select(".behaviour-block")[11].text.squish
+    tally = css_select(".behaviour-block").find { |b| b.at_css(".bh-no").text == "12" }.text.squish
     assert_includes tally, "un click pe telefon a însemnat în medie 2.0 apeluri primite (1 zile cu date)"
 
     post "/dashboard/analytics/call_tally", params: { date: day.to_s, calls: 5 }
@@ -99,7 +101,7 @@ class AnalyticsBehaviourTest < ActionDispatch::IntegrationTest
   def seed
     a_visitor = SecureRandom.uuid
     visit(started_at: @now - 20.days, visitor: a_visitor) # earlier visit of the same person
-    t = @now - 1.day
+    t = @now.beginning_of_day - 1.day + 9.hours # yesterday 09:00 local, so every offset below stays on that day
     a = visit(started_at: t, visitor: a_visitor, device: "Mobile", referrer: "www.google.com", landing: "https://www.spinalcare.ro/")
     view(a, "/", t); view(a, "/specialitati-medicale/ortopedie", t + 20); view(a, "/echipa/ion-popescu", t + 60)
     click(a, "call", "tel:0374554344", "/echipa/ion-popescu", t + 90, section: "main")
