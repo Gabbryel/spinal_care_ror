@@ -47,6 +47,61 @@ module AnalyticsFilterHelper
 
   ANALYTICS_CACHE_TTL = 10.minutes
 
+  # Traffic channel of a visit, from what the landing URL and referrer carry.
+  # Google Ads auto-tagging adds gclid/gbraid/wbraid (certain); Bing adds
+  # msclkid; other paid traffic needs utm_medium=cpc/paid…; fbclid marks a
+  # Facebook/Instagram link, paid or not. `prefix` qualifies the columns
+  # when the visits table is joined ("ahoy_visits.").
+  def self.channel_sql(prefix = '')
+    lp = "#{prefix}landing_page"
+    rd = "#{prefix}referring_domain"
+    um = "#{prefix}utm_medium"
+    us = "#{prefix}utm_source"
+    <<~SQL.squish
+      CASE
+        WHEN #{lp} ~* '[?&](gclid|gbraid|wbraid)=' THEN 'paid_google'
+        WHEN #{lp} ~* '[?&]msclkid=' THEN 'paid_other'
+        WHEN #{um} ~* '^(cpc|ppc|paid|paidsocial|paid_social|paid-social|display|ads?)$'
+          THEN CASE WHEN #{us} ~* 'google' THEN 'paid_google' ELSE 'paid_other' END
+        WHEN #{rd} ~* 'google|bing|yahoo|duckduckgo|yandex' THEN 'organic_search'
+        WHEN #{rd} ~* 'facebook|instagram|fb\\.|tiktok|linkedin|youtube'
+          OR #{us} ~* '^(facebook|instagram|ig|fb)$' OR #{lp} ~* '[?&]fbclid=' THEN 'social'
+        WHEN #{rd} ~* 'spinalcare\\.ro|^77\\.81\\.2\\.98$' THEN 'self'
+        WHEN #{rd} IS NULL OR #{rd} = '' THEN 'direct'
+        ELSE 'referral'
+      END
+    SQL
+  end
+
+  CHANNEL_LABELS = {
+    'paid_google' => 'Google Ads',
+    'paid_other' => 'Alte reclame (UTM)',
+    'organic_search' => 'Căutare organică',
+    'social' => 'Social (Facebook, Instagram)',
+    'direct' => 'Direct',
+    'referral' => 'Alte site-uri',
+    'self' => 'Site propriu'
+  }.freeze
+
+  # Options of the "Canal" filter: group name => channels.
+  CHANNEL_FILTERS = {
+    'paid' => %w[paid_google paid_other],
+    'organic' => %w[organic_search],
+    'social' => %w[social],
+    'direct' => %w[direct],
+    'paid_google' => %w[paid_google],
+    'referral' => %w[referral self]
+  }.freeze
+
+  CHANNEL_FILTER_LABELS = {
+    'paid' => 'Plătit (reclame)',
+    'organic' => 'Organic (căutare)',
+    'social' => 'Social',
+    'direct' => 'Direct',
+    'paid_google' => 'Doar Google Ads',
+    'referral' => 'Alte site-uri + site propriu'
+  }.freeze
+
   private
 
   # Cache key for one analytics section under the current filters. The page
@@ -57,7 +112,7 @@ module AnalyticsFilterHelper
     [
       "analytics", section,
       params[:period] || "30", params[:custom_start_date].presence, params[:custom_end_date].presence,
-      params[:filter_bots] != "false", params[:filter_geography] == "true"
+      params[:filter_bots] != "false", params[:filter_geography] == "true", params[:channel].presence
     ]
   end
 
@@ -96,6 +151,15 @@ module AnalyticsFilterHelper
     visits.where(country: BOT_COUNTRIES)
   end
 
+  def filter_channel(visits, channel)
+    channels = CHANNEL_FILTERS[channel.to_s]
+    return visits unless channels
+    # The channel SQL contains "[?&]" regexes, so no "?" binds here: the
+    # channel names are quoted into the statement.
+    quoted = channels.map { |c| ActiveRecord::Base.connection.quote(c) }.join(', ')
+    visits.where(Arel.sql("(#{AnalyticsFilterHelper.channel_sql}) IN (#{quoted})"))
+  end
+
   def apply_analytics_filters(visits, options = {})
     filtered = visits
 
@@ -108,6 +172,11 @@ module AnalyticsFilterHelper
     if options[:relevant_countries_only]
       filtered = filter_relevant_countries(filtered)
     end
+
+    # Channel filter from the page's "Canal" select, unless a caller asks
+    # for all channels (the paid-vs-organic section compares them).
+    channel = options.key?(:channel) ? options[:channel] : params[:channel]
+    filtered = filter_channel(filtered, channel) if channel.present? && channel != 'all'
 
     filtered
   end

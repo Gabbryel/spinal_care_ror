@@ -30,6 +30,7 @@ class AdminController < ApplicationController
     @custom_end_date = params[:custom_end_date]
     @filter_bots = params[:filter_bots] != 'false' # Default: filter bots
     @filter_geography = params[:filter_geography] == 'true' # Default: show all countries
+    @channel = AnalyticsFilterHelper::CHANNEL_FILTERS.key?(params[:channel].to_s) ? params[:channel] : nil
     
     # Calculate date range based on period
     dates = calculate_period_dates
@@ -447,6 +448,58 @@ class AdminController < ApplicationController
       flash[:notice] = "Apeluri notate pentru #{tally.date.strftime('%d.%m.%Y')}: #{tally.calls}."
     else
       flash[:alert] = "Nu am putut salva: #{tally.errors.full_messages.join(', ')}"
+    end
+    redirect_to dashboard_analytics_path(period: params[:period].presence || '30')
+  end
+
+  # Paid vs organic: every channel side by side, Google Ads campaigns, spend.
+  # Ignores the page's channel filter (it compares the channels).
+  def analytics_channels
+    render_cached_analytics_section(:channels, 'admin/analytics/channels') do
+      dates = calculate_period_dates
+      start_date = dates[:start_date]
+      end_date = dates[:end_date]
+      filter_bots = params[:filter_bots] != 'false'
+      filter_geography = params[:filter_geography] == 'true'
+      base_visits = Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                               .where('started_at >= ? AND started_at <= ?', start_date, end_date)
+      visits = apply_analytics_filters(base_visits, include_bots: !filter_bots, relevant_countries_only: filter_geography, channel: 'all')
+      c = ChannelAnalytics.new(visits: visits, start_date: start_date, end_date: end_date)
+      @channels = c.channels
+      @groups = c.groups
+      @campaigns = c.campaigns
+      @spend = c.spend
+      @monthly = c.monthly
+      @labels = AnalyticsFilterHelper::CHANNEL_LABELS
+    end
+  end
+
+  # Admin names a Google Ads campaign id (the URL carries only the id).
+  def analytics_campaign_name
+    record = AdCampaignName.find_or_initialize_by(campaign_id: params[:campaign_id].to_s.strip)
+    record.name = params[:name].to_s.strip
+    if record.name.present? && record.save
+      Rails.cache.delete_matched('analytics/channels*') rescue nil
+      flash[:notice] = "Campania #{record.campaign_id} se numește acum „#{record.name}”."
+    else
+      flash[:alert] = 'Numele campaniei nu a putut fi salvat.'
+    end
+    redirect_to dashboard_analytics_path(period: params[:period].presence || '30')
+  end
+
+  # Admin types the month's ad spend (lei), per channel.
+  def analytics_ad_spend
+    month = Date.parse("#{params[:month]}-01") rescue nil
+    spend = month && AdSpend.find_or_initialize_by(month: month, channel: params[:channel_key].presence || 'paid_google')
+    if spend
+      spend.amount = params[:amount].to_s.tr(',', '.').to_d
+      spend.note = params[:note].presence
+    end
+    if spend&.save
+      Rails.cache.delete_matched('analytics/channels*') rescue nil
+      flash[:notice] = "Cheltuială notată pentru #{I18n.l(month, format: '%m.%Y')}: #{spend.amount.to_i} lei."
+    else
+      flash[:alert] = 'Cheltuiala nu a putut fi salvată (luna în format AAAA-LL, suma în lei).'
     end
     redirect_to dashboard_analytics_path(period: params[:period].presence || '30')
   end

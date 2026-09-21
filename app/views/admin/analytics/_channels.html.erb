@@ -1,0 +1,142 @@
+<%# Plătit vs. Organic: channel groups, every channel side by side, Google
+    Ads campaigns with admin-given names, monthly spend and cost per contact. %>
+<%= turbo_frame_tag "channels" do %>
+  <% if @channels.empty? %>
+    <div class="empty-state"><p>Nu există vizite în perioada selectată.</p></div>
+  <% else %>
+  <%
+    paid = @groups.find { |g| g[:group] == 'paid' }
+    organic = @groups.find { |g| g[:group] == 'organic' }
+    total_contacts = @groups.sum { |g| g[:contacts] }
+  %>
+  <div class="bh">
+    <p class="bh-intro">Vizitele împărțite după cum au ajuns pe site. „Plătit” = click-uri din Google Ads (identificate sigur prin <code>gclid</code>) și linkuri etichetate cu <code>utm_medium=cpc</code>. Filtrul „Canal” de sus aplică aceeași împărțire tuturor secțiunilor.</p>
+
+    <section class="bh-group">
+      <h3 class="bh-group-title">Pe scurt</h3>
+      <div class="bh-blocks">
+        <article class="bh-block bh-block--wide">
+          <header class="bh-head"><span class="bh-no">1</span><h4>Plătit față de organic</h4></header>
+          <% if paid && organic %>
+            <p class="bh-headline">
+              Reclamele au adus <strong><%= paid[:share] %>%</strong> din vizite și <strong><%= total_contacts.positive? ? (paid[:contacts] * 100.0 / total_contacts).round : 0 %>%</strong> din contacte;
+              căutarea organică <strong><%= organic[:share] %>%</strong> din vizite și <strong><%= total_contacts.positive? ? (organic[:contacts] * 100.0 / total_contacts).round : 0 %>%</strong> din contacte.
+              Din 100 de vizite plătite contactează <strong><%= paid[:per_100] %></strong>, din 100 organice <strong><%= organic[:per_100] %></strong>.
+            </p>
+          <% elsif paid %>
+            <p class="bh-headline">Reclamele au adus <strong><%= paid[:share] %>%</strong> din vizite; din 100 de vizite plătite contactează <strong><%= paid[:per_100] %></strong>; nicio vizită din căutare organică în perioadă.</p>
+          <% else %>
+            <p class="bh-headline bh-headline--muted">Nicio vizită plătită în perioadă. Google Ads adaugă automat <code>gclid</code>; pentru Facebook adaugă <code>utm_medium=paidsocial</code> pe linkurile din reclame.</p>
+          <% end %>
+          <table class="bh-table">
+            <thead><tr><th>Grup</th><th class="num">Vizite</th><th class="num">Din total</th><th class="num">Apeluri</th><th class="num">Programări</th><th class="num">Contacte</th><th class="num">Vizite cu contact</th><th class="num">Din 100 de vizite contactează</th></tr></thead>
+            <tbody>
+              <% @groups.each do |g| %>
+                <tr class="<%= 'bh-row-strong' if g[:group] == 'paid' %>"><td><%= g[:label] %></td><td class="num"><%= number_with_delimiter(g[:visits]) %></td><td class="num"><%= g[:share] %>%</td><td class="num"><%= g[:calls] %></td><td class="num"><%= g[:bookings] %></td><td class="num"><%= g[:contacts] %></td><td class="num"><%= g[:converting_visits] %></td><td class="num"><%= g[:per_100] %></td></tr>
+              <% end %>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+    <section class="bh-group">
+      <h3 class="bh-group-title">Fiecare canal în parte</h3>
+      <div class="bh-blocks">
+        <article class="bh-block bh-block--wide">
+          <header class="bh-head"><span class="bh-no">2</span><h4>Canale, unul lângă altul</h4></header>
+          <% best = @channels.select { |c| c[:visits] >= 50 }.max_by { |c| c[:per_100] } %>
+          <% if best %>
+            <p class="bh-headline">Canalul care convertește cel mai bine, dintre cele cu cel puțin 50 de vizite: <strong><%= @labels[best[:channel]] %></strong>: din 100 de vizite, <%= best[:per_100] %> ajung la contact.</p>
+          <% end %>
+          <table class="bh-table">
+            <thead><tr><th>Canal</th><th class="num">Vizite</th><th class="num">Din total</th><th class="num">Vizitatori unici</th><th class="num">Pagini / vizită</th><th class="num">Apeluri</th><th class="num">Programări</th><th class="num">Din 100 contactează</th><th class="num">Reveniri</th><th class="num">Timp până la contact</th></tr></thead>
+            <tbody>
+              <% @channels.each do |c| %>
+                <tr><td><%= @labels[c[:channel]] || c[:channel] %></td><td class="num"><%= number_with_delimiter(c[:visits]) %></td><td class="num"><%= c[:share] %>%</td><td class="num"><%= number_with_delimiter(c[:unique]) %></td><td class="num"><%= c[:views_per_visit] %></td><td class="num"><%= c[:calls] %></td><td class="num"><%= c[:bookings] %></td><td class="num"><%= c[:per_100] %></td><td class="num"><%= c[:returning_share] %>%</td><td class="num"><%= c[:median_seconds] ? "#{c[:median_seconds]} s" : '—' %></td></tr>
+              <% end %>
+            </tbody>
+          </table>
+          <p class="bh-note">„Reveniri” = vizite ale unui browser care a mai fost pe site. „Timp până la contact” = median, de la prima pagină la primul apel sau prima programare. „Social” conține și click-urile din reclame Facebook neetichetate: Facebook pune <code>fbclid</code> pe orice link, plătit sau nu.</p>
+        </article>
+
+        <% if @monthly.any? %>
+        <article class="bh-block bh-block--wide">
+          <header class="bh-head"><span class="bh-no">3</span><h4>Pe luni</h4></header>
+          <table class="bh-table">
+            <thead><tr><th>Luna</th><% ChannelAnalytics::GROUPS.each_key do |g| %><th class="num"><%= ChannelAnalytics::GROUP_LABELS[g] %><br><small>vizite · contacte</small></th><% end %></tr></thead>
+            <tbody>
+              <% @monthly.each do |m| %>
+                <tr><td><%= I18n.l(m[:month], format: '%m.%Y') %></td><% ChannelAnalytics::GROUPS.each_key do |g| %><td class="num"><%= number_with_delimiter(m[:groups][g][:visits]) %> · <strong><%= m[:groups][g][:converting] %></strong></td><% end %></tr>
+              <% end %>
+            </tbody>
+          </table>
+          <p class="bh-note">Contacte = vizite cu cel puțin un apel sau o programare.</p>
+        </article>
+        <% end %>
+      </div>
+    </section>
+
+    <section class="bh-group">
+      <h3 class="bh-group-title">Google Ads</h3>
+      <div class="bh-blocks">
+        <article class="bh-block">
+          <header class="bh-head"><span class="bh-no">4</span><h4>Campanii</h4></header>
+          <% if @campaigns.any? %>
+            <% top = @campaigns.first %>
+            <p class="bh-headline">Cea mai mare campanie: <strong><%= top[:name] || "id #{top[:campaign_id]}" %></strong>, cu <%= number_with_delimiter(top[:visits]) %> vizite; din 100, <%= top[:per_100] %> ajung la contact.</p>
+            <table class="bh-table bh-table--compact">
+              <thead><tr><th>Campanie</th><th class="num">Vizite</th><th class="num">Vizite cu contact</th><th class="num">La 100</th><th>Activă</th></tr></thead>
+              <tbody>
+                <% @campaigns.each do |c| %>
+                  <tr>
+                    <td class="bh-path">
+                      <% if c[:name] %><%= c[:name] %> <small class="bh-muted">#<%= c[:campaign_id] %></small>
+                      <% elsif c[:campaign_id] %>
+                        <%= form_with url: dashboard_analytics_campaign_name_path, method: :post, class: 'inline-form', data: { turbo: false } do %>
+                          <%= hidden_field_tag :period, params[:period] %>
+                          <%= hidden_field_tag :campaign_id, c[:campaign_id] %>
+                          <%= text_field_tag :name, nil, placeholder: "nume pentru #{c[:campaign_id]}", class: 'date-input-new inline-input', aria: { label: "Nume campanie #{c[:campaign_id]}" } %>
+                          <%= submit_tag 'Salvează', class: 'btn-apply-new btn-small' %>
+                        <% end %>
+                      <% else %>fără id de campanie<% end %>
+                    </td>
+                    <td class="num"><%= number_with_delimiter(c[:visits]) %></td><td class="num"><%= c[:converting] %></td><td class="num"><%= c[:per_100] %></td>
+                    <td><small><%= c[:first_seen].to_s[5..] %> → <%= c[:last_seen].to_s[5..] %></small></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+            <p class="bh-note">Id-ul vine din <code>gad_campaignid</code> în adresa de aterizare. Numele îl dai tu o singură dată, din Google Ads.</p>
+          <% else %>
+            <p class="bh-headline bh-headline--muted">Nicio vizită din Google Ads în perioadă.</p>
+          <% end %>
+        </article>
+
+        <article class="bh-block">
+          <header class="bh-head"><span class="bh-no">5</span><h4>Cheltuială și cost per contact</h4></header>
+          <% if @spend[:per_contact] %>
+            <p class="bh-headline">Cu <strong><%= number_with_delimiter(@spend[:total].to_i) %> lei</strong> cheltuiți în lunile perioadei, un contact din reclame a costat <strong><%= number_with_delimiter(@spend[:per_contact].to_i) %> lei</strong> (<%= @spend[:per_visit] %> lei pe vizită plătită)<%= @spend[:partial] ? '; perioada nu acoperă luni întregi, deci cifra e aproximativă' : '' %>.</p>
+          <% else %>
+            <p class="bh-headline bh-headline--muted">Notează cheltuiala lunară din Google Ads și vei vedea aici costul pe contact și pe vizită.</p>
+          <% end %>
+          <%= form_with url: dashboard_analytics_ad_spend_path, method: :post, class: 'tally-form', data: { turbo: false } do %>
+            <%= hidden_field_tag :period, params[:period] %>
+            <%= hidden_field_tag :channel_key, 'paid_google' %>
+            <%= month_field_tag :month, Date.current.strftime('%Y-%m'), class: 'date-input-new', required: true, aria: { label: 'Luna' } %>
+            <%= number_field_tag :amount, nil, min: 0, step: 1, placeholder: 'lei', class: 'date-input-new tally-calls', required: true, aria: { label: 'Suma în lei' } %>
+            <%= text_field_tag :note, nil, placeholder: 'notă (opțional)', class: 'date-input-new', aria: { label: 'Notă' } %>
+            <%= submit_tag 'Notează', class: 'btn-apply-new' %>
+          <% end %>
+          <% if @spend[:rows].any? %>
+            <table class="bh-table bh-table--compact">
+              <thead><tr><th>Luna</th><th class="num">Cheltuit (lei)</th><th>Notă</th></tr></thead>
+              <tbody><% @spend[:rows].each do |r| %><tr><td><%= I18n.l(r.month, format: '%m.%Y') %></td><td class="num"><%= number_with_delimiter(r.amount.to_i) %></td><td><%= r.note %></td></tr><% end %></tbody>
+            </table>
+          <% end %>
+        </article>
+      </div>
+    </section>
+  </div>
+  <% end %>
+<% end %>
