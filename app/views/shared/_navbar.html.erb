@@ -1,7 +1,7 @@
 <nav class="modern-public-navbar" id="navbar-toggle" data-controller="navbarFixed adminLink" data-action="scroll@window->navbarFixed#navbarFixed click->blurMain#removeBlur">
   <div class="navbar-container">
     <%= link_to root_path, class: "navbar-logo" do %>
-      <%= image_tag "logo-signature-v6.png", class: 'logo-img', data: {sidemenu_toggle_target: 'toggle'}, alt: 'Spinal Care logo' %>
+      <%= image_tag "logo-signature-v6-400.webp", class: 'logo-img', data: {sidemenu_toggle_target: 'toggle'}, alt: 'Spinal Care logo', width: 400, height: 104 %>
     <% end %>
     
     <div class="navbar-desktop-menu">
@@ -112,7 +112,7 @@
       </button>
     </div>
 
-    <button class="mobile-menu-toggle" data-sidemenu-toggle-target="hamburger" data-action="click->sidemenu-toggle#toggle">
+    <button type="button" class="mobile-menu-toggle" aria-label="Deschide meniul" aria-controls="side-menu" data-sidemenu-toggle-target="hamburger" data-action="click->sidemenu-toggle#toggle">
       <span class="hamburger-line" data-sidemenu-toggle-target="shortline"></span>
       <span class="hamburger-line hamburger-line-middle" data-sidemenu-toggle-target="longline"></span>
       <span class="hamburger-line" data-sidemenu-toggle-target="longline2"></span>

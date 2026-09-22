@@ -218,8 +218,9 @@
   }
 
   @keyframes promoCardIn {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: none; }
+    /* movement only: fading from transparent failed contrast checks */
+    from { transform: translateY(18px); }
+    to   { transform: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -459,14 +460,12 @@
   .promo-home-cta {
     font-size: calc(0.82rem * var(--promo-scale));
     font-weight: 700;
-    color: #ea580c;
+    color: #c2410c; /* 5.2:1 on white; #ea580c at 75% opacity was ~2.6:1 */
     white-space: nowrap;
-    opacity: 0.75;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: transform 0.3s ease;
   }
 
   .promo-home-card:hover .promo-home-cta {
-    opacity: 1;
     transform: translateX(2px);
   }
 

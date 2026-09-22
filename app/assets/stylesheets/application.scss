@@ -13,12 +13,12 @@
 // External libraries
 @import "../../../node_modules/bootstrap/scss/bootstrap";
 // @import "font-awesome-sprockets";
+$fa-font-display: swap;
 @import "font-awesome";
 // Your CSS partials
 @import "components/index";
 @import "pages/index";
 @import "devise/index";
-@import "admin/index";
 @import "members/index";
 @import "articles/index";
 @import "admin/index";

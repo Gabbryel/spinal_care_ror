@@ -205,6 +205,11 @@
   resolved "https://registry.npmjs.org/@webpack-cli/serve/-/serve-2.0.5.tgz"
   integrity sha512-lqaoKnRYBdo1UgDX8uF24AfGMifWK19TxPmM5FHc2vAGxrJ/qtyUyFBWoY1tISZdelsQ5fBcOusifo5o5wSJxQ==
 
+ahoy.js@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/ahoy.js/-/ahoy.js-0.4.2.tgz#52a0a2b56cf382848a10204c632a40402347ac65"
+  integrity sha512-DYrXBIPhlnRmfvLKJ1gkUQyhByCO/6Grmpy/OBXGdM4hDcmrjIY3VKhtWwVdILQF0wYjYYABWSScGYLByoaM2g==
+
 ajv-keywords@^3.5.2:
   version "3.5.2"
   resolved "https://registry.npmjs.org/ajv-keywords/-/ajv-keywords-3.5.2.tgz"

@@ -115,11 +115,27 @@ class AnalyticsClicksTest < ActionDispatch::IntegrationTest
     assert_response :success
     doc = Nokogiri::HTML5(response.body)
     assert_empty doc.css("head img, head iframe"), "head must not contain img/iframe (noscript pixels go in body)"
-    assert doc.at_css("head script[src*='ahoy']"), "ahoy.js must be in head"
-    ahoy_config = doc.css("head script:not([src])").find { |s| s.text.include?("ahoy.configure") }
-    assert ahoy_config, "ahoy config script must be in head"
-    assert_includes ahoy_config.text, "ahoyViewTrackingBound"
-    assert_equal 1, response.body.scan('addEventListener("turbo:load"').size, "one turbo:load view listener"
+    bundle = doc.at_css("head script[src*='/assets/application']")
+    assert bundle, "the application bundle (which includes Ahoy) is in head"
+    assert_equal "defer", bundle["defer"], "and never blocks rendering"
+    assert_nil doc.at_css("script[src*='jsdelivr'], script[src*='ahoy']"), "no separate, render-blocking Ahoy script"
+    assert_not_includes response.body, "ahoy.configure", "Ahoy is configured inside the bundle"
+  end
+
+  test "the page does not block on the booking app, fonts or unused stylesheets" do
+    get "/"
+    doc = Nokogiri::HTML5(response.body)
+    frame = doc.at_css("#promoModal iframe")
+    assert_nil frame["src"], "the booking iframe loads only when the modal opens"
+    assert_equal "https://programari.spinalcare.ro", frame["data-src"]
+    assert_equal "lazy-iframe", doc.at_css("#promoModal")["data-controller"]
+
+    fonts = doc.css("link[href*='fonts.googleapis.com/css2']")
+    assert fonts.any? { |l| l["rel"] == "preload" }, "font CSS is preloaded"
+    stylesheet = fonts.find { |l| l["rel"] == "stylesheet" }
+    assert_equal "print", stylesheet["media"], "font CSS does not block the first paint"
+    assert_equal 1, fonts.map { |l| l["href"] }.uniq.size, "one request for all font families"
+    assert_nil doc.at_css("link[href*='inter-font']"), "unused Inter font is not loaded"
   end
 
   private

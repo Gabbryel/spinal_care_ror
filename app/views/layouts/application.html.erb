@@ -30,7 +30,12 @@
     <meta name="ahrefs-site-verification" content="42887ccc32d8cfecbea7a49857b20d58078267bb98d6a66d1da75ddb54cbe7ec">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <%# One request for the fonts actually used (Montserrat body, variable; Nunito
+        headings; Poppins display titles), loaded without blocking the first paint. %>
+    <% google_fonts = "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap" %>
+    <link rel="preload" as="style" href="<%= google_fonts %>">
+    <link rel="stylesheet" href="<%= google_fonts %>" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="<%= google_fonts %>"></noscript>
     <%= favicon_link_tag 'favicon.ico' %>
     <!-- Facebook Open Graph data -->
     <meta property="og:title" content="<%= meta_title %>" />
@@ -55,7 +60,7 @@
     <%= yield :json_ld %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
     <script>
@@ -70,25 +75,9 @@
       fbq('init', '623596673860745');
       fbq('track', 'PageView');
       </script>
-      <%# The Facebook pixel <noscript><img> lives in <body> (below): an <img> inside
-          <head> makes Turbo's DOMParser close the head early, so every tag after it
-          (Ahoy, this config) was re-executed on each Turbo visit and views doubled. %>
-      <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/ahoy.js@0.4.2/dist/ahoy.min.js" %>
-      <script>
-        ahoy.configure({
-          visitsUrl: "/ahoy/visits",
-          eventsUrl: "/ahoy/events"
-        });
-        // One $view per page shown. turbo:load fires on the initial load and
-        // after every Turbo Drive navigation; without this, only full page
-        // loads were counted. Guarded so a re-executed script cannot add a
-        // second listener.
-        if (!window.ahoyViewTrackingBound) {
-          window.ahoyViewTrackingBound = true;
-          document.addEventListener("turbo:load", function () { ahoy.trackView(); });
-          document.addEventListener("DOMContentLoaded", function () { if (!window.Turbo) ahoy.trackView(); });
-        }
-      </script>
+      <%# Ahoy is bundled into application.js (see app/javascript/application.js).
+          The Facebook pixel <noscript><img> lives in <body>: an <img> in <head>
+          makes Turbo's parser open <body> early and re-run head scripts. %>
       <%= yield :head %>
   </head>
 

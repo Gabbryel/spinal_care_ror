@@ -97,6 +97,12 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
+  # No separate CSS compressor pass: it also ran over tailwind.css, which it
+  # cannot parse. Sass writes application.css compressed instead.
   config.assets.css_compressor = nil
-  #remove the prepocessor compression
+  config.sass.style = :compressed
+
+  # Gzip HTML and other dynamic responses (the homepage went out as 130 KB
+  # of plain HTML). Precompiled assets are already served pre-gzipped.
+  config.middleware.insert_after ActionDispatch::Static, Rack::Deflater
 end

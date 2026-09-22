@@ -7,15 +7,17 @@
   </div>
 </div> -->
 
-<div class="modal modal-xl fade" tabindex="-1" id="promoModal">
+<%# The booking site loads ~3 MB (Vue, Vuetify, jQuery, reCAPTCHA); its iframe
+    gets its src only when the modal first opens (lazy_iframe_controller). %>
+<div class="modal modal-xl fade" tabindex="-1" id="promoModal" aria-labelledby="promoModalTitle" data-controller="lazy-iframe">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <p class="h5 modal-title">Programări Clinica Spinal Care</p>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <p class="h5 modal-title" id="promoModalTitle">Programări Clinica Spinal Care</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Închide"></button>
       </div>
       <div class="modal-body">
-        <iframe src="https://programari.spinalcare.ro" frameborder="0"></iframe>
+        <iframe data-lazy-iframe-target="frame" data-src="https://programari.spinalcare.ro" title="Programări online Spinal Care" frameborder="0"></iframe>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Închide</button>

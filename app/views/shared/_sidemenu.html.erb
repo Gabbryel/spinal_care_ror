@@ -1,7 +1,7 @@
-<div class="modern-side-menu" data-sidemenu-toggle-target="toggle">
+<div class="modern-side-menu" id="side-menu" data-sidemenu-toggle-target="toggle">
   <div class="side-menu-header">
     <%= link_to root_path, class: 'side-menu-logo' do %>
-      <%= image_tag "logo-signature-v6.png", alt: 'Spinal Care' %>
+      <%= image_tag "logo-signature-v6-400.webp", alt: 'Spinal Care', width: 400, height: 104, loading: 'lazy', decoding: 'async' %>
     <% end %>
   </div>
 
@@ -131,11 +131,11 @@
       <a href="tel:0374554344">0374 554 344</a>
     </p>
     <div class="side-menu-social">
-      <%= link_to 'https://www.facebook.com/SpinalCareBacau', target: '_blank', rel: 'noopener', class: 'social-link' do %>
-        <i class="fab fa-facebook-f"></i>
+      <%= link_to 'https://www.facebook.com/SpinalCareBacau', target: '_blank', rel: 'noopener', class: 'social-link', aria: { label: 'Spinal Care pe Facebook' } do %>
+        <i class="fab fa-facebook-f" aria-hidden="true"></i>
       <% end %>
-      <%= link_to 'https://www.instagram.com/spinalcarebacau', target: '_blank', rel: 'noopener', class: 'social-link' do %>
-        <i class="fab fa-instagram"></i>
+      <%= link_to 'https://www.instagram.com/spinalcarebacau', target: '_blank', rel: 'noopener', class: 'social-link', aria: { label: 'Spinal Care pe Instagram' } do %>
+        <i class="fab fa-instagram" aria-hidden="true"></i>
       <% end %>
     </div>
   </div>
