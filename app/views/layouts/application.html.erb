@@ -1,28 +1,20 @@
 <!DOCTYPE html>
 <html lang="ro">
   <head>
-    <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-TVX66CLN');</script>
-  <!-- End Google Tag Manager -->
-  <!-- Google ads tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16853789356">
-  </script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'AW-16853789356');
-  </script>
-  <!-- Google ads tag (gtag.js) -->
-  <!-- Google tag (gtag.js) --> 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2M3F6CZYYF"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-2M3F6CZYYF'); </script>
-  <!-- Google tag (gtag.js) --> 
     <meta charset="UTF-8">
+    <%# One Google tag library for both destinations (GA4 + Google Ads).
+        There used to be two copies of gtag.js on one dataLayer, plus a Tag
+        Manager container (GTM-TVX66CLN) that held no tags: ~450 KB and
+        ~1.1 s of mobile main thread for nothing. To use Tag Manager later,
+        re-add its snippet and move these configs into the container. %>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2M3F6CZYYF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2M3F6CZYYF');
+      gtag('config', 'AW-16853789356');
+    </script>
     <title><%= meta_title %></title>
     <link rel="canonical" href="<%= canonical_url %>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -83,10 +75,6 @@
 
   <body data-controller="vh sidemenu-toggle adminLink contact click-tracker engagement" data-action="scroll@window->sidemenu-toggle#close">
     <meta name="google-site-verification" content="oxssYt-WnE928L-zOpjVsjkDrhXjOE2kWQOfBlIdRTA" />
-    <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TVX66CLN"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
     <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=623596673860745&ev=PageView&noscript=1"/></noscript>
   
       <%= render "shared/before_nav" %>

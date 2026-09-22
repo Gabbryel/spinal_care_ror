@@ -122,6 +122,16 @@ class AnalyticsClicksTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, "ahoy.configure", "Ahoy is configured inside the bundle"
   end
 
+  test "Google tags load one library for both GA4 and Ads, without an empty Tag Manager" do
+    get "/"
+    body = response.body
+    assert_equal 1, body.scan(%r{googletagmanager\.com/gtag/js}).size, "gtag.js is loaded once"
+    assert_includes body, "gtag('config', 'G-2M3F6CZYYF')"
+    assert_includes body, "gtag('config', 'AW-16853789356')"
+    assert_no_match %r{googletagmanager\.com/(gtm\.js|ns\.html)}, body, "no Tag Manager container"
+    assert_match %r{\A<!DOCTYPE html>\s*<html[^>]*>\s*<head>\s*<meta charset="UTF-8">}, body, "charset comes first"
+  end
+
   test "the page does not block on the booking app, fonts or unused stylesheets" do
     get "/"
     doc = Nokogiri::HTML5(response.body)
