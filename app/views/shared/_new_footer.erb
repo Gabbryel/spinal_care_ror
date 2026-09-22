@@ -55,11 +55,11 @@
         <div class="footer-social">
           <p class="social-label">Urmărește-ne</p>
           <div class="social-icons">
-            <%= link_to 'https://www.facebook.com/SpinalCareBacau', target: '_blank', rel: 'noopener', class: 'social-link', title: 'Facebook' do %>
-              <i class="fab fa-facebook-f"></i>
+            <%= link_to 'https://www.facebook.com/SpinalCareBacau', target: '_blank', rel: 'noopener', class: 'social-link', title: 'Facebook', aria: { label: 'Spinal Care pe Facebook' } do %>
+              <%= brand_icon(:facebook_f) %>
             <% end %>
-            <%= link_to 'https://www.instagram.com/spinalcarebacau', target: '_blank', rel: 'noopener', class: 'social-link', title: 'Instagram' do %>
-              <i class="fab fa-instagram"></i>
+            <%= link_to 'https://www.instagram.com/spinalcarebacau', target: '_blank', rel: 'noopener', class: 'social-link', title: 'Instagram', aria: { label: 'Spinal Care pe Instagram' } do %>
+              <%= brand_icon(:instagram) %>
             <% end %>
           </div>
         </div>

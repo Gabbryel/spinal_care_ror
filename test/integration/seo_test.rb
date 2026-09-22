@@ -347,8 +347,18 @@ class SeoTest < ActionDispatch::IntegrationTest
     eager_alts = images.reject { |img| img["loading"] == "lazy" }.map { |img| img["alt"] }
     assert_includes eager_alts, "Spinal Care logo"
     assert_includes eager_alts, "15 ani Spinal Care"
-    specialty_img = images.find { |img| img["alt"] == @cardio.name }
+    specialty_img = css_select(%(.modern-specialty-card[data-specialty="#{@cardio.slug}"] .specialty-icon img)).first
     assert specialty_img && specialty_img["loading"] == "lazy", "specialty card image should be lazy"
+    # Decorative: the card's heading already names the specialty.
+    assert_equal "", specialty_img["alt"]
+  end
+
+  test "public layout has one main landmark and no icon-font brand glyphs" do
+    get "/"
+    assert_select "main.main", count: 1
+    # Font Awesome brand glyphs pull a 119 KB font; brand icons are inline SVG.
+    assert_select "i.fab", count: 0
+    assert_select "i.svg-icon svg path", minimum: 4
   end
 
   # --- round 3 ----------------------------------------------------------------
