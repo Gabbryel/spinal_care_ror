@@ -1,0 +1,28 @@
+// Dashboard-only stylesheet, loaded after application.css by
+// layouts/dashboard.erb. Public pages no longer download the admin styles.
+//
+// Cascade: this file repeats, in their original order, everything that used
+// to follow articles/ in application.scss: the whole admin sequence (including
+// the few partials application.scss still has via admin/_public), then
+// specialties, medical_services, gdpr, facts, promos and analytics. Loaded
+// after application.css, it makes dashboard pages resolve every tie exactly
+// as before the split.
+
+// Variables, functions and mixins only (no CSS output).
+@import "config/fonts";
+@import "config/colors";
+@import "config/bootstrap_variables";
+@import "mixins/mixins";
+@import "../../../node_modules/bootstrap/scss/functions";
+@import "../../../node_modules/bootstrap/scss/variables";
+@import "../../../node_modules/bootstrap/scss/mixins";
+
+@import "admin/index";
+
+@import "specialties/index";
+@import "medical_services/index";
+@import "gdpr/index";
+@import "facts/index";
+@import "promos/index";
+
+@import "analytics";

@@ -1,0 +1,12 @@
+// The admin partials that public pages depend on, in their admin/_index order.
+// Measured by matching every admin selector against the public pages
+// (2026-09-22): general (h1–h6 and .fas resets), specialties_redesign
+// (.specialty-card, .specialties-grid), medical_services_redesign (the price
+// list's .service-card), specialty_services_redesign (.services-container)
+// and medicines_consumption (the site-wide .btn / .btn-secondary look).
+// Everything else in admin/ is dashboard-only and lives in admin.scss.
+@import "general";
+@import "specialties_redesign";
+@import "medical_services_redesign";
+@import "specialty_services_redesign";
+@import "medicines_consumption";

@@ -21,10 +21,11 @@ $fa-font-display: swap;
 @import "devise/index";
 @import "members/index";
 @import "articles/index";
-@import "admin/index";
+// Only the admin partials public pages depend on (see admin/_public.scss);
+// the rest of the admin styles are in admin.scss, loaded only on the dashboard.
+@import "admin/public";
 @import "specialties/index";
 @import "medical_services/index";
 @import "gdpr/index";
 @import "facts/index";
 @import "promos/index";
-@import "analytics";
