@@ -17,14 +17,15 @@
         <input 
           type="text" 
           placeholder="Caută după nume..." 
+          aria-label="Caută un membru al echipei după nume"
           class="filter-search-input"
           data-memberindexfilter-target="nameInput"
           data-action="input->memberIndexFilter#filterByName"
         >
         
         <div class="filter-specialties">
-          <label class="filter-label">Filtrează după specialitate:</label>
-          <select class="filter-select" data-action="change->memberIndexFilter#filterBySpecialty">
+          <label class="filter-label" for="team-specialty-filter">Filtrează după specialitate:</label>
+          <select id="team-specialty-filter" class="filter-select" data-action="change->memberIndexFilter#filterBySpecialty">
             <option value="all">Toate specialitățile</option>
             <% @specialties.select{|s| s.members.where(is_active: true).count > 0}.each do |specialty| %>
               <option value="<%= specialty.slug %>"><%= specialty.name %></option>

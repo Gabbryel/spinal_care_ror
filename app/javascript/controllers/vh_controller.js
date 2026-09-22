@@ -6,7 +6,11 @@ export default class extends Controller {
 
   connect() {
     useWindowResize(this)
-    document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
+    // After the first frame: reading the viewport while Turbo renders forced a
+    // layout on every page.
+    requestAnimationFrame(() => {
+      document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
+    });
   }
   windowResize({ width, height, event }) {
     document.documentElement.style.setProperty("--vh", `${height * 0.01}px`);
