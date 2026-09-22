@@ -100,8 +100,10 @@ module SeoHelper
 
   # cl_image_tag for images below the fold: deferred loading, async decoding.
   # Never use it for the LCP image or anything in the first viewport.
+  # Below-the-fold Cloudinary image: lazy, async decoding, and WebP/AVIF with
+  # automatic quality unless the caller asks for something else.
   def cl_lazy_image_tag(source, **options)
-    cl_image_tag(source, loading: "lazy", decoding: "async", **options)
+    cl_image_tag(source, loading: "lazy", decoding: "async", fetch_format: :auto, quality: :auto, **options)
   end
 
   # Alt text for a team member's photo: name + profession + specialty.

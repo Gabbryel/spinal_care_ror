@@ -365,7 +365,7 @@ body:has(.modern-medical-services-page) .main {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: #059669;
+          color: #047857; /* 5.5:1 on white; #059669 was 3.8:1 */
           font-weight: 600;
           font-size: 0.95rem;
 

@@ -101,6 +101,9 @@ Rails.application.configure do
   # cannot parse. Sass writes application.css compressed instead.
   config.assets.css_compressor = nil
   config.sass.style = :compressed
+  # sassc-rails turns "/* line N, file.scss */" comments on in every
+  # environment (the old compressor used to strip them): 1.25 MB → 0.58 MB.
+  config.sass.line_comments = false
 
   # Gzip HTML and other dynamic responses (the homepage went out as 130 KB
   # of plain HTML). Precompiled assets are already served pre-gzipped.
