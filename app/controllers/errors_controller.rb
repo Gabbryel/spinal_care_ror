@@ -9,6 +9,15 @@ class ErrorsController < ApplicationController
   # probe prefixes: scanners, not people. They get a bodyless 404.
   FILE_LIKE = %r{\.[a-z0-9]{1,5}\z|/\.|/wp-|/cgi-bin/|/xmlrpc}i
 
+  # Single-segment roots that only vulnerability scanners ask for: archive
+  # years, other-CMS roots and bare language codes. They arrive with the site
+  # itself as referer (spinalcare.ro/2024/ → /2024), so they used to be
+  # tracked as dead links and each one opened a visit with no page view.
+  # Paths a person could plausibly type (/contact, /blog, /preturi) are not
+  # here: those still get the helpful 404 page and stay in the report.
+  PROBE_PATHS = %r{\A/(20\d\d|backup|content|cms|wordpress|blog\d+|old|new|test|demo|site|shop|store|
+                       admin|administrator|phpmyadmin|sql|db|vendor|[a-z]{2})/?\z}xi
+
   # Catch-all route. Old URLs with a current equivalent get a 301; everything
   # else is a real 404 (a bare one for file-like probes such as /wp-login.php,
   # a helpful page for everything else). Never a redirect to the homepage:
@@ -19,7 +28,9 @@ class ErrorsController < ApplicationController
       return redirect_to target, status: :moved_permanently, allow_other_host: true
     end
 
-    return head :not_found, content_type: "text/plain" if request.path.match?(FILE_LIKE) || wants_non_html?
+    if request.path.match?(FILE_LIKE) || request.path.match?(PROBE_PATHS) || wants_non_html?
+      return head :not_found, content_type: "text/plain"
+    end
 
     track_not_found
     render_not_found

@@ -473,6 +473,23 @@ class SeoTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "scanner probes for other CMS roots get a bare 404 and are not tracked" do
+    %w[/2024 /2023/ /backup /content /cms /blog2 /wordpress /admin /de /en].each do |path|
+      assert_no_difference -> { Ahoy::Event.where(name: "$not_found").count }, path do
+        get path
+      end
+      assert_response :not_found, path
+      assert_empty response.body, path
+    end
+
+    # Paths a person may type keep the helpful page and stay in the report.
+    %w[/contact /blog /preturi].each do |path|
+      get path
+      assert_response :not_found, path
+      assert_select "h1", text: "Pagina căutată nu există"
+    end
+  end
+
   test "unknown slugs under a section answer 404, with suggestions when there are near matches" do
     get "/echipa/inexistent-xyz"
     assert_response :not_found
