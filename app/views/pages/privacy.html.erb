@@ -1,8 +1,6 @@
 <%= content_for :meta_title, page_title("Politica de confidențialitate și cookie-uri") %>
 <%= content_for :meta_description, meta_description_for(nil, "Cum prelucrează Clinica Spinal Care Bacău datele vizitatorilor site-ului, ce cookie-uri folosim, cât durează și cum vă exercitați drepturile prevăzute de GDPR.") %>
 
-<% operator = LEGAL["company_name"].presence %>
-
 <div class="legal-page">
   <header class="legal-header">
     <h1>Politica de confidențialitate și de cookie-uri</h1>
@@ -27,12 +25,24 @@
   <section id="operator" class="legal-section">
     <h2>1. Cine prelucrează datele</h2>
     <p>
-      Site-ul <strong>spinalcare.ro</strong> este administrat de
-      <strong><%= operator || LEGAL["clinic_name"] %></strong><%= ", #{LEGAL['registration']}" if LEGAL["registration"].present? %>,
-      cu sediul în <%= LEGAL["address"] %>.
-      Pentru orice aspect legat de datele dumneavoastră ne puteți scrie la
-      <a href="mailto:<%= LEGAL["email"] %>"><%= LEGAL["email"] %></a> sau ne puteți suna la
-      <a href="tel:<%= LEGAL["phone"].delete(" ") %>"><%= LEGAL["phone"] %></a>.
+      Site-ul <strong>spinalcare.ro</strong> prezintă activitatea <%= LEGAL["clinic_name"] %> și este administrat
+      împreună de următoarele societăți, în calitate de <strong>operatori asociați</strong> în sensul art. 26 din
+      Regulamentul (UE) 2016/679:
+    </p>
+    <ul>
+      <% LEGAL["companies"].each do |company| %>
+        <li>
+          <strong><%= company["name"] %></strong>, CUI <%= company["cui"] %><%= ", #{company['registration']}" if company["registration"].present? %>,
+          cu sediul în <%= LEGAL["address"] %>;
+        </li>
+      <% end %>
+    </ul>
+    <p>
+      Cele două societăți stabilesc împreună scopurile și mijloacele prelucrărilor descrise aici și răspund în comun
+      pentru ele. Vă puteți exercita drepturile față de oricare dintre ele, folosind aceleași date de contact:
+      <a href="mailto:<%= LEGAL["email"] %>"><%= LEGAL["email"] %></a> sau
+      <a href="tel:<%= LEGAL["phone"].delete(" ") %>"><%= LEGAL["phone"] %></a>. Indiferent cui vă adresați, cererea
+      primește un singur răspuns.
     </p>
     <p>
       Această politică se referă numai la site-ul de prezentare. Programările online se fac pe platforma

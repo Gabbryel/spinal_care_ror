@@ -1,13 +1,20 @@
 # Operator details for /politica-de-confidentialitate.
 #
-# TODO(owner): two companies share the clinic name and the Mihai Eminescu 1bis
-# address in the trade register: SPINAL CARE DOBRECI SRL (CUI 35688884) and
-# SPINAL CARE RECOVERY SRL (CUI 40616140). Whichever one operates the website
-# is the data controller and must appear in the policy, so fill in
-# company_name and registration below. Until then the page names the clinic
-# and its address only, rather than stating something unverified.
-company_name: ""
-registration: ""
+# The owner confirmed on 2026-09-23 that BOTH companies run the site, so the
+# policy names them as joint controllers (art. 26 GDPR).
+#
+# TODO(owner): the trade register numbers are optional but usual in a policy.
+# Public registries list J04/272/2016 for Dobreci and a 2019 registration for
+# Recovery in the new ONRC format; neither was verified against an official
+# certificate, so they stay out until you confirm them. Fill `registration`
+# for each company and it appears next to the CUI.
+companies:
+  - name: "SPINAL CARE DOBRECI S.R.L."
+    cui: "35688884"
+    registration: ""
+  - name: "SPINAL CARE RECOVERY S.R.L."
+    cui: "40616140"
+    registration: ""
 clinic_name: "Clinica Spinal Care"
 address: "Str. Mihai Eminescu nr. 1bis, Bacău, județul Bacău"
 email: "pacient@spinalcare.ro"

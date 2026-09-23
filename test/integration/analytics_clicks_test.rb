@@ -178,6 +178,11 @@ class AnalyticsClicksTest < ActionDispatch::IntegrationTest
       assert_includes body, text, "the policy covers #{text}"
     end
     assert_includes body, "pacient@spinalcare.ro"
+    # Both companies run the site, so both are named as joint controllers.
+    ["SPINAL CARE DOBRECI S.R.L.", "35688884", "SPINAL CARE RECOVERY S.R.L.", "40616140",
+     "operatori asociați", "art. 26"].each do |text|
+      assert_includes body, text, "the policy names #{text}"
+    end
 
     # Reachable from every page and from the notice itself.
     get "/"
