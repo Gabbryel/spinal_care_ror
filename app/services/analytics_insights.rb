@@ -117,13 +117,49 @@ class AnalyticsInsights
     end
   end
 
+  # A visit row without a single $view. Which events it does have says why,
+  # so the three cases are counted separately:
+  #
+  # - $not_found only: a dead link or a scanner. The 404 page is tracked
+  #   server-side (ErrorsController), which is what creates the visit, so
+  #   these rows are expected and are not lost page views.
+  # - no event at all: the visit POST reached /ahoy/visits but the $view POST
+  #   that follows it did not (left before it went out, cookies refused, JS
+  #   error after the visit started). An ad blocker is NOT a cause: both
+  #   requests go to the same /ahoy path, so a blocked visitor leaves no row.
+  # - other events only ($click, $leave, $search): the page view was lost but
+  #   the rest of the tracking worked; a real bug if it is more than a trickle.
   def visits_without_views
     return nil if total_visits.zero?
-    without = @visits.where.not(id: views.select(:visit_id)).count
+    ids = @visits.where.not(id: views.select(:visit_id)).select(:id)
+    without = ids.count
+    return nil if without.zero?
+
+    counts = Ahoy::Event.where(visit_id: ids).group(:visit_id).pluck(Arel.sql("bool_and(name = '$not_found')"))
+    with_events = counts.size
+    not_found_only = counts.count(true)
+    other_events = with_events - not_found_only
+    silent = without - with_events
     share = pct(without, total_visits)
-    Finding.new(level: share > 40 ? 'warn' : 'info', title: 'Vizite fără nicio pagină vizualizată',
-                text: "#{fmt(without)} din #{fmt(total_visits)} vizite (#{share}%) nu au nicio vizualizare de pagină.",
-                hint: share > 40 ? 'Procent mare: ad-blockere, boți neidentificați (vezi „Trafic din afara zonei relevante”) sau vizitatori care pleacă înainte să se încarce scriptul. Vizitele sunt numărate, dar paginile și click-urile lor nu.' : 'Normal sub 20–30%: ad-blockere și vizite abandonate imediat.')
+
+    parts = []
+    parts << "#{fmt(not_found_only)} doar pagini inexistente (404)" if not_found_only.positive?
+    parts << "#{fmt(silent)} fără niciun eveniment" if silent.positive?
+    parts << "#{fmt(other_events)} cu click-uri dar fără vizualizare" if other_events.positive?
+    level = if other_events > [total_visits * 0.05, 5].max then 'bad'
+            elsif share > 40 && silent > not_found_only then 'warn'
+            else 'info'
+            end
+    hint = if other_events > [total_visits * 0.05, 5].max
+             'Click-uri fără vizualizare: $view nu se mai trimite la încărcarea paginii. Verifică handler-ul turbo:load din application.js.'
+           elsif not_found_only >= silent
+             'Majoritatea sunt 404-uri urmărite pe server (linkuri moarte și scanere), nu vizite pierdute. Vezi „Parcurs & Comportament” pentru paginile care duc la ele.'
+           else
+             'Vizitatori plecați înainte ca $view să plece sau care refuză cookie-urile. Ad-blockerele nu produc astfel de vizite: ar bloca și /ahoy/visits.'
+           end
+    Finding.new(level: level, title: 'Vizite fără nicio pagină vizualizată',
+                text: "#{fmt(without)} din #{fmt(total_visits)} vizite (#{share}%) nu au nicio vizualizare de pagină: #{parts.join(', ')}.",
+                hint: hint)
   end
 
   def duplicate_views

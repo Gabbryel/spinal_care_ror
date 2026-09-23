@@ -31,6 +31,8 @@ class AnalyticsAuditTest < ActionDispatch::IntegrationTest
     assert_includes audit["Trafic concentrat pe un singur IP"], "55 vizite"
     assert_includes audit["Vizite cu sursa „propriul site”"], "5 vizite (8.3%)"
     assert_includes audit["Acoperire geolocalizare"], "100.0% din vizite"
+    # Bots are filtered out of the period, so every visit left has a $view.
+    assert_nil audit["Vizite fără nicio pagină vizualizată"]
     assert_nil audit["Click-uri fără categorie"]
 
     insights = findings(1)
@@ -66,6 +68,29 @@ class AnalyticsAuditTest < ActionDispatch::IntegrationTest
     assert_includes insights["Paginile care duc cel mai des la contact"], "#{new_path} (10.0% din 40 vizualizări)"
     assert_nil insights["Pagini vizitate des, fără nicio acțiune de contact"]
     assert_not_includes response.body, old_path
+  end
+
+  test "visits without page views are split by what they did record" do
+    # 404s tracked server-side, silent visits, and one visit whose $view was
+    # lost but whose click arrived (the only case that means broken tracking).
+    3.times do |i|
+      v = visit(started_at: @now - 1.hour)
+      v.events.create!(name: "$not_found", time: @now - 1.hour + i.seconds,
+                       properties: { path: "/pagina-stearsa-#{i}", referer: nil })
+    end
+    2.times { visit(started_at: @now - 2.hours) }
+    click(visit(started_at: @now - 3.hours), "call", "tel:0374554344", "/", @now - 3.hours)
+    v = visit(started_at: @now - 4.hours)
+    view(v, "/", @now - 4.hours)
+
+    get "/dashboard/analytics/audit", params: { period: "7" }
+    assert_response :success
+    body = findings(0)["Vizite fără nicio pagină vizualizată"]
+    assert_includes body, "6 din 7 vizite (85.7%)"
+    assert_includes body, "3 doar pagini inexistente (404)"
+    assert_includes body, "2 fără niciun eveniment"
+    assert_includes body, "1 cu click-uri dar fără vizualizare"
+    assert_includes body, "404-uri urmărite pe server"
   end
 
   test "dead tracking is reported as a problem and an empty period says so" do
