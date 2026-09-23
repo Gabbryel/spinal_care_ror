@@ -1,20 +1,58 @@
-<div class="modal" id="gdpr-modal" tabindex="-1" data-controller="gdpr" data-gdpr-target="acceptModal">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-body">
-          <p><b>La spinalcare.ro</b> luăm foarte în serios confidențialitatea dumneavoastră. Dorim să vă informăm că nu colectăm cookie-uri.</p><br>
-          <p>Ce înseamnă acest lucru pentru dumneavoastră?</p><br>
-          <p><b>Confidențialitate</b><br> Activitățile dumneavoastră online nu sunt urmărite prin cookie-uri pe site-ul nostru. Nu colectăm informații despre obiceiurile dumneavoastră de navigare.</p> <br>
-          <p><b>Securitate îmbunătățită</b><br>Informațiile dumneavoastră personale sunt în siguranță la noi. Nu utilizăm cookie-uri pentru a stoca date sensibile, asigurându-vă o experiență de navigare sigură.</p><br>
-          <p><b>Experiență simplificată</b><br>Deși poate că nu oferim conținut personalizat pe baza vizitelor anterioare, credem în furnizarea unei experiențe consistente și de încredere tuturor utilizatorilor noștri.</p><br>
-          <p>Nu va trebui să vă ocupați de notificări sau setări legate de preferințele cookie-urilor atunci când vizitați site-ul nostru.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="accept-btn" data-gdpr-target="acceptBtn" data-action="click->gdpr#acceptGdpr">Am înțeles!</button>
+<%# Cookie notice. Shown until the visitor chooses; the choice is kept in the
+    cookie_consent cookie (12 months) so the server knows whether to render the
+    Google and Meta tags and whether to let Ahoy open a visit.
+    The text must keep matching what the site actually sets: session cookie,
+    Ahoy (ahoy_visit / ahoy_visitor), Google Analytics 4 + Google Ads via gtag,
+    Meta pixel. %>
+<% unless consent_given? %>
+  <div class="modal cookie-consent" id="gdpr-modal" tabindex="-1" role="dialog" aria-modal="true"
+       aria-labelledby="cookie-consent-title" data-controller="gdpr" data-gdpr-target="acceptModal">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h2 class="cookie-consent-title" id="cookie-consent-title">Cookie-uri și confidențialitate</h2>
+          <p>
+            Folosim cookie-uri ca site-ul să funcționeze și, doar cu acordul dumneavoastră, ca să
+            măsurăm traficul și eficiența reclamelor. Puteți accepta totul sau păstra doar
+            cookie-urile strict necesare. Alegerea se poate schimba oricând din subsolul paginii.
+          </p>
+
+          <h3 class="cookie-consent-subtitle">Strict necesare (mereu active)</h3>
+          <p>
+            Un cookie de sesiune (<code>_spinal_care_ror_session</code>) ține site-ul în siguranță și
+            face formularele să funcționeze, plus un cookie care reține această alegere
+            (<code>cookie_consent</code>, 12 luni). Fără ele site-ul nu poate funcționa.
+          </p>
+
+          <h3 class="cookie-consent-subtitle">Analiză proprie</h3>
+          <p>
+            <code>ahoy_visit</code> (30 de minute) și <code>ahoy_visitor</code> (2 ani) ne arată ce
+            pagini sunt vizitate, de unde vin vizitatorii și dacă apasă butoanele de telefon sau de
+            programare. Datele rămân pe serverul nostru și nu sunt vândute nimănui.
+          </p>
+
+          <h3 class="cookie-consent-subtitle">Analiză și marketing prin terți</h3>
+          <p>
+            Google Analytics 4 (<code>_ga</code>, <code>_ga_*</code>, 2 ani), Google Ads
+            (<code>_gcl_au</code>, 3 luni) și Meta Pixel (<code>_fbp</code>, 3 luni) măsoară
+            rezultatele reclamelor noastre. Aceste date ajung la Google și la Meta, care le pot folosi
+            și în scopuri proprii, inclusiv în afara Uniunii Europene.
+          </p>
+
+          <p class="cookie-consent-rights">
+            Aveți dreptul să vă retrageți acordul, să cereți acces la datele dumneavoastră sau
+            ștergerea lor, scriindu-ne la
+            <a href="mailto:pacient@spinalcare.ro">pacient@spinalcare.ro</a>. Cookie-urile pot fi
+            șterse și din setările browserului.
+          </p>
+        </div>
+        <div class="modal-footer cookie-consent-actions">
+          <button type="button" class="btn btn-outline-secondary" id="reject-btn"
+                  data-action="click->gdpr#rejectAll">Doar strict necesare</button>
+          <button type="button" class="btn btn-primary" id="accept-btn" data-gdpr-target="acceptBtn"
+                  data-action="click->gdpr#acceptAll">Acceptă toate</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
-
-
+<% end %>

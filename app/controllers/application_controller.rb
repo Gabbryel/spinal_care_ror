@@ -6,6 +6,18 @@ class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include NotFoundRendering
 
+  # Cookie consent. Nothing beyond the session and the consent cookie itself
+  # is set until the visitor chooses: Ahoy's own before_action (which sets
+  # ahoy_visit/ahoy_visitor and opens a visit) only runs with consent, and
+  # the layout renders the Google and Meta tags only with consent.
+  CONSENT_COOKIE = :cookie_consent
+  CONSENT_ALL = "all".freeze
+
+  skip_before_action :track_ahoy_visit
+  before_action :track_ahoy_visit, if: :tracking_consent?
+
+  helper_method :tracking_consent?, :consent_given?
+
   after_action :verify_authorized, except: :index, unless: :skip_pundit?
   after_action :verify_policy_scoped, only: :index, unless: :skip_pundit?
 
@@ -18,7 +30,17 @@ class ApplicationController < ActionController::Base
   end
 
   private
-  
+
+  # "all" = analytics and marketing accepted. Any other value (or none) means
+  # strictly necessary only.
+  def tracking_consent?
+    cookies[CONSENT_COOKIE] == CONSENT_ALL
+  end
+
+  def consent_given?
+    cookies[CONSENT_COOKIE].present?
+  end
+
   def set_current_request_details
     Current.user = current_user
     Current.ip_address = request.remote_ip

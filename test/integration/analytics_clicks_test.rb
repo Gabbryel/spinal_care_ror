@@ -123,6 +123,7 @@ class AnalyticsClicksTest < ActionDispatch::IntegrationTest
   end
 
   test "Google tags load one library for both GA4 and Ads, without an empty Tag Manager" do
+    cookies[:cookie_consent] = "all"
     get "/"
     body = response.body
     assert_equal 1, body.scan(%r{googletagmanager\.com/gtag/js}).size, "gtag.js is loaded once"
@@ -130,6 +131,45 @@ class AnalyticsClicksTest < ActionDispatch::IntegrationTest
     assert_includes body, "gtag('config', 'AW-16853789356')"
     assert_no_match %r{googletagmanager\.com/(gtm\.js|ns\.html)}, body, "no Tag Manager container"
     assert_match %r{\A<!DOCTYPE html>\s*<html[^>]*>\s*<head>\s*<meta charset="UTF-8">}, body, "charset comes first"
+  end
+
+  test "without consent no tracker is loaded and no visit is opened" do
+    assert_no_difference -> { Ahoy::Visit.count } do
+      get "/"
+    end
+    body = response.body
+    assert_no_match %r{googletagmanager\.com}, body, "no Google tag before consent"
+    assert_no_match %r{connect\.facebook\.net|facebook\.com/tr}, body, "no Meta pixel before consent"
+    assert_nil cookies[:ahoy_visit].presence, "no Ahoy cookie before consent"
+    assert_nil cookies[:ahoy_visitor].presence, "no Ahoy cookie before consent"
+    assert_select "#gdpr-modal", count: 1
+    assert_select "#gdpr-modal button", count: 2, text: /Acceptă toate|Doar strict necesare/
+  end
+
+  test "accepting brings the trackers back and refusing keeps them away" do
+    cookies[:cookie_consent] = "all"
+    get "/"
+    assert_match %r{googletagmanager\.com/gtag/js}, response.body
+    assert_match %r{connect\.facebook\.net}, response.body
+    assert_select "#gdpr-modal", count: 0, message: "the notice is gone once a choice is stored"
+
+    cookies[:cookie_consent] = "essential"
+    assert_no_difference -> { Ahoy::Visit.count } do
+      get "/"
+    end
+    assert_no_match %r{googletagmanager\.com}, response.body
+    assert_no_match %r{connect\.facebook\.net}, response.body
+    assert_select "#gdpr-modal", count: 0
+  end
+
+  test "the cookie notice describes the cookies the site actually sets" do
+    get "/"
+    body = response.body
+    %w[_spinal_care_ror_session cookie_consent ahoy_visit ahoy_visitor _ga _gcl_au _fbp].each do |name|
+      assert_includes body, name, "the notice names #{name}"
+    end
+    assert_no_match(/nu colectăm cookie-uri/i, body, "the old claim that no cookies are used is gone")
+    assert_includes body, "pacient@spinalcare.ro"
   end
 
   test "the page does not block on the booking app, fonts or unused stylesheets" do

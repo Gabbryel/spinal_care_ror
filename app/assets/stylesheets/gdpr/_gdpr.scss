@@ -10,3 +10,95 @@
     font-size: 12px;
     font-weight: 200;
 }
+
+// Cookie notice (shared/_gdpr). Bootstrap's .modal gives the overlay; these
+// rules set the reading rhythm and put the two choices side by side, equally
+// prominent, as consent guidance requires.
+.cookie-consent {
+  background: rgba(15, 23, 42, 0.55);
+
+  .modal-content {
+    border: none;
+    border-radius: 0.75rem;
+  }
+
+  .modal-body {
+    padding: 1.5rem 1.5rem 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: #334155;
+  }
+
+  p {
+    margin-bottom: 1rem;
+  }
+
+  code {
+    font-size: 0.85em;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 0.05rem 0.3rem;
+    border-radius: 0.25rem;
+  }
+
+  .cookie-consent-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.75rem;
+  }
+
+  .cookie-consent-subtitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 1.25rem 0 0.35rem;
+  }
+
+  .cookie-consent-rights {
+    font-size: 0.875rem;
+    color: #475569;
+  }
+
+  .cookie-consent-actions {
+    gap: 0.75rem;
+    padding: 1rem 1.5rem 1.25rem;
+    border-top: 1px solid #e2e8f0;
+
+    // Equal prominence: refusing must look as easy as accepting.
+    .btn {
+      flex: 1 1 0;
+      margin: 0;
+      padding: 0.6rem 1rem;
+      font-weight: 600;
+      border-width: 1px;
+    }
+
+    .btn-outline-secondary {
+      color: #0f172a;
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+
+      &:hover,
+      &:focus {
+        color: #0f172a;
+        background: #cbd5e1;
+        border-color: #94a3b8;
+      }
+    }
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+    }
+  }
+}
+
+.footer-cookie-settings {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+}

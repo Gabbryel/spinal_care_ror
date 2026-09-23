@@ -41,6 +41,8 @@ class ErrorsController < ApplicationController
   # Dead links reached by people (Ahoy drops bots) show up in the analytics
   # "Parcurs & Comportament" section with the page that linked to them.
   def track_not_found
+    return unless tracking_consent?
+
     ahoy.track("$not_found", path: request.path.to_s.first(200), referer: request.referer.to_s.first(300).presence)
   rescue StandardError => e
     Rails.logger.warn "not_found tracking failed: #{e.message}"

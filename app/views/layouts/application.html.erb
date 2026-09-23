@@ -2,19 +2,23 @@
 <html lang="ro">
   <head>
     <meta charset="UTF-8">
-    <%# One Google tag library for both destinations (GA4 + Google Ads).
+    <%# One Google tag library for both destinations (GA4 + Google Ads), and
+        only for visitors who accepted analytics and marketing cookies (see
+        shared/_gdpr). Without consent the tags are not in the page at all.
         There used to be two copies of gtag.js on one dataLayer, plus a Tag
         Manager container (GTM-TVX66CLN) that held no tags: ~450 KB and
         ~1.1 s of mobile main thread for nothing. To use Tag Manager later,
         re-add its snippet and move these configs into the container. %>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2M3F6CZYYF"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-2M3F6CZYYF');
-      gtag('config', 'AW-16853789356');
-    </script>
+    <% if tracking_consent? %>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-2M3F6CZYYF"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-2M3F6CZYYF');
+        gtag('config', 'AW-16853789356');
+      </script>
+    <% end %>
     <title><%= meta_title %></title>
     <link rel="canonical" href="<%= canonical_url %>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -55,18 +59,20 @@
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
-    <script>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '623596673860745');
-      fbq('track', 'PageView');
+    <% if tracking_consent? %>
+      <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '623596673860745');
+        fbq('track', 'PageView');
       </script>
+    <% end %>
       <%# Ahoy is bundled into application.js (see app/javascript/application.js).
           The Facebook pixel <noscript><img> lives in <body>: an <img> in <head>
           makes Turbo's parser open <body> early and re-run head scripts. %>
@@ -75,7 +81,9 @@
 
   <body data-controller="vh sidemenu-toggle adminLink contact click-tracker engagement" data-action="scroll@window->sidemenu-toggle#close">
     <meta name="google-site-verification" content="oxssYt-WnE928L-zOpjVsjkDrhXjOE2kWQOfBlIdRTA" />
-    <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=623596673860745&ev=PageView&noscript=1"/></noscript>
+    <% if tracking_consent? %>
+      <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=623596673860745&ev=PageView&noscript=1"/></noscript>
+    <% end %>
   
       <%= render "shared/before_nav" %>
       <%= render "shared/navbar" %>

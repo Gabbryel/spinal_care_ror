@@ -68,6 +68,13 @@ class AnalyticsBehaviourTest < ActionDispatch::IntegrationTest
 
   test "a real visitor's 404 is recorded with its referer" do
     sign_out :user
+
+    # Without cookie consent nothing is tracked, not even a dead link.
+    assert_no_difference -> { Ahoy::Event.where(name: "$not_found").count } do
+      get "/pagina-inexistenta-fara-consimtamant", headers: { "User-Agent" => BROWSER }
+    end
+
+    cookies[:cookie_consent] = "all"
     assert_difference -> { Ahoy::Event.where(name: "$not_found").count }, 1 do
       get "/pagina-inexistenta-xyz", headers: { "User-Agent" => BROWSER, "Referer" => "https://www.spinalcare.ro/echipa" }
     end
