@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
-  skip_before_action :authenticate_user!, only: %i[ home medical_team pacient_page consum ]
+  skip_before_action :authenticate_user!, only: %i[ home medical_team pacient_page consum privacy ]
 
   def home
     # @review = Review.new()
@@ -12,6 +12,12 @@ class PagesController < ApplicationController
     @schroths = @kinetos.select {|k| k.schroth }
     @beauties = @members.select {|m| m.profession.slug == 'tehnician-estetica-medicala'}
     @promo_packages = PromoPackage.active.with_attached_photo.order(valid_until: :asc)
+  end
+
+  # Privacy and cookie policy. Static text; the operator details come from
+  # config/legal.yml so they are edited in one place.
+  def privacy
+    skip_authorization if respond_to?(:skip_authorization, true)
   end
 
   def medical_team

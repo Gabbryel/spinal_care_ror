@@ -63,6 +63,10 @@ Rails.application.routes.draw do
   # Retired per-specialty price pages: 301 to the specialty page, which lists the same services and prices.
   get 'servicii-medicale/:id', to: 'medical_services#legacy_specialty_redirect'
 
+  get 'politica-de-confidentialitate', to: 'pages#privacy', as: 'privacy_policy'
+  # The cookie section is part of the same document.
+  get 'politica-cookie-uri', to: redirect('/politica-de-confidentialitate#cookie-uri', status: 301)
+
   get 'sitemap.xml', to: 'sitemaps#show', defaults: { format: :xml }, as: 'sitemap'
 
   get "*any", to: "errors#not_found", via: :all

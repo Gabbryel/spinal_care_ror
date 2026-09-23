@@ -162,6 +162,35 @@ class AnalyticsClicksTest < ActionDispatch::IntegrationTest
     assert_select "#gdpr-modal", count: 0
   end
 
+  test "the privacy and cookie policy is public, linked and complete" do
+    get "/politica-de-confidentialitate"
+    assert_response :success
+    body = response.body
+
+    assert_select "h1", text: "Politica de confidențialitate și de cookie-uri"
+    # Every cookie the site can set has a row, with its lifetime.
+    %w[_spinal_care_ror_session cookie_consent ahoy_visit ahoy_visitor _ga _gcl_au _fbp].each do |name|
+      assert_includes body, name, "the policy lists #{name}"
+    end
+    # GDPR essentials: legal bases, recipients, rights, supervisory authority.
+    ["art. 6", "Google", "Meta", "portabilitatea", "retrage oricând consimțământul",
+     "anspdcp@dataprotection.ro", "Legii nr. 506/2004"].each do |text|
+      assert_includes body, text, "the policy covers #{text}"
+    end
+    assert_includes body, "pacient@spinalcare.ro"
+
+    # Reachable from every page and from the notice itself.
+    get "/"
+    assert_select "footer a[href=?]", "/politica-de-confidentialitate"
+    assert_select "#gdpr-modal a[href=?]", "/politica-de-confidentialitate"
+
+    get "/politica-cookie-uri"
+    assert_redirected_to "/politica-de-confidentialitate#cookie-uri"
+
+    get "/sitemap.xml"
+    assert_includes response.body, "/politica-de-confidentialitate"
+  end
+
   test "the cookie notice describes the cookies the site actually sets" do
     get "/"
     body = response.body

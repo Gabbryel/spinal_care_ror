@@ -1,0 +1,220 @@
+<%= content_for :meta_title, page_title("Politica de confidențialitate și cookie-uri") %>
+<%= content_for :meta_description, meta_description_for(nil, "Cum prelucrează Clinica Spinal Care Bacău datele vizitatorilor site-ului, ce cookie-uri folosim, cât durează și cum vă exercitați drepturile prevăzute de GDPR.") %>
+
+<% operator = LEGAL["company_name"].presence %>
+
+<div class="legal-page">
+  <header class="legal-header">
+    <h1>Politica de confidențialitate și de cookie-uri</h1>
+    <p class="legal-subtitle">
+      Cum prelucrăm datele dumneavoastră atunci când vizitați <strong>spinalcare.ro</strong> și ce alegeri aveți.
+    </p>
+    <p class="legal-updated">Ultima actualizare: <%= date_in_romanian(Date.parse(LEGAL["updated_on"])) %></p>
+  </header>
+
+  <nav class="legal-toc" aria-label="Cuprins">
+    <a href="#operator">1. Cine prelucrează datele</a>
+    <a href="#date">2. Ce date colectăm</a>
+    <a href="#scopuri">3. Scopuri și temeiuri legale</a>
+    <a href="#cookie-uri">4. Cookie-uri</a>
+    <a href="#destinatari">5. Cui transmitem datele</a>
+    <a href="#durata">6. Cât timp păstrăm datele</a>
+    <a href="#drepturi">7. Drepturile dumneavoastră</a>
+    <a href="#alegeri">8. Cum vă schimbați alegerea</a>
+    <a href="#contact">9. Contact și modificări</a>
+  </nav>
+
+  <section id="operator" class="legal-section">
+    <h2>1. Cine prelucrează datele</h2>
+    <p>
+      Site-ul <strong>spinalcare.ro</strong> este administrat de
+      <strong><%= operator || LEGAL["clinic_name"] %></strong><%= ", #{LEGAL['registration']}" if LEGAL["registration"].present? %>,
+      cu sediul în <%= LEGAL["address"] %>.
+      Pentru orice aspect legat de datele dumneavoastră ne puteți scrie la
+      <a href="mailto:<%= LEGAL["email"] %>"><%= LEGAL["email"] %></a> sau ne puteți suna la
+      <a href="tel:<%= LEGAL["phone"].delete(" ") %>"><%= LEGAL["phone"] %></a>.
+    </p>
+    <p>
+      Această politică se referă numai la site-ul de prezentare. Programările online se fac pe platforma
+      <strong><%= LEGAL["booking_host"] %></strong>, care are propriile condiții, iar datele medicale ale pacienților
+      se prelucrează în cadrul clinicii, pe baza documentelor semnate la recepție.
+    </p>
+  </section>
+
+  <section id="date" class="legal-section">
+    <h2>2. Ce date colectăm prin site</h2>
+    <ul>
+      <li>
+        <strong>Date tehnice de navigare:</strong> adresa IP, tipul de browser și de dispozitiv, paginile vizitate,
+        pagina de unde ați ajuns la noi, data și ora vizitei, precum și apăsarea butoanelor de telefon sau de programare.
+      </li>
+      <li>
+        <strong>Date pe care ni le transmiteți direct:</strong> dacă ne scrieți pe e-mail sau trimiteți un CV pentru un
+        post publicat, prelucrăm datele din mesajul dumneavoastră.
+      </li>
+      <li>
+        <strong>Conturi de administrare:</strong> numai pentru personalul clinicii, cu e-mail și parolă.
+      </li>
+    </ul>
+    <p>
+      Nu vă cerem date despre sănătate prin acest site și nu creăm profiluri automate care să producă efecte juridice
+      asupra dumneavoastră.
+    </p>
+  </section>
+
+  <section id="scopuri" class="legal-section">
+    <h2>3. Scopuri și temeiuri legale</h2>
+    <table class="legal-table">
+      <thead>
+        <tr><th>Scop</th><th>Temei legal (art. 6 GDPR)</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Funcționarea și securitatea site-ului</td>
+          <td>Interesul nostru legitim de a livra un site funcțional și protejat, art. 6 alin. (1) lit. f)</td>
+        </tr>
+        <tr>
+          <td>Măsurarea traficului cu instrumentul nostru de analiză</td>
+          <td>Consimțământul dumneavoastră, art. 6 alin. (1) lit. a)</td>
+        </tr>
+        <tr>
+          <td>Măsurarea reclamelor prin Google și Meta</td>
+          <td>Consimțământul dumneavoastră, art. 6 alin. (1) lit. a)</td>
+        </tr>
+        <tr>
+          <td>Răspunsul la mesajele și candidaturile primite</td>
+          <td>Demersuri la cererea dumneavoastră, art. 6 alin. (1) lit. b), respectiv interes legitim</td>
+        </tr>
+        <tr>
+          <td>Respectarea obligațiilor legale</td>
+          <td>Obligație legală, art. 6 alin. (1) lit. c)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="cookie-uri" class="legal-section">
+    <h2>4. Cookie-uri</h2>
+    <p>
+      Cookie-urile sunt fișiere mici păstrate de browser. Conform Legii nr. 506/2004 și GDPR, cookie-urile care nu sunt
+      strict necesare se instalează numai după acordul dumneavoastră. Până când alegeți, site-ul nu încarcă niciun
+      instrument de analiză sau de marketing.
+    </p>
+
+    <h3>Strict necesare (fără consimțământ)</h3>
+    <table class="legal-table">
+      <thead><tr><th>Cookie</th><th>Rol</th><th>Durată</th></tr></thead>
+      <tbody>
+        <tr><td><code>_spinal_care_ror_session</code></td><td>Menține sesiunea și protejează formularele</td><td>Durata sesiunii</td></tr>
+        <tr><td><code>cookie_consent</code></td><td>Reține alegerea dumneavoastră privind cookie-urile</td><td>12 luni</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Analiză proprie (cu consimțământ)</h3>
+    <table class="legal-table">
+      <thead><tr><th>Cookie</th><th>Rol</th><th>Durată</th></tr></thead>
+      <tbody>
+        <tr><td><code>ahoy_visit</code></td><td>Identifică vizita curentă</td><td>30 de minute</td></tr>
+        <tr><td><code>ahoy_visitor</code></td><td>Distinge vizitatorii care revin</td><td>2 ani</td></tr>
+      </tbody>
+    </table>
+    <p>Datele colectate astfel rămân pe serverul nostru și nu sunt vândute sau transmise altor companii.</p>
+
+    <h3>Analiză și marketing prin terți (cu consimțământ)</h3>
+    <table class="legal-table">
+      <thead><tr><th>Cookie</th><th>Furnizor și rol</th><th>Durată</th></tr></thead>
+      <tbody>
+        <tr><td><code>_ga</code>, <code>_ga_*</code></td><td>Google Analytics 4 – statistici de audiență</td><td>2 ani</td></tr>
+        <tr><td><code>_gcl_au</code></td><td>Google Ads – măsurarea campaniilor</td><td>3 luni</td></tr>
+        <tr><td><code>_fbp</code></td><td>Meta Pixel – măsurarea campaniilor</td><td>3 luni</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Aceste servicii pot folosi datele și în scopuri proprii, conform politicilor lor:
+      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">politica Google</a> și
+      <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener">politica Meta</a>.
+    </p>
+  </section>
+
+  <section id="destinatari" class="legal-section">
+    <h2>5. Cui transmitem datele</h2>
+    <p>
+      Nu vindem date. Le transmitem doar furnizorilor care ne ajută să ținem site-ul în funcțiune și, dacă ați
+      consimțit, partenerilor de publicitate:
+    </p>
+    <ul>
+      <li><strong>Heroku (Salesforce, Inc.)</strong> – găzduirea aplicației și a bazei de date;</li>
+      <li><strong>Cloudinary</strong> – livrarea imaginilor;</li>
+      <li><strong>Google Ireland Ltd.</strong> – Google Analytics și Google Ads, numai cu consimțământ;</li>
+      <li><strong>Meta Platforms Ireland Ltd.</strong> – Meta Pixel, numai cu consimțământ.</li>
+    </ul>
+    <p>
+      O parte dintre acești furnizori pot prelucra datele și în afara Spațiului Economic European. În aceste cazuri
+      transferul are loc pe baza clauzelor contractuale standard aprobate de Comisia Europeană sau a unei decizii de
+      adecvare.
+    </p>
+  </section>
+
+  <section id="durata" class="legal-section">
+    <h2>6. Cât timp păstrăm datele</h2>
+    <ul>
+      <li>Cookie-urile expiră la termenele din tabelele de mai sus sau când le ștergeți din browser.</li>
+      <li>Statisticile din analiza proprie rămân în baza noastră de date atât timp cât sunt utile pentru a urmări
+          evoluția site-ului. Le ștergem la cererea dumneavoastră sau când nu mai sunt necesare acestui scop.</li>
+      <li>Mesajele pe e-mail și candidaturile le păstrăm cât durează discuția și perioada în care ne-ar fi utile pentru
+          un post similar, dacă v-ați exprimat acordul.</li>
+      <li>Jurnalele tehnice de securitate se păstrează pe termen scurt, pentru depanare.</li>
+    </ul>
+  </section>
+
+  <section id="drepturi" class="legal-section">
+    <h2>7. Drepturile dumneavoastră</h2>
+    <p>Conform GDPR aveți dreptul:</p>
+    <ul>
+      <li>de acces la datele pe care le avem despre dumneavoastră;</li>
+      <li>de rectificare a datelor inexacte;</li>
+      <li>de ștergere („dreptul de a fi uitat”);</li>
+      <li>de restricționare a prelucrării;</li>
+      <li>la portabilitatea datelor;</li>
+      <li>de opoziție la prelucrarea bazată pe interesul legitim;</li>
+      <li>de a vă retrage oricând consimțământul, fără ca retragerea să afecteze prelucrările anterioare.</li>
+    </ul>
+    <p>
+      Ne puteți contacta la <a href="mailto:<%= LEGAL["email"] %>"><%= LEGAL["email"] %></a>. Răspundem în cel mult o
+      lună de la primirea cererii.
+    </p>
+    <p>
+      Dacă nu sunteți mulțumit de răspuns, aveți dreptul de a depune o plângere la Autoritatea Națională de Supraveghere
+      a Prelucrării Datelor cu Caracter Personal: B-dul G-ral. Gheorghe Magheru nr. 28-30, sector 1, 010336 București,
+      e-mail <a href="mailto:anspdcp@dataprotection.ro">anspdcp@dataprotection.ro</a>,
+      <a href="https://www.dataprotection.ro/" target="_blank" rel="noopener">dataprotection.ro</a>. Vă puteți adresa și
+      instanțelor de judecată.
+    </p>
+  </section>
+
+  <section id="alegeri" class="legal-section">
+    <h2>8. Cum vă schimbați alegerea</h2>
+    <p>
+      Alegerea privind cookie-urile se poate schimba oricând din linkul <strong>„Setări cookie-uri”</strong> aflat în
+      subsolul fiecărei pagini. Dacă refuzați, ștergem cookie-urile de analiză și de marketing rămase de la vizitele
+      anterioare, iar site-ul continuă să funcționeze normal.
+    </p>
+    <p>
+      Puteți bloca sau șterge cookie-urile și din setările browserului. Blocarea celor strict necesare poate împiedica
+      funcționarea unor pagini.
+    </p>
+  </section>
+
+  <section id="contact" class="legal-section">
+    <h2>9. Contact și modificări</h2>
+    <p>
+      Pentru întrebări despre această politică scrieți la
+      <a href="mailto:<%= LEGAL["email"] %>"><%= LEGAL["email"] %></a> sau sunați la
+      <a href="tel:<%= LEGAL["phone"].delete(" ") %>"><%= LEGAL["phone"] %></a>.
+    </p>
+    <p>
+      Putem actualiza politica atunci când schimbăm instrumentele folosite pe site sau când se modifică legislația.
+      Versiunea în vigoare este cea publicată aici, cu data actualizării afișată la începutul paginii.
+    </p>
+  </section>
+</div>

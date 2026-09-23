@@ -20,6 +20,7 @@ class SitemapsController < ApplicationController
     add "/echipa", lastmod: latest(members), changefreq: "monthly", priority: 0.8
     add "/servicii-medicale", lastmod: MedicalService.maximum(:updated_at), changefreq: "monthly", priority: 0.7
     add "/info-pacient-index", lastmod: latest(facts), changefreq: "monthly", priority: 0.5
+    add "/politica-de-confidentialitate", lastmod: Date.parse(LEGAL["updated_on"]), changefreq: "yearly", priority: 0.2
     add "/promotii", lastmod: latest(promo_packages), changefreq: "weekly", priority: 0.6 if promo_packages.exists?
     add "/cariere", lastmod: latest(job_postings), changefreq: "weekly", priority: 0.4 if job_postings.exists?
 
