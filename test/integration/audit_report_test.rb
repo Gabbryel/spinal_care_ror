@@ -61,6 +61,34 @@ class AuditReportTest < ActionDispatch::IntegrationTest
                     "fotografia: vechi.gif → nou.gif"
   end
 
+  # A Trix description lives in action_text_rich_texts and only touches the
+  # record, so an edit moved updated_at (the dashboard showed "Actualizat
+  # acum o oră") while the journal stayed empty.
+  test "editing only the description is recorded once, with both versions" do
+    profession = Profession.create!(name: "Medic", slug: "medic-text")
+    member = Member.create!(first_name: "Ovidiu", last_name: "Cojocariu", profession: profession,
+                            description: "<div>Consultații de recuperare</div>")
+    AuditLog.delete_all
+    updated_before = member.reload.updated_at
+
+    assert_difference -> { AuditLog.where(auditable_type: "Member", action: "update").count }, 1 do
+      patch "/members/#{member.slug}", params: { member: { description: "<div>Consultații și terapie Schroth</div>" } }
+    end
+    assert_response :redirect
+    member.reload
+    assert_not_equal updated_before, member.updated_at, "the record is touched, which is what the dashboard shows"
+
+    log = AuditLog.where(auditable_type: "Member").last
+    assert_equal @admin, log.user
+    assert_equal ["Consultații de recuperare", "Consultații și terapie Schroth"], log.parsed_changes["description_text"]
+
+    get "/dashboard/audit", params: { user: @admin.id, period: "7" }
+    entry = css_select(".audit-entry--update").first
+    assert_includes entry.at_css(".audit-entry-text").text.squish, "a modificat membrul echipei „Ovidiu Cojocariu”"
+    assert_includes entry.css(".audit-entry-details li").map { |li| li.text.squish },
+                    "descrierea: Consultații de recuperare → Consultații și terapie Schroth"
+  end
+
   test "a photo attached while creating a record is recorded too" do
     AuditLog.delete_all
     profession = Profession.create!(name: "Asistent", slug: "asistent-audit")

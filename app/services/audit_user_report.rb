@@ -46,7 +46,9 @@ class AuditUserReport
     'discount' => 'reducere', 'sessions' => 'ședințe', 'duration' => 'durată', 'image' => 'imagine', 'photo' => 'fotografie',
     # Active Storage files, recorded by Auditable#audited_attachment_changes.
     'photo_file' => 'fotografia', 'image_file' => 'imaginea', 'logo_file' => 'logo-ul',
-    'document_file' => 'documentul', 'file_file' => 'fișierul'
+    'document_file' => 'documentul', 'file_file' => 'fișierul',
+    # Rich text bodies, recorded by Auditable#audited_rich_text_changes.
+    'description_text' => 'descrierea', 'benefits_text' => 'beneficiile'
   }.freeze
 
   PUBLIC_PATHS = { 'Specialty' => '/specialitati-medicale', 'Member' => '/echipa', 'Fact' => '/info-pacient' }.freeze

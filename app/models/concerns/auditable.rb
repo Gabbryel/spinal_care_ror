@@ -2,6 +2,7 @@ module Auditable
   extend ActiveSupport::Concern
 
   included do
+    before_save :capture_rich_text_changes
     after_create :log_create
     after_update :log_update
     after_destroy :log_destroy
@@ -10,15 +11,15 @@ module Auditable
   private
 
   def log_create
-    attached = audited_attachment_changes.transform_values(&:last).compact
-    create_audit_log('create', changes_for_audit.merge(attached), generate_create_summary)
+    extras = audited_attachment_changes.merge(audited_rich_text_changes).transform_values(&:last).compact
+    create_audit_log('create', changes_for_audit.merge(extras), generate_create_summary)
   end
 
   def log_update
-    attachments = audited_attachment_changes
-    return if saved_changes.blank? && attachments.blank?
+    extras = audited_attachment_changes.merge(audited_rich_text_changes)
+    return if saved_changes.blank? && extras.blank?
 
-    create_audit_log('update', saved_changes.merge(attachments), generate_update_summary(attachments.keys))
+    create_audit_log('update', saved_changes.merge(extras), generate_update_summary(extras.keys))
   end
 
   def log_destroy
@@ -50,6 +51,8 @@ module Auditable
     )
   rescue => e
     Rails.logger.error "Failed to create audit log: #{e.message}"
+  ensure
+    @audited_rich_text_changes = nil
   end
 
   def changes_for_audit
@@ -115,6 +118,43 @@ module Auditable
   # The in-memory association already points at the incoming file, so the
   # previous name comes from the attachment row still stored in the database
   # (Active Storage replaces it in its own after_save, which runs later).
+  # Rich text (Trix) lives in action_text_rich_texts and only touches the
+  # record, so an edit to a description changed updated_at while leaving
+  # saved_changes empty: the dashboard showed "Actualizat acum o oră" and the
+  # journal showed nothing. The association is saved before this callback
+  # (has_rich_text registers its autosave hooks first), so its saved_changes
+  # still hold the previous and the new body here.
+  RICH_TEXT_PREVIEW = 200
+
+  # Read before the save, because afterwards the rich text keeps reporting the
+  # same saved_changes until it is saved again: the controller's update + save
+  # pair would then log the edit twice.
+  def capture_rich_text_changes
+    @audited_rich_text_changes =
+      self.class.reflect_on_all_associations(:has_one)
+          .select { |reflection| reflection.options[:class_name] == "ActionText::RichText" }
+          .each_with_object({}) do |reflection, result|
+            record = association(reflection.name).target
+            next unless record&.changes&.key?("body")
+
+            was, now = record.changes["body"]
+            result["#{reflection.name.to_s.delete_prefix('rich_text_')}_text"] = [plain_text(was), plain_text(now)]
+          end
+  rescue StandardError
+    @audited_rich_text_changes = {}
+  end
+
+  def audited_rich_text_changes
+    @audited_rich_text_changes || {}
+  end
+
+  def plain_text(body)
+    return nil if body.blank?
+
+    text = body.respond_to?(:to_plain_text) ? body.to_plain_text : body.to_s.gsub(/<[^>]+>/, ' ')
+    text.squish.truncate(RICH_TEXT_PREVIEW).presence
+  end
+
   def attached_filename(name)
     return nil unless persisted?
 
