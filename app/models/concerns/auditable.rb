@@ -10,12 +10,15 @@ module Auditable
   private
 
   def log_create
-    create_audit_log('create', changes_for_audit, generate_create_summary)
+    attached = audited_attachment_changes.transform_values(&:last).compact
+    create_audit_log('create', changes_for_audit.merge(attached), generate_create_summary)
   end
 
   def log_update
-    return unless saved_changes.any?
-    create_audit_log('update', saved_changes, generate_update_summary)
+    attachments = audited_attachment_changes
+    return if saved_changes.blank? && attachments.blank?
+
+    create_audit_log('update', saved_changes.merge(attachments), generate_update_summary(attachments.keys))
   end
 
   def log_destroy
@@ -89,11 +92,51 @@ module Auditable
     "Created #{self.class.name.underscore.humanize.downcase}#{identifier}"
   end
   
-  def generate_update_summary
+  def generate_update_summary(extra_fields = [])
     identifier = record_identifier
-    changed_fields = saved_changes.keys.reject { |k| k.in?(['updated_at', 'created_at']) }
+    changed_fields = saved_changes.keys.reject { |k| k.in?(['updated_at', 'created_at']) } + extra_fields
     fields_list = changed_fields.map(&:humanize).join(', ')
     "Updated #{self.class.name.underscore.humanize.downcase}#{identifier}: #{fields_list}"
+  end
+
+  # Attaching or replacing an Active Storage file changes no column, so
+  # saved_changes is empty for a photo-only save and the change used to go
+  # unrecorded. attachment_changes holds what the save is about to write
+  # (Active Storage clears it in after_commit, we read it in after_update),
+  # and the association still points at the previous file at this moment.
+  def audited_attachment_changes
+    return {} unless respond_to?(:attachment_changes)
+
+    attachment_changes.each_with_object({}) do |(name, change), result|
+      result["#{name}_file"] = [attached_filename(name), incoming_filename(change)]
+    end
+  end
+
+  # The in-memory association already points at the incoming file, so the
+  # previous name comes from the attachment row still stored in the database
+  # (Active Storage replaces it in its own after_save, which runs later).
+  def attached_filename(name)
+    return nil unless persisted?
+
+    ActiveStorage::Attachment.joins(:blob)
+                             .where(record_type: self.class.polymorphic_name, record_id: id, name: name.to_s)
+                             .pick("active_storage_blobs.filename").to_s.presence
+  rescue StandardError
+    nil
+  end
+
+  # A DeleteOne change (the file was removed) carries no attachable.
+  def incoming_filename(change)
+    return nil unless change.respond_to?(:attachable)
+
+    attachable = change.attachable
+    case attachable
+    when ActiveStorage::Blob then attachable.filename.to_s
+    when Hash then attachable[:filename].to_s.presence
+    else attachable.try(:original_filename) || attachable.try(:filename).to_s.presence
+    end
+  rescue StandardError
+    nil
   end
   
   def generate_destroy_summary

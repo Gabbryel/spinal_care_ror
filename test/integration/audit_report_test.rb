@@ -7,6 +7,8 @@ class AuditReportTest < ActionDispatch::IntegrationTest
 
   self.fixture_table_names = []
 
+  GIF = Base64.decode64("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7").freeze
+
   setup do
     host! "www.spinalcare.ro"
     Rails.application.reload_routes_unless_loaded
@@ -28,6 +30,46 @@ class AuditReportTest < ActionDispatch::IntegrationTest
     3.times { |i| log(@editor, "view", "MedicalService", 0, at: @now - 40.minutes + i.minutes, path: "/servicii-medicale", method: "GET", duration: 120 + i) }
     log(@admin, "update", "Member", 1, at: @now - 40.days, data: { first_name: ["Ion", "Ioan"] })
     log(@admin, "login", "User", @admin.id, at: @now - 10.days, data: { email: @admin.email })
+  end
+
+  # A photo lives in Active Storage and changes no column on the record, so a
+  # photo-only save left saved_changes empty and used to be recorded nowhere.
+  test "replacing only a photo is recorded and reads as a sentence" do
+    profession = Profession.create!(name: "Medic", slug: "medic-audit")
+    member = Member.create!(first_name: "Matei", last_name: "Popescu", profession: profession)
+    member.photo.attach(io: StringIO.new(GIF), filename: "vechi.gif", content_type: "image/gif")
+    AuditLog.delete_all
+
+    assert_difference -> { AuditLog.where(auditable_type: "Member", action: "update").count }, 1 do
+      patch "/members/#{member.reload.slug}", params: {
+        member: { photo: Rack::Test::UploadedFile.new(StringIO.new(GIF), "image/gif", original_filename: "nou.gif") }
+      }
+    end
+    assert_response :redirect
+    assert_equal "nou.gif", member.reload.photo.filename.to_s
+
+    log = AuditLog.where(auditable_type: "Member").last
+    assert_equal @admin, log.user
+    assert_includes log.description, "Matei Popescu"
+    assert_equal ["vechi.gif", "nou.gif"], log.parsed_changes["photo_file"]
+
+    get "/dashboard/audit", params: { user: @admin.id, period: "7" }
+    assert_response :success
+    entry = css_select(".audit-entry--update").first
+    assert_includes entry.at_css(".audit-entry-text").text.squish, "a modificat membrul echipei „Matei Popescu”"
+    assert_includes entry.css(".audit-entry-details li").map { |li| li.text.squish },
+                    "fotografia: vechi.gif → nou.gif"
+  end
+
+  test "a photo attached while creating a record is recorded too" do
+    AuditLog.delete_all
+    profession = Profession.create!(name: "Asistent", slug: "asistent-audit")
+    member = Member.new(first_name: "Ana", last_name: "Ionescu", profession: profession)
+    member.photo.attach(io: StringIO.new(GIF), filename: "ana.gif", content_type: "image/gif")
+    Current.set(user: @admin) { member.save! }
+
+    log = AuditLog.where(auditable_type: "Member", action: "create").last
+    assert_equal "ana.gif", log.parsed_changes["photo_file"]
   end
 
   test "cards per user, most recently active first and selected by default" do

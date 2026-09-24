@@ -43,7 +43,10 @@ class AuditUserReport
     'alias' => 'alias', 'medicine' => 'medicament', 'unit' => 'unitate', 'notes' => 'note', 'content' => 'conținut',
     'body' => 'conținut', 'rating' => 'notă', 'author' => 'autor', 'text' => 'text', 'published' => 'publicat',
     'visible' => 'vizibil', 'featured' => 'evidențiat', 'discounted_price' => 'preț redus', 'full_price' => 'preț întreg',
-    'discount' => 'reducere', 'sessions' => 'ședințe', 'duration' => 'durată', 'image' => 'imagine', 'photo' => 'fotografie'
+    'discount' => 'reducere', 'sessions' => 'ședințe', 'duration' => 'durată', 'image' => 'imagine', 'photo' => 'fotografie',
+    # Active Storage files, recorded by Auditable#audited_attachment_changes.
+    'photo_file' => 'fotografia', 'image_file' => 'imaginea', 'logo_file' => 'logo-ul',
+    'document_file' => 'documentul', 'file_file' => 'fișierul'
   }.freeze
 
   PUBLIC_PATHS = { 'Specialty' => '/specialitati-medicale', 'Member' => '/echipa', 'Fact' => '/info-pacient' }.freeze
