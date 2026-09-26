@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_21_090000) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_26_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -218,6 +218,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_090000) do
     t.index ["year"], name: "index_medicines_consumptions_on_year"
   end
 
+  create_table "member_specialties", force: :cascade do |t|
+    t.bigint "member_id", null: false
+    t.bigint "specialty_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_id", "specialty_id"], name: "index_member_specialties_on_member_id_and_specialty_id", unique: true
+    t.index ["member_id"], name: "index_member_specialties_on_member_id"
+    t.index ["specialty_id"], name: "index_member_specialties_on_specialty_id"
+  end
+
   create_table "members", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -315,6 +325,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_090000) do
   add_foreign_key "careers", "professions"
   add_foreign_key "medical_services", "members"
   add_foreign_key "medical_services", "specialties"
+  add_foreign_key "member_specialties", "members"
+  add_foreign_key "member_specialties", "specialties"
   add_foreign_key "members", "professions"
   add_foreign_key "members", "specialties"
 end

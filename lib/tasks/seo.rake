@@ -44,7 +44,7 @@ namespace :seo do
     unassigned = Member.joins(:profession)
                        .where(professions: { slug: %w[fiziokinetoterapeut asistent-medical-bfkt] }, specialty_id: nil, is_active: true)
     names = unassigned.map(&:name)
-    moved = unassigned.update_all(specialty_id: target.id, updated_at: Time.current)
+    moved = unassigned.each { |member| member.update!(specialty: target) }.size
     puts "#{moved} team member(s) attached to '#{target.name}': #{names.join(', ')}"
   end
 end

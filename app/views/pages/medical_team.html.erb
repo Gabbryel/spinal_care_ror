@@ -66,7 +66,7 @@
 
   <!-- Team Members by Profession -->
   <% @professions.each do |profession| %>
-    <% active_members = profession.members.where(is_active: true).where.not(founder: true).order(:last_name) %>
+    <% active_members = profession.members.where(is_active: true).where.not(founder: true).includes(:specialties).order(:last_name) %>
     <% if active_members.any? %>
       <div class="profession-section" data-profession="<%= profession.slug %>" data-memberindexfilter-target="professionSection">
         <div class="section-header">

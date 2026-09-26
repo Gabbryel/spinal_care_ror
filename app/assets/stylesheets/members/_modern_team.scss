@@ -490,6 +490,11 @@
     height: 1rem;
   }
 
+  // A member with several specialties gets one pill per specialty.
+  & + & {
+    margin-top: 0.35rem;
+  }
+
   &:hover {
     background: #4A6775;
     color: white;

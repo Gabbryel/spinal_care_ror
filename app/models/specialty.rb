@@ -1,5 +1,7 @@
 class Specialty < ApplicationRecord
-  has_many :members, dependent: :nullify
+  has_many :primary_members, class_name: "Member", inverse_of: :specialty, dependent: :nullify
+  has_many :member_specialties, dependent: :destroy
+  has_many :members, through: :member_specialties
   has_many :medical_services, dependent: :nullify
   has_rich_text :description
   has_one_attached :photo
@@ -10,10 +12,6 @@ class Specialty < ApplicationRecord
   after_save :slugify, unless: :check_slug
   def to_param
     "#{slug}"
-  end
-
-  def members_belonging_to_specialty
-    self.members
   end
 
   private

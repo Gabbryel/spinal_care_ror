@@ -56,7 +56,7 @@ export default class extends Controller {
     cards.forEach((card) => {
       const cardName = card.dataset.memberName || "";
       const cardProfession = card.dataset.profession || "";
-      const cardSpecialty = card.dataset.specialty || "none";
+      const cardSpecialties = (card.dataset.specialty || "none").split(" ");
 
       const matchesName =
         !this.currentNameFilter || cardName.includes(this.currentNameFilter);
@@ -65,7 +65,7 @@ export default class extends Controller {
         cardProfession === this.currentProfession;
       const matchesSpecialty =
         this.currentSpecialty === "all" ||
-        cardSpecialty === this.currentSpecialty;
+        cardSpecialties.includes(this.currentSpecialty);
 
       if (matchesName && matchesProfession && matchesSpecialty) {
         card.style.display = "";

@@ -1,7 +1,8 @@
+<% member_specialties = m.ordered_specialties %>
 <article class="modern-member-card" 
          data-member-name="<%= full_name(m).downcase %>"
          data-profession="<%= m.profession.slug %>"
-         data-specialty="<%= m.specialty&.slug || 'none' %>"
+         data-specialty="<%= member_specialties.map(&:slug).join(' ').presence || 'none' %>"
          data-memberindexfilter-target="card">
   <div class="member-card-inner">
     <div class="member-photo" <% if m.photo.attached? %>style="background-image: url('<%= cl_image_path(m.photo.key, quality: 70, width: 400, height: 500, crop: :fill, gravity: :face, fetch_format: :auto) %>');"<% end %>>
@@ -54,12 +55,12 @@
         <% end %>
       </p>
 
-      <% if m.specialty.present? %>
-        <%= link_to "/specialitati-medicale/#{m.specialty.slug}", class: 'member-specialty' do %>
+      <% member_specialties.each do |specialty| %>
+        <%= link_to "/specialitati-medicale/#{specialty.slug}", class: 'member-specialty' do %>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
           </svg>
-          <%= m.specialty.name %>
+          <%= specialty.name %>
         <% end %>
       <% end %>
     </div>

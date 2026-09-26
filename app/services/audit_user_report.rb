@@ -48,7 +48,9 @@ class AuditUserReport
     'photo_file' => 'fotografia', 'image_file' => 'imaginea', 'logo_file' => 'logo-ul',
     'document_file' => 'documentul', 'file_file' => 'fișierul',
     # Rich text bodies, recorded by Auditable#audited_rich_text_changes.
-    'description_text' => 'descrierea', 'benefits_text' => 'beneficiile'
+    'description_text' => 'descrierea', 'benefits_text' => 'beneficiile',
+    # Join rows, recorded by Member#audited_association_changes.
+    'specialties' => 'specialitățile'
   }.freeze
 
   PUBLIC_PATHS = { 'Specialty' => '/specialitati-medicale', 'Member' => '/echipa', 'Fact' => '/info-pacient' }.freeze

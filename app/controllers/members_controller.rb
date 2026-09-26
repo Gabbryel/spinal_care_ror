@@ -51,7 +51,7 @@ class MembersController < ApplicationController
   end
 
   def index
-    @members = policy_scope(Member).includes([:profession, :specialty, :photo_attachment]).order(:last_name)
+    @members = policy_scope(Member).includes([:profession, :specialty, :specialties, :photo_attachment]).order(:last_name)
     render json: @members
   end
 
@@ -73,6 +73,6 @@ class MembersController < ApplicationController
   end
 
   def member_params
-    params.require(:member).permit(:first_name, :last_name, :seo_title, :profession_id, :specialty_id, :photo, :description, :slug, :academic_title, :doctor_grade, :has_own_page, :has_prices, :selected, :order, :schroth, :founder, :has_day_hospitalization, :is_active, :specialty_favored)
+    params.require(:member).permit(:first_name, :last_name, :seo_title, :profession_id, :specialty_id, :photo, :description, :slug, :academic_title, :doctor_grade, :has_own_page, :has_prices, :selected, :order, :schroth, :founder, :has_day_hospitalization, :is_active, :specialty_favored, specialty_ids: [])
   end
 end

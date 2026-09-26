@@ -64,8 +64,8 @@
                     <% if member.profession %>
                       <span class="profession-badge"><%= translate_profession(member.profession.name) %></span>
                     <% end %>
-                    <% if member.specialty %>
-                      <span class="specialty-badge"><%= member.specialty.name %></span>
+                    <% member.ordered_specialties.each do |specialty| %>
+                      <span class="specialty-badge"><%= specialty.name %></span>
                     <% end %>
                   </div>
 

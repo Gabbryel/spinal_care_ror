@@ -5,7 +5,7 @@ class PagesController < ApplicationController
     # @review = Review.new()
     # @reviews = Review.all.shuffle || []
     @specialties = Specialty.strict_loading.order(name: :asc) || []
-    @members = Member.includes([:profession, :specialty, :photo_attachment]).order(:last_name).to_a || [].to_a
+    @members = Member.includes([:profession, :specialty, :specialties, :photo_attachment]).order(:last_name).to_a || [].to_a
     @medics = @members.select {|m| m.profession.slug == 'medic'}.sample(7)
     @kinetos = @members.select { |m| m.profession.slug == 'fiziokinetoterapeut' || 'asistent-medical-bfkt' }
     @kinetos_to_show = @kinetos.select { |k| k.selected }.sort_by { |k| k.order }

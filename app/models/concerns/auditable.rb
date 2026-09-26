@@ -11,12 +11,12 @@ module Auditable
   private
 
   def log_create
-    extras = audited_attachment_changes.merge(audited_rich_text_changes).transform_values(&:last).compact
+    extras = audited_extra_changes.transform_values(&:last).compact
     create_audit_log('create', changes_for_audit.merge(extras), generate_create_summary)
   end
 
   def log_update
-    extras = audited_attachment_changes.merge(audited_rich_text_changes)
+    extras = audited_extra_changes
     return if saved_changes.blank? && extras.blank?
 
     create_audit_log('update', saved_changes.merge(extras), generate_update_summary(extras.keys))
@@ -53,6 +53,16 @@ module Auditable
     Rails.logger.error "Failed to create audit log: #{e.message}"
   ensure
     @audited_rich_text_changes = nil
+  end
+
+  def audited_extra_changes
+    audited_attachment_changes.merge(audited_rich_text_changes).merge(audited_association_changes)
+  end
+
+  # Changes kept outside the record's own columns (join tables). A model that
+  # has them returns { "name" => [before, after] } computed before the save.
+  def audited_association_changes
+    {}
   end
 
   def changes_for_audit

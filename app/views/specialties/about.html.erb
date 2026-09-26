@@ -87,9 +87,7 @@
         <div class="section-line"></div>
       </div>
       <div class="team-grid">
-        <% @specialty.members_belonging_to_specialty.concat(specialty_specialists(@specialty)).uniq
-        .sort_by { |a| a.specialty_favored ? 0:1 }
-        .each_with_index do |member| %>
+        <% @specialty_members.each do |member| %>
           <%= render partial: 'members/modern_member_card', locals: {m: member} %>
         <% end %>
       </div>

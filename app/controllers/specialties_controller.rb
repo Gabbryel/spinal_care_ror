@@ -59,7 +59,12 @@ class SpecialtiesController < ApplicationController
   def about
     @specialties = [@specialty]
     @all_specialties = Specialty.all.order(:name)
-    @specialists = Member.where(has_day_hospitalization: true)
+    @specialists = Member.where(has_day_hospitalization: true).includes(:specialties)
+    # Everyone with this specialty (primary or not), plus doctors linked
+    # through one of its services. A plain array: concat on the association
+    # would persist the service doctors as members of the specialty.
+    @specialty_members = (@specialty.members.includes(:specialties).to_a + helpers.specialty_specialists(@specialty))
+                         .uniq.sort_by { |m| m.specialty_favored ? 0 : 1 }
   end
 
   def destroy

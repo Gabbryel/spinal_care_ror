@@ -75,14 +75,25 @@
             prompt: 'Selectează gradul profesional',
             wrapper_html: { class: 'form-input-wrapper' } %>
       </div>
-<!-- test -->
       <div class="form-group">
-        <%= f.label :specialty_id, 'Specialitate medicală', class: 'form-label' %>
+        <%= f.label :specialty_id, 'Specialitate principală', class: 'form-label' %>
         <%= f.association :specialty, 
             label: false, 
             include_blank: 'Fără specialitate',
             wrapper_html: { class: 'form-input-wrapper' } %>
-        <p class="form-hint">Lasă gol dacă membrul nu are specialitate</p>
+        <p class="form-hint">Apare pe cardul membrului. Lasă gol dacă membrul nu are specialitate</p>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :specialty_ids, 'Alte specialități', class: 'form-label' %>
+        <%= f.input :specialty_ids,
+            as: :check_boxes,
+            collection: Specialty.order(:name),
+            label_method: :name,
+            value_method: :id,
+            label: false,
+            wrapper_html: { class: 'form-input-wrapper form-specialties' } %>
+        <p class="form-hint">Membrul apare pe pagina fiecărei specialități bifate. Specialitatea principală este inclusă automat</p>
       </div>
 
       <div class="form-group form-checkbox">

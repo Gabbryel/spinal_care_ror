@@ -45,7 +45,7 @@
           # Filter members based on context
           if defined?(@specialty) && @specialty.persisted?
             # On specialty admin page - only show members from this specialty
-            member_collection = Member.where(specialty_id: @specialty.id)
+            member_collection = @specialty.members
                                      .where(has_prices: true)
                                      .order(:last_name, :first_name)
             hint_text = "Selectează un specialist din #{@specialty.name} sau lasă necompletat pentru servicii generale"

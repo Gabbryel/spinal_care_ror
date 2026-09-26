@@ -108,7 +108,7 @@ module SeoHelper
 
   # Alt text for a team member's photo: name + profession + specialty.
   def member_photo_alt(member)
-    [full_name_with_title(member), translate_profession(member.profession_name), member.specialty&.name]
+    [full_name_with_title(member), translate_profession(member.profession_name), member.ordered_specialties.map(&:name).join(", ")]
       .map { |part| part.to_s.squish }.reject(&:empty?).join(", ")
   end
 
@@ -176,7 +176,8 @@ module SeoHelper
       "url" => canonical_url
     }
     if physician
-      data["medicalSpecialty"] = member.specialty.name if member.specialty
+      names = member.ordered_specialties.map(&:name)
+      data["medicalSpecialty"] = names.one? ? names.first : names if names.any?
       data["parentOrganization"] = clinic_json_ld_reference
     else
       data["honorificPrefix"] = title if title.present?
