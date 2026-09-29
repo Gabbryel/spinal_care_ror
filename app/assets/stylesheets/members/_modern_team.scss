@@ -541,3 +541,25 @@
     font-size: 0.875rem;
   }
 }
+
+// Contact cards: the top one overlaps the hero; every section (founder and
+// each profession) ends with its own card, so it hides with the section when
+// the filters empty it. Same width as the filters and the team grid.
+.founder-section .specialty-cta,
+.profession-section .specialty-cta {
+  margin: 2.5rem 0 0;
+
+  @media (max-width: 768px) {
+    margin-top: 2rem;
+  }
+}
+
+.team-contact-cta {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+  }
+}

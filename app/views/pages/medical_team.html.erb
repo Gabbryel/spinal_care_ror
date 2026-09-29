@@ -10,6 +10,10 @@
     </div>
   </div>
 
+  <div class="team-contact-cta">
+    <%= render partial: "specialties/contact_cta", locals: { placement: "top", title: "Programează o consultație cu unul dintre specialiștii noștri" } %>
+  </div>
+
   <!-- Filter Section -->
   <div class="team-filters">
     <div class="filters-container">
@@ -61,6 +65,7 @@
       <div class="founder-card-container">
         <%= render partial: "members/modern_member_card", locals: {m: @founder} %>
       </div>
+      <%= render partial: "specialties/contact_cta", locals: { placement: "bottom", key: "fondator" } %>
     </div>
   <% end %>
 
@@ -80,7 +85,9 @@
             <%= render partial: "members/modern_member_card", locals: {m: member} %>
           <% end %>
         </div>
+        <%= render partial: "specialties/contact_cta", locals: { placement: "bottom", key: profession.slug } %>
       </div>
     <% end %>
   <% end %>
+
 </div>

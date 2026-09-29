@@ -376,32 +376,33 @@
   }
 }
 
-// Under the hero: pulled up over the hero's bottom edge so the actions sit
-// in the first screen on every device.
+// Under the hero and after the content: normal flow with its own spacing.
+// Negative margins (the card pulled over the hero and over the section
+// above) made it overlap neighbouring sections, so none are used.
 .specialty-cta--top {
-  margin-top: -4.5rem;
-  position: relative;
-  z-index: 1;
+  margin-top: 2rem;
 
   @media (max-width: 768px) {
-    margin-top: -3.5rem;
+    margin-top: 1.5rem;
   }
 }
 
-// Containers that already overlap the hero (member page) keep their own offset.
+// Member page: .member-content is pulled up over the hero (-2rem, -1.5rem on
+// phones); this margin cancels that pull and leaves the usual gap below it.
 .specialty-cta--flush {
-  margin-top: 0;
+  margin-top: 3.5rem;
 
   @media (max-width: 768px) {
-    margin-top: 0;
+    margin-top: 3rem;
   }
 }
 
 .specialty-cta--bottom {
-  margin-top: -1rem;
+  margin-top: 2.5rem;
   margin-bottom: 4rem;
 
   @media (max-width: 768px) {
+    margin-top: 2rem;
     margin-bottom: 3rem;
   }
 }

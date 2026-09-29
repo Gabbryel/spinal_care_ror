@@ -11,7 +11,10 @@
   <%= motto('Pune accentul pe prevenție și cere sfatul unui medic cu experiență!', 'row-span-1 row-start-4 col-span-full col-start-1') %>
   <%= render 'pages/home_partials/home_specialists' %>
   <%= render 'pages/home_partials/schroth' %>
-  <%= motto('Fiecare pacient care pleacă cu zâmbetul pe buze ne face să ne simțim împliniți.', 'row-span-1 row-start-7 col-span-full col-start-1') %>
+  <div class="home-contact-cta row-span-1 row-start-7 col-span-full col-start-1">
+    <%= render partial: "specialties/contact_cta", locals: { placement: "bottom" } %>
+  </div>
+  <%= motto('Fiecare pacient care pleacă cu zâmbetul pe buze ne face să ne simțim împliniți.', 'row-span-1 row-start-8 col-span-full col-start-1') %>
   <%#= render 'pages/home_partials/home_attractions' %>
   <%#= render 'pages/home_partials/home_info' %>
   <%#= render 'pages/home_partials/home_second_landing' %>

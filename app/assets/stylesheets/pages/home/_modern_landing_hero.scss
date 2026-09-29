@@ -296,3 +296,61 @@
   pointer-events: none;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
 }
+
+// Contact actions under the rotating motto (the same two buttons as the
+// contact card). Stacked full width on phones, side by side from 641px.
+.hero-cta {
+  margin-top: 2rem;
+
+  // Desktop: 100px lower. The matching top padding on .hero-content keeps the
+  // centred motto where it was, so only the buttons move.
+  @media (min-width: 769px) {
+    margin-top: calc(2rem + 100px);
+  }
+
+  .specialty-cta-actions {
+    justify-content: center;
+  }
+
+  .specialty-cta-secondary {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (max-width: 640px) {
+    max-width: 22rem;
+    margin: 1.5rem auto 0;
+  }
+}
+
+// On phones the buttons make the centred content taller, which pushed the
+// motto up under the stamp: a smaller stamp and a top offset keep them apart.
+@media (max-width: 768px) {
+  .hero-stamp-15years {
+    width: 112px;
+    height: 112px;
+    top: 1rem;
+    left: 1rem;
+  }
+
+  .modern-landing-hero .hero-content {
+    padding-top: 4rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .modern-landing-hero .hero-content {
+    padding-top: 100px;
+  }
+}
+
+// Contact card after the Schroth section, same width as the page sections.
+.home-contact-cta {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+  }
+}

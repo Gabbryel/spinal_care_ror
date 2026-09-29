@@ -81,7 +81,7 @@ export default class extends Controller {
   // --- CTA visibility ---------------------------------------------------
 
   observeCta() {
-    const ctas = document.querySelectorAll(".specialty-cta");
+    const ctas = document.querySelectorAll(".specialty-cta, .hero-cta");
     this.ctaPresent = ctas.length > 0;
     this.ctaSeen = false;
     if (!this.ctaPresent || !("IntersectionObserver" in window)) return;
