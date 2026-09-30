@@ -54,14 +54,18 @@ class AnalyticsClicksTest < ActionDispatch::IntegrationTest
     assert_includes css_select(".summary-value").first.text, "5", "total clicks (nav and social included)"
   end
 
-  test "conversion rate per day counts converting visits per 100 visits, daily and over 7 days" do
+  test "the audit section charts converting visits per 100 visits, daily and over 7 days" do
     # A third real visitor on the same day as visitor a, who does not convert.
     visit(started_at: @now - 1.day, visitor: "c")
 
     get "/dashboard/analytics/clicks", params: { period: "7" }
+    assert_nil css_select(".chart-section").find { |s| s.text.include?("Rata de conversie pe zi") },
+               "the chart lives in the audit section"
+
+    get "/dashboard/analytics/audit", params: { period: "7" }
     assert_response :success
 
-    section = css_select(".chart-section").find { |s| s.text.include?("Rata de conversie pe zi") }
+    section = css_select(".audit-section .chart-section").find { |s| s.text.include?("Rata de conversie pe zi") }
     assert section, "the chart section is rendered"
     assert_includes section.at_css(".chart-note").text, "Media perioadei: 66.7%", "2 converting visits of 3 (the bot is filtered)"
     assert section.at_css("canvas#conversionRateChart")
