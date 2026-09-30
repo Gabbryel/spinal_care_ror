@@ -228,14 +228,19 @@ class AnalyticsInsights
                 hint: 'Dacă este IP-ul clinicii sau al unui angajat, exclude-l din statistici; dacă nu, este probabil un scraper.')
   end
 
+  # Only visits with a page view: scanners that send our own address as
+  # referrer never run JavaScript and are reported under visits with no page
+  # view instead.
   def self_referrals
-    return nil if total_visits.zero?
-    n = @visits.where('referring_domain ~* ?', SELF_REFERRER).count
+    viewed = @visits.where(id: views.select(:visit_id))
+    total = viewed.count
+    return nil if total.zero?
+    n = viewed.where('referring_domain ~* ?', SELF_REFERRER).count
     return nil if n.zero?
-    share = pct(n, total_visits)
+    share = pct(n, total)
     Finding.new(level: share > 10 ? 'warn' : 'info', title: 'Vizite cu sursa „propriul site”',
-                text: "#{fmt(n)} vizite (#{share}%) au ca referrer spinalcare.ro sau serverul vechi (77.81.2.98).",
-                hint: 'Sunt sesiuni noi create la întoarcerea de pe site-ul de programări sau prin redirect-ul de pe spinalcare.ro fără www; sursa reală (Google, Facebook) se pierde pentru ele.')
+                text: "#{fmt(n)} vizite (#{share}%) cu pagini vizualizate au ca referrer spinalcare.ro sau serverul vechi (77.81.2.98).",
+                hint: 'Până la 30 septembrie 2026, acceptarea cookie-urilor reîncărca pagina, iar vizita pornită atunci primea ca sursă chiar pagina noastră, așa că Google, Facebook sau reclamele se pierdeau. De atunci sursa reală se păstrează. Dacă procentul rămâne mare în perioade de după această dată, e o problemă nouă de urmărit.')
   end
 
   def uncategorised_clicks

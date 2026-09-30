@@ -8,6 +8,7 @@ import { Controller } from "@hotwired/stimulus"
 // page instead of being injected halfway through.
 const COOKIE = "cookie_consent"
 const YEAR = 365 * 24 * 60 * 60
+const ORIGIN_COOKIE = "consent_origin"
 
 export default class extends Controller {
   static targets = ["acceptModal"]
@@ -17,6 +18,7 @@ export default class extends Controller {
   }
 
   acceptAll() {
+    this.#saveOrigin()
     this.#save("all")
   }
 
@@ -30,6 +32,20 @@ export default class extends Controller {
     document.cookie = `${COOKIE}=${value}; path=/; max-age=${YEAR}; samesite=lax${secure}`
     this.acceptModalTarget.style.display = "none"
     window.location.reload()
+  }
+
+  // Ahoy opens the visit on the reload below, and a reload reports the page
+  // itself as referrer, so every visitor who accepted counted as "own site".
+  // Hand the server where the visitor really came from and the page they
+  // landed on (Turbo navigations keep both), for Ahoy::Store to use instead.
+  #saveOrigin() {
+    const navigation = performance.getEntriesByType("navigation")[0]
+    const origin = JSON.stringify({
+      referrer: document.referrer,
+      landing_page: navigation ? navigation.name : window.location.href,
+    })
+    const secure = window.location.protocol === "https:" ? "; secure" : ""
+    document.cookie = `${ORIGIN_COOKIE}=${encodeURIComponent(origin)}; path=/; max-age=60; samesite=lax${secure}`
   }
 
   // Cookies a previous visit may have left behind. Google and Meta set theirs
