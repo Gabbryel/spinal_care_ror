@@ -1366,6 +1366,26 @@
     margin: 1rem 0;
   }
 
+  .chart-note {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin: -0.5rem 0 1rem;
+  }
+
+  .chart-table {
+    margin-top: 1rem;
+
+    summary {
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: #374151;
+    }
+
+    .bh-table {
+      margin-top: 0.75rem;
+    }
+  }
+
   .chart-title {
     font-size: 1.25rem;
     font-weight: 600;

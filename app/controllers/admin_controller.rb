@@ -352,6 +352,40 @@ class AdminController < ApplicationController
         { label: CLICK_CATEGORY_LABELS[category], data: days.map { |d| daily[[category, d]] || 0 } }
       end
 
+      # Conversion rate per day: visits with a call or booking per 100 visits
+      # started that day (same definition as the channels section), plus a
+      # rolling 7-day rate (sum of converting visits over sum of visits), since
+      # a single day of ~100 visits swings by several points. The 6 days before
+      # the period feed the first windows, so the line starts on a full week.
+      rate_start = start_date - 6.days
+      rate_visits = apply_analytics_filters(
+        Ahoy::Visit.where("landing_page NOT LIKE ? OR landing_page IS NULL", '%/dashboard%')
+                   .where('started_at >= ? AND started_at <= ?', rate_start, end_date),
+        include_bots: !filter_bots, relevant_countries_only: filter_geography
+      )
+      converting_ids = Ahoy::Event.where(name: '$click')
+                                  .where("properties->>'category' IN (?)", DAILY_CHART_CATEGORIES)
+                                  .where('time >= ? AND time <= ?', rate_start, end_date)
+                                  .select(:visit_id)
+      visits_by_day = rate_visits.group(Arel.sql('DATE(started_at)')).count
+      converting_by_day = rate_visits.where(id: converting_ids).group(Arel.sql('DATE(started_at)')).count
+      @daily_rate = days.map do |d|
+        window = ((d - 6.days)..d).to_a
+        window_visits = window.sum { |w| visits_by_day[w] || 0 }
+        window_converting = window.sum { |w| converting_by_day[w] || 0 }
+        visits = visits_by_day[d] || 0
+        converting = converting_by_day[d] || 0
+        {
+          visits: visits,
+          converting: converting,
+          rate: visits > 0 ? (converting * 100.0 / visits).round(1) : nil,
+          rolling: window_visits > 0 ? (window_converting * 100.0 / window_visits).round(1) : nil
+        }
+      end
+      total_visits = days.sum { |d| visits_by_day[d] || 0 }
+      total_converting = days.sum { |d| converting_by_day[d] || 0 }
+      @period_rate = total_visits > 0 ? (total_converting * 100.0 / total_visits).round(1) : 0
+
       @top_destinations = clicks.group(Arel.sql("properties->>'category'"), Arel.sql("properties->>'destination'"))
                                 .order('count_all DESC')
                                 .limit(15)

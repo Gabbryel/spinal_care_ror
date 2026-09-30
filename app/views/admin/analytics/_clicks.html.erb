@@ -37,6 +37,38 @@
       <% end %>
     </div>
 
+    <!-- Conversion rate per day -->
+    <div class="chart-section">
+      <h4 class="pages-title">Rata de conversie pe zi</h4>
+      <p class="chart-note">
+        Vizite cu un apel sau o programare la 100 de vizite. Media perioadei: <strong><%= @period_rate %>%</strong>.
+        Linia continuă e media pe ultimele 7 zile; punctele sunt zilele luate separat.
+      </p>
+      <% if @daily_rate.any? { |d| d[:visits] > 0 } %>
+        <canvas id="conversionRateChart" height="100"
+                role="img" aria-label="Rata de conversie pe zi, media perioadei <%= @period_rate %>%"></canvas>
+        <details class="chart-table">
+          <summary>Vezi datele în tabel</summary>
+          <table class="bh-table">
+            <thead><tr><th>Zi</th><th>Vizite</th><th>Cu apel sau programare</th><th>Rată</th><th>Media 7 zile</th></tr></thead>
+            <tbody>
+              <% @daily_rate.each_with_index do |d, i| %>
+                <tr>
+                  <td><%= @daily_labels[i] %></td>
+                  <td><%= number_with_delimiter(d[:visits]) %></td>
+                  <td><%= number_with_delimiter(d[:converting]) %></td>
+                  <td><%= d[:rate] ? "#{d[:rate]}%" : '–' %></td>
+                  <td><%= d[:rolling] ? "#{d[:rolling]}%" : '–' %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </details>
+      <% else %>
+        <div class="empty-state"><p>Nicio vizită în perioada selectată.</p></div>
+      <% end %>
+    </div>
+
     <div class="pages-grid">
       <!-- Top destinations -->
       <div class="pages-table-container">
@@ -179,6 +211,82 @@
         });
       };
       initChart();
+    })();
+  </script>
+  <% end %>
+  <% if @daily_rate.any? { |d| d[:visits] > 0 } %>
+  <script>
+    (function() {
+      const initRateChart = () => {
+        if (typeof Chart === 'undefined') { setTimeout(initRateChart, 50); return; }
+        const canvas = document.getElementById('conversionRateChart');
+        if (!canvas) return;
+        if (canvas.chart) canvas.chart.destroy();
+
+        const days = <%= raw @daily_rate.to_json %>;
+        const ROLLING = '#1d4ed8';
+        const DAILY = '#0d9488';
+        const pct = (v) => v === null ? '–' : v.toLocaleString('ro-RO', { maximumFractionDigits: 1 }) + '%';
+        canvas.chart = new Chart(canvas, {
+          type: 'line',
+          data: {
+            labels: <%= raw @daily_labels.to_json %>,
+            datasets: [
+              {
+                label: 'Media pe 7 zile',
+                data: days.map((d) => d.rolling),
+                borderColor: ROLLING,
+                backgroundColor: ROLLING,
+                borderWidth: 2,
+                cubicInterpolationMode: 'monotone',
+                pointRadius: 0,
+                pointHoverRadius: 5,
+                spanGaps: true
+              },
+              {
+                label: 'Ziua respectivă',
+                data: days.map((d) => d.rate),
+                borderColor: DAILY,
+                backgroundColor: DAILY,
+                borderWidth: 0,
+                showLine: false,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointStyle: 'rectRot'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 3,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: true, position: 'top', labels: { usePointStyle: true, color: '#374151' } },
+              tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)', padding: 12, cornerRadius: 8,
+                callbacks: {
+                  label: (ctx) => {
+                    const d = days[ctx.dataIndex];
+                    return ctx.datasetIndex === 0
+                      ? `Media 7 zile: ${pct(d.rolling)}`
+                      : `Ziua: ${pct(d.rate)} (${d.converting} din ${d.visits} vizite)`;
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { callback: (v) => v + '%', font: { size: 12 }, color: '#6b7280' },
+                grid: { color: '#e5e7eb' }
+              },
+              x: { ticks: { maxRotation: 45, minRotation: 45, font: { size: 11 }, color: '#6b7280' }, grid: { display: false } }
+            }
+          }
+        });
+      };
+      initRateChart();
     })();
   </script>
   <% end %>

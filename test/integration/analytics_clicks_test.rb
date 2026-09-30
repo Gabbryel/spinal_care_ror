@@ -54,6 +54,29 @@ class AnalyticsClicksTest < ActionDispatch::IntegrationTest
     assert_includes css_select(".summary-value").first.text, "5", "total clicks (nav and social included)"
   end
 
+  test "conversion rate per day counts converting visits per 100 visits, daily and over 7 days" do
+    # A third real visitor on the same day as visitor a, who does not convert.
+    visit(started_at: @now - 1.day, visitor: "c")
+
+    get "/dashboard/analytics/clicks", params: { period: "7" }
+    assert_response :success
+
+    section = css_select(".chart-section").find { |s| s.text.include?("Rata de conversie pe zi") }
+    assert section, "the chart section is rendered"
+    assert_includes section.at_css(".chart-note").text, "Media perioadei: 66.7%", "2 converting visits of 3 (the bot is filtered)"
+    assert section.at_css("canvas#conversionRateChart")
+
+    rows = section.css(".chart-table tbody tr").to_h { |r| [r.at_css("td").text, r.css("td").map { |td| td.text.strip }] }
+    day_b = rows.fetch((@now - 2.days).to_date.strftime("%d %b"))
+    day_a = rows.fetch((@now - 1.day).to_date.strftime("%d %b"))
+    assert_equal ["1", "1", "100.0%", "100.0%"], day_b[1..], "visitor b booked"
+    assert_equal ["2", "1", "50.0%", "66.7%"], day_a[1..], "a called twice (one converting visit), c did not; 7-day: 2 of 3"
+    assert_equal "–", rows.fetch((@now - 3.days).to_date.strftime("%d %b"))[3], "a day without visits has no rate"
+    day_before = rows.fetch((@now - 4.days).to_date.strftime("%d %b"))
+    assert_equal ["0", "0", "–", "100.0%"], day_before[1..],
+                 "the 7-day window reaches back before the period: the call 10 days ago counts"
+  end
+
   test "top destinations are labelled by category with a readable destination" do
     get "/dashboard/analytics/clicks", params: { period: "7" }
 
@@ -169,7 +192,7 @@ class AnalyticsClicksTest < ActionDispatch::IntegrationTest
 
     assert_select "h1", text: "Politica de confidențialitate și de cookie-uri"
     # Every cookie the site can set has a row, with its lifetime.
-    %w[_spinal_care_ror_session cookie_consent ahoy_visit ahoy_visitor _ga _gcl_au _fbp].each do |name|
+    %w[_spinal_care_ror_session cookie_consent ahoy_visit ahoy_visitor consent_origin _ga _gcl_au _fbp].each do |name|
       assert_includes body, name, "the policy lists #{name}"
     end
     # GDPR essentials: legal bases, recipients, rights, supervisory authority.
@@ -199,7 +222,7 @@ class AnalyticsClicksTest < ActionDispatch::IntegrationTest
   test "the cookie notice describes the cookies the site actually sets" do
     get "/"
     body = response.body
-    %w[_spinal_care_ror_session cookie_consent ahoy_visit ahoy_visitor _ga _gcl_au _fbp].each do |name|
+    %w[_spinal_care_ror_session cookie_consent ahoy_visit ahoy_visitor consent_origin _ga _gcl_au _fbp].each do |name|
       assert_includes body, name, "the notice names #{name}"
     end
     assert_no_match(/nu colectăm cookie-uri/i, body, "the old claim that no cookies are used is gone")
