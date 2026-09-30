@@ -6,6 +6,22 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
   
   has_many :audit_logs, dependent: :destroy
+
+  # SEO specialists see the dashboard's analytics section and nothing else.
+  # The attribute check keeps the app working in the minutes between a deploy
+  # and the migration that adds the column (no release phase on Heroku).
+  def seo_specialist?
+    has_attribute?(:seo_specialist) && self[:seo_specialist] == true
+  end
+
+  def analytics_access?
+    admin || seo_specialist?
+  end
+
+  # Signed in only for the analytics: every other dashboard page sends them there.
+  def analytics_only?
+    !admin && seo_specialist?
+  end
   
   def log_login(ip_address, user_agent)
     AuditLog.create!(

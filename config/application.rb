@@ -11,6 +11,8 @@ module SpinalCareRor
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
     config.active_storage.variant_processor = :mini_magick
+    # A Pundit refusal is a 403, not a 500 (it used to surface as a server error).
+    config.action_dispatch.rescue_responses["Pundit::NotAuthorizedError"] = :forbidden
 
     # Configuration for the application, engines, and railties goes here.
     #

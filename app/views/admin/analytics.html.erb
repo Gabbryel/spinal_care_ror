@@ -1,4 +1,4 @@
-<% if access %>
+<% if analytics_access %>
   <div class="analytics-dashboard-new" data-controller="analytics-refresh" data-analytics-refresh-interval-value="1200000">
     <!-- Header -->
     <div class="analytics-header-new">
@@ -12,11 +12,13 @@
         </h1>
         <p class="analytics-subtitle">Performanță în timp real</p>
       </div>
-      <%= link_to dashboard_path, class: 'btn-back-new' do %>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-        </svg>
-        Înapoi
+      <% unless current_user.analytics_only? %>
+        <%= link_to dashboard_path, class: 'btn-back-new' do %>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Înapoi
+        <% end %>
       <% end %>
     </div>
 

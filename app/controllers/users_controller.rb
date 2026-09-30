@@ -1,6 +1,20 @@
 class UsersController < ApplicationController
-  before_action :set_user
+  before_action :set_user, except: :create
+
   def edit
+  end
+
+  # New account from the dashboard: email, a first password the admin passes
+  # on, and optionally the SEO specialist role. Admin rights are still granted
+  # afterwards with the God Mode buttons.
+  def create
+    user = authorize User.new(new_user_params)
+    if user.save
+      role = user.seo_specialist? ? ' (SEO specialist: vede doar secțiunea de analytics)' : ''
+      redirect_to dashboard_users_path, alert: "Contul #{user.email} a fost creat#{role}."
+    else
+      redirect_to dashboard_users_path, alert: "Contul nu a fost creat: #{user.errors.full_messages.to_sentence}."
+    end
   end
 
   def update
@@ -10,6 +24,8 @@ class UsersController < ApplicationController
         flash.alert = 'Utilizatorul este administrator din acest moment!'
       elsif !@user.admin && params[:user][:admin]
         flash.alert = 'Utilizatorul nu mai are drepturi de administrare!'
+      elsif params[:user].key?(:seo_specialist)
+        flash.alert = @user.seo_specialist? ? 'Utilizatorul este SEO specialist: vede doar secțiunea de analytics.' : 'Utilizatorul nu mai este SEO specialist.'
       elsif params[:user][:alias]
         flash.alert = params[:user][:alias].empty? ? "Ai uitat să-i pui un alias!" : "Utilizatorul are aliasul #{params[:user][:alias]}!"
       end
@@ -32,7 +48,11 @@ class UsersController < ApplicationController
     @user = authorize User.find(params[:id])
   end
 
+  def new_user_params
+    params.require(:user).permit(:email, :password, :alias, :seo_specialist)
+  end
+
   def user_params
-    params.require(:user).permit(:email, :password, :admin, :alias, :god_mode)
+    params.require(:user).permit(:email, :password, :admin, :alias, :god_mode, :seo_specialist)
   end
 end

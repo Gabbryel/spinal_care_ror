@@ -5,6 +5,31 @@
       <span class="users-count"><%= @users.count %> <%= @users.count == 1 ? 'utilizator' : 'utilizatori' %></span>
     </div>
 
+    <%# A signed-in admin cannot use the public sign-up, so accounts start here. %>
+    <details class="new-user">
+      <summary>Creează utilizator</summary>
+      <%= form_with model: User.new, url: dashboard_create_user_path, method: :post, class: 'new-user-form' do |f| %>
+        <div class="form-group">
+          <%= f.label :email, 'Email', class: 'form-label' %>
+          <%= f.email_field :email, required: true, autocomplete: 'off', class: 'form-input' %>
+        </div>
+        <div class="form-group">
+          <%= f.label :password, 'Parolă inițială', class: 'form-label' %>
+          <%= f.text_field :password, required: true, minlength: 6, autocomplete: 'new-password', class: 'form-input' %>
+          <small>Minim 6 caractere. O comunici persoanei; o poate schimba din „Ai uitat parola?”.</small>
+        </div>
+        <div class="form-group">
+          <%= f.label :alias, 'Alias (opțional)', class: 'form-label' %>
+          <%= f.text_field :alias, class: 'form-input' %>
+        </div>
+        <label class="new-user-role">
+          <%= f.check_box :seo_specialist %>
+          SEO specialist: vede doar secțiunea de analytics
+        </label>
+        <%= f.submit 'Creează contul', class: 'btn-action btn-grant' %>
+      <% end %>
+    </details>
+
     <% if @users.empty? %>
       <div class="empty-state">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -39,6 +64,12 @@
                 </svg>
                 <span>God Mode</span>
               </div>
+              <div class="permission-badge <%= u.seo_specialist? ? 'active' : 'inactive' %>">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                </svg>
+                <span>SEO specialist</span>
+              </div>
             </div>
 
             <% if access && god_mode %>
@@ -54,6 +85,14 @@
                   <%= simple_form_for u, html: { class: 'inline-form' } do |f| %>
                     <%= f.hidden_field :god_mode, value: u.god_mode ? false : true %>
                     <%= f.submit "#{u.god_mode ? 'Revocă God Mode' : 'Acordă God Mode'}", class: "btn-action #{u.god_mode ? 'btn-revoke' : 'btn-grant'}" %>
+                  <% end %>
+                </div>
+
+                <div class="action-item">
+                  <%# Sees only the dashboard's analytics section. %>
+                  <%= simple_form_for u, html: { class: 'inline-form' } do |f| %>
+                    <%= f.hidden_field :seo_specialist, value: u.seo_specialist? ? false : true %>
+                    <%= f.submit "#{u.seo_specialist? ? 'Revocă SEO specialist' : 'Acordă SEO specialist'}", class: "btn-action #{u.seo_specialist? ? 'btn-revoke' : 'btn-grant'}" %>
                   <% end %>
                 </div>
 

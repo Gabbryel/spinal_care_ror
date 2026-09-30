@@ -121,9 +121,11 @@ module AnalyticsFilterHelper
   end
 
   # Lazy-loaded section: runs the block (which sets the instance variables the
-  # partial needs) and caches the rendered partial HTML.
+  # partial needs) and caches the rendered partial HTML. Admins get the forms
+  # that write (campaign names, ad spend, call tallies) and SEO specialists do
+  # not, so the two are cached apart.
   def render_cached_analytics_section(section, partial)
-    html = cached_analytics(section) do
+    html = cached_analytics([section, current_user&.admin ? :editor : :reader]) do
       yield
       render_to_string(partial: partial, layout: false)
     end

@@ -3,10 +3,17 @@ class AdminController < ApplicationController
   
   layout "dashboard"
 
-  # The analytics page checks `access` in its view, but the lazy-loaded
-  # sections are separate requests that rendered their data to any signed-in
-  # user. Keep the whole analytics surface admin-only.
-  before_action :require_admin_for_analytics, if: -> { action_name.start_with?("analytics") }
+  # The analytics page checks `analytics_access` in its view, but the
+  # lazy-loaded sections are separate requests that rendered their data to any
+  # signed-in user, so each one checks too. Admins and SEO specialists read
+  # them; the forms that write (campaign names, ad spend, call tallies) and the
+  # debug dump stay admin-only. An SEO specialist who opens any other
+  # dashboard page lands on the analytics.
+  ANALYTICS_ADMIN_ONLY = %w[analytics_campaign_name analytics_ad_spend analytics_call_tally analytics_debug].freeze
+
+  before_action :redirect_analytics_only_users, unless: -> { action_name.start_with?("analytics") }
+  before_action :require_analytics_access, if: -> { action_name.start_with?("analytics") }
+  before_action :require_admin_for_analytics, if: -> { ANALYTICS_ADMIN_ONLY.include?(action_name) }
 
   def dashboard
     @m = Member.new()
@@ -793,8 +800,16 @@ class AdminController < ApplicationController
   
   private
   
+  def require_analytics_access
+    head :forbidden unless current_user&.analytics_access?
+  end
+
   def require_admin_for_analytics
     head :forbidden unless current_user&.admin
+  end
+
+  def redirect_analytics_only_users
+    redirect_to dashboard_analytics_path if current_user&.analytics_only?
   end
 
   def normalize_url(url)

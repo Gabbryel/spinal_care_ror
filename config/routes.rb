@@ -25,6 +25,8 @@ Rails.application.routes.draw do
   get 'dashboard/analytics/debug', to: 'admin#analytics_debug'
   get 'dashboard/audit', to: 'admin#audit'
   get 'dashboard/users', to: 'admin#edit_users'
+  # POST /users belongs to Devise's sign-up, so admins create accounts here.
+  post 'dashboard/users', to: 'users#create', as: 'dashboard_create_user'
   get 'dashboard/personal', to: 'admin#personal'
   get 'dashboard/profesii', to: 'admin#professions', as: 'admin_professions'
   get 'dashboard/specialitati', to: 'admin#specialties', as: 'admin_specialties'

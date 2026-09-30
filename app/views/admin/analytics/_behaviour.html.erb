@@ -285,12 +285,14 @@
           <% else %>
             <p class="bh-headline bh-headline--muted">Notează câte apeluri a primit recepția într-o zi. După câteva zile afli câte click-uri pe telefon devin apeluri reale.</p>
           <% end %>
+          <% if access %>
           <%= form_with url: dashboard_analytics_call_tally_path, method: :post, class: 'tally-form', data: { turbo: false } do |f| %>
             <%= hidden_field_tag :period, params[:period] %>
             <%= f.date_field :date, value: Date.current, class: 'date-input-new', required: true, aria: { label: 'Ziua' } %>
             <%= f.number_field :calls, min: 0, step: 1, placeholder: 'apeluri primite', class: 'date-input-new tally-calls', required: true, aria: { label: 'Apeluri primite' } %>
             <%= f.text_field :note, placeholder: 'notă (opțional)', class: 'date-input-new', aria: { label: 'Notă' } %>
             <%= f.submit 'Notează', class: 'btn-apply-new' %>
+          <% end %>
           <% end %>
           <% if @tally[:rows].any? %>
             <table class="bh-table bh-table--compact">

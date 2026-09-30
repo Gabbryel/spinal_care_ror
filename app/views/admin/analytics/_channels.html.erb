@@ -92,13 +92,14 @@
                   <tr>
                     <td class="bh-path">
                       <% if c[:name] %><%= c[:name] %> <small class="bh-muted">#<%= c[:campaign_id] %></small>
-                      <% elsif c[:campaign_id] %>
+                      <% elsif c[:campaign_id] && access %>
                         <%= form_with url: dashboard_analytics_campaign_name_path, method: :post, class: 'inline-form', data: { turbo: false } do %>
                           <%= hidden_field_tag :period, params[:period] %>
                           <%= hidden_field_tag :campaign_id, c[:campaign_id] %>
                           <%= text_field_tag :name, nil, placeholder: "nume pentru #{c[:campaign_id]}", class: 'date-input-new inline-input', aria: { label: "Nume campanie #{c[:campaign_id]}" } %>
                           <%= submit_tag 'Salvează', class: 'btn-apply-new btn-small' %>
                         <% end %>
+                      <% elsif c[:campaign_id] %>#<%= c[:campaign_id] %> <small class="bh-muted">(fără nume)</small>
                       <% else %>fără id de campanie<% end %>
                     </td>
                     <td class="num"><%= number_with_delimiter(c[:visits]) %></td><td class="num"><%= c[:converting] %></td><td class="num"><%= c[:per_100] %></td>
@@ -120,6 +121,7 @@
           <% else %>
             <p class="bh-headline bh-headline--muted">Notează cheltuiala lunară din Google Ads și vei vedea aici costul pe contact și pe vizită.</p>
           <% end %>
+          <% if access %>
           <%= form_with url: dashboard_analytics_ad_spend_path, method: :post, class: 'tally-form', data: { turbo: false } do %>
             <%= hidden_field_tag :period, params[:period] %>
             <%= hidden_field_tag :channel_key, 'paid_google' %>
@@ -127,6 +129,7 @@
             <%= number_field_tag :amount, nil, min: 0, step: 1, placeholder: 'lei', class: 'date-input-new tally-calls', required: true, aria: { label: 'Suma în lei' } %>
             <%= text_field_tag :note, nil, placeholder: 'notă (opțional)', class: 'date-input-new', aria: { label: 'Notă' } %>
             <%= submit_tag 'Notează', class: 'btn-apply-new' %>
+          <% end %>
           <% end %>
           <% if @spend[:rows].any? %>
             <table class="bh-table bh-table--compact">

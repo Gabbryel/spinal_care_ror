@@ -19,6 +19,10 @@ module ApplicationHelper
     current_user && current_user.god_mode
   end
 
+  def analytics_access
+    current_user&.analytics_access?
+  end
+
   def btn_color(u)
     u.admin ? 'btn-red' : 'btn-green'
   end

@@ -31,6 +31,11 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # SEO specialists have nothing to do outside the analytics.
+  def after_sign_in_path_for(resource)
+    resource.respond_to?(:analytics_only?) && resource.analytics_only? ? dashboard_analytics_path : super
+  end
+
   # "all" = analytics and marketing accepted. Any other value (or none) means
   # strictly necessary only.
   def tracking_consent?
