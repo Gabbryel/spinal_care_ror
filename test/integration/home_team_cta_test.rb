@@ -38,6 +38,30 @@ class HomeTeamCtaTest < ActionDispatch::IntegrationTest
     assert_operator body.index("specialisti schroth"), :<, body.index("home-contact-cta")
   end
 
+  test "the promotions page has a contact card under the header and after the offers" do
+    PromoPackage.create!(name: "Pachet recuperare coloană", valid_until: Date.current + 20.days)
+    get "/promotii"
+    assert_response :success
+
+    ctas = css_select(".promo-contact-cta .specialty-cta")
+    assert_equal 2, ctas.size
+    assert ctas[0].matches?(".specialty-cta--top")
+    assert_equal "Programează-te pentru unul dintre pachetele promoționale", ctas[0].at_css(".specialty-cta-title").text.strip
+    assert ctas[1].matches?(".specialty-cta--bottom")
+    assert_equal 2, css_select(".specialty-cta button[data-bs-target='#promoModal']").size
+    assert_equal 2, css_select(".specialty-cta a[href='tel:0374554344']").size
+
+    body = response.body
+    assert_operator body.index("specialty-cta--top"), :<, body.index("Pachet recuperare coloană")
+    assert_operator body.index("Pachet recuperare coloană"), :<, body.index("specialty-cta--bottom")
+  end
+
+  test "without offers the promotions page still offers the contact card once" do
+    get "/promotii"
+    assert_response :success
+    assert_equal 1, css_select(".promo-contact-cta .specialty-cta").size
+  end
+
   test "the team page has a contact card under the hero and at the end of every section" do
     Member.create!(first_name: "Lucian", last_name: "Dobreci", profession: Profession.find_by!(name: "medic"),
                    founder: true, is_active: true)

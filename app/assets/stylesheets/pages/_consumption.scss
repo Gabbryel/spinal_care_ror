@@ -371,3 +371,15 @@
     line-height: 1.6;
   }
 }
+
+// Contact cards on /promotii: same width as the header and the offers; the
+// header and the offers section already leave 3rem below them.
+.promo-contact-cta {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .specialty-cta--top,
+  .specialty-cta--bottom {
+    margin-top: 0;
+  }
+}

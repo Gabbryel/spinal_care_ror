@@ -23,6 +23,10 @@
     <% end %>
   </div>
 
+  <div class="promo-contact-cta">
+    <%= render partial: "specialties/contact_cta", locals: { placement: "top", title: "Programează-te pentru unul dintre pachetele promoționale" } %>
+  </div>
+
   <% if @promo_packages.empty? %>
     <div class="empty-state">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -101,6 +105,10 @@
           </div>
         <% end %>
       </div>
+    </div>
+
+    <div class="promo-contact-cta">
+      <%= render partial: "specialties/contact_cta", locals: { placement: "bottom" } %>
     </div>
   <% end %>
 </div>
