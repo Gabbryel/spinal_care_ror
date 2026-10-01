@@ -33,18 +33,18 @@ class AnalyticsChannelsTest < ActionDispatch::IntegrationTest
     get "/dashboard/analytics/channels", params: { period: "7" }
     assert_response :success
 
-    groups = css_select(".bh-block")[0].css("tbody tr").map { |tr| tr.css("td").map { |td| td.text.strip } }
+    groups = block("Plătit față de organic").css("tbody tr").map { |tr| tr.css("td").map { |td| td.text.strip } }
     assert_includes groups, ["Plătit", "5", "41.7%", "2", "0", "2", "2", "40.0"]
     assert_includes groups, ["Organic (căutare)", "3", "25.0%", "0", "1", "1", "1", "33.3"]
     assert_includes groups, ["Social", "1", "8.3%", "0", "0", "0", "0", "0.0"]
     assert_includes groups, ["Direct", "2", "16.7%", "0", "0", "0", "0", "0.0"]
     assert_includes groups, ["Alte site-uri + propriu", "1", "8.3%", "0", "0", "0", "0", "0.0"]
-    assert_includes css_select(".bh-block")[0].text.squish, "Reclamele au adus 41.7% din vizite și 67% din contacte"
+    assert_includes block("Plătit față de organic").text.squish, "Reclamele au adus 41.7% din vizite și 67% din contacte"
 
-    channels = css_select(".bh-block")[1].css("tbody tr").map { |tr| tr.css("td").first.text.strip }
+    channels = block("Canale, unul lângă altul").css("tbody tr").map { |tr| tr.css("td").first.text.strip }
     assert_equal ["Google Ads", "Căutare organică", "Direct", "Alte reclame (UTM)", "Site propriu", "Social (Facebook, Instagram)"], channels
 
-    campaigns = css_select(".bh-block")[2]
+    campaigns = block("Campanii")
     rows = campaigns.css("tbody tr")
     assert_equal 2, rows.size
     assert_equal "nume pentru 111", rows[0].at_css("input[name=name]")["placeholder"], "unnamed campaign shows the naming form"
@@ -66,7 +66,7 @@ class AnalyticsChannelsTest < ActionDispatch::IntegrationTest
     assert_equal "1", css_select(".clicks-kpis .kpi-card")[1].at_css(".kpi-value").text.strip, "one booking from organic"
 
     get "/dashboard/analytics/channels", params: { period: "7", channel: "paid" }
-    assert_equal 5, css_select(".bh-block")[0].css("tbody tr").size, "the comparison ignores the channel filter"
+    assert_equal 5, block("Plătit față de organic").css("tbody tr").size, "the comparison ignores the channel filter"
   end
 
   test "admins can name a campaign and note monthly spend, giving a cost per contact" do
@@ -76,8 +76,8 @@ class AnalyticsChannelsTest < ActionDispatch::IntegrationTest
     assert_redirected_to "/dashboard/analytics?period=7"
 
     get "/dashboard/analytics/channels", params: { period: "7" }
-    assert_includes css_select(".bh-block")[2].css("tbody tr")[0].text, "Brand Bacău"
-    spend = css_select(".bh-block")[3].text.squish
+    assert_includes block("Campanii").css("tbody tr")[0].text, "Brand Bacău"
+    spend = block("Cheltuială și cost per contact").text.squish
     assert_includes spend, "Cu 1,200 lei cheltuiți în lunile perioadei, un contact din reclame a costat 600 lei (240.0 lei pe vizită plătită)"
 
     post "/dashboard/analytics/ad_spend", params: { month: @t.strftime("%Y-%m"), amount: "900" }
@@ -110,4 +110,11 @@ class AnalyticsChannelsTest < ActionDispatch::IntegrationTest
                          properties: { category: category, destination: category == "call" ? "tel:0374554344" : "programari.spinalcare.ro (modal)",
                                        page: "/", text: category, element_type: "link", section: "main", timestamp: (visit.started_at + 30).iso8601(3) })
   end
+
+  # Blocks by title, not position: a period that spans two months adds a
+  # "Pe luni" block in the middle, which shifted every later index.
+  def block(title)
+    css_select(".bh-block").find { |b| b.at_css(".bh-head h4")&.text&.strip == title } || flunk("no block titled #{title}")
+  end
+
 end
