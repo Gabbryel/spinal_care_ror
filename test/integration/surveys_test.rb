@@ -149,7 +149,7 @@ class SurveysTest < ActionDispatch::IntegrationTest
     Specialty.create!(name: "Spitalizare de zi", description: "<p>x</p>", is_day_hospitalize: true)
     Fact.create!(title: "Drepturile pacientului", content: "x") rescue nil
     get "/specialitati-medicale/spitalizare-de-zi"
-    assert_select ".feedback-cta a[href='/chestionare/satisfactie-pacienti-internati']", 1
+    assert_select ".feedback-cta a[href=?]", "/parerea-ta?chestionar=satisfactie-pacienti-internati", 1
     get "/"
     assert_response :success
     assert_select ".feedback-cta a[href='/parerea-ta']", 1
@@ -231,7 +231,46 @@ class SurveysTest < ActionDispatch::IntegrationTest
   test "the day-hospital page links straight to the inpatient questionnaire" do
     seed_outpatient
     get "/specialitati-medicale/spitalizare-de-zi"
-    assert_select ".feedback-cta a[href='/chestionare/satisfactie-pacienti-internati']"
+    assert_select ".feedback-cta a[href=?]", "/parerea-ta?chestionar=satisfactie-pacienti-internati"
+    get "/parerea-ta", params: { chestionar: "satisfactie-pacienti-internati" }
+    assert_redirected_to "/chestionare/satisfactie-pacienti-internati"
+  end
+
+  test "a link to an inactive questionnaire falls back to the choice instead of a 404" do
+    seed_outpatient
+    @survey.update!(active: false)
+    get "/parerea-ta", params: { chestionar: "satisfactie-pacienti-internati" }
+    assert_redirected_to "/chestionare/satisfactie-pacienti-ambulatoriu", "the only active one"
+  end
+
+  test "the feedback card is on every specialty, doctor, team, price, specialties and promotions page" do
+    seed_outpatient
+    medic = Profession.create!(name: "medic")
+    ortho = Specialty.find_by!(name: "Ortopedie")
+    member = Member.create!(first_name: "Ana", last_name: "Pop", profession: medic, specialty: ortho, academic_title: "dr.",
+                            has_own_page: true, is_active: true, order: 1)
+    PromoPackage.create!(name: "Pachet", valid_until: Date.current + 10.days)
+    consult = "/parerea-ta?chestionar=satisfactie-pacienti-ambulatoriu"
+    {
+      "/specialitati-medicale/#{ortho.slug}" => consult, "/echipa/#{member.slug}" => consult, "/echipa" => consult,
+      "/servicii-medicale" => consult, "/specialitati-medicale" => "/parerea-ta", "/promotii" => "/parerea-ta"
+    }.each do |path, href|
+      get path
+      assert_response :success, path
+      assert_select ".feedback-cta a[href=?]", href, { count: 1 }, "feedback card on #{path}"
+    end
+    get "/echipa/#{member.slug}"
+    assert_select ".feedback-cta--compact .feedback-cta-kicker", "Ați fost la dr. Ana Pop?"
+    get "/specialitati-medicale/#{ortho.slug}"
+    assert_select ".feedback-cta-kicker", "Ați fost la o consultație de ortopedie?"
+    assert_select ".feedback-cta a[data-track-label='Chestionar satisfacție (specialitate)']"
+  end
+
+  test "the top bar links to the questionnaires on every page" do
+    get "/"
+    assert_select "#before-nav a.before-nav-feedback[href='/parerea-ta']"
+    get "/promotii"
+    assert_select "#before-nav a.before-nav-feedback[href='/parerea-ta']"
   end
 
   # --------------------------------------------------------------- dashboard

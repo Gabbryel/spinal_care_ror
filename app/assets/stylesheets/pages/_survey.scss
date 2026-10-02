@@ -433,3 +433,38 @@
 
   @media (prefers-reduced-motion: reduce) { transition: none; }
 }
+
+// One-line strip for pages that already end with a booking card (doctor
+// profiles, team page): same colours, less height.
+.feedback-cta--compact {
+  padding: 1rem 1.5rem;
+  gap: 0.75rem 1.25rem;
+
+  .feedback-cta-icon { width: 2.5rem; height: 2.5rem; }
+  .feedback-cta-title { font-size: 1.1rem; margin-bottom: 0; }
+  .feedback-cta-button { min-height: 2.75rem; padding: 0.6rem 1.25rem; }
+}
+
+// Site-wide link in the top bar ("Programări & info").
+.before-nav-feedback {
+  margin-left: auto;
+  padding-right: 1rem;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+
+  &:hover { color: white; }
+
+  .before-nav-feedback-long { display: inline; }
+  .before-nav-feedback-short { display: none; }
+
+  // Phones: an icon only, so the bar keeps to one line next to the phone number.
+  @media (max-width: 640px) {
+    padding-right: 0.75rem;
+
+    .before-nav-feedback-long { display: none; }
+    .before-nav-feedback-short { display: inline-flex; }
+    svg { width: 1.4rem; height: 1.4rem; }
+  }
+}

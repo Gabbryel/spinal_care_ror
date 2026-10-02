@@ -1,18 +1,24 @@
-<%# "Ești pacientul nostru? Spune-ne părerea ta!" card, linking to the active
-    questionnaire. Blue rather than the orange of the booking card, so the two
-    do not compete where both appear. %>
-<aside class="feedback-cta" aria-labelledby="feedback-cta-title-<%= local_assigns[:key] || 'main' %>">
+<%# "Ești pacientul nostru? Spune-ne părerea ta!" card. Blue rather than the
+    orange of the booking card, so the two do not compete where both appear.
+    key: unique per page and the click label in analytics ("Chestionar satisfacție (key)").
+    survey: slug of the questionnaire that applies (falls back to the choice page).
+    kicker / title: override the default wording (e.g. a doctor's name).
+    compact: true for a one-line strip. %>
+<% key = local_assigns[:key] || "main" %>
+<% href = local_assigns[:survey] ? parerea_ta_path(chestionar: local_assigns[:survey]) : parerea_ta_path %>
+<aside class="feedback-cta<%= ' feedback-cta--compact' if local_assigns[:compact] %>" aria-labelledby="feedback-cta-title-<%= key %>">
   <div class="feedback-cta-icon" aria-hidden="true">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" focusable="false">
       <path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clip-rule="evenodd" />
     </svg>
   </div>
   <div class="feedback-cta-text">
-    <p class="feedback-cta-kicker">Ești pacientul nostru?</p>
-    <p class="feedback-cta-title" id="feedback-cta-title-<%= local_assigns[:key] || 'main' %>">Spune-ne părerea ta!</p>
-    <p class="feedback-cta-subtitle">Completează anonim chestionarul de satisfacție. Durează în jur de 3 minute și ne ajută să devenim mai buni.</p>
+    <p class="feedback-cta-kicker"><%= local_assigns[:kicker] || "Ești pacientul nostru?" %></p>
+    <p class="feedback-cta-title" id="feedback-cta-title-<%= key %>"><%= local_assigns[:title] || "Spune-ne părerea ta!" %></p>
+    <% unless local_assigns[:compact] %>
+      <p class="feedback-cta-subtitle">Completează anonim chestionarul de satisfacție. Durează în jur de 3 minute și ne ajută să devenim mai buni.</p>
+    <% end %>
   </div>
-  <%# survey: a slug to open that questionnaire directly (the day-hospital page opens the inpatient one). %>
-  <%= link_to "Completează chestionarul", (local_assigns[:survey] ? public_survey_path(local_assigns[:survey]) : parerea_ta_path),
-              class: "feedback-cta-button", data: { track_label: "Chestionar satisfacție" } %>
+  <%= link_to "Completează chestionarul", href, class: "feedback-cta-button",
+              data: { track_label: "Chestionar satisfacție (#{key})" } %>
 </aside>

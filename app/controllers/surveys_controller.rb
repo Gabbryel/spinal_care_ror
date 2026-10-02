@@ -14,9 +14,14 @@ class SurveysController < ApplicationController
              with: -> { redirect_to public_survey_path(params[:slug]), alert: "Prea multe trimiteri într-un timp scurt. Încercați din nou peste câteva minute." }
 
   # /parerea-ta: the active questionnaire, or the list when there are several.
+  # ?chestionar=<slug> (from a page that knows which one applies) opens that
+  # one while it is active and falls back to the list when it is not, so a
+  # link on the site never ends in a 404.
   def featured
     # Newest first: the consultations questionnaire (most patients) above the inpatient one.
     surveys = Survey.active.order(created_at: :desc)
+    wanted = surveys.find { |s| s.slug == params[:chestionar] }
+    return redirect_to(public_survey_path(wanted.slug)) if wanted
     return redirect_to(public_survey_path(surveys.first.slug)) if surveys.one?
 
     @surveys = surveys

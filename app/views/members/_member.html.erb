@@ -80,5 +80,7 @@
     </div>
 
     <%= render partial: "specialties/contact_cta", locals: { placement: "bottom" } %>
+    <%= render "surveys/feedback_cta", key: "profil", survey: "satisfactie-pacienti-ambulatoriu", compact: true,
+               kicker: "Ați fost la #{full_name_with_title(@member).squish}?" %>
   </div>
 </div>
