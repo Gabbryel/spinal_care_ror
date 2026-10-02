@@ -12,5 +12,7 @@
     <p class="feedback-cta-title" id="feedback-cta-title-<%= local_assigns[:key] || 'main' %>">Spune-ne părerea ta!</p>
     <p class="feedback-cta-subtitle">Completează anonim chestionarul de satisfacție. Durează în jur de 3 minute și ne ajută să devenim mai buni.</p>
   </div>
-  <%= link_to "Completează chestionarul", parerea_ta_path, class: "feedback-cta-button", data: { track_label: "Chestionar satisfacție" } %>
+  <%# survey: a slug to open that questionnaire directly (the day-hospital page opens the inpatient one). %>
+  <%= link_to "Completează chestionarul", (local_assigns[:survey] ? public_survey_path(local_assigns[:survey]) : parerea_ta_path),
+              class: "feedback-cta-button", data: { track_label: "Chestionar satisfacție" } %>
 </aside>

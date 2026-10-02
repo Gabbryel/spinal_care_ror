@@ -66,7 +66,7 @@ module Admin
     end
 
     def survey_params
-      params.require(:survey).permit(:title, :intro, :thank_you, :active, :alert_emails)
+      params.require(:survey).permit(:title, :audience, :intro, :thank_you, :active, :alert_emails)
     end
   end
 end

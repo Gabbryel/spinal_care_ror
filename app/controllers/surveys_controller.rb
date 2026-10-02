@@ -15,7 +15,8 @@ class SurveysController < ApplicationController
 
   # /parerea-ta: the active questionnaire, or the list when there are several.
   def featured
-    surveys = Survey.active.order(:created_at)
+    # Newest first: the consultations questionnaire (most patients) above the inpatient one.
+    surveys = Survey.active.order(created_at: :desc)
     return redirect_to(public_survey_path(surveys.first.slug)) if surveys.one?
 
     @surveys = surveys

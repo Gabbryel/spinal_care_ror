@@ -44,14 +44,21 @@
                 <%= q.text %>
                 <% unless q.required %><span class="survey-optional">(opțional)</span><% end %>
               </legend>
-              <div class="survey-options">
-                <% q.labels.each_with_index do |label, i| %>
-                  <label class="survey-option">
-                    <%= radio_button_tag name, label, submitted[q.id.to_s] == label, id: "survey-q-#{q.id}-#{i}", required: q.required %>
-                    <span><%= label %></span>
-                  </label>
-                <% end %>
-              </div>
+              <% if q.labels.size > 8 %>
+                <%# A long list (e.g. every specialty) reads better as a dropdown than as 20 buttons. %>
+                <%= select_tag name, options_for_select(q.labels, submitted[q.id.to_s]), include_blank: "Alegeți…",
+                               id: "survey-q-#{q.id}", class: "survey-select", required: q.required,
+                               "aria-label": q.text %>
+              <% else %>
+                <div class="survey-options">
+                  <% q.labels.each_with_index do |label, i| %>
+                    <label class="survey-option">
+                      <%= radio_button_tag name, label, submitted[q.id.to_s] == label, id: "survey-q-#{q.id}-#{i}", required: q.required %>
+                      <span><%= label %></span>
+                    </label>
+                  <% end %>
+                </div>
+              <% end %>
             </fieldset>
           <% end %>
         <% end %>

@@ -1,5 +1,6 @@
 require "test_helper"
 require Rails.root.join("db/migrate/20261002090100_seed_inpatient_satisfaction_survey")
+require Rails.root.join("db/migrate/20261002120000_seed_outpatient_satisfaction_survey")
 
 # Patient questionnaires: the public form (anonymous, anti-spam, validation,
 # scoring and alerts), the dashboard (management, answers, interpretation)
@@ -147,13 +148,64 @@ class SurveysTest < ActionDispatch::IntegrationTest
   test "the feedback card appears on the home, info and day-hospital pages and in the menus" do
     Specialty.create!(name: "Spitalizare de zi", description: "<p>x</p>", is_day_hospitalize: true)
     Fact.create!(title: "Drepturile pacientului", content: "x") rescue nil
-    ["/", "/specialitati-medicale/spitalizare-de-zi"].each do |path|
-      get path
-      assert_response :success
-      assert_select ".feedback-cta a[href='/parerea-ta']", 1, "feedback card on #{path}"
-    end
+    get "/specialitati-medicale/spitalizare-de-zi"
+    assert_select ".feedback-cta a[href='/chestionare/satisfactie-pacienti-internati']", 1
+    get "/"
+    assert_response :success
+    assert_select ".feedback-cta a[href='/parerea-ta']", 1
     assert_select ".dropdown-menu a[href='/parerea-ta']", /Spune-ne părerea ta/
     assert_select "footer a[href='/parerea-ta']"
+  end
+
+  # ------------------------------------------------- consultations survey
+
+  def seed_outpatient
+    Specialty.create!(name: "Ortopedie", description: "<p>x</p>", is_active: true)
+    Specialty.create!(name: "Terapie Schroth", description: "<p>x</p>", is_active: true)
+    Specialty.create!(name: "Estetică medicală", description: "<p>x</p>", is_active: false)
+    Specialty.create!(name: "Spitalizare de zi", description: "<p>x</p>", is_active: true, is_day_hospitalize: true)
+    ActiveRecord::Migration.suppress_messages { SeedOutpatientSatisfactionSurvey.new.migrate(:up) }
+    Survey.find_by!(slug: "satisfactie-pacienti-ambulatoriu")
+  end
+
+  test "the consultations questionnaire lists every active specialty except day hospitalisation" do
+    outpatient = seed_outpatient
+    specialty = outpatient.questions.find { |q| q.text.start_with?("Pentru ce specialitate") }
+    assert_equal ["Ortopedie", "Terapie Schroth", "Altă specialitate / nu știu"], specialty.labels
+    assert specialty.required && specialty.segment
+    assert outpatient.headline_question.text.start_with?("Impresia generală despre vizita")
+    assert_equal "Am fost internat (spitalizare de zi)", @survey.reload.audience
+  end
+
+  test "with two questionnaires /parerea-ta asks which one applies, consultations first" do
+    seed_outpatient
+    get "/parerea-ta"
+    assert_response :success
+    choices = css_select("a.survey-choice")
+    assert_equal ["/chestionare/satisfactie-pacienti-ambulatoriu", "/chestionare/satisfactie-pacienti-internati"], choices.map { |a| a["href"] }
+    assert_equal "Am venit la o consultație sau la terapie", choices.first.at_css("strong").text
+  end
+
+  test "a long option list is a dropdown, and a neutral option does not count in the score" do
+    outpatient = seed_outpatient
+    10.times { |i| Specialty.create!(name: "Specialitate #{i}", description: "<p>x</p>", is_active: true) }
+    question = outpatient.questions.find { |q| q.text.start_with?("Pentru ce specialitate") }
+    question.update!(options: question.options + (0..9).map { |i| { "label" => "Specialitate #{i}", "score" => nil } })
+
+    get "/chestionare/#{outpatient.slug}"
+    assert_select "select[name='answers[#{question.id}]'] option", question.labels.size + 1
+
+    @survey = outpatient
+    submit(answers("Cum apreciați raportul" => "Nu am plătit (CAS)"))
+    response = SurveyResponse.last
+    assert_equal "Nu am plătit (CAS)", response.answer_for(@survey.questions.find { |q| q.text.start_with?("Cum apreciați raportul") })["label"]
+    assert_equal 100.0, response.score, "the CAS answer has no score and leaves the mean at 100"
+  end
+
+  test "the day-hospital page links straight to the inpatient questionnaire" do
+    seed_outpatient
+    get "/specialitati-medicale/spitalizare-de-zi"
+    assert_select ".feedback-cta a[href='/chestionare/satisfactie-pacienti-internati']"
   end
 
   # --------------------------------------------------------------- dashboard

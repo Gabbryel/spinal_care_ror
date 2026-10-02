@@ -7,6 +7,11 @@
     <%= f.text_field :title, required: true %>
   </div>
   <div class="sv-field">
+    <%= f.label :audience, "Pentru cine este (butonul de pe pagina de alegere, ex. „Am venit la o consultație”)" %>
+    <%= f.text_field :audience %>
+    <small>Când sunt mai multe chestionare active, pacientul alege după acest text pe <%= link_to "/parerea-ta", parerea_ta_path, target: "_blank", rel: "noopener" %>.</small>
+  </div>
+  <div class="sv-field">
     <%= f.label :intro, "Text introductiv (apare deasupra formularului)" %>
     <%= f.text_area :intro, rows: 3 %>
   </div>

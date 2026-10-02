@@ -52,8 +52,8 @@ export default class extends Controller {
   }
 
   validate(step, show = true) {
-    const missing = [...step.querySelectorAll("fieldset[data-required]")]
-      .filter((fieldset) => !fieldset.querySelector("input:checked"))
+    const answered = (fieldset) => fieldset.querySelector("input:checked") || fieldset.querySelector("select")?.value
+    const missing = [...step.querySelectorAll("fieldset[data-required]")].filter((fieldset) => !answered(fieldset))
     step.querySelectorAll("fieldset").forEach((f) => f.classList.toggle("is-missing", missing.includes(f)))
     if (missing.length === 0) return true
     if (show) {
@@ -61,7 +61,7 @@ export default class extends Controller {
         ? "Vă rugăm să răspundeți la întrebarea marcată."
         : `Vă rugăm să răspundeți la cele ${missing.length} întrebări marcate.`
       this.errorTarget.hidden = false
-      missing[0].querySelector("input")?.focus()
+      missing[0].querySelector("input, select")?.focus()
     }
     return false
   }

@@ -6,10 +6,15 @@
     <p class="survey-kicker">Ești pacientul nostru? Spune-ne părerea ta!</p>
     <h1>Chestionare de satisfacție</h1>
     <% if @surveys.any? %>
-      <p class="survey-intro">Alegeți chestionarul potrivit. Răspunsurile sunt anonime.</p>
-      <ul class="survey-list">
+      <p class="survey-intro">Alegeți varianta care vi se potrivește. Răspunsurile sunt anonime și durează în jur de 3 minute.</p>
+      <ul class="survey-choices">
         <% @surveys.each do |survey| %>
-          <li><%= link_to survey.title, public_survey_path(survey.slug), class: "survey-submit" %></li>
+          <li>
+            <%= link_to public_survey_path(survey.slug), class: "survey-choice" do %>
+              <strong><%= survey.audience.presence || survey.title %></strong>
+              <span><%= survey.title %></span>
+            <% end %>
+          </li>
         <% end %>
       </ul>
     <% else %>
