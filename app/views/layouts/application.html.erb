@@ -77,10 +77,10 @@
           The Facebook pixel <noscript><img> lives in <body>: an <img> in <head>
           makes Turbo's parser open <body> early and re-run head scripts. %>
       <%= yield :head %>
+      <meta name="google-site-verification" content="oxssYt-WnE928L-zOpjVsjkDrhXjOE2kWQOfBlIdRTA" />
   </head>
 
   <body data-controller="vh sidemenu-toggle adminLink contact click-tracker engagement" data-action="scroll@window->sidemenu-toggle#close">
-    <meta name="google-site-verification" content="oxssYt-WnE928L-zOpjVsjkDrhXjOE2kWQOfBlIdRTA" />
     <% if tracking_consent? %>
       <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=623596673860745&ev=PageView&noscript=1"/></noscript>
     <% end %>
