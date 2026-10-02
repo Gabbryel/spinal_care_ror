@@ -7,6 +7,21 @@
     <%= link_to "Chestionar nou", new_dashboard_survey_path, class: "sv-btn sv-btn--primary" %>
   </header>
 
+  <% shown = @popup["shown"].to_i %>
+  <section class="sv-panel">
+    <h2>Invitația de pe site (pop-up, ultimele 30 de zile)</h2>
+    <% if shown.zero? %>
+      <p class="sv-note">Încă nu a fost afișată. Apare o singură dată pe vizită, la 20 de secunde de la intrarea pe site.</p>
+    <% else %>
+      <dl class="sv-stats">
+        <div><dt>Afișată</dt><dd><%= number_with_delimiter(shown) %></dd></div>
+        <div><dt>Au deschis chestionarul</dt><dd><%= @popup["clicked"].to_i %> <small class="sv-muted">(<%= (@popup["clicked"].to_i * 100.0 / shown).round(1) %>%)</small></dd></div>
+        <div><dt>Au închis-o</dt><dd><%= @popup["closed"].to_i %> <small class="sv-muted">(<%= (@popup["closed"].to_i * 100.0 / shown).round(1) %>%)</small></dd></div>
+      </dl>
+    <% end %>
+    <p class="sv-note">Se numără doar vizitatorii care au acceptat cookie-urile de analiză.</p>
+  </section>
+
   <% if @surveys.empty? %>
     <p class="sv-empty">Niciun chestionar încă.</p>
   <% else %>

@@ -23,6 +23,19 @@ module ApplicationHelper
     current_user&.analytics_access?
   end
 
+  # The questionnaire invitation (surveys/_feedback_popup) shows on public
+  # pages while at least one questionnaire is active, except on the
+  # questionnaire itself, error pages and sign-in pages.
+  FEEDBACK_POPUP_SKIP = %w[surveys errors sessions registrations passwords].freeze
+
+  def feedback_popup?
+    return false if FEEDBACK_POPUP_SKIP.include?(controller_name)
+
+    Rails.cache.fetch("surveys/any_active", expires_in: 5.minutes) { Survey.active.exists? }
+  rescue ActiveRecord::StatementInvalid
+    false
+  end
+
   # Negative questionnaire answers nobody has looked at, for the dashboard
   # menu. Nil while the table does not exist yet (between a deploy and its
   # migration), so the menu never takes the dashboard down.

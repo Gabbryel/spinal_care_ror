@@ -12,6 +12,9 @@ class Survey < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
+  # The site-wide invitation checks a cached "any active survey?".
+  after_commit { Rails.cache.delete("surveys/any_active") }
+
   def to_param
     slug
   end

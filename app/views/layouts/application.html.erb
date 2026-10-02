@@ -97,5 +97,6 @@
         <%= yield %>
       </main>
       <%= render "shared/new_footer" %>
+      <%= render "surveys/feedback_popup" if feedback_popup? %>
   </body>
 </html>

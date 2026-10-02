@@ -266,6 +266,28 @@ class SurveysTest < ActionDispatch::IntegrationTest
     assert_select ".feedback-cta a[data-track-label='Chestionar satisfacție (specialitate)']"
   end
 
+  test "the invitation pop-up is on public pages while a questionnaire is active, never on the questionnaire" do
+    get "/"
+    assert_select "aside.feedback-popup[hidden][data-controller='feedback-popup'][data-feedback-popup-delay-value='20000']"
+    assert_select "aside.feedback-popup a[href='/parerea-ta']"
+    get "/chestionare/#{@survey.slug}"
+    assert_select "aside.feedback-popup", 0
+    @survey.update!(active: false)
+    get "/"
+    assert_select "aside.feedback-popup", 0
+  end
+
+  test "the questionnaires page reports how the pop-up does" do
+    visit = Ahoy::Visit.create!(visit_token: "v1", visitor_token: "u1", started_at: 1.hour.ago)
+    { "shown" => 4, "clicked" => 1, "closed" => 2 }.each do |action, n|
+      n.times { Ahoy::Event.create!(visit: visit, name: "$feedback_popup", properties: { action: action }, time: 1.hour.ago) }
+    end
+    sign_in @admin
+    get "/dashboard/chestionare"
+    values = css_select(".sv-panel").first.css(".sv-stats dd").map { |dd| dd.text.squish }
+    assert_equal ["4", "1 (25.0%)", "2 (50.0%)"], values
+  end
+
   test "the top bar links to the questionnaires on every page" do
     get "/"
     assert_select "#before-nav a.before-nav-feedback[href='/parerea-ta']"

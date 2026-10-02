@@ -129,6 +129,12 @@
         <tr><td><code>cookie_consent</code></td><td>Reține alegerea dumneavoastră privind cookie-urile</td><td>12 luni</td></tr>
       </tbody>
     </table>
+    <p>
+      Pe lângă acestea, în memoria de sesiune a browserului (<code>sessionStorage</code>, nu un cookie) păstrăm ora la care
+      ați intrat pe site și faptul că ați văzut invitația de a completa chestionarul de satisfacție
+      (<code>feedbackPopupStart</code>, <code>feedbackPopupDone</code>), ca să nu v-o arătăm de mai multe ori. Nu se trimit
+      serverului și se șterg când închideți fila.
+    </p>
 
     <h3>Analiză proprie (cu consimțământ)</h3>
     <table class="legal-table">

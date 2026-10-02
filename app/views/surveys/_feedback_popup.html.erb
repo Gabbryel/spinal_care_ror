@@ -1,0 +1,24 @@
+<%# Invitation to the satisfaction questionnaire, 20 seconds into a visit.
+    Not a modal: a card that slides in at the corner (a bar at the bottom on
+    phones) and leaves the page usable, since half of the visitors who call or
+    book do it within the first minute, and Google demotes mobile pop-ups that
+    cover the content. Once per browser session; never over the booking window
+    or the cookie notice. feedback_popup_controller.js runs it. %>
+<aside class="feedback-popup" hidden role="dialog" aria-modal="false" aria-labelledby="feedback-popup-title"
+       aria-describedby="feedback-popup-text" aria-live="polite"
+       data-controller="feedback-popup" data-feedback-popup-delay-value="20000"
+       data-action="keydown.esc@window->feedback-popup#close">
+  <button type="button" class="feedback-popup-close" data-action="feedback-popup#close" aria-label="Închide invitația">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+    </svg>
+  </button>
+  <p class="feedback-popup-kicker">Ești pacientul nostru?</p>
+  <p class="feedback-popup-title" id="feedback-popup-title">Spune-ne părerea ta!</p>
+  <p class="feedback-popup-text" id="feedback-popup-text">Un chestionar anonim de 3 minute ne ajută să devenim mai buni.</p>
+  <div class="feedback-popup-actions">
+    <%= link_to "Completează chestionarul", parerea_ta_path, class: "feedback-popup-button",
+                data: { action: "feedback-popup#accept", track_label: "Chestionar satisfacție (pop-up)" } %>
+    <button type="button" class="feedback-popup-later" data-action="feedback-popup#close">Nu acum</button>
+  </div>
+</aside>

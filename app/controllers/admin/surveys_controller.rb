@@ -11,6 +11,9 @@ module Admin
       @stats = SurveyResponse.group(:survey_id).count
       @recent = SurveyResponse.where(created_at: 30.days.ago..).group(:survey_id).count
       @open_alerts = SurveyResponse.alerts.unreviewed.group(:survey_id).count
+      # The site-wide invitation, last 30 days (only visitors who accepted analytics).
+      @popup = Ahoy::Event.where(name: "$feedback_popup", time: 30.days.ago..)
+                          .group(Arel.sql("properties->>'action'")).count
     end
 
     def new
