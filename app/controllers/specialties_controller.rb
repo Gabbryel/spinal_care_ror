@@ -84,6 +84,6 @@ class SpecialtiesController < ApplicationController
   end
 
   def specialty_params
-    params.require(:specialty).permit(:name, :seo_title, :slug, :description, :photo, :has_day_hospitalization, :is_day_hospitalize, :is_active) 
+    params.require(:specialty).permit(:name, :seo_title, :meta_description, :slug, :description, :photo, :has_day_hospitalization, :is_day_hospitalize, :is_active) 
   end
 end

@@ -109,7 +109,7 @@ class MemberSpecialtiesTest < ActionDispatch::IntegrationTest
     assert_equal ["Cardiologie", "Medicină internă"], css_select(".hero-badge.specialty-badge").map { |b| b.text.squish }
     physician = css_select("script[type='application/ld+json']").map { |n| JSON.parse(n.text) }.find { |b| b["@type"] == "Physician" }
     assert_equal ["Cardiologie", "Medicină internă"], physician["medicalSpecialty"]
-    assert_select "meta[name=description][content*=?]", "cardiologie și medicină internă"
+    assert_select "meta[name=description][content*=?]", "Cardiologie și Medicină internă la Clinica Spinal Care Bacău"
   end
 
   test "deleting a specialty removes it from its members" do

@@ -39,6 +39,18 @@
   </div>
 
   <div class="form-group">
+    <%= f.label :meta_description, 'Meta descriere (opțional, max 155 caractere)', class: 'form-label' %>
+    <%= f.input :meta_description,
+        as: :text,
+        label: false,
+        placeholder: 'ex: Ortopedie la Clinica Spinal Care Bacău: consultații, infiltrații și ecografie musculo-scheletală. Programări la 0374 554 344.',
+        hint: 'Textul de sub titlu în Google, max 155 de caractere. Gol = se compune automat din date (specialitate, medici, servicii, prețuri).',
+        input_html: { class: 'form-control-modern', maxlength: 155, rows: 2 },
+        wrapper: false,
+        error: false %>
+  </div>
+
+  <div class="form-group">
     <%= f.label :photo, 'Fotografie specialitate', class: 'form-label' %>
     <%= f.input :photo, 
         label: false,

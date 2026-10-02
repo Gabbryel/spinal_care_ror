@@ -8,3 +8,5 @@
 /legea-nr-46-2003: /info-pacient/legea-nr-46-2003-privind-drepturile-pacientului
 /obligatiile-si-drepturile-pacientilor: /info-pacient-index
 /programeaza-te: https://www.programari.spinalcare.ro/
+# Old specialty slugs still in Google's index (2026-10 SEO audit).
+/specialitati-medicale/ginecologie: /specialitati-medicale/obstetrica-ginecologie

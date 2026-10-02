@@ -84,7 +84,7 @@ class SeoTest < ActionDispatch::IntegrationTest
     assert_match(/recuperare medicală, kinetoterapie/, descriptions["/"])
     assert descriptions["/"].length.between?(120, 155)
     assert_equal "Cardiologie intervențională Bacău | Clinica Spinal Care", titles["/specialitati-medicale/#{@cardio.slug}"]
-    assert_match(/Proceduri minim invazive/, descriptions["/specialitati-medicale/#{@cardio.slug}"])
+    assert_match(/\ACardiologie intervențională la Clinica Spinal Care Bacău cu dr\. Moisei\. /, descriptions["/specialitati-medicale/#{@cardio.slug}"])
   end
 
   test "open graph and twitter tags mirror the page title and description" do
@@ -363,30 +363,57 @@ class SeoTest < ActionDispatch::IntegrationTest
 
   # --- round 3 ----------------------------------------------------------------
 
-  test "image-only and very short descriptions fall back to record data" do
-    image_only = Member.create!(first_name: "Georgeta", last_name: "Huszar", profession: @medic, specialty: @cardio,
-                                academic_title: "dr.", doctor_grade: "primar", has_own_page: true,
-                                description: '<action-text-attachment content-type="image/png" filename="x.png"></action-text-attachment>')
-    get "/echipa/#{image_only.slug}"
+  test "team and specialty descriptions are built from data, never from the CV, and a hand-written one wins" do
+    cv = Member.create!(first_name: "Georgeta", last_name: "Huszar", profession: @medic, specialty: @cardio,
+                        academic_title: "dr.", doctor_grade: "primar", has_own_page: true,
+                        description: "<p>Absolventă a Facultății de Medicină din Iași în 1998, rezidențiat în...</p>")
+    get "/echipa/#{cv.slug}"
     description = css_select("meta[name=description]").first["content"]
-    refute_includes description, "[Image]"
-    assert_includes description, "dr. Georgeta Huszar"
-    assert_includes description, "Bacău"
-    assert description.length.between?(70, 155), description
+    assert_equal "dr. Georgeta Huszar, medic primar Cardiologie intervențională la Clinica Spinal Care Bacău. " \
+                 "Consultații cu programare online sau la 0374 554 344.", description
+    refute_includes description, "Absolventă"
 
-    short = Member.create!(first_name: "Danisia", last_name: "Butăcel", profession: @medic, academic_title: "dr.", has_own_page: true,
-                           description: "<p>Atestat somnologie.</p>")
-    get "/echipa/#{short.slug}"
-    description = css_select("meta[name=description]").first["content"]
-    assert_includes description, "Atestat somnologie."
-    assert_includes description, "Clinica Spinal Care Bacău"
-    assert description.length >= 70
+    bare = Member.create!(first_name: "Danisia", last_name: "Butăcel", profession: @medic, academic_title: "dr.", has_own_page: true,
+                          description: "<p>Atestat somnologie.</p>")
+    get "/echipa/#{bare.slug}"
+    assert_match(/\Adr\. Danisia Butăcel, medic la Clinica Spinal Care Bacău\./, css_select("meta[name=description]").first["content"])
 
+    bare.update!(meta_description: "dr. Danisia Butăcel, pneumolog: somnologie și spirometrie la Spinal Care Bacău.")
+    get "/echipa/#{bare.slug}"
+    assert_equal "dr. Danisia Butăcel, pneumolog: somnologie și spirometrie la Spinal Care Bacău.", css_select("meta[name=description]").first["content"]
+
+    @cardio.update!(meta_description: "Cardiologie intervențională în Bacău: coronarografie și angioplastie.")
+    get "/specialitati-medicale/#{@cardio.slug}"
+    assert_equal "Cardiologie intervențională în Bacău: coronarografie și angioplastie.", css_select("meta[name=description]").first["content"]
+  end
+
+  test "patient-info pages keep their own text unless it opens with a table or is only an image" do
     fact = Fact.create!(name: "Organigrama", description: '<action-text-attachment content-type="image/png" filename="o.png"></action-text-attachment>')
     get "/info-pacient/#{fact.slug}"
     description = css_select("meta[name=description]").first["content"]
     refute_includes description, "[Image]"
     assert_match(/\AOrganigrama: informații utile/, description)
+
+    table = Fact.create!(name: "Pachetul de servicii de bază",
+                         description: "<table><tr><td>Consultație</td><td>Tarif CAS</td></tr><tr><td>Medic specialist</td><td>50</td></tr></table>")
+    get "/info-pacient/#{table.slug}"
+    assert_match(/\APachetul de servicii de bază: informații utile/, css_select("meta[name=description]").first["content"])
+
+    prose = Fact.create!(name: "Drepturi", description: "<p>Pacienții au dreptul la îngrijiri medicale de cea mai înaltă calitate de care societatea dispune, în conformitate cu resursele.</p>")
+    get "/info-pacient/#{prose.slug}"
+    assert_match(/\APacienții au dreptul la îngrijiri medicale/, css_select("meta[name=description]").first["content"])
+  end
+
+  test "the old gynaecology address answers a 301 to the current specialty" do
+    get "/specialitati-medicale/ginecologie"
+    assert_response :moved_permanently
+    assert_redirected_to "/specialitati-medicale/obstetrica-ginecologie"
+  end
+
+  test "the Search Console verification tag sits in the head" do
+    get "/"
+    assert_select "head meta[name=google-site-verification]", 1
+    assert_select "body meta[name=google-site-verification]", 0
   end
 
   test "titles always contain Bacău and long names are shortened at a word boundary" do

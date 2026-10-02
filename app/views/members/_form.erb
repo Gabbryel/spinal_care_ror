@@ -34,6 +34,11 @@
       </div>
 
       <div class="form-group">
+        <%= f.label :meta_description, 'Meta descriere (opțional, max 155 caractere)', class: 'form-label' %>
+        <%= f.input :meta_description, as: :text, label: false, placeholder: 'ex: dr. Ion Popescu, medic primar cardiolog la Clinica Spinal Care Bacău: ecografie cardiacă, Holter, consultații.', hint: 'Textul de sub titlu în Google, max 155 de caractere. Gol = se compune automat din date (nume, grad, specialitate).', input_html: { maxlength: 155, rows: 2 }, wrapper_html: { class: 'form-input-wrapper' } %>
+      </div>
+
+      <div class="form-group">
         <%= f.label :photo, 'Fotografie', class: 'form-label' %>
         <%= f.input :photo, label: false, wrapper_html: { class: 'form-input-wrapper' } %>
         <% if member.photo.attached? %>

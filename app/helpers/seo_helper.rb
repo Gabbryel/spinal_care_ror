@@ -72,6 +72,71 @@ module SeoHelper
     truncate("#{base} #{excerpt}".squish, length: DESCRIPTION_MAX, separator: " ", omission: "…")
   end
 
+  # Descriptions built from what we know about the page (name, grade,
+  # specialty, team, services, prices) rather than its first paragraph,
+  # which cut CVs and textbook definitions mid-sentence. A description
+  # written by hand in the dashboard (meta_description) always wins; it is
+  # read with [] so a page still renders before its migration has run.
+  def member_meta_description(member)
+    manual = member[:meta_description].to_s.squish.presence
+    return manual if manual
+
+    name = full_name_with_title(member).squish
+    # "Terapie Schroth (Terapie pentru deviații de coloană)" -> "Terapie Schroth".
+    specialties = member.ordered_specialties.map { |sp| sp.name.sub(/\s*\(.*\)\s*\z/, "") }
+    doctor = member.profession&.name.to_s.casecmp?("medic")
+    role = doctor ? "medic #{member.doctor_grade}".squish : member.profession&.name.to_s
+    field = specialties.to_sentence(two_words_connector: " și ", last_word_connector: " și ")
+    who = doctor ? "#{name}, #{role} #{field}".squish : "#{name}, #{role}#{" (#{field})" if field.present?}"
+    where = member.founder ? ", fondatorul Clinicii Spinal Care Bacău" : " la Clinica Spinal Care Bacău"
+    what = doctor ? "Consultații" : "Ședințe"
+    first_fitting(
+      "#{who}#{where}. #{what} cu programare online sau la #{CLINIC_PHONE_DISPLAY}.",
+      "#{who}#{where}. Programări la #{CLINIC_PHONE_DISPLAY}.",
+      "#{who}#{where}."
+    )
+  end
+
+  def specialty_meta_description(specialty, members)
+    manual = specialty[:meta_description].to_s.squish.presence
+    return manual if manual
+
+    names = members.select { |m| m.is_active && m.has_own_page }.map { |m| "#{m.academic_title} #{m.last_name}".squish }.uniq
+    team = if names.size > 3
+             " cu #{names.first(2).join(', ')} și încă #{names.size - 2} specialiști"
+           elsif names.any?
+             " cu #{names.to_sentence(two_words_connector: ' și ', last_word_connector: ' și ')}"
+           end
+    services = specialty.medical_services.to_a
+    from = services.map(&:price).compact.select(&:positive?).min
+    offer = services.any? ? "#{services.size} #{services.size == 1 ? 'serviciu' : 'servicii'}#{", de la #{from.to_i} lei" if from}. " : ""
+    base = "#{specialty.name} la Clinica Spinal Care Bacău"
+    first_fitting(
+      "#{base}#{team}. #{offer}Programări online sau la #{CLINIC_PHONE_DISPLAY}.",
+      "#{base}#{team}. Programări la #{CLINIC_PHONE_DISPLAY}.",
+      "#{base}. #{offer}Programări la #{CLINIC_PHONE_DISPLAY}.",
+      "#{base}#{team}."
+    )
+  end
+
+  # Patient-information pages keep their own text (it is the content
+  # people search for), unless a description was written by hand.
+  # A text that opens with a table reads as "Consultație | | Tarif…" once
+  # flattened, so such pages get the name-based description instead.
+  def fact_meta_description(fact)
+    manual = fact[:meta_description].to_s.squish.presence
+    return manual if manual
+
+    fallback = "#{fact.name.to_s.strip}: informații utile pentru pacienții Clinicii Spinal Care Bacău, în ambulatoriu și spitalizare de zi."
+    excerpt = meta_description_for(fact.description, fallback)
+    excerpt.include?(" | ") ? shorten_at_word(fallback, DESCRIPTION_MAX) : excerpt
+  end
+
+  # The first candidate that fits in a description; the last one cut at a word.
+  def first_fitting(*candidates)
+    candidates.map(&:squish).find { |c| c.length <= DESCRIPTION_MAX } || shorten_at_word(candidates.last, DESCRIPTION_MAX)
+  end
+
   # Cuts text at a word boundary within `limit` characters, no ellipsis,
   # dropping a dangling stopword ("... de", "... și").
   def shorten_at_word(text, limit)
