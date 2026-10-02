@@ -1,58 +1,143 @@
-<div class="sv-page">
+<% r = @response %>
+<% hl = r.highlights %>
+<div class="sv-page sv-response-page">
   <header class="sv-header">
     <div>
       <p class="sv-crumb"><%= link_to "Chestionare", dashboard_surveys_path %> / <%= link_to @survey.title, dashboard_survey_responses_path(@survey) %></p>
-      <h1>Răspuns din <%= l(@response.created_at, format: "%d.%m.%Y, %H:%M") %></h1>
+      <h1>Răspuns din <%= l(r.created_at, format: "%d.%m.%Y, %H:%M") %></h1>
     </div>
-    <span class="sv-status sv-status--<%= @response.status %>"><%= SurveyResponse::STATUSES[@response.status] %></span>
+    <nav class="sv-pager-top" aria-label="Alte răspunsuri">
+      <%= link_to "← Mai nou", dashboard_survey_response_path(@survey, @newer), class: "sv-btn" if @newer %>
+      <%= link_to "Mai vechi →", dashboard_survey_response_path(@survey, @older), class: "sv-btn" if @older %>
+      <button type="button" class="sv-btn" onclick="window.print()">Tipărește</button>
+    </nav>
   </header>
 
-  <% if @response.alert %>
-    <div class="finding finding-bad sv-alert-box">
-      <span class="finding-icon" aria-hidden="true">✕</span>
-      <div class="finding-body">
-        <div class="finding-title">Răspuns negativ</div>
-        <div class="finding-text"><%= @response.alert_reasons.join("; ") %></div>
-      </div>
-    </div>
-  <% end %>
-
   <div class="sv-response-grid">
-    <section class="sv-panel">
-      <h2>Răspunsurile pacientului</h2>
-      <p class="sv-note">Scor general: <strong><%= @response.score ? "#{@response.score.round}/100" : "–" %></strong></p>
-      <dl class="sv-answers">
-        <% @survey.questions.each do |q| %>
-          <% a = @response.answer_for(q) %>
-          <% next if a.nil? && !q.active %>
-          <div class="sv-answer <%= 'is-low' if a && a['score'] && a['score'] <= SurveyInsights::UNFAVORABLE %>">
-            <dt><%= q.text %></dt>
-            <dd>
-              <% if a.nil? %><span class="sv-muted">fără răspuns</span>
-              <% elsif a["text"] %><%= simple_format(a["text"]) %>
-              <% else %><%= a["label"] %><% end %>
-            </dd>
+    <div>
+      <section class="sv-panel sv-summary">
+        <h2>Pe scurt</h2>
+        <div class="sv-summary-top">
+          <% if (headline = r.headline_label) %>
+            <div>
+              <span class="sv-kpi-label">Impresia generală</span>
+              <%= answer_pill(headline, r.answer_for(@survey.headline_question)&.dig("score"), "sv-pill--lg") %>
+            </div>
+          <% end %>
+          <div>
+            <span class="sv-kpi-label">Scor general</span>
+            <%= score_chip(r.score) %>
+          </div>
+          <% if (profile = r.profile).any? %>
+            <dl class="sv-profile">
+              <% profile.each do |label, value| %>
+                <div><dt><%= label %></dt><dd><%= value %></dd></div>
+              <% end %>
+            </dl>
+          <% end %>
+        </div>
+
+        <% if r.alert %>
+          <p class="sv-alert-line"><span aria-hidden="true">!</span> Marcat negativ: <%= r.alert_reasons.join("; ") %>.</p>
+        <% end %>
+
+        <% if r.comment %>
+          <figure class="sv-quote">
+            <blockquote><%= simple_format(r.comment) %></blockquote>
+            <figcaption>Comentariul pacientului</figcaption>
+          </figure>
+        <% end %>
+
+        <div class="sv-highlights">
+          <div class="sv-hl sv-hl--weak">
+            <h3><span aria-hidden="true">!</span> Ce nu a mers (<%= hl[:weak].size %>)</h3>
+            <% if hl[:weak].any? %>
+              <ul><% hl[:weak].each do |q, label| %><li><span><%= q.short_text %></span> <%= answer_pill(label, r.answer_for(q)["score"]) %></li><% end %></ul>
+            <% else %><p class="sv-note">Nimic evaluat slab.</p><% end %>
+          </div>
+          <div class="sv-hl sv-hl--mid">
+            <h3><span aria-hidden="true">~</span> Așa și așa (<%= hl[:mid].size %>)</h3>
+            <% if hl[:mid].any? %>
+              <ul><% hl[:mid].each do |q, label| %><li><span><%= q.short_text %></span> <%= answer_pill(label, r.answer_for(q)["score"]) %></li><% end %></ul>
+            <% else %><p class="sv-note">—</p><% end %>
+          </div>
+          <div class="sv-hl sv-hl--good">
+            <h3><span aria-hidden="true">✓</span> Ce a apreciat (<%= hl[:good].size %>)</h3>
+            <% if hl[:good].any? %>
+              <ul><% hl[:good].each do |q, label| %><li><span><%= q.short_text %></span> <%= answer_pill(label, r.answer_for(q)["score"]) %></li><% end %></ul>
+            <% else %><p class="sv-note">Nicio evaluare bună.</p><% end %>
+          </div>
+        </div>
+      </section>
+
+      <section class="sv-panel sv-filled">
+        <h2>Formularul, așa cum l-a completat pacientul</h2>
+        <p class="sv-note">Toate variantele sunt afișate; cea aleasă de pacient e marcată. Întrebările fără răspuns apar estompate.</p>
+        <% @survey.questions.chunk_while { |a, b| a.section == b.section }.each do |questions| %>
+          <% answered_or_active = questions.select { |q| q.active || r.answer_for(q) } %>
+          <% next if answered_or_active.empty? %>
+          <div class="sv-filled-step">
+            <h3><%= questions.first.section.presence || "Întrebări" %></h3>
+            <% answered_or_active.each do |q| %>
+              <% a = r.answer_for(q) %>
+              <div class="sv-filled-q <%= 'is-empty' unless a %>">
+                <p class="sv-filled-text"><%= q.text %></p>
+                <% if q.text? %>
+                  <% if a %><blockquote class="sv-filled-comment"><%= simple_format(a["text"]) %></blockquote>
+                  <% else %><p class="sv-muted">fără comentariu</p><% end %>
+                <% else %>
+                  <% labels = q.labels %>
+                  <% labels += [a["label"]] if a && a["label"] && !labels.include?(a["label"]) %>
+                  <% if labels.size > 8 %>
+                    <%# Long lists (specialties): only the chosen one. %>
+                    <% if a %><%= answer_pill(a["label"], a["score"], "is-chosen") %><% else %><span class="sv-muted">fără răspuns</span><% end %>
+                  <% else %>
+                    <div class="sv-filled-options">
+                      <% labels.each do |label| %>
+                        <% if a && a["label"] == label %>
+                          <%= answer_pill(label, a["score"], "is-chosen") %>
+                        <% else %>
+                          <span class="sv-option-off"><%= label %></span>
+                        <% end %>
+                      <% end %>
+                    </div>
+                    <% unless a %><span class="sv-muted sv-filled-none">fără răspuns</span><% end %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
           </div>
         <% end %>
-      </dl>
-    </section>
+      </section>
+    </div>
 
-    <section class="sv-panel">
-      <h2>Urmărire internă</h2>
-      <%= form_with model: @response, url: dashboard_survey_response_path(@survey, @response), method: :patch, scope: :survey_response, class: "sv-form" do |f| %>
-        <div class="sv-field">
-          <%= f.label :status, "Stare" %>
-          <%= f.select :status, SurveyResponse::STATUSES.invert %>
-        </div>
-        <div class="sv-field">
-          <%= f.label :staff_note, "Notă internă (ce s-a făcut)" %>
-          <%= f.text_area :staff_note, rows: 5 %>
-        </div>
-        <%= f.submit "Salvează", class: "sv-btn sv-btn--primary" %>
-      <% end %>
-      <% if @response.reviewed_at %>
-        <p class="sv-note">Ultima actualizare: <%= @response.reviewed_by&.alias.presence || @response.reviewed_by&.email %>, <%= l(@response.reviewed_at, format: "%d.%m.%Y %H:%M") %>.</p>
-      <% end %>
-    </section>
+    <aside>
+      <section class="sv-panel sv-followup">
+        <h2>Urmărire internă</h2>
+        <%= form_with model: r, url: dashboard_survey_response_path(@survey, r), method: :patch, scope: :survey_response, class: "sv-form" do |f| %>
+          <div class="sv-field">
+            <%= f.label :status, "Stare" %>
+            <%= f.select :status, SurveyResponse::STATUSES.invert %>
+          </div>
+          <div class="sv-field">
+            <%= f.label :staff_note, "Notă internă (ce s-a făcut)" %>
+            <%= f.text_area :staff_note, rows: 5 %>
+          </div>
+          <%= f.submit "Salvează", class: "sv-btn sv-btn--primary" %>
+        <% end %>
+        <% if r.reviewed_at %>
+          <p class="sv-note">Ultima actualizare: <%= r.reviewed_by&.alias.presence || r.reviewed_by&.email %>, <%= l(r.reviewed_at, format: "%d.%m.%Y %H:%M") %>.</p>
+        <% end %>
+      </section>
+      <section class="sv-panel sv-meta">
+        <h2>Despre răspuns</h2>
+        <dl>
+          <div><dt>Chestionar</dt><dd><%= @survey.title %></dd></div>
+          <div><dt>Trimis</dt><dd><%= l(r.created_at, format: "%d.%m.%Y, %H:%M") %></dd></div>
+          <div><dt>Întrebări cu răspuns</dt><dd><%= r.answers.size %> din <%= @survey.active_questions.size %></dd></div>
+          <div><dt>Anonim</dt><dd>fără nume, IP sau date de contact</dd></div>
+        </dl>
+      </section>
+    </aside>
   </div>
 </div>

@@ -1,0 +1,31 @@
+<%# One response as a readable card: who, the overall impression, what went
+    badly, the comment. Links to the full, form-like view. %>
+<% survey = response.survey %>
+<% weak = response.weak_count %>
+<article class="sv-rcard <%= 'is-alert' if response.alert %> <%= 'is-new' if response.status == 'new' %>">
+  <header class="sv-rcard-head">
+    <span class="sv-rcard-date"><%= l(response.created_at, format: "%d.%m.%Y, %H:%M") %></span>
+    <% if local_assigns[:show_survey] %><span class="sv-rcard-survey"><%= survey.audience.presence || survey.title %></span><% end %>
+    <span class="sv-status sv-status--<%= response.status %>"><%= SurveyResponse::STATUSES[response.status] %></span>
+  </header>
+  <div class="sv-rcard-body">
+    <div class="sv-rcard-main">
+      <% if (headline = response.headline_label) %>
+        <%= answer_pill(headline, response.answer_for(survey.headline_question)&.dig("score"), "sv-pill--lg") %>
+      <% end %>
+      <%= score_chip(response.score) %>
+      <% if weak.positive? %><span class="sv-weak-count"><%= weak %> <%= weak == 1 ? "răspuns slab" : "răspunsuri slabe" %></span><% end %>
+    </div>
+    <% if (profile = response.profile).any? %>
+      <%# Bare ranges ("50-59", "<20") read better with their question: "vârsta 50-59". %>
+      <p class="sv-rcard-profile"><%= profile.map { |label, value| value.match?(/\A[<\d]/) ? "#{label.downcase} #{value}" : value }.join(" · ") %></p>
+    <% end %>
+    <% if response.alert %>
+      <p class="sv-rcard-reasons"><strong>De ce e marcat negativ:</strong> <%= response.alert_reasons.join("; ") %></p>
+    <% end %>
+    <% if response.comment %>
+      <blockquote class="sv-rcard-comment">„<%= response.comment.truncate(220) %>”</blockquote>
+    <% end %>
+  </div>
+  <%= link_to "Citește răspunsul complet", dashboard_survey_response_path(survey, response), class: "sv-rcard-link" %>
+</article>

@@ -284,7 +284,8 @@ class SurveysTest < ActionDispatch::IntegrationTest
     end
     sign_in @admin
     get "/dashboard/chestionare"
-    values = css_select(".sv-panel").first.css(".sv-stats dd").map { |dd| dd.text.squish }
+    box = css_select(".sv-card").find { |c| c.text.include?("Invitația de pe site") }
+    values = box.css(".sv-stats dd").map { |dd| dd.text.squish }
     assert_equal ["4", "1 (25.0%)", "2 (50.0%)"], values
   end
 
@@ -336,7 +337,8 @@ class SurveysTest < ActionDispatch::IntegrationTest
 
     sign_in @admin
     get "/dashboard/chestionare/#{@survey.slug}/raspunsuri", params: { only: "alerts" }
-    assert_select "table.sv-responses tbody tr", 1
+    assert_select ".sv-rcards--list .sv-rcard", 1
+    assert_select ".sv-rcard.is-alert .sv-rcard-reasons", /Impresie generală: Nemulțumit/
     assert_select ".nav-alert-count", "1"
 
     patch "/dashboard/chestionare/#{@survey.slug}/raspunsuri/#{bad.id}", params: { survey_response: { status: "resolved", staff_note: "Am sunat pacientul." } }
@@ -350,6 +352,62 @@ class SurveysTest < ActionDispatch::IntegrationTest
     assert_equal 2, rows.size
     assert_includes rows.headers, "Impresia generală despre spitalul Spinal Care Dobreci:"
     assert_equal ["Nemulțumit", "Foarte mulțumit"].sort, rows.map { |r| r["Impresia generală despre spitalul Spinal Care Dobreci:"] }.sort
+  end
+
+  test "the overview puts unread negative answers first and shows the latest ones" do
+    submit(answers)
+    bad = answers("Impresia generală" => "Nemulțumit")
+    bad[question("Sugestii").id.to_s] = "Camera era murdară."
+    submit(bad)
+    negative = SurveyResponse.alerts.last
+
+    sign_in @admin
+    get "/dashboard/chestionare"
+    assert_response :success
+    attention = css_select(".sv-panel").find { |p| p.text.include?("Necesită atenție") }
+    assert_equal 1, attention.css(".sv-rcard").size
+    assert_includes attention.text, "„Camera era murdară.”"
+    assert attention.at_css("a[href='/dashboard/chestionare/#{@survey.slug}/raspunsuri/#{negative.id}']")
+    latest = css_select(".sv-panel").find { |p| p.text.include?("Ultimele răspunsuri") }
+    assert_equal 2, latest.css(".sv-rcard").size
+    assert_select ".sv-card svg.sv-spark"
+  end
+
+  test "a response reads like the filled-in form, with a plain summary on top" do
+    submit(answers("Curățenia" => "Nesatisfăcător", "Impresia generală" => "Mulțumit"))
+    older = SurveyResponse.last
+    submit(answers)
+    newer = SurveyResponse.last
+
+    sign_in @admin
+    get "/dashboard/chestionare/#{@survey.slug}/raspunsuri/#{older.id}"
+    assert_response :success
+
+    weak = css_select(".sv-hl--weak li").map { |li| li.text.squish }
+    assert_includes weak, "Curățenia în spital ! Nesatisfăcător"
+    assert_select ".sv-hl--mid li", text: /Impresia generală despre spitalul Spinal Care Dobreci ~ Mulțumit/
+
+    cleaning = css_select(".sv-filled-q").find { |q| q.text.include?("Curățenia în spital:") }
+    assert_equal "! Nesatisfăcător", cleaning.at_css(".sv-pill.is-chosen").text.squish
+    assert_equal ["Foarte bine", "Bine", "Satisfăcător"], cleaning.css(".sv-option-off").map { |o| o.text.strip }
+
+    assert_select "a[href='/dashboard/chestionare/#{@survey.slug}/raspunsuri/#{newer.id}']", text: "← Mai nou"
+  end
+
+  test "the interpretation links each weak question to the responses that rated it weak" do
+    submit(answers("Curățenia" => "Nesatisfăcător"))
+    submit(answers("Curățenia" => "Satisfăcător"))
+    submit(answers)
+
+    sign_in @admin
+    get "/dashboard/chestionare/#{@survey.slug}/interpretare"
+    link = css_select(".sv-dist-link").find { |a| a.text.include?("2 răspunsuri slabe") }
+    assert link, "the cleanliness row links to its 2 weak answers"
+    assert_includes link["href"], "weak_on=#{question('Curățenia').id}"
+
+    get link["href"]
+    assert_select ".sv-rcards--list .sv-rcard", 2
+    assert_select ".sv-note", /care au evaluat slab „Curățenia în spital”/
   end
 
   test "admins add, edit, reorder and retire questions without rewriting old answers" do

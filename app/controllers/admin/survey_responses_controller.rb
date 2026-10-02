@@ -4,16 +4,17 @@ module Admin
   class SurveyResponsesController < BaseController
     before_action :set_survey
 
-    PER_PAGE = 50
+    PER_PAGE = 20
 
     def index
-      @filter = params.permit(:period, :only, :status, :segment, :page)
-      scope = filtered(@survey.responses.order(created_at: :desc))
+      @filter = params.permit(:period, :only, :status, :segment, :weak_on, :page)
+      scope = filtered(@survey.responses.order(created_at: :desc, id: :desc))
       respond_to do |format|
         format.html do
           @total = scope.count
           @page = [@filter[:page].to_i, 1].max
-          @responses = scope.offset((@page - 1) * PER_PAGE).limit(PER_PAGE).to_a
+          @responses = scope.includes(survey: :questions).offset((@page - 1) * PER_PAGE).limit(PER_PAGE).to_a
+          @weak_question = @survey.questions.find { |q| q.id.to_s == @filter[:weak_on].to_s }
         end
         format.csv do
           send_data csv(scope), filename: "#{@survey.slug}-#{Date.current}.csv", type: "text/csv; charset=utf-8"
@@ -21,8 +22,14 @@ module Admin
       end
     end
 
+    # One response, laid out like the form the patient filled in, with the
+    # previous and next responses (newest first, as in the list).
     def show
       @response = @survey.responses.find(params[:id])
+      # (created_at, id): two answers sent in the same second still have an order.
+      at, id = @response.created_at, @response.id
+      @newer = @survey.responses.where("(created_at, id) > (?, ?)", at, id).order(:created_at, :id).first
+      @older = @survey.responses.where("(created_at, id) < (?, ?)", at, id).order(created_at: :desc, id: :desc).first
     end
 
     def update
@@ -44,6 +51,10 @@ module Admin
       scope = scope.where(created_at: days.days.ago..) if days.positive?
       scope = scope.alerts if @filter[:only] == "alerts"
       scope = scope.where(status: @filter[:status]) if SurveyResponse::STATUSES.key?(@filter[:status])
+      # Responses that rated this question Satisfăcător or worse (from the interpretation page).
+      if @filter[:weak_on].present?
+        scope = scope.where("(answers -> ? ->> 'score')::int <= ?", @filter[:weak_on].to_s, SurveyInsights::UNFAVORABLE)
+      end
       if @filter[:segment].present?
         question_id, label = @filter[:segment].split(":", 2)
         scope = scope.where("answers -> ? ->> 'label' = ?", question_id, label)

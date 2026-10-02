@@ -52,6 +52,16 @@ class SurveyQuestion < ApplicationRecord
     options_source.present?
   end
 
+  # The question without "Cum apreciați…" and its punctuation, for summaries:
+  # "Cum apreciați curățenia în spital?" -> "Curățenia în spital".
+  SHORT_PREFIXES = [/\ACum apreciați\s+/i, /\ACum evaluați\s+/i].freeze
+
+  def short_text
+    t = text.to_s.strip.delete_suffix(":").delete_suffix("?").strip
+    SHORT_PREFIXES.each { |re| t = t.sub(re, "") }
+    t.empty? ? text : t[0].upcase + t[1..]
+  end
+
   def labels
     options.map { |o| o["label"] }
   end

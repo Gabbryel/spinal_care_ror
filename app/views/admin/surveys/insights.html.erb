@@ -55,24 +55,43 @@
 
     <section class="sv-panel">
       <h2>Fiecare întrebare, de la cea mai slab evaluată</h2>
-      <p class="sv-note">Scor 0–100: media răspunsurilor (Foarte bine = 100, Bine = 67, Satisfăcător = 33, Nesatisfăcător = 0; Da = 100, Nu = 0). „Favorabile” = scor 67 sau mai mult (Bine, Foarte bine, Da); „slabe” = scor 33 sau mai puțin (Satisfăcător, Nesatisfăcător, Nu, Niciodată).</p>
-      <table class="bh-table">
-        <thead><tr><th>Întrebare</th><th class="num">Răspunsuri</th><th class="num">Scor</th><th class="num">Favorabile</th><th class="num">Slabe</th></tr></thead>
-        <tbody>
-          <% ins.questions.sort_by { |r| r[:mean] || 101 }.each do |row| %>
-            <tr>
-              <td>
-                <%= row[:question].text %>
-                <div class="sv-mini-bar" aria-hidden="true"><span style="width: <%= row[:mean].to_f %>%"></span></div>
-              </td>
-              <td class="num"><%= row[:n] %></td>
-              <td class="num"><strong><%= row[:mean] || "–" %></strong></td>
-              <td class="num"><%= row[:n].positive? ? "#{row[:favorable]}%" : "–" %></td>
-              <td class="num"><%= row[:n].positive? ? "#{row[:unfavorable]}%" : "–" %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+      <p class="sv-note">
+        Bara arată cum s-au împărțit răspunsurile: albastru = bine, gri = mediu, portocaliu = slab.
+        Scorul 0–100 e media (Foarte bine = 100, Bine = 67, Satisfăcător = 33, Nesatisfăcător = 0; Da = 100, Nu = 0).
+        Apăsați „vezi răspunsurile” ca să citiți chestionarele care au evaluat slab acea întrebare.
+      </p>
+      <div class="sv-dist-list">
+        <% ins.questions.sort_by { |row| row[:mean] || 101 }.each do |row| %>
+          <% q = row[:question] %>
+          <div class="sv-dist">
+            <div class="sv-dist-head">
+              <span class="sv-dist-title"><%= q.short_text %></span>
+              <span class="sv-dist-score"><%= score_chip(row[:mean]) %></span>
+            </div>
+            <% if row[:n].positive? %>
+              <% total = row[:counts].sum { |_, n| n } %>
+              <div class="sv-dist-bar" role="img" aria-label="<%= row[:counts].map { |l, n| "#{l} #{(n * 100.0 / total).round}%" }.join(', ') %>">
+                <% row[:counts].each do |label, n| %>
+                  <% next if n.zero? %>
+                  <% share = (n * 100.0 / total).round(1) %>
+                  <span class="sv-dist-seg" style="flex: <%= share %>; background: <%= option_color(q.score_for(label)) %>" title="<%= label %>: <%= n %> (<%= share %>%)"></span>
+                <% end %>
+              </div>
+              <p class="sv-dist-legend">
+                <% row[:counts].each do |label, n| %>
+                  <span><i style="background: <%= option_color(q.score_for(label)) %>" aria-hidden="true"></i><%= label %> <strong><%= (n * 100.0 / total).round %>%</strong> <small>(<%= n %>)</small></span>
+                <% end %>
+                <% weak = row[:counts].sum { |l, n| (s = q.score_for(l)) && s <= SurveyInsights::UNFAVORABLE ? n : 0 } %>
+                <% if weak.positive? %>
+                  <%= link_to "vezi cele #{weak} răspunsuri slabe →", dashboard_survey_responses_path(@survey, weak_on: q.id, period: (@period == "all" ? nil : @period)), class: "sv-dist-link" %>
+                <% end %>
+              </p>
+            <% else %>
+              <p class="sv-muted">Niciun răspuns în perioadă.</p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
     </section>
 
     <% ins.segments.each do |seg| %>

@@ -21,48 +21,43 @@
       <label for="f-status">Stare</label>
       <%= select_tag :status, options_for_select([["Toate", ""]] + SurveyResponse::STATUSES.invert.to_a, @filter[:status]), id: "f-status" %>
     </div>
-    <% segment_options = @survey.questions.select(&:segment).flat_map { |q| q.labels.map { |l| ["#{q.text.delete_suffix('?').delete_suffix(':')}: #{l}", "#{q.id}:#{l}"] } } %>
+    <% segment_options = @survey.questions.select(&:segment).flat_map { |q| q.labels.map { |l| ["#{q.short_text}: #{l}", "#{q.id}:#{l}"] } } %>
     <% if segment_options.any? %>
       <div class="sv-field">
         <label for="f-segment">Grup</label>
         <%= select_tag :segment, options_for_select([["Toate", ""]] + segment_options, @filter[:segment]), id: "f-segment" %>
       </div>
     <% end %>
+    <div class="sv-field">
+      <label for="f-weak">Răspuns slab la</label>
+      <%= select_tag :weak_on, options_for_select([["Orice întrebare", ""]] + @survey.questions.select(&:rating?).map { |q| [q.short_text.truncate(60), q.id] }, @filter[:weak_on]), id: "f-weak" %>
+    </div>
     <button type="submit" class="sv-btn sv-btn--primary">Filtrează</button>
+    <% if @filter.to_h.except("page").values.any?(&:present?) %>
+      <%= link_to "Toate răspunsurile", dashboard_survey_responses_path(@survey), class: "sv-btn" %>
+    <% end %>
   <% end %>
 
-  <section class="sv-panel">
-    <p class="sv-note"><%= number_with_delimiter(@total) %> <%= @total == 1 ? "răspuns" : "răspunsuri" %></p>
-    <% if @responses.empty? %>
-      <p class="sv-empty">Niciun răspuns pentru filtrele alese.</p>
-    <% else %>
-      <% headline_q = @survey.headline_question %>
-      <table class="bh-table sv-responses">
-        <thead><tr><th>Data</th><th class="num">Scor</th><th>Impresie generală</th><th>Comentariu</th><th>Stare</th><th></th></tr></thead>
-        <tbody>
-          <% @responses.each do |r| %>
-            <tr class="<%= 'is-alert' if r.alert %>">
-              <td><%= l(r.created_at, format: "%d.%m.%Y %H:%M") %></td>
-              <td class="num"><%= r.score ? r.score.round : "–" %></td>
-              <td>
-                <%= headline_q && r.answer_for(headline_q)&.dig("label") || "–" %>
-                <% if r.alert %><span class="sv-badge sv-badge--alert" title="<%= r.alert_reasons.join('; ') %>">negativ</span><% end %>
-              </td>
-              <td class="sv-comment-cell"><%= r.comment&.truncate(120) || "–" %></td>
-              <td><span class="sv-status sv-status--<%= r.status %>"><%= SurveyResponse::STATUSES[r.status] %></span></td>
-              <td><%= link_to "Deschide", dashboard_survey_response_path(@survey, r) %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-      <% pages = (@total.to_f / Admin::SurveyResponsesController::PER_PAGE).ceil %>
-      <% if pages > 1 %>
-        <nav class="sv-pager" aria-label="Pagini">
-          <% if @page > 1 %><%= link_to "← Anterioare", dashboard_survey_responses_path(@survey, @filter.to_h.merge("page" => @page - 1)) %><% end %>
-          <span>Pagina <%= @page %> din <%= pages %></span>
-          <% if @page < pages %><%= link_to "Următoare →", dashboard_survey_responses_path(@survey, @filter.to_h.merge("page" => @page + 1)) %><% end %>
-        </nav>
+  <p class="sv-note">
+    <strong><%= number_with_delimiter(@total) %></strong> <%= @total == 1 ? "răspuns" : "răspunsuri" %>
+    <% if @weak_question %> care au evaluat slab „<%= @weak_question.short_text %>”<% end %>, cele mai noi primele.
+  </p>
+
+  <% if @responses.empty? %>
+    <section class="sv-panel"><p class="sv-empty">Niciun răspuns pentru filtrele alese.</p></section>
+  <% else %>
+    <div class="sv-rcards sv-rcards--list">
+      <% @responses.each do |r| %>
+        <%= render "card", response: r %>
       <% end %>
+    </div>
+    <% pages = (@total.to_f / Admin::SurveyResponsesController::PER_PAGE).ceil %>
+    <% if pages > 1 %>
+      <nav class="sv-pager" aria-label="Pagini">
+        <% if @page > 1 %><%= link_to "← Anterioare", dashboard_survey_responses_path(@survey, @filter.to_h.merge("page" => @page - 1)) %><% end %>
+        <span>Pagina <%= @page %> din <%= pages %></span>
+        <% if @page < pages %><%= link_to "Următoare →", dashboard_survey_responses_path(@survey, @filter.to_h.merge("page" => @page + 1)) %><% end %>
+      </nav>
     <% end %>
-  </section>
+  <% end %>
 </div>

@@ -2,48 +2,110 @@
   <header class="sv-header">
     <div>
       <h1>Chestionare</h1>
-      <p class="sv-sub">Ce spun pacienții despre clinică: formularele de pe site, răspunsurile și interpretarea lor.</p>
+      <p class="sv-sub">Ce spun pacienții despre clinică. Citiți fiecare răspuns așa cum l-a completat pacientul; cifrele de mai jos doar arată unde să vă uitați.</p>
     </div>
-    <%= link_to "Chestionar nou", new_dashboard_survey_path, class: "sv-btn sv-btn--primary" %>
+    <%= link_to "Chestionar nou", new_dashboard_survey_path, class: "sv-btn" %>
   </header>
 
-  <% shown = @popup["shown"].to_i %>
-  <section class="sv-panel">
-    <h2>Invitația de pe site (pop-up, ultimele 30 de zile)</h2>
-    <% if shown.zero? %>
-      <p class="sv-note">Încă nu a fost afișată. Apare o singură dată pe vizită, la 20 de secunde de la intrarea pe site.</p>
-    <% else %>
-      <dl class="sv-stats">
-        <div><dt>Afișată</dt><dd><%= number_with_delimiter(shown) %></dd></div>
-        <div><dt>Au deschis chestionarul</dt><dd><%= @popup["clicked"].to_i %> <small class="sv-muted">(<%= (@popup["clicked"].to_i * 100.0 / shown).round(1) %>%)</small></dd></div>
-        <div><dt>Au închis-o</dt><dd><%= @popup["closed"].to_i %> <small class="sv-muted">(<%= (@popup["closed"].to_i * 100.0 / shown).round(1) %>%)</small></dd></div>
-      </dl>
-    <% end %>
-    <p class="sv-note">Se numără doar vizitatorii care au acceptat cookie-urile de analiză.</p>
+  <section class="sv-kpis" aria-label="Ultimele 30 de zile, toate chestionarele">
+    <div class="sv-kpi">
+      <span class="sv-kpi-label">Răspunsuri, ultimele 30 de zile</span>
+      <span class="sv-kpi-value"><%= number_with_delimiter(@kpis[:count]) %></span>
+      <%= delta_badge(@kpis[:count], @kpis[:count_prev]) %>
+    </div>
+    <div class="sv-kpi">
+      <span class="sv-kpi-label">Indice de satisfacție</span>
+      <span class="sv-kpi-value"><%= @kpis[:index] ? "#{@kpis[:index]}/100" : "–" %></span>
+      <%= delta_badge(@kpis[:index], @kpis[:index_prev], unit: " puncte") %>
+    </div>
+    <div class="sv-kpi">
+      <span class="sv-kpi-label">Cu comentariu scris</span>
+      <span class="sv-kpi-value"><%= number_with_delimiter(@kpis[:comments]) %></span>
+    </div>
+    <div class="sv-kpi <%= 'sv-kpi--alert' if @kpis[:open_alerts].positive? %>">
+      <span class="sv-kpi-label">Negative necitite</span>
+      <span class="sv-kpi-value"><%= @kpis[:open_alerts] %></span>
+    </div>
   </section>
 
-  <% if @surveys.empty? %>
-    <p class="sv-empty">Niciun chestionar încă.</p>
-  <% else %>
-    <div class="sv-cards">
-      <% @surveys.each do |survey| %>
+  <div class="sv-overview">
+    <div class="sv-overview-main">
+      <section class="sv-panel">
+        <div class="sv-panel-head">
+          <h2>Necesită atenție</h2>
+          <% if @kpis[:open_alerts] > @attention.size %>
+            <span class="sv-note">Primele <%= @attention.size %> din <%= @kpis[:open_alerts] %></span>
+          <% end %>
+        </div>
+        <% if @attention.empty? %>
+          <p class="sv-empty">✓ Niciun răspuns negativ necitit. Când apare unul, îl găsiți aici primul.</p>
+        <% else %>
+          <div class="sv-rcards">
+            <% @attention.each do |r| %>
+              <%= render "admin/survey_responses/card", response: r, show_survey: true %>
+            <% end %>
+          </div>
+        <% end %>
+      </section>
+
+      <section class="sv-panel">
+        <h2>Ultimele răspunsuri</h2>
+        <% if @recent.empty? %>
+          <p class="sv-empty">Încă nu a răspuns nimeni.</p>
+        <% else %>
+          <div class="sv-rcards">
+            <% @recent.each do |r| %>
+              <%= render "admin/survey_responses/card", response: r, show_survey: true %>
+            <% end %>
+          </div>
+        <% end %>
+      </section>
+    </div>
+
+    <aside class="sv-overview-side">
+      <% @cards.each do |c| %>
+        <% survey = c[:survey] %>
         <article class="sv-card">
           <div class="sv-card-head">
             <h2><%= link_to survey.title, insights_dashboard_survey_path(survey) %></h2>
-            <span class="sv-badge <%= survey.active ? 'sv-badge--on' : 'sv-badge--off' %>"><%= survey.active ? 'Activ pe site' : 'Inactiv' %></span>
+            <span class="sv-badge <%= survey.active ? 'sv-badge--on' : 'sv-badge--off' %>"><%= survey.active ? 'Activ' : 'Inactiv' %></span>
+          </div>
+          <% if survey.audience.present? %><p class="sv-note"><%= survey.audience %></p><% end %>
+          <div class="sv-card-trend">
+            <div>
+              <span class="sv-kpi-label">Indice, 30 de zile</span>
+              <span class="sv-card-index"><%= c[:index] ? "#{c[:index]}/100" : "–" %></span>
+              <%= delta_badge(c[:index], c[:index_prev], unit: " puncte") %>
+            </div>
+            <%= sparkline(c[:spark]) %>
           </div>
           <dl class="sv-stats">
-            <div><dt>Răspunsuri</dt><dd><%= number_with_delimiter(@stats[survey.id] || 0) %></dd></div>
-            <div><dt>Ultimele 30 de zile</dt><dd><%= number_with_delimiter(@recent[survey.id] || 0) %></dd></div>
-            <div class="<%= 'sv-stat--alert' if @open_alerts[survey.id].to_i.positive? %>"><dt>Negative nevăzute</dt><dd><%= @open_alerts[survey.id] || 0 %></dd></div>
+            <div><dt>Total</dt><dd><%= number_with_delimiter(c[:total]) %></dd></div>
+            <div><dt>30 de zile</dt><dd><%= number_with_delimiter(c[:count]) %></dd></div>
+            <div class="<%= 'sv-stat--alert' if c[:open_alerts].positive? %>"><dt>Negative necitite</dt><dd><%= c[:open_alerts] %></dd></div>
           </dl>
           <div class="sv-card-actions">
-            <%= link_to "Interpretare", insights_dashboard_survey_path(survey), class: "sv-btn sv-btn--primary" %>
-            <%= link_to "Răspunsuri", dashboard_survey_responses_path(survey), class: "sv-btn" %>
-            <%= link_to "Formular și întrebări", edit_dashboard_survey_path(survey), class: "sv-btn" %>
+            <%= link_to "Răspunsuri", dashboard_survey_responses_path(survey), class: "sv-btn sv-btn--primary" %>
+            <%= link_to "Interpretare", insights_dashboard_survey_path(survey), class: "sv-btn" %>
+            <%= link_to "Întrebări", edit_dashboard_survey_path(survey), class: "sv-btn" %>
           </div>
         </article>
       <% end %>
-    </div>
-  <% end %>
+
+      <% shown = @popup["shown"].to_i %>
+      <section class="sv-card">
+        <h2 class="sv-card-title">Invitația de pe site (pop-up)</h2>
+        <% if shown.zero? %>
+          <p class="sv-note">Încă nu a fost afișată în ultimele 30 de zile. Apare o dată pe vizită, la 20 de secunde.</p>
+        <% else %>
+          <dl class="sv-stats">
+            <div><dt>Afișată</dt><dd><%= number_with_delimiter(shown) %></dd></div>
+            <div><dt>Au deschis chestionarul</dt><dd><%= @popup["clicked"].to_i %> <small class="sv-muted">(<%= (@popup["clicked"].to_i * 100.0 / shown).round(1) %>%)</small></dd></div>
+            <div><dt>Au închis-o</dt><dd><%= @popup["closed"].to_i %> <small class="sv-muted">(<%= (@popup["closed"].to_i * 100.0 / shown).round(1) %>%)</small></dd></div>
+          </dl>
+        <% end %>
+        <p class="sv-note">Ultimele 30 de zile; doar vizitatorii care au acceptat cookie-urile de analiză.</p>
+      </section>
+    </aside>
+  </div>
 </div>

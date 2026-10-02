@@ -6,11 +6,23 @@ module Admin
 
     PERIODS = { "30" => "Ultimele 30 de zile", "90" => "Ultimele 90 de zile", "365" => "Ultimul an", "all" => "Tot" }.freeze
 
+    # The overview: last 30 days against the 30 before, one card per
+    # questionnaire with its weekly trend, the negative answers nobody has
+    # opened, and the latest answers to read.
     def index
-      @surveys = Survey.order(:created_at).to_a
-      @stats = SurveyResponse.group(:survey_id).count
-      @recent = SurveyResponse.where(created_at: 30.days.ago..).group(:survey_id).count
-      @open_alerts = SurveyResponse.alerts.unreviewed.group(:survey_id).count
+      @surveys = Survey.includes(:questions).order(created_at: :desc).to_a
+      now = Time.current
+      current = SurveyResponse.where(created_at: (now - 30.days)..now)
+      previous = SurveyResponse.where(created_at: (now - 60.days)...(now - 30.days))
+      @kpis = {
+        count: current.count, count_prev: previous.count,
+        index: current.average(:score)&.round(1), index_prev: previous.average(:score)&.round(1),
+        comments: current.where("answers::text LIKE ?", '%"text":%').count,
+        open_alerts: SurveyResponse.alerts.unreviewed.count
+      }
+      @cards = @surveys.map { |survey| survey_card(survey, now) }
+      @attention = SurveyResponse.alerts.unreviewed.includes(survey: :questions).order(created_at: :desc).limit(5).to_a
+      @recent = SurveyResponse.includes(survey: :questions).order(created_at: :desc).limit(6).to_a
       # The site-wide invitation, last 30 days (only visitors who accepted analytics).
       @popup = Ahoy::Event.where(name: "$feedback_popup", time: 30.days.ago..)
                           .group(Arel.sql("properties->>'action'")).count
@@ -59,6 +71,23 @@ module Admin
 
     def set_survey
       @survey = Survey.includes(:questions).find_by!(slug: params[:id])
+    end
+
+    # Index, counts and a 12-week sparkline for one questionnaire.
+    def survey_card(survey, now)
+      scope = survey.responses
+      current = scope.where(created_at: (now - 30.days)..now)
+      previous = scope.where(created_at: (now - 60.days)...(now - 30.days))
+      weeks = scope.where(created_at: (now - 12.weeks)..now)
+                   .group(Arel.sql("date_trunc('week', created_at)")).average(:score)
+                   .transform_keys(&:to_date)
+      week_starts = (0..11).map { |i| (now - (11 - i).weeks).to_date.beginning_of_week }
+      {
+        survey: survey, total: scope.count, count: current.count,
+        index: current.average(:score)&.round(1), index_prev: previous.average(:score)&.round(1),
+        open_alerts: scope.alerts.unreviewed.count,
+        spark: week_starts.map { |w| weeks[w]&.round(1) }
+      }
     end
 
     def unique_slug(title)

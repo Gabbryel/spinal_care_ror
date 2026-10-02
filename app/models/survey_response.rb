@@ -45,6 +45,39 @@ class SurveyResponse < ApplicationRecord
     answers[question.id.to_s]
   end
 
+  # How an answer reads: good (Bine or better, Da), mid (Da, uneori; Mulțumit),
+  # weak (Satisfăcător or worse, Nu, Niciodată) or neutral (no score).
+  def self.band(score)
+    return :neutral if score.nil?
+    return :good if score >= SurveyInsights::FAVORABLE
+    return :weak if score <= SurveyInsights::UNFAVORABLE
+
+    :mid
+  end
+
+  # Who answered, from the grouping questions (age, sex, specialty…).
+  def profile
+    survey.active_questions.select(&:segment).filter_map do |q|
+      label = answer_for(q)&.dig("label")
+      [q.short_text, label] if label
+    end
+  end
+
+  # The rated answers sorted into what went well, what was so-so and what did
+  # not, for the plain-language summary of one response.
+  def highlights
+    survey.questions.select(&:rating?).each_with_object({ good: [], mid: [], weak: [] }) do |q, h|
+      a = answer_for(q)
+      next unless a && a["score"]
+
+      h[self.class.band(a["score"])] << [q, a["label"]]
+    end
+  end
+
+  def weak_count
+    answers.values.count { |a| a["score"] && a["score"] <= SurveyInsights::UNFAVORABLE }
+  end
+
   def comment
     answers.values.filter_map { |a| a["text"] }.join("\n\n").presence
   end
