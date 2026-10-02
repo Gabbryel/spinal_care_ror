@@ -1,0 +1,44 @@
+<%= content_for :meta_title, page_title("Afecțiuni și proceduri") %>
+<%= content_for :meta_description, "Afecțiunile tratate și procedurile făcute la Clinica Spinal Care Bacău, pe specialități: ce sunt, cum se tratează și la ce medic vă programați." %>
+<%= content_for :json_ld, json_ld_tag(breadcrumb_json_ld([["Acasă", "/"], ["Afecțiuni și proceduri", "/afectiuni-si-proceduri"]])) %>
+
+<div class="ht-page">
+  <header class="ht-hero">
+    <div class="ht-hero-inner">
+      <p class="ht-kicker">Ghid pentru pacienți</p>
+      <h1>Afecțiuni și proceduri</h1>
+      <p class="ht-lead">Ce tratăm și ce investigații facem la Spinal Care, pe specialități: pe scurt, ce este fiecare și la ce medic vă puteți programa.</p>
+    </div>
+  </header>
+
+  <div class="ht-content">
+    <% if @topics.empty? %>
+      <p class="ht-empty">Paginile sunt în pregătire. Până atunci, găsiți medicii și serviciile pe <%= link_to "pagina specialităților", "/specialitati-medicale" %>.</p>
+    <% else %>
+      <% groups = @by_specialty + (@unlinked.any? ? [[nil, @unlinked]] : []) %>
+      <% groups.each do |specialty, topics| %>
+        <section class="ht-group" aria-labelledby="ht-group-<%= specialty&.slug || 'altele' %>">
+          <h2 id="ht-group-<%= specialty&.slug || 'altele' %>">
+            <%= specialty ? link_to(specialty.name, "/specialitati-medicale/#{specialty.slug}") : "Alte teme" %>
+          </h2>
+          <% HealthTopic::KINDS.each do |kind, info| %>
+            <% list = topics.select { |t| t.kind == kind } %>
+            <% next if list.empty? %>
+            <h3><%= info[:plural] %></h3>
+            <ul class="ht-cards">
+              <% list.each do |t| %>
+                <li>
+                  <%= link_to t.public_path, class: "ht-card" do %>
+                    <strong><%= t.name %></strong>
+                    <% if t.summary.present? %><span><%= t.summary.truncate(140) %></span><% end %>
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </section>
+      <% end %>
+    <% end %>
+    <%= render partial: "specialties/contact_cta", locals: { placement: "bottom" } %>
+  </div>
+</div>

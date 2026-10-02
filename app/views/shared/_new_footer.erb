@@ -43,6 +43,7 @@
         <li><%= link_to "Echipa medicală", '/echipa' %></li>
         <li><%= link_to "Servicii medicale", servicii_medicale_path %></li>
         <li><%= link_to "Specialități", specialitati_medicale_path %></li>
+        <% if health_topics_published? %><li><%= link_to "Afecțiuni și proceduri", health_topics_hub_path %></li><% end %>
         <li><%= link_to "Info pacient", info_pacient_index_path %></li>
         <li><%= link_to "Spune-ne părerea ta", parerea_ta_path %></li>
       </ul>

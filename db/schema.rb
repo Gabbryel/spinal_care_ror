@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_03_090000) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_03_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -186,6 +186,42 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_03_090000) do
     t.string "custom_width", default: "f"
     t.string "seo_title"
     t.string "meta_description"
+  end
+
+  create_table "health_topic_services", force: :cascade do |t|
+    t.bigint "health_topic_id", null: false
+    t.bigint "medical_service_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["health_topic_id", "medical_service_id"], name: "index_topic_services_unique", unique: true
+    t.index ["health_topic_id"], name: "index_health_topic_services_on_health_topic_id"
+    t.index ["medical_service_id"], name: "index_health_topic_services_on_medical_service_id"
+  end
+
+  create_table "health_topic_specialties", force: :cascade do |t|
+    t.bigint "health_topic_id", null: false
+    t.bigint "specialty_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["health_topic_id", "specialty_id"], name: "index_topic_specialties_unique", unique: true
+    t.index ["health_topic_id"], name: "index_health_topic_specialties_on_health_topic_id"
+    t.index ["specialty_id"], name: "index_health_topic_specialties_on_specialty_id"
+  end
+
+  create_table "health_topics", force: :cascade do |t|
+    t.string "kind", default: "afectiune", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "summary"
+    t.string "seo_title"
+    t.string "meta_description"
+    t.jsonb "faqs", default: [], null: false
+    t.boolean "published", default: false, null: false
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["kind", "slug"], name: "index_health_topics_on_kind_and_slug", unique: true
+    t.index ["published"], name: "index_health_topics_on_published"
   end
 
   create_table "job_postings", force: :cascade do |t|
@@ -377,6 +413,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_03_090000) do
   add_foreign_key "applications", "careers"
   add_foreign_key "audit_logs", "users"
   add_foreign_key "careers", "professions"
+  add_foreign_key "health_topic_services", "health_topics"
+  add_foreign_key "health_topic_services", "medical_services"
+  add_foreign_key "health_topic_specialties", "health_topics"
+  add_foreign_key "health_topic_specialties", "specialties"
   add_foreign_key "medical_services", "members"
   add_foreign_key "medical_services", "specialties"
   add_foreign_key "member_specialties", "members"

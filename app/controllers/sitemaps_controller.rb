@@ -36,11 +36,24 @@ class SitemapsController < ApplicationController
       add "/info-pacient/#{fact.slug}", lastmod: fact.updated_at, changefreq: "monthly", priority: 0.4
     end
 
+    add_health_topics
+
     expires_in 1.hour, public: true
     render formats: :xml
   end
 
   private
+
+  # Published condition and procedure pages (none until the table exists).
+  def add_health_topics
+    topics = HealthTopic.published.order(:kind, :name)
+    return unless topics.exists?
+
+    add "/afectiuni-si-proceduri", lastmod: latest(topics), changefreq: "weekly", priority: 0.6
+    topics.each { |topic| add topic.public_path, lastmod: topic.updated_at, changefreq: "monthly", priority: 0.6 }
+  rescue ActiveRecord::StatementInvalid
+    nil
+  end
 
   def add(path, lastmod:, changefreq:, priority:)
     @entries << {

@@ -1,0 +1,71 @@
+<div class="sv-page">
+  <header class="sv-header">
+    <div>
+      <h1>Afecțiuni și proceduri</h1>
+      <p class="sv-sub">Pagini pentru pacienții care caută pe Google o afecțiune („hernie de disc Bacău”) sau o investigație („ecografie Doppler Bacău”). Fiecare pagină arată automat medicii specialității și prețurile serviciilor legate.</p>
+    </div>
+    <div class="sv-card-actions">
+      <%= link_to "Afecțiune nouă", new_dashboard_health_topic_path(kind: "afectiune"), class: "sv-btn sv-btn--primary" %>
+      <%= link_to "Procedură nouă", new_dashboard_health_topic_path(kind: "procedura"), class: "sv-btn" %>
+    </div>
+  </header>
+
+  <nav class="sv-tabs" aria-label="Filtru">
+    <%= link_to "Toate (#{HealthTopic.count})", dashboard_health_topics_path, class: "sv-tab #{'is-active' unless @kind}" %>
+    <% HealthTopic::KINDS.each do |kind, info| %>
+      <%= link_to "#{info[:plural]} (#{HealthTopic.where(kind: kind).count})", dashboard_health_topics_path(kind: kind), class: "sv-tab #{'is-active' if @kind == kind}" %>
+    <% end %>
+    <% if HealthTopic.published.exists? %>
+      <%= link_to "Vezi pe site ↗", health_topics_hub_path, class: "sv-tab sv-tab--external", target: "_blank", rel: "noopener" %>
+    <% end %>
+  </nav>
+
+  <section class="sv-panel">
+    <% if @topics.empty? %>
+      <p class="sv-empty">Nicio pagină încă. Porniți de la o sugestie de mai jos sau creați una nouă.</p>
+    <% else %>
+      <table class="bh-table ht-admin-table">
+        <thead><tr><th>Pagina</th><th>Tip</th><th>Specialități</th><th>Stare</th><th>Actualizată</th><th></th></tr></thead>
+        <tbody>
+          <% @topics.each do |t| %>
+            <tr>
+              <td><%= link_to t.name, edit_dashboard_health_topic_path(t) %><br><small class="sv-muted"><%= t.public_path %></small></td>
+              <td><%= t.kind_info[:label] %></td>
+              <td><%= t.specialties.map(&:name).join(", ").presence || "–" %></td>
+              <td>
+                <% if t.published %><span class="sv-badge sv-badge--on">Publicată</span>
+                <% else %><span class="sv-badge sv-badge--off">Ciornă</span><% end %>
+                <% if t.body.blank? %><small class="sv-muted">fără text</small><% end %>
+              </td>
+              <td><%= l(t.updated_at, format: "%d.%m.%Y") %></td>
+              <td><%= link_to (t.published ? "Vezi" : "Previzualizare"), t.public_path, target: "_blank", rel: "noopener" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </section>
+
+  <section class="sv-panel">
+    <h2>Sugestii de început</h2>
+    <p class="sv-note">Un clic creează o ciornă, legată deja de specialitățile potrivite; nu apare pe site până nu o publicați. Verificați că tema se potrivește cu ce face clinica.</p>
+    <% if @condition_suggestions.any? %>
+      <h3>Afecțiuni frecvente</h3>
+      <div class="ht-suggestions">
+        <% @condition_suggestions.each do |name, _| %>
+          <%= button_to name, suggest_dashboard_health_topics_path, params: { name: name }, class: "sv-btn" %>
+        <% end %>
+      </div>
+    <% end %>
+    <% if @services.any? %>
+      <h3>Proceduri și investigații din lista de prețuri</h3>
+      <%= form_with url: suggest_dashboard_health_topics_path, method: :post, class: "sv-filters" do %>
+        <div class="sv-field">
+          <label for="ht-service">Serviciul clinicii</label>
+          <%= select_tag :service_id, grouped_options_for_select(@services.group_by { |s| s.specialty.name }.map { |sp, list| [sp, list.map { |s| [s.name.to_s.strip, s.id] }] }), id: "ht-service", required: true %>
+        </div>
+        <button type="submit" class="sv-btn sv-btn--primary">Creează ciorna</button>
+      <% end %>
+    <% end %>
+  </section>
+</div>

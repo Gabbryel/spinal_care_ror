@@ -3,6 +3,8 @@ class Specialty < ApplicationRecord
   has_many :member_specialties, dependent: :destroy
   has_many :members, through: :member_specialties
   has_many :medical_services, dependent: :nullify
+  has_many :health_topic_specialties, dependent: :destroy
+  has_many :health_topics, through: :health_topic_specialties
   has_rich_text :description
   has_one_attached :photo
   validates :name, presence: true

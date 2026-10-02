@@ -15,7 +15,8 @@ class AuditUserReport
     'Review' => 'recenzia',
     'Survey' => 'chestionarul',
     'SurveyQuestion' => 'întrebarea din chestionar',
-    'SurveyResponse' => 'răspunsul la chestionar'
+    'SurveyResponse' => 'răspunsul la chestionar',
+    'HealthTopic' => 'pagina despre afecțiune sau procedură'
   }.freeze
 
   TYPE_PLURALS = {
@@ -31,7 +32,8 @@ class AuditUserReport
     'Review' => 'Recenzii',
     'Survey' => 'Chestionare',
     'SurveyQuestion' => 'Întrebări din chestionare',
-    'SurveyResponse' => 'Răspunsuri la chestionare'
+    'SurveyResponse' => 'Răspunsuri la chestionare',
+    'HealthTopic' => 'Afecțiuni și proceduri'
   }.freeze
 
   FIELD_LABELS = {
@@ -45,7 +47,7 @@ class AuditUserReport
     'specialty_favored' => 'favorit în specialitate', 'is_day_hospitalize' => 'spitalizare de zi',
     'staff_note' => 'notă internă', 'status' => 'stare', 'intro' => 'text introductiv', 'thank_you' => 'mesaj de mulțumire',
     'alert_emails' => 'emailuri pentru alerte', 'section' => 'secțiune', 'kind' => 'tip', 'options' => 'variante',
-    'required' => 'obligatorie', 'segment' => 'grupare', 'headline' => 'impresie generală',
+    'required' => 'obligatorie', 'summary' => 'pe scurt', 'faqs' => 'întrebări frecvente', 'segment' => 'grupare', 'headline' => 'impresie generală',
     'quantity' => 'cantitate', 'date' => 'dată', 'valid_until' => 'valabil până la', 'benefits' => 'beneficii',
     'has_prices' => 'are prețuri', 'schroth' => 'Schroth', 'position' => 'poziție', 'department' => 'departament',
     'requirements' => 'cerințe', 'location' => 'locație', 'contact_email' => 'email de contact', 'phone' => 'telefon',

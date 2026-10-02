@@ -36,6 +36,21 @@ module ApplicationHelper
     false
   end
 
+  # Published condition and procedure pages linked to a specialty, for its
+  # page. Empty while the table does not exist yet (deploy before migration).
+  def specialty_health_topics(specialty)
+    specialty.health_topics.published.order(:kind, :name).to_a
+  rescue ActiveRecord::StatementInvalid
+    []
+  end
+
+  # The menus link to /afectiuni-si-proceduri only once it has something to show.
+  def health_topics_published?
+    Rails.cache.fetch("health_topics/any_published", expires_in: 5.minutes) { HealthTopic.published.exists? }
+  rescue ActiveRecord::StatementInvalid
+    false
+  end
+
   # Negative questionnaire answers nobody has looked at, for the dashboard
   # menu. Nil while the table does not exist yet (between a deploy and its
   # migration), so the menu never takes the dashboard down.

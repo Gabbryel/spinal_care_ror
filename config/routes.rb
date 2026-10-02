@@ -5,6 +5,10 @@ Rails.application.routes.draw do
   
   # Public Promotii route
   get 'promotii', to: 'promo_packages#index', as: 'promotii'
+  # Condition and procedure pages, and their hub.
+  get 'afectiuni-si-proceduri', to: 'health_topics#index', as: 'health_topics_hub'
+  get 'afectiuni/:slug', to: 'health_topics#show', defaults: { kind: 'afectiune' }, as: 'condition'
+  get 'proceduri/:slug', to: 'health_topics#show', defaults: { kind: 'procedura' }, as: 'procedure'
   # Public questionnaires ("Spune-ne părerea ta").
   get 'parerea-ta', to: 'surveys#featured', as: 'parerea_ta'
   get 'chestionare/:slug', to: 'surveys#show', as: 'public_survey'
@@ -31,6 +35,9 @@ Rails.application.routes.draw do
   get 'dashboard/audit', to: 'admin#audit'
   # Patient questionnaires: management, answers and interpretation.
   scope 'dashboard', module: 'admin', as: 'dashboard' do
+    resources :health_topics, path: 'afectiuni', path_names: { edit: 'editare', new: 'nou' }, except: %i[show] do
+      post :suggest, on: :collection, path: 'sugestie'
+    end
     resources :surveys, path: 'chestionare', path_names: { edit: 'editare', new: 'nou' }, only: %i[index new create edit update] do
       get :insights, on: :member, path: 'interpretare'
       resources :responses, path: 'raspunsuri', controller: 'survey_responses', only: %i[index show update]

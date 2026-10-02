@@ -1,0 +1,89 @@
+<%= form_with model: topic, url: (topic.persisted? ? dashboard_health_topic_path(topic) : dashboard_health_topics_path), class: "sv-form ht-form" do |f| %>
+  <% if topic.errors.any? %>
+    <div class="sv-error" role="alert"><%= topic.errors.full_messages.to_sentence %></div>
+  <% end %>
+
+  <div class="sv-question-grid">
+    <div class="sv-field">
+      <%= f.label :kind, "Tip" %>
+      <%= f.select :kind, HealthTopic::KINDS.map { |k, v| [v[:label], k] } %>
+    </div>
+    <div class="sv-field">
+      <%= f.label :name, "Nume (titlul paginii)" %>
+      <%= f.text_field :name, required: true, placeholder: "ex: Hernie de disc" %>
+    </div>
+    <div class="sv-field sv-field--wide">
+      <%= f.label :summary, "Pe scurt (1–2 fraze sub titlu; apare și în liste)" %>
+      <%= f.text_area :summary, rows: 2, maxlength: 400, placeholder: "ex: Hernia de disc apare când discul dintre vertebre iese din poziția normală și apasă pe un nerv. La Spinal Care o tratăm fără operație, prin..." %>
+    </div>
+  </div>
+
+  <div class="sv-field">
+    <%= f.label :body, "Textul paginii" %>
+    <small>Sugestie de structură, cu subtitluri: Ce este · Simptome · Cauze · Diagnostic · Tratament la Spinal Care · Când să mergeți la medic.</small>
+    <%= f.rich_text_area :body %>
+  </div>
+
+  <fieldset class="sv-field ht-fieldset">
+    <legend>Specialități (medicii lor apar pe pagină)</legend>
+    <div class="ht-checks">
+      <%= f.collection_check_boxes :specialty_ids, Specialty.where(is_active: true).order(:name), :id, :name do |b| %>
+        <label class="sv-check"><%= b.check_box %> <%= b.text %></label>
+      <% end %>
+    </div>
+  </fieldset>
+
+  <fieldset class="sv-field ht-fieldset">
+    <legend>Servicii legate (apar cu prețul pe pagină)</legend>
+    <% chosen = topic.medical_service_ids %>
+    <% MedicalService.includes(:specialty).where.not(specialty_id: nil).order(:name).group_by(&:specialty).sort_by { |sp, _| sp.name }.each do |specialty, services| %>
+      <details class="ht-service-group" <%= "open" if services.any? { |s| chosen.include?(s.id) } %>>
+        <summary><%= specialty.name %> <small class="sv-muted">(<%= services.count { |s| chosen.include?(s.id) } %> alese)</small></summary>
+        <div class="ht-checks">
+          <% services.each do |s| %>
+            <label class="sv-check">
+              <%= check_box_tag "health_topic[medical_service_ids][]", s.id, chosen.include?(s.id), id: "ht-service-#{s.id}" %>
+              <%= s.name.to_s.strip %> <small class="sv-muted"><%= s.price.to_f.positive? ? "#{s.price.to_i} lei" : "preț la telefon" %></small>
+            </label>
+          <% end %>
+        </div>
+      </details>
+    <% end %>
+    <%= hidden_field_tag "health_topic[medical_service_ids][]", "" %>
+  </fieldset>
+
+  <div class="sv-field">
+    <%= f.label :faqs_text, "Întrebări frecvente (opțional)" %>
+    <small>Câte o întrebare pe primul rând și răspunsul pe rândurile următoare; lăsați un rând gol între întrebări. Apar pe pagină și în Google.</small>
+    <%= f.text_area :faqs_text, rows: 8, placeholder: "Se poate trata hernia de disc fără operație?\nÎn majoritatea cazurilor, da: ...\n\nCât durează recuperarea?\n..." %>
+  </div>
+
+  <details class="ht-seo">
+    <summary>Google (opțional)</summary>
+    <div class="sv-question-grid">
+      <div class="sv-field">
+        <%= f.label :slug, "Adresa paginii" %>
+        <%= f.text_field :slug, placeholder: "se completează din nume" %>
+        <small>/<%= topic.kind_info&.dig(:path) || "afectiuni" %>/<%= topic.slug.presence || "…" %></small>
+      </div>
+      <div class="sv-field">
+        <%= f.label :seo_title, "Titlu SEO (max 40 caractere)" %>
+        <%= f.text_field :seo_title, maxlength: 40 %>
+      </div>
+      <div class="sv-field sv-field--wide">
+        <%= f.label :meta_description, "Meta descriere (max 155 caractere)" %>
+        <%= f.text_area :meta_description, rows: 2, maxlength: 155 %>
+        <small>Gol = „Pe scurt”, sau una compusă din specialitate și medici.</small>
+      </div>
+    </div>
+  </details>
+
+  <label class="sv-check ht-publish"><%= f.check_box :published %> Publicată (apare pe site, în meniu, pe pagina specialității și în sitemap)</label>
+
+  <div class="sv-card-actions">
+    <%= f.submit topic.persisted? ? "Salvează" : "Creează ciorna", class: "sv-btn sv-btn--primary" %>
+    <% if topic.persisted? %>
+      <%= link_to (topic.published ? "Vezi pe site ↗" : "Previzualizare ↗"), topic.public_path, class: "sv-btn", target: "_blank", rel: "noopener" %>
+    <% end %>
+  </div>
+<% end %>

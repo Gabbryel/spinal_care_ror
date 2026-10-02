@@ -1,0 +1,115 @@
+<% t = @topic %>
+<% hub = ["Afecțiuni și proceduri", "/afectiuni-si-proceduri"] %>
+<%= content_for :meta_title, page_title(t.name, seo_title: t.seo_title) %>
+<%= content_for :meta_description, health_topic_meta_description(t, @specialists) %>
+<%= content_for :head, tag.meta(name: "robots", content: "noindex, nofollow") unless t.published %>
+<%= content_for :json_ld, json_ld_tag(breadcrumb_json_ld([["Acasă", "/"], hub, [t.name, t.public_path]])) %>
+<%= content_for :json_ld, json_ld_tag(health_topic_json_ld(t)) %>
+
+<% primary = t.specialties.first %>
+<div class="ht-page">
+  <% unless t.published %>
+    <p class="ht-draft" role="status">Ciornă: doar administratorii văd această pagină. <%= link_to "Editează", edit_dashboard_health_topic_path(t) %></p>
+  <% end %>
+
+  <header class="ht-hero">
+    <div class="ht-hero-inner">
+      <nav class="ht-crumbs" aria-label="Breadcrumb">
+        <%= link_to "Acasă", root_path %> <span aria-hidden="true">›</span>
+        <%= link_to hub[0], hub[1] %> <span aria-hidden="true">›</span>
+        <span aria-current="page"><%= t.name %></span>
+      </nav>
+      <p class="ht-kicker"><%= t.kind_info[:label] %><% if t.specialties.any? %> · <%= t.specialties.map(&:name).join(", ") %><% end %></p>
+      <h1><%= t.name %></h1>
+      <% if t.summary.present? %><p class="ht-lead"><%= t.summary %></p><% end %>
+    </div>
+  </header>
+
+  <div class="ht-content">
+    <%= render partial: "specialties/contact_cta", locals: { placement: "top", specialty: (t.specialties.one? ? primary : nil),
+                                                             title: (t.specialties.one? ? nil : "Programează o consultație") }.compact %>
+
+    <div class="ht-grid">
+      <article class="ht-main">
+        <% if t.body.present? %>
+          <div class="ht-body"><%= rich_text_html(t.body) %></div>
+        <% end %>
+
+        <% if t.faqs.any? %>
+          <section class="ht-faq" aria-labelledby="ht-faq-title">
+            <h2 id="ht-faq-title">Întrebări frecvente</h2>
+            <% t.faqs.each do |f| %>
+              <details>
+                <summary><%= f["q"] %></summary>
+                <p><%= f["a"] %></p>
+              </details>
+            <% end %>
+          </section>
+        <% end %>
+
+        <p class="ht-disclaimer">Informațiile de pe această pagină sunt generale și nu înlocuiesc consultul medical. Pentru un diagnostic și un plan de tratament, programați-vă la un specialist.</p>
+      </article>
+
+      <aside class="ht-side">
+        <% if @specialists.any? %>
+          <section class="ht-box">
+            <h2>Cine vă poate ajuta</h2>
+            <ul class="ht-people">
+              <% @specialists.each do |m| %>
+                <li>
+                  <%= link_to "/echipa/#{m.slug}", class: "ht-person" do %>
+                    <% if m.photo.attached? %>
+                      <%= cl_image_tag m.photo.key, width: 96, height: 96, crop: :thumb, gravity: :face, fetch_format: :auto, quality: 70, alt: "", loading: "lazy", class: "ht-person-photo" %>
+                    <% else %>
+                      <span class="ht-person-photo ht-person-photo--empty" aria-hidden="true"><%= m.first_name.to_s.first %><%= m.last_name.to_s.first %></span>
+                    <% end %>
+                    <span>
+                      <strong><%= full_name_with_title(m).squish %></strong>
+                      <small><%= [m.profession&.name.to_s.casecmp?("medic") ? "Medic #{m.doctor_grade}".strip : m.profession&.name, m.ordered_specialties.map(&:name).join(", ")].compact_blank.join(" · ") %></small>
+                    </span>
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+          </section>
+        <% end %>
+
+        <% if t.medical_services.any? %>
+          <section class="ht-box">
+            <h2>Servicii și prețuri</h2>
+            <ul class="ht-services">
+              <% t.medical_services.each do |s| %>
+                <li>
+                  <span><%= s.name %></span>
+                  <% if s.price.to_f.positive? %>
+                    <strong><%= number_to_currency(s.price, unit: "lei", separator: ",", delimiter: ".", format: "%n %u", precision: 0) %></strong>
+                  <% else %>
+                    <a href="tel:0374554344" data-track-label="Sună pentru preț">Sună pentru preț</a>
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+            <%= link_to "Toate prețurile →", "/servicii-medicale", class: "ht-more" %>
+          </section>
+        <% end %>
+
+        <% if @related.any? %>
+          <section class="ht-box">
+            <h2>Pe aceeași temă</h2>
+            <ul class="ht-related">
+              <% @related.each do |r| %>
+                <li><%= link_to r.name, r.public_path %> <small><%= r.kind_info[:label] %></small></li>
+              <% end %>
+            </ul>
+          </section>
+        <% end %>
+
+        <% t.specialties.each do |sp| %>
+          <%= link_to "Despre #{sp.name} la Spinal Care →", "/specialitati-medicale/#{sp.slug}", class: "ht-specialty-link" %>
+        <% end %>
+      </aside>
+    </div>
+
+    <%= render partial: "specialties/contact_cta", locals: { placement: "bottom" } %>
+  </div>
+</div>

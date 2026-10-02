@@ -1,0 +1,14 @@
+<div class="sv-page">
+  <header class="sv-header">
+    <div>
+      <p class="sv-crumb"><%= link_to "Afecțiuni și proceduri", dashboard_health_topics_path %></p>
+      <h1><%= @topic.name %></h1>
+    </div>
+    <span class="sv-badge <%= @topic.published ? 'sv-badge--on' : 'sv-badge--off' %>"><%= @topic.published ? "Publicată" : "Ciornă" %></span>
+  </header>
+  <section class="sv-panel"><%= render "form", topic: @topic %></section>
+  <section class="sv-panel">
+    <%= button_to "Șterge pagina", dashboard_health_topic_path(@topic), method: :delete, class: "sv-btn sv-btn--danger",
+                  form: { data: { turbo_confirm: "Ștergeți definitiv pagina „#{@topic.name}”?" } } %>
+  </section>
+</div>

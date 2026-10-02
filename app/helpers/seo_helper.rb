@@ -277,6 +277,45 @@ module SeoHelper
     { "@context" => "https://schema.org", "@graph" => procedures }
   end
 
+  # Condition and procedure pages: a MedicalCondition / MedicalProcedure for
+  # the topic and, when it has questions and answers, an FAQPage.
+  def health_topic_json_ld(topic)
+    item = {
+      "@context" => "https://schema.org",
+      "@type" => topic.kind_info[:schema],
+      "name" => topic.name,
+      "url" => canonical_url_for(topic.public_path)
+    }
+    description = topic.summary.to_s.squish.presence || plain_text_excerpt(topic.body, 300).presence
+    item["description"] = description if description
+    graph = [item]
+    if topic.faqs.any?
+      graph << {
+        "@type" => "FAQPage",
+        "mainEntity" => topic.faqs.map do |f|
+          { "@type" => "Question", "name" => f["q"], "acceptedAnswer" => { "@type" => "Answer", "text" => f["a"] } }
+        end
+      }
+    end
+    graph.one? ? item : { "@context" => "https://schema.org", "@graph" => graph.map { |g| g.except("@context") } }
+  end
+
+  # A written description wins; then the summary; then one built from the
+  # specialties and the number of doctors.
+  def health_topic_meta_description(topic, specialists)
+    manual = topic[:meta_description].to_s.squish.presence
+    return manual if manual
+    return shorten_at_word(topic.summary.to_s.squish, DESCRIPTION_MAX) if topic.summary.to_s.squish.length >= DESCRIPTION_MIN
+
+    field = topic.specialties.map(&:name).to_sentence(two_words_connector: " și ", last_word_connector: " și ")
+    who = specialists.any? ? " cu #{specialists.size} #{specialists.size == 1 ? 'specialist' : 'specialiști'}#{" în #{field}" if field.present?}" : ""
+    first_fitting(
+      "#{topic.name} la Clinica Spinal Care Bacău#{who}. Ce este, cum se tratează și cum vă programați: online sau la #{CLINIC_PHONE_DISPLAY}.",
+      "#{topic.name} la Clinica Spinal Care Bacău#{who}. Programări la #{CLINIC_PHONE_DISPLAY}.",
+      "#{topic.name} la Clinica Spinal Care Bacău."
+    )
+  end
+
   # crumbs: [[name, path], ...] in order, the current page last.
   def breadcrumb_json_ld(crumbs)
     {

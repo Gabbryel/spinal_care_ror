@@ -63,6 +63,23 @@
       <% end %>
     <% end %>
 
+    <% topics = specialty_health_topics(@specialty) %>
+    <% if topics.any? %>
+      <section class="specialty-topics" aria-labelledby="specialty-topics-title">
+        <h2 id="specialty-topics-title">Afecțiuni și proceduri: <%= @specialty.name.downcase %></h2>
+        <ul class="ht-cards">
+          <% topics.each do |t| %>
+            <li>
+              <%= link_to t.public_path, class: "ht-card" do %>
+                <strong><%= t.name %></strong>
+                <span><%= t.summary.present? ? t.summary.truncate(120) : t.kind_info[:label] %></span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </section>
+    <% end %>
+
     <!-- Medical Services Section -->
     <% if @specialty.medical_services.any? %>
       <div class="specialty-section">
