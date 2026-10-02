@@ -181,9 +181,12 @@ class SurveysTest < ActionDispatch::IntegrationTest
     seed_outpatient
     get "/parerea-ta"
     assert_response :success
-    choices = css_select("a.survey-choice")
-    assert_equal ["/chestionare/satisfactie-pacienti-ambulatoriu", "/chestionare/satisfactie-pacienti-internati"], choices.map { |a| a["href"] }
-    assert_equal "Am venit la o consultație sau la terapie", choices.first.at_css("strong").text
+    cards = css_select(".pt-card")
+    assert_equal ["/chestionare/satisfactie-pacienti-ambulatoriu", "/chestionare/satisfactie-pacienti-internati"],
+                 cards.map { |c| c.at_css("a.pt-card-button")["href"] }
+    assert_equal ["Am venit la o consultație sau la terapie", "Am fost internat (spitalizare de zi)"], cards.map { |c| c.at_css("h3").text.strip }
+    assert_match(/19 întrebări · aprox\. 3 minute/, cards.first.text)
+    assert_select ".pt-faq details", 3
   end
 
   test "the specialty list is read from the database every time the form opens" do

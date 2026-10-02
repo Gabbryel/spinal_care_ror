@@ -597,3 +597,292 @@
 
   &:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
 }
+
+// ---------------------------------------------------------------------------
+// /parerea-ta: the questionnaire choice page. Same blue hero as the team and
+// specialty pages. On the lighter end of the gradient (#4A6775) white is
+// 6.0:1, #f1f5f9 5.5:1 and the orange #ffedd5 5.25:1; card text #1f2937 /
+// #374151 on white.
+// ---------------------------------------------------------------------------
+.pt-page {
+  grid-column: 1 / -1;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.pt-hero {
+  background: linear-gradient(135deg, #4A6775 0%, #3a5463 100%);
+  color: white;
+  padding: 5.5rem 1.5rem 4.5rem;
+
+  @media (max-width: 768px) { padding: 4.5rem 1rem 3.5rem; }
+}
+
+.pt-hero-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  text-align: center;
+
+  h1 {
+    font-size: clamp(1.9rem, 4.5vw, 2.9rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0.4rem 0 1rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.pt-kicker {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #ffedd5;
+}
+
+.pt-lead {
+  margin: 0 auto;
+  max-width: 640px;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: #f1f5f9;
+}
+
+.pt-promises {
+  list-style: none;
+  padding: 0;
+  margin: 2rem auto 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  text-align: left;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
+    border-radius: 0.875rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  svg { flex: none; width: 1.6rem; height: 1.6rem; color: #ffedd5; }
+  span { font-size: 0.95rem; line-height: 1.35; color: #f1f5f9; }
+  strong { display: block; color: white; font-size: 1.02rem; }
+  small { font-size: inherit; }
+
+  // Phones: three small badges in a row, so the questionnaires show in the
+  // first screen; the detail line goes.
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+
+    li { flex-direction: column; justify-content: center; gap: 0.35rem; padding: 0.7rem 0.4rem; text-align: center; }
+    svg { width: 1.35rem; height: 1.35rem; }
+    strong { font-size: 0.85rem; }
+    small { display: none; }
+  }
+}
+
+.pt-content {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+
+  @media (max-width: 768px) { padding: 0 1rem 3rem; }
+
+  h2 {
+    font-size: clamp(1.4rem, 3vw, 1.75rem);
+    font-weight: 700;
+    color: #1f2937;
+    text-align: center;
+    margin: 0 0 1.5rem;
+  }
+}
+
+// The two questionnaires, pulled up over the hero's bottom edge.
+.pt-choose {
+  position: relative;
+  margin-top: -2.5rem;
+
+  h2 { @extend .sr-only-scss; }
+}
+
+.sr-only-scss {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pt-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+
+  @media (max-width: 768px) { grid-template-columns: 1fr; gap: 1rem; }
+}
+
+.pt-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-top: 5px solid #1d4ed8;
+  border-radius: 1.1rem;
+  padding: 1.75rem 1.75rem 1.5rem;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1);
+
+  @media (max-width: 768px) { padding: 1.4rem 1.25rem 1.25rem; }
+
+  h3 {
+    margin: 0.4rem 0 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    line-height: 1.3;
+  }
+}
+
+.pt-card--inpatient { border-top-color: #4A6775; h3 { color: #1f2937; } }
+
+.pt-card-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eff6ff;
+  color: #1d4ed8;
+
+  svg { width: 2rem; height: 2rem; }
+}
+
+.pt-card--inpatient .pt-card-icon { background: #f1f5f9; color: #3a5463; }
+
+.pt-card-for {
+  margin: 0;
+  color: #374151;
+  line-height: 1.55;
+}
+
+.pt-card-meta {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+// Same orange as the site's other actions; label is large bold text (3:1).
+.pt-card-button {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.25rem;
+  padding: 0.8rem 1.25rem;
+  border-radius: 0.7rem;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: white;
+  font-size: 1.1875rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+
+  &:hover { color: white; background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%); }
+  &:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 3px; }
+}
+
+.pt-how {
+  margin-top: 4rem;
+}
+
+.pt-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+
+  @media (max-width: 768px) { grid-template-columns: 1fr; }
+
+  li {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    padding: 1.4rem 1.4rem 1.2rem;
+  }
+
+  // Tailwind's reset sets headings to font-weight: inherit.
+  h3 { margin: 0.75rem 0 0.35rem; font-size: 1.15rem; font-weight: 700; color: #1f2937; }
+  p { margin: 0; color: #374151; line-height: 1.55; }
+}
+
+.pt-step-no {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: #4A6775;
+  color: white;
+  font-weight: 700;
+}
+
+.pt-faq {
+  margin: 4rem auto 0;
+  max-width: 760px;
+
+  details {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.875rem;
+    padding: 0 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  summary {
+    cursor: pointer;
+    padding: 1.05rem 0;
+    font-weight: 600;
+    color: #1f2937;
+    list-style-position: inside;
+
+    &:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; border-radius: 0.25rem; }
+  }
+
+  details p { margin: 0 0 1.1rem; color: #374151; line-height: 1.6; }
+  a { color: #1d4ed8; font-weight: 600; }
+}
+
+.pt-call {
+  margin: 2.5rem auto 0;
+  max-width: 760px;
+  text-align: center;
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.875rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+
+  p { margin: 0; color: #1f2937; font-size: 1.05rem; }
+  a { color: #c2410c; font-weight: 700; white-space: nowrap; }
+}
+
+.pt-empty {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  color: #374151;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1);
+}

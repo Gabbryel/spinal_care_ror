@@ -1,24 +1,111 @@
 <%= content_for :meta_title, page_title("Spune-ne părerea ta") %>
+<%= content_for :meta_description, "Ați fost pacient la Clinica Spinal Care Bacău? Spuneți-ne anonim cum a fost: un chestionar de câteva minute, citit de conducerea clinicii." %>
 <%= content_for :head, tag.meta(name: "robots", content: "noindex, follow") %>
 
-<div class="survey-page">
-  <header class="survey-hero">
-    <p class="survey-kicker">Ești pacientul nostru? Spune-ne părerea ta!</p>
-    <h1>Chestionare de satisfacție</h1>
-    <% if @surveys.any? %>
-      <p class="survey-intro">Alegeți varianta care vi se potrivește. Răspunsurile sunt anonime și durează în jur de 3 minute.</p>
-      <ul class="survey-choices">
-        <% @surveys.each do |survey| %>
-          <li>
-            <%= link_to public_survey_path(survey.slug), class: "survey-choice" do %>
-              <strong><%= survey.audience.presence || survey.title %></strong>
-              <span><%= survey.title %></span>
-            <% end %>
-          </li>
-        <% end %>
+<div class="pt-page">
+  <header class="pt-hero">
+    <div class="pt-hero-inner">
+      <p class="pt-kicker">Ești pacientul nostru?</p>
+      <h1>Spune-ne cum a fost la Spinal Care</h1>
+      <p class="pt-lead">Fiecare răspuns e citit de conducerea clinicii. Ne arată ce facem bine și ce trebuie să schimbăm.</p>
+      <ul class="pt-promises">
+        <li>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" /></svg>
+          <span><strong>Anonim</strong> <small>fără nume, telefon sau adresă IP</small></span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" /></svg>
+          <span><strong>3–4 minute</strong> <small>întrebări cu variante de bifat</small></span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" /><path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" /></svg>
+          <span><strong>Citit de conducere</strong> <small>nu de un robot</small></span>
+        </li>
       </ul>
-    <% else %>
-      <p class="survey-intro">Momentan nu avem niciun chestionar deschis. Ne puteți spune părerea și la telefon: <a href="tel:0374554344">0374 554 344</a>.</p>
-    <% end %>
+    </div>
   </header>
+
+  <div class="pt-content">
+    <% if @surveys.any? %>
+      <section class="pt-choose" aria-labelledby="pt-choose-title">
+        <h2 id="pt-choose-title">Alegeți chestionarul potrivit</h2>
+        <div class="pt-cards">
+          <% @surveys.each do |survey| %>
+            <% inpatient = survey.slug.include?("internat") %>
+            <% questions = survey.active_questions %>
+            <% minutes = [(questions.size * 9 / 60.0).ceil, 2].max %>
+            <% sourced = questions.find(&:sourced?) %>
+            <% names = sourced ? sourced.labels - [SurveyQuestion::OTHER] : [] %>
+            <article class="pt-card <%= inpatient ? 'pt-card--inpatient' : 'pt-card--visit' %>">
+              <div class="pt-card-icon" aria-hidden="true">
+                <% if inpatient %>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3 6v13M3 14h18v5M21 14v-2.5A2.5 2.5 0 0018.5 9H11v5"/><circle cx="7" cy="11" r="2"/></svg>
+                <% else %>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M6 3v5a4 4 0 008 0V3"/><path d="M10 12v3a5 5 0 0010 0v-2"/><circle cx="20" cy="11" r="2"/><path d="M5 3h2M13 3h2"/></svg>
+                <% end %>
+              </div>
+              <h3><%= survey.audience.presence || survey.title %></h3>
+              <p class="pt-card-for">
+                <% if inpatient %>
+                  Pentru pacienții internați în spitalizarea de zi<%= ": #{names.to_sentence(two_words_connector: ' și ', last_word_connector: ' și ')}" if names.any? && names.size <= 5 %>.
+                <% else %>
+                  Consultații, investigații și ședințe de terapie<%= ", la oricare dintre cele #{names.size} specialități ale clinicii" if names.size > 5 %>.
+                <% end %>
+              </p>
+              <p class="pt-card-meta"><%= questions.size %> întrebări · aprox. <%= minutes %> minute</p>
+              <%= link_to public_survey_path(survey.slug), class: "pt-card-button",
+                          data: { track_label: "Chestionar satisfacție (alegere: #{inpatient ? 'internat' : 'consultație'})" } do %>
+                Începe chestionarul <span aria-hidden="true">→</span>
+              <% end %>
+            </article>
+          <% end %>
+        </div>
+      </section>
+
+      <section class="pt-how" aria-labelledby="pt-how-title">
+        <h2 id="pt-how-title">Ce se întâmplă cu răspunsul tău</h2>
+        <ol class="pt-steps">
+          <li>
+            <span class="pt-step-no" aria-hidden="true">1</span>
+            <h3>Îl citim</h3>
+            <p>Răspunsul ajunge în panoul conducerii clinicii, întreg, așa cum l-ai completat.</p>
+          </li>
+          <li>
+            <span class="pt-step-no" aria-hidden="true">2</span>
+            <h3>Urmărim ce nu a mers</h3>
+            <p>Un răspuns nemulțumit e marcat și rămâne deschis până când cineva din conducere îl rezolvă.</p>
+          </li>
+          <li>
+            <span class="pt-step-no" aria-hidden="true">3</span>
+            <h3>Vedem dacă ne îmbunătățim</h3>
+            <p>Urmărim lună de lună cum evoluează părerea pacienților despre fiecare aspect al vizitei.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="pt-faq" aria-labelledby="pt-faq-title">
+        <h2 id="pt-faq-title">Întrebări frecvente</h2>
+        <details>
+          <summary>Este cu adevărat anonim?</summary>
+          <p>Da. Nu vă cerem numele sau datele de contact și nu păstrăm adresa IP alături de răspunsuri. Vă rugăm doar să nu scrieți în comentariu date care v-ar putea identifica.</p>
+        </details>
+        <details>
+          <summary>Am fost și la consultație, și internat. Ce aleg?</summary>
+          <p>Alegeți chestionarul despre experiența pe care vreți să ne-o povestiți. Le puteți completa pe amândouă, separat.</p>
+        </details>
+        <details>
+          <summary>Am o reclamație care trebuie rezolvată acum.</summary>
+          <p>Scrieți-o în chestionar, dar sunați-ne și la <a href="tel:0374554344">0374 554 344</a>: un răspuns anonim nu ne permite să vă contactăm.</p>
+        </details>
+      </section>
+    <% else %>
+      <section class="pt-choose">
+        <p class="pt-empty">Momentan nu avem niciun chestionar deschis. Ne puteți spune părerea și la telefon: <a href="tel:0374554344">0374 554 344</a>.</p>
+      </section>
+    <% end %>
+
+    <aside class="pt-call">
+      <p><strong>Preferi să vorbești cu noi?</strong> Sună la <a href="tel:0374554344">0374 554 344</a>.</p>
+    </aside>
+  </div>
 </div>
