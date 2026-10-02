@@ -23,6 +23,9 @@ class CreateSurveys < ActiveRecord::Migration[8.0]
       t.string :kind, null: false, default: "rating"
       # [{ "label" => "Foarte bine", "score" => 100 }, ...]; score nil = not evaluative
       t.jsonb :options, null: false, default: []
+      # Options read from the database each time the form opens instead of
+      # `options` (e.g. "specialties": the clinic's active specialties).
+      t.string :options_source
       t.boolean :required, null: false, default: false
       # Answers to a segment question (specialty, age, sex) split the interpretation.
       t.boolean :segment, null: false, default: false

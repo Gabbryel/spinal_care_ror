@@ -310,6 +310,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_02_120000) do
     t.text "text", null: false
     t.string "kind", default: "rating", null: false
     t.jsonb "options", default: [], null: false
+    t.string "options_source"
     t.boolean "required", default: false, null: false
     t.boolean "segment", default: false, null: false
     t.boolean "headline", default: false, null: false

@@ -186,14 +186,40 @@ class SurveysTest < ActionDispatch::IntegrationTest
     assert_equal "Am venit la o consultație sau la terapie", choices.first.at_css("strong").text
   end
 
+  test "the specialty list is read from the database every time the form opens" do
+    outpatient = seed_outpatient
+    question_id = outpatient.questions.find { |q| q.text.start_with?("Pentru ce specialitate") }.id
+    options = -> { get("/chestionare/#{outpatient.slug}"); css_select("[name='answers[#{question_id}]']").map { |e| e["value"] }.reject(&:blank?) }
+    assert_equal ["Ortopedie", "Terapie Schroth", "Altă specialitate / nu știu"], options.call
+
+    Specialty.create!(name: "Cardiologie", description: "<p>x</p>", is_active: true)
+    Specialty.find_by!(name: "Terapie Schroth").update!(is_active: false)
+    assert_equal ["Cardiologie", "Ortopedie", "Altă specialitate / nu știu"], options.call, "no questionnaire edit needed"
+  end
+
+  test "the inpatient list follows the day-hospitalisation checkbox on specialties" do
+    Specialty.create!(name: "Neurologie", description: "<p>x</p>", is_active: true, has_day_hospitalization: true)
+    Specialty.create!(name: "Cardiologie", description: "<p>x</p>", is_active: true, has_day_hospitalization: false)
+    assert_equal ["Neurologie", "Altă specialitate / nu știu"], Survey.find(@survey.id).questions.find { |q| q.text.start_with?("Pe ce specialitate") }.labels
+  end
+
+  test "answers for a specialty that was later switched off still count in the interpretation" do
+    Specialty.create!(name: "Neurologie", description: "<p>x</p>", is_active: true, has_day_hospitalization: true)
+    submit(answers("Pe ce specialitate" => "Neurologie"))
+    Specialty.find_by!(name: "Neurologie").update!(has_day_hospitalization: false)
+
+    sign_in @admin
+    get "/dashboard/chestionare/#{@survey.slug}/interpretare"
+    assert_select "table.bh-table td", text: "Neurologie"
+  end
+
   test "a long option list is a dropdown, and a neutral option does not count in the score" do
     outpatient = seed_outpatient
     10.times { |i| Specialty.create!(name: "Specialitate #{i}", description: "<p>x</p>", is_active: true) }
     question = outpatient.questions.find { |q| q.text.start_with?("Pentru ce specialitate") }
-    question.update!(options: question.options + (0..9).map { |i| { "label" => "Specialitate #{i}", "score" => nil } })
 
     get "/chestionare/#{outpatient.slug}"
-    assert_select "select[name='answers[#{question.id}]'] option", question.labels.size + 1
+    assert_select "select[name='answers[#{question.id}]'] option", 14, "12 specialties, other, and the blank prompt"
 
     @survey = outpatient
     submit(answers("Cum apreciați raportul" => "Nu am plătit (CAS)"))
@@ -225,6 +251,7 @@ class SurveysTest < ActionDispatch::IntegrationTest
   end
 
   test "the interpretation reads the answers back in plain Romanian" do
+    Specialty.create!(name: "Endocrinologie", description: "<p>x</p>", is_active: true, has_day_hospitalization: true)
     6.times { submit(answers) }
     2.times { submit(answers("Curățenia" => "Nesatisfăcător", "Ați fost informat despre drepturile" => "Nu", "Impresia generală" => "Mulțumit")) }
     2.times { submit(answers("Curățenia" => "Nesatisfăcător", "Impresia generală" => "Mulțumit")) }

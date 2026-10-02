@@ -58,8 +58,11 @@ module Admin
       @question = @survey.questions.find(params[:id])
     end
 
+    # A question whose options come from the database ignores typed options.
     def question_params
-      params.require(:survey_question).permit(:section, :text, :kind, :options_text, :required, :segment, :headline, :active)
+      attrs = params.require(:survey_question).permit(:section, :text, :kind, :options_source, :options_text, :required, :segment, :headline, :active)
+      attrs.delete(:options_text) if attrs[:options_source].present?
+      attrs
     end
   end
 end

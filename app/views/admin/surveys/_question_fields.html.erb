@@ -12,8 +12,20 @@
     <%= f.select :kind, SurveyQuestion::KINDS.invert, {}, id: "#{prefix}-kind" %>
   </div>
   <div class="sv-field sv-field--wide">
+    <%= f.label :options_source, "De unde vin variantele", for: "#{prefix}-source" %>
+    <%= f.select :options_source, [["Scrise mai jos", ""]] + SurveyQuestion::SOURCES.map { |key, src| ["Din baza de date: #{src[:label]}", key] },
+                 {}, id: "#{prefix}-source" %>
+    <% if question.sourced? %>
+      <small>
+        Lista se citește din baza de date de fiecare dată când un pacient deschide formularul. Acum:
+        <strong><%= question.labels.join(", ") %></strong>.
+        Se schimbă din Dashboard → Specialități.
+      </small>
+    <% end %>
+  </div>
+  <div class="sv-field sv-field--wide" <%= "hidden" if question.sourced? %>>
     <%= f.label :options_text, "Variante de răspuns (câte una pe rând; la evaluare cu scor 0–100, ex. „Foarte bine=100”)", for: "#{prefix}-options" %>
-    <%= f.text_area :options_text, rows: [question.options.size, 3].max, id: "#{prefix}-options" %>
+    <%= f.text_area :options_text, rows: [question.options.size, 3].max, id: "#{prefix}-options", disabled: question.sourced? %>
   </div>
   <div class="sv-checks">
     <label class="sv-check"><%= f.check_box :required, id: "#{prefix}-required" %> Obligatorie</label>

@@ -88,14 +88,14 @@ class SurveyInsights
   def choices
     survey.active_questions.select { |q| q.kind == "choice" }.map do |q|
       answers = responses.filter_map { |r| r.answer_for(q)&.dig("label") }
-      { question: q, n: answers.size, counts: q.labels.map { |l| [l, answers.count(l), pct(answers.count(l), answers.size)] } }
+      { question: q, n: answers.size, counts: labels_with_history(q).map { |l| [l, answers.count(l), pct(answers.count(l), answers.size)] } }
     end
   end
 
   # Satisfaction per answer of a segment question (specialty, age, sex).
   def segments
     survey.active_questions.select(&:segment).map do |q|
-      rows = q.labels.map do |label|
+      rows = labels_with_history(q).map do |label|
         group = responses.select { |r| r.answer_for(q)&.dig("label") == label }
         { label: label, n: group.size, index: satisfaction_index(group) }
       end
@@ -239,6 +239,12 @@ class SurveyInsights
     Finding.new(level: "bad", title: "Răspunsuri negative nevăzute",
                 text: "#{open} #{open == 1 ? 'răspuns negativ așteaptă' : 'răspunsuri negative așteaptă'} să fie citite.",
                 hint: "Deschideți lista răspunsurilor filtrată pe „negative” și marcați-le ca văzute sau rezolvate.")
+  end
+
+  # Current options plus any answered label that is no longer offered (a
+  # specialty renamed or switched off since), so old answers stay counted.
+  def labels_with_history(question)
+    (question.labels + responses.filter_map { |r| r.answer_for(question)&.dig("label") }).uniq
   end
 
   def label(question)

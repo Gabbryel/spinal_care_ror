@@ -1,6 +1,6 @@
 # A second questionnaire, for patients who come to consultations and
-# therapies without being admitted, covering every active specialty except
-# day hospitalisation (which has its own). Also gives each questionnaire the
+# therapies without being admitted, covering every active specialty (read
+# from the database whenever the form opens). Also gives each questionnaire the
 # short label shown on /parerea-ta, where the patient picks the right one.
 class SeedOutpatientSatisfactionSurvey < ActiveRecord::Migration[8.0]
   class Survey < ActiveRecord::Base
@@ -11,20 +11,16 @@ class SeedOutpatientSatisfactionSurvey < ActiveRecord::Migration[8.0]
     self.table_name = "survey_questions"
   end
 
-  class Specialty < ActiveRecord::Base
-    self.table_name = "specialties"
-  end
-
   FOUR = [["Foarte bine", 100], ["Bine", 67], ["Satisfăcător", 33], ["Nesatisfăcător", 0]].freeze
 
-  def questions(specialties)
+  def questions
     [
       ["Despre dumneavoastră", "Vârsta", "choice", %w[<20 20-29 30-39 40-49 50-59 60-69 70+].map { |a| [a, nil] }, false, true],
       ["Despre dumneavoastră", "Sexul", "choice", [["Masculin", nil], ["Feminin", nil]], false, true],
       ["Despre dumneavoastră", "Este prima dată când veniți la Spinal Care?", "choice",
        [["Da, prima dată", nil], ["Nu, am mai fost", nil]], false, true],
-      ["Vizita", "Pentru ce specialitate ați venit?", "choice",
-       specialties.map { |name| [name, nil] } + [["Altă specialitate / nu știu", nil]], true, true],
+      # Every active specialty, read from the database whenever the form opens.
+      ["Vizita", "Pentru ce specialitate ați venit?", "choice", "specialties", true, true],
       ["Vizita", "Consultația sau ședința a fost:", "choice",
        [["Cu bilet de trimitere (decontată de CAS)", nil], ["Cu plată", nil], ["Nu știu", nil]], false, true],
       ["Vizita", "Cum v-ați programat?", "choice",
@@ -57,7 +53,6 @@ class SeedOutpatientSatisfactionSurvey < ActiveRecord::Migration[8.0]
     Survey.where(slug: "satisfactie-pacienti-internati").update_all(audience: "Am fost internat (spitalizare de zi)")
     return if Survey.exists?(slug: "satisfactie-pacienti-ambulatoriu")
 
-    specialties = Specialty.where(is_active: true).where.not(slug: "spitalizare-de-zi").order(:name).pluck(:name)
     survey = Survey.create!(
       title: "Chestionar de satisfacție pentru consultații și terapii",
       slug: "satisfactie-pacienti-ambulatoriu",
@@ -67,9 +62,11 @@ class SeedOutpatientSatisfactionSurvey < ActiveRecord::Migration[8.0]
              "Răspunsurile rămân anonime: nu vă cerem numele și nu păstrăm adresa IP. Durează în jur de 3 minute.",
       thank_you: "Răspunsurile dumneavoastră ajung la conducerea clinicii și ne ajută să devenim mai buni."
     )
-    questions(specialties).each_with_index do |(section, text, kind, options, required, segment), i|
+    questions.each_with_index do |(section, text, kind, options, required, segment), i|
+      source = options if options.is_a?(String)
       SurveyQuestion.create!(survey_id: survey.id, position: i + 1, section: section, text: text, kind: kind,
-                             options: options.map { |label, score| { "label" => label, "score" => score } },
+                             options: source ? [] : options.map { |label, score| { "label" => label, "score" => score } },
+                             options_source: source,
                              required: required, segment: segment, headline: text.start_with?("Impresia generală"))
     end
   end
