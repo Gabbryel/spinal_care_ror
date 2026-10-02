@@ -23,6 +23,15 @@ module ApplicationHelper
     current_user&.analytics_access?
   end
 
+  # Negative questionnaire answers nobody has looked at, for the dashboard
+  # menu. Nil while the table does not exist yet (between a deploy and its
+  # migration), so the menu never takes the dashboard down.
+  def open_survey_alerts_count
+    SurveyResponse.alerts.unreviewed.count
+  rescue ActiveRecord::StatementInvalid
+    nil
+  end
+
   def btn_color(u)
     u.admin ? 'btn-red' : 'btn-green'
   end

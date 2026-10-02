@@ -1,0 +1,180 @@
+<% ins = @insights %>
+<div class="sv-page">
+  <header class="sv-header">
+    <div>
+      <p class="sv-crumb"><%= link_to "Chestionare", dashboard_surveys_path %></p>
+      <h1><%= @survey.title %></h1>
+    </div>
+    <%= form_with url: insights_dashboard_survey_path(@survey), method: :get, class: "sv-period" do %>
+      <label for="sv-period">Perioada</label>
+      <%= select_tag :period, options_for_select(Admin::SurveysController::PERIODS.invert, @period), id: "sv-period", onchange: "this.form.requestSubmit()" %>
+      <noscript><button type="submit" class="sv-btn">Aplică</button></noscript>
+    <% end %>
+  </header>
+  <%= render "nav", survey: @survey %>
+
+  <% headline = ins.headline %>
+  <section class="sv-kpis" aria-label="Pe scurt">
+    <div class="sv-kpi"><span class="sv-kpi-label">Răspunsuri</span><span class="sv-kpi-value"><%= number_with_delimiter(ins.count) %></span></div>
+    <div class="sv-kpi"><span class="sv-kpi-label">Indice de satisfacție</span><span class="sv-kpi-value"><%= ins.satisfaction_index ? "#{ins.satisfaction_index}/100" : "–" %></span></div>
+    <% if headline %>
+      <% satisfied = headline[:shares].select { |l, _| headline[:question].score_for(l).to_i >= 50 }.sum { |_, s| s } %>
+      <div class="sv-kpi"><span class="sv-kpi-label">Mulțumiți în general</span><span class="sv-kpi-value"><%= satisfied.round(1) %>%</span></div>
+    <% end %>
+    <div class="sv-kpi <%= 'sv-kpi--alert' if ins.open_alerts.any? %>">
+      <span class="sv-kpi-label">Negative nevăzute</span>
+      <span class="sv-kpi-value"><%= link_to ins.open_alerts.size, dashboard_survey_responses_path(@survey, only: "alerts", status: "new") %></span>
+    </div>
+  </section>
+
+  <section class="sv-panel">
+    <h2>Interpretare</h2>
+    <div class="sv-findings">
+      <% ins.findings.each do |f| %>
+        <%= render "admin/analytics/finding", finding: f %>
+      <% end %>
+    </div>
+  </section>
+
+  <% if ins.count.positive? %>
+    <% if headline %>
+      <section class="sv-panel">
+        <h2>Impresia generală</h2>
+        <p class="sv-note"><%= headline[:question].text %> (<%= headline[:total] %> răspunsuri)</p>
+        <div class="sv-bars">
+          <% headline[:shares].each do |label, share| %>
+            <div class="sv-bar-row">
+              <span class="sv-bar-label"><%= label %></span>
+              <span class="sv-bar-track"><span class="sv-bar-fill" style="width: <%= share %>%"></span></span>
+              <span class="sv-bar-value"><%= share %>%</span>
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <section class="sv-panel">
+      <h2>Fiecare întrebare, de la cea mai slab evaluată</h2>
+      <p class="sv-note">Scor 0–100: media răspunsurilor (Foarte bine = 100, Bine = 67, Satisfăcător = 33, Nesatisfăcător = 0; Da = 100, Nu = 0). „Favorabile” = scor 67 sau mai mult (Bine, Foarte bine, Da); „slabe” = scor 33 sau mai puțin (Satisfăcător, Nesatisfăcător, Nu, Niciodată).</p>
+      <table class="bh-table">
+        <thead><tr><th>Întrebare</th><th class="num">Răspunsuri</th><th class="num">Scor</th><th class="num">Favorabile</th><th class="num">Slabe</th></tr></thead>
+        <tbody>
+          <% ins.questions.sort_by { |r| r[:mean] || 101 }.each do |row| %>
+            <tr>
+              <td>
+                <%= row[:question].text %>
+                <div class="sv-mini-bar" aria-hidden="true"><span style="width: <%= row[:mean].to_f %>%"></span></div>
+              </td>
+              <td class="num"><%= row[:n] %></td>
+              <td class="num"><strong><%= row[:mean] || "–" %></strong></td>
+              <td class="num"><%= row[:n].positive? ? "#{row[:favorable]}%" : "–" %></td>
+              <td class="num"><%= row[:n].positive? ? "#{row[:unfavorable]}%" : "–" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </section>
+
+    <% ins.segments.each do |seg| %>
+      <section class="sv-panel">
+        <h2>Pe grupuri: <%= seg[:question].text.delete_suffix("?").delete_suffix(":") %></h2>
+        <table class="bh-table">
+          <thead><tr><th>Grup</th><th class="num">Răspunsuri</th><th class="num">Indice de satisfacție</th><th></th></tr></thead>
+          <tbody>
+            <% seg[:rows].each do |r| %>
+              <tr>
+                <td><%= r[:label] %></td>
+                <td class="num"><%= r[:n] %></td>
+                <td class="num"><%= r[:index] ? "#{r[:index]}/100" : "–" %><% if r[:n].positive? && r[:n] < SurveyInsights::MIN_PER_SEGMENT %> <small class="sv-muted">(puține)</small><% end %></td>
+                <td><%= link_to "răspunsuri", dashboard_survey_responses_path(@survey, segment: "#{seg[:question].id}:#{r[:label]}") if r[:n].positive? %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </section>
+    <% end %>
+
+    <% trend = ins.trend %>
+    <% if trend.size >= 2 %>
+      <section class="sv-panel">
+        <h2>Evoluție lunară</h2>
+        <canvas id="sv-trend" height="90" role="img" aria-label="Indicele de satisfacție pe luni"></canvas>
+        <table class="bh-table sv-trend-table">
+          <thead><tr><th>Luna</th><th class="num">Răspunsuri</th><th class="num">Indice</th></tr></thead>
+          <tbody><% trend.each do |t| %><tr><td><%= t[:month].strftime("%m.%Y") %></td><td class="num"><%= t[:n] %></td><td class="num"><%= t[:index] || "–" %></td></tr><% end %></tbody>
+        </table>
+        <script>
+          (function () {
+            const init = () => {
+              if (typeof Chart === "undefined") { setTimeout(init, 50); return; }
+              const canvas = document.getElementById("sv-trend");
+              if (!canvas) return;
+              if (canvas.chart) canvas.chart.destroy();
+              const rows = <%= raw trend.map { |t| { m: t[:month].strftime("%m.%Y"), i: t[:index], n: t[:n] } }.to_json %>;
+              canvas.chart = new Chart(canvas, {
+                type: "line",
+                data: { labels: rows.map((r) => r.m), datasets: [{ label: "Indice de satisfacție", data: rows.map((r) => r.i),
+                  borderColor: "#1d4ed8", backgroundColor: "#1d4ed8", borderWidth: 2, pointRadius: 4, cubicInterpolationMode: "monotone" }] },
+                options: {
+                  plugins: { legend: { display: false },
+                    tooltip: { callbacks: { label: (ctx) => `Indice ${rows[ctx.dataIndex].i}/100 (${rows[ctx.dataIndex].n} răspunsuri)` } } },
+                  scales: { y: { min: 0, max: 100, ticks: { color: "#6b7280" }, grid: { color: "#e5e7eb" } },
+                            x: { ticks: { color: "#6b7280" }, grid: { display: false } } }
+                }
+              });
+            };
+            init();
+          })();
+        </script>
+      </section>
+    <% end %>
+
+    <% themes = ins.themes %>
+    <section class="sv-panel">
+      <h2>Ce scriu pacienții</h2>
+      <% if themes.any? %>
+        <table class="bh-table">
+          <thead><tr><th>Temă</th><th class="num">Comentarii</th><th class="num">Din răspunsuri negative</th></tr></thead>
+          <tbody><% themes.each do |t| %><tr><td><%= t[:theme] %></td><td class="num"><%= t[:n] %></td><td class="num"><%= t[:negative] %></td></tr><% end %></tbody>
+        </table>
+      <% end %>
+      <% comments = ins.comments.first(10) %>
+      <% if comments.any? %>
+        <ul class="sv-comments">
+          <% comments.each do |r| %>
+            <li class="<%= 'is-alert' if r.alert %>">
+              <blockquote><%= simple_format(r.comment) %></blockquote>
+              <p class="sv-comment-meta">
+                <%= l(r.created_at, format: "%d.%m.%Y") %>
+                <% if r.headline_label %> · <%= r.headline_label %><% end %>
+                · <%= link_to "deschide", dashboard_survey_response_path(@survey, r) %>
+              </p>
+            </li>
+          <% end %>
+        </ul>
+        <% if ins.comments.size > 10 %>
+          <p class="sv-note"><%= link_to "Toate răspunsurile (#{ins.comments.size} cu comentarii)", dashboard_survey_responses_path(@survey, period: @period == "all" ? nil : @period) %></p>
+        <% end %>
+      <% else %>
+        <p class="sv-note">Niciun comentariu în perioadă.</p>
+      <% end %>
+    </section>
+
+    <% choices = ins.choices.reject { |c| c[:question].segment || c[:n].zero? } %>
+    <% if choices.any? %>
+      <section class="sv-panel">
+        <h2>Alte întrebări</h2>
+        <div class="sv-choice-grid">
+          <% choices.each do |c| %>
+            <div>
+              <h3><%= c[:question].text %></h3>
+              <table class="bh-table bh-table--compact">
+                <tbody><% c[:counts].each do |label, n, share| %><tr><td><%= label %></td><td class="num"><%= n %></td><td class="num"><%= share %>%</td></tr><% end %></tbody>
+              </table>
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  <% end %>
+</div>

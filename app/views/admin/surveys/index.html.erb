@@ -1,0 +1,34 @@
+<div class="sv-page">
+  <header class="sv-header">
+    <div>
+      <h1>Chestionare</h1>
+      <p class="sv-sub">Ce spun pacienții despre clinică: formularele de pe site, răspunsurile și interpretarea lor.</p>
+    </div>
+    <%= link_to "Chestionar nou", new_dashboard_survey_path, class: "sv-btn sv-btn--primary" %>
+  </header>
+
+  <% if @surveys.empty? %>
+    <p class="sv-empty">Niciun chestionar încă.</p>
+  <% else %>
+    <div class="sv-cards">
+      <% @surveys.each do |survey| %>
+        <article class="sv-card">
+          <div class="sv-card-head">
+            <h2><%= link_to survey.title, insights_dashboard_survey_path(survey) %></h2>
+            <span class="sv-badge <%= survey.active ? 'sv-badge--on' : 'sv-badge--off' %>"><%= survey.active ? 'Activ pe site' : 'Inactiv' %></span>
+          </div>
+          <dl class="sv-stats">
+            <div><dt>Răspunsuri</dt><dd><%= number_with_delimiter(@stats[survey.id] || 0) %></dd></div>
+            <div><dt>Ultimele 30 de zile</dt><dd><%= number_with_delimiter(@recent[survey.id] || 0) %></dd></div>
+            <div class="<%= 'sv-stat--alert' if @open_alerts[survey.id].to_i.positive? %>"><dt>Negative nevăzute</dt><dd><%= @open_alerts[survey.id] || 0 %></dd></div>
+          </dl>
+          <div class="sv-card-actions">
+            <%= link_to "Interpretare", insights_dashboard_survey_path(survey), class: "sv-btn sv-btn--primary" %>
+            <%= link_to "Răspunsuri", dashboard_survey_responses_path(survey), class: "sv-btn" %>
+            <%= link_to "Formular și întrebări", edit_dashboard_survey_path(survey), class: "sv-btn" %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  <% end %>
+</div>

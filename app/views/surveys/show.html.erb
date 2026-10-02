@@ -1,0 +1,71 @@
+<%= content_for :meta_title, page_title("Spune-ne părerea ta") %>
+<%= content_for :meta_description, "Ați fost internat la Clinica Spinal Care? Completați anonim chestionarul de satisfacție: durează în jur de 3 minute și ne ajută să devenim mai buni." %>
+<%= content_for :head, tag.meta(name: "robots", content: "noindex, follow") %>
+
+<% submitted = @submitted || {} %>
+<div class="survey-page">
+  <header class="survey-hero">
+    <p class="survey-kicker">Ești pacientul nostru? Spune-ne părerea ta!</p>
+    <h1><%= @survey.title %></h1>
+    <p class="survey-intro"><%= @survey.intro %></p>
+  </header>
+
+  <%= form_with url: public_survey_path(@survey.slug), method: :post, class: "survey-form",
+                data: { controller: "survey-form", action: "submit->survey-form#submit", turbo: false } do %>
+    <%= hidden_field_tag :started, @started %>
+    <div class="survey-hp" aria-hidden="true">
+      <label for="survey-website">Nu completați acest câmp</label>
+      <input type="text" name="website" id="survey-website" tabindex="-1" autocomplete="off">
+    </div>
+
+    <% if @response.errors.any? %>
+      <div class="survey-error" role="alert"><%= @response.errors.full_messages.to_sentence %></div>
+    <% end %>
+    <div class="survey-error" role="alert" hidden data-survey-form-target="error"></div>
+
+    <p class="survey-progress" aria-live="polite" data-survey-form-target="progress" hidden></p>
+
+    <% @survey.sections.each_with_index do |(section, questions), step| %>
+      <section class="survey-step" data-survey-form-target="step" aria-labelledby="survey-step-<%= step %>">
+        <h2 id="survey-step-<%= step %>" tabindex="-1"><%= section %></h2>
+
+        <% questions.each do |q| %>
+          <% name = "answers[#{q.id}]" %>
+          <% if q.text? %>
+            <div class="survey-question">
+              <label for="survey-q-<%= q.id %>" class="survey-question-text"><%= q.text %></label>
+              <p class="survey-hint" id="survey-q-<%= q.id %>-hint">Vă rugăm să nu scrieți nume, CNP sau date de contact.</p>
+              <%= text_area_tag name, submitted[q.id.to_s], id: "survey-q-#{q.id}", rows: 5, maxlength: 4000,
+                                class: "survey-textarea", "aria-describedby": "survey-q-#{q.id}-hint" %>
+            </div>
+          <% else %>
+            <fieldset class="survey-question" <%= "data-required" if q.required %>>
+              <legend class="survey-question-text">
+                <%= q.text %>
+                <% unless q.required %><span class="survey-optional">(opțional)</span><% end %>
+              </legend>
+              <div class="survey-options">
+                <% q.labels.each_with_index do |label, i| %>
+                  <label class="survey-option">
+                    <%= radio_button_tag name, label, submitted[q.id.to_s] == label, id: "survey-q-#{q.id}-#{i}", required: q.required %>
+                    <span><%= label %></span>
+                  </label>
+                <% end %>
+              </div>
+            </fieldset>
+          <% end %>
+        <% end %>
+      </section>
+    <% end %>
+
+    <div class="survey-nav">
+      <button type="button" class="survey-back" data-survey-form-target="back" data-action="survey-form#back" hidden>Înapoi</button>
+      <button type="button" class="survey-next" data-survey-form-target="next" data-action="survey-form#next" hidden>Continuă</button>
+      <button type="submit" class="survey-submit" data-survey-form-target="submit">Trimite răspunsurile</button>
+    </div>
+    <p class="survey-privacy">
+      Răspunsurile sunt anonime și se folosesc doar pentru îmbunătățirea serviciilor clinicii, conform
+      <%= link_to "politicii de confidențialitate", "/politica-de-confidentialitate" %>.
+    </p>
+  <% end %>
+</div>

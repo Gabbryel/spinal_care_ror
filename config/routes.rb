@@ -5,6 +5,11 @@ Rails.application.routes.draw do
   
   # Public Promotii route
   get 'promotii', to: 'promo_packages#index', as: 'promotii'
+  # Public questionnaires ("Spune-ne părerea ta").
+  get 'parerea-ta', to: 'surveys#featured', as: 'parerea_ta'
+  get 'chestionare/:slug', to: 'surveys#show', as: 'public_survey'
+  post 'chestionare/:slug', to: 'surveys#create'
+  get 'chestionare/:slug/multumim', to: 'surveys#thanks', as: 'survey_thanks'
 
   get 'dashboard', to: 'admin#dashboard'
   get 'dashboard/analytics', to: 'admin#analytics'
@@ -24,6 +29,16 @@ Rails.application.routes.draw do
   get 'dashboard/analytics/bot_traffic', to: 'admin#analytics_bot_traffic'
   get 'dashboard/analytics/debug', to: 'admin#analytics_debug'
   get 'dashboard/audit', to: 'admin#audit'
+  # Patient questionnaires: management, answers and interpretation.
+  scope 'dashboard', module: 'admin', as: 'dashboard' do
+    resources :surveys, path: 'chestionare', path_names: { edit: 'editare', new: 'nou' }, only: %i[index new create edit update] do
+      get :insights, on: :member, path: 'interpretare'
+      resources :responses, path: 'raspunsuri', controller: 'survey_responses', only: %i[index show update]
+      resources :questions, path: 'intrebari', controller: 'survey_questions', only: %i[create update destroy] do
+        patch :move, on: :member
+      end
+    end
+  end
   get 'dashboard/users', to: 'admin#edit_users'
   # POST /users belongs to Devise's sign-up, so admins create accounts here.
   post 'dashboard/users', to: 'users#create', as: 'dashboard_create_user'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_30_180000) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_02_090100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -303,6 +303,54 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_30_180000) do
     t.string "seo_title"
   end
 
+  create_table "survey_questions", force: :cascade do |t|
+    t.bigint "survey_id", null: false
+    t.integer "position", default: 0, null: false
+    t.string "section"
+    t.text "text", null: false
+    t.string "kind", default: "rating", null: false
+    t.jsonb "options", default: [], null: false
+    t.boolean "required", default: false, null: false
+    t.boolean "segment", default: false, null: false
+    t.boolean "headline", default: false, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["survey_id", "position"], name: "index_survey_questions_on_survey_id_and_position"
+    t.index ["survey_id"], name: "index_survey_questions_on_survey_id"
+  end
+
+  create_table "survey_responses", force: :cascade do |t|
+    t.bigint "survey_id", null: false
+    t.jsonb "answers", default: {}, null: false
+    t.float "score"
+    t.boolean "alert", default: false, null: false
+    t.jsonb "alert_reasons", default: [], null: false
+    t.string "status", default: "new", null: false
+    t.text "staff_note"
+    t.bigint "reviewed_by_id"
+    t.datetime "reviewed_at"
+    t.string "source"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["alert"], name: "index_survey_responses_on_alert"
+    t.index ["reviewed_by_id"], name: "index_survey_responses_on_reviewed_by_id"
+    t.index ["survey_id", "created_at"], name: "index_survey_responses_on_survey_id_and_created_at"
+    t.index ["survey_id"], name: "index_survey_responses_on_survey_id"
+  end
+
+  create_table "surveys", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.text "intro"
+    t.text "thank_you"
+    t.boolean "active", default: false, null: false
+    t.string "alert_emails"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_surveys_on_slug", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -330,4 +378,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_30_180000) do
   add_foreign_key "member_specialties", "specialties"
   add_foreign_key "members", "professions"
   add_foreign_key "members", "specialties"
+  add_foreign_key "survey_questions", "surveys"
+  add_foreign_key "survey_responses", "surveys"
+  add_foreign_key "survey_responses", "users", column: "reviewed_by_id"
 end

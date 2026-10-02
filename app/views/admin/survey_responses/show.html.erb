@@ -1,0 +1,58 @@
+<div class="sv-page">
+  <header class="sv-header">
+    <div>
+      <p class="sv-crumb"><%= link_to "Chestionare", dashboard_surveys_path %> / <%= link_to @survey.title, dashboard_survey_responses_path(@survey) %></p>
+      <h1>Răspuns din <%= l(@response.created_at, format: "%d.%m.%Y, %H:%M") %></h1>
+    </div>
+    <span class="sv-status sv-status--<%= @response.status %>"><%= SurveyResponse::STATUSES[@response.status] %></span>
+  </header>
+
+  <% if @response.alert %>
+    <div class="finding finding-bad sv-alert-box">
+      <span class="finding-icon" aria-hidden="true">✕</span>
+      <div class="finding-body">
+        <div class="finding-title">Răspuns negativ</div>
+        <div class="finding-text"><%= @response.alert_reasons.join("; ") %></div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="sv-response-grid">
+    <section class="sv-panel">
+      <h2>Răspunsurile pacientului</h2>
+      <p class="sv-note">Scor general: <strong><%= @response.score ? "#{@response.score.round}/100" : "–" %></strong></p>
+      <dl class="sv-answers">
+        <% @survey.questions.each do |q| %>
+          <% a = @response.answer_for(q) %>
+          <% next if a.nil? && !q.active %>
+          <div class="sv-answer <%= 'is-low' if a && a['score'] && a['score'] <= SurveyInsights::UNFAVORABLE %>">
+            <dt><%= q.text %></dt>
+            <dd>
+              <% if a.nil? %><span class="sv-muted">fără răspuns</span>
+              <% elsif a["text"] %><%= simple_format(a["text"]) %>
+              <% else %><%= a["label"] %><% end %>
+            </dd>
+          </div>
+        <% end %>
+      </dl>
+    </section>
+
+    <section class="sv-panel">
+      <h2>Urmărire internă</h2>
+      <%= form_with model: @response, url: dashboard_survey_response_path(@survey, @response), method: :patch, scope: :survey_response, class: "sv-form" do |f| %>
+        <div class="sv-field">
+          <%= f.label :status, "Stare" %>
+          <%= f.select :status, SurveyResponse::STATUSES.invert %>
+        </div>
+        <div class="sv-field">
+          <%= f.label :staff_note, "Notă internă (ce s-a făcut)" %>
+          <%= f.text_area :staff_note, rows: 5 %>
+        </div>
+        <%= f.submit "Salvează", class: "sv-btn sv-btn--primary" %>
+      <% end %>
+      <% if @response.reviewed_at %>
+        <p class="sv-note">Ultima actualizare: <%= @response.reviewed_by&.alias.presence || @response.reviewed_by&.email %>, <%= l(@response.reviewed_at, format: "%d.%m.%Y %H:%M") %>.</p>
+      <% end %>
+    </section>
+  </div>
+</div>

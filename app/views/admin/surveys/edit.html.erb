@@ -1,0 +1,61 @@
+<div class="sv-page">
+  <header class="sv-header">
+    <div>
+      <p class="sv-crumb"><%= link_to "Chestionare", dashboard_surveys_path %></p>
+      <h1><%= @survey.title %></h1>
+    </div>
+    <span class="sv-badge <%= @survey.active ? 'sv-badge--on' : 'sv-badge--off' %>"><%= @survey.active ? 'Activ pe site' : 'Inactiv' %></span>
+  </header>
+  <%= render "nav", survey: @survey %>
+
+  <section class="sv-panel">
+    <h2>Setări</h2>
+    <%= render "settings_form", survey: @survey %>
+  </section>
+
+  <section class="sv-panel">
+    <h2>Întrebări</h2>
+    <p class="sv-note">
+      Răspunsurile vechi păstrează textul și scorul din momentul trimiterii, așa că puteți corecta formulări fără să schimbați istoria.
+      O întrebare care are deja răspunsuri nu se șterge, se dezactivează.
+    </p>
+    <datalist id="sv-sections">
+      <% @survey.questions.map(&:section).compact.uniq.each do |s| %><option value="<%= s %>"><% end %>
+    </datalist>
+
+    <% @survey.questions.each_with_index do |q, i| %>
+      <article class="sv-question <%= 'is-inactive' unless q.active %>" id="q-<%= q.id %>">
+        <header class="sv-question-head">
+          <span class="sv-question-no"><%= i + 1 %></span>
+          <span class="sv-question-meta">
+            <%= q.section %> · <%= SurveyQuestion::KINDS[q.kind] %>
+            <% unless q.active %> · <strong>dezactivată</strong><% end %>
+          </span>
+          <span class="sv-question-move">
+            <%= button_to "↑", move_dashboard_survey_question_path(@survey, q, direction: "up"), method: :patch, class: "sv-icon-btn", "aria-label": "Mută mai sus", disabled: i.zero? %>
+            <%= button_to "↓", move_dashboard_survey_question_path(@survey, q, direction: "down"), method: :patch, class: "sv-icon-btn", "aria-label": "Mută mai jos", disabled: i == @survey.questions.size - 1 %>
+          </span>
+        </header>
+        <%= form_with model: q, url: dashboard_survey_question_path(@survey, q), method: :patch, scope: :survey_question do |f| %>
+          <%= render "question_fields", f: f, question: q, prefix: "q#{q.id}" %>
+          <div class="sv-question-actions">
+            <%= f.submit "Salvează întrebarea", class: "sv-btn sv-btn--primary" %>
+          </div>
+        <% end %>
+        <%= button_to "Șterge", dashboard_survey_question_path(@survey, q), method: :delete, class: "sv-btn sv-btn--danger sv-delete",
+                      form: { data: { turbo_confirm: "Ștergeți întrebarea? Dacă are răspunsuri, va fi doar dezactivată." } } %>
+      </article>
+    <% end %>
+
+    <article class="sv-question sv-question--new" id="new-question">
+      <h3>Adaugă o întrebare</h3>
+      <% new_q = SurveyQuestion.new(survey_id: @survey.id, kind: "rating", options: [{ "label" => "Foarte bine", "score" => 100 }, { "label" => "Bine", "score" => 67 }, { "label" => "Satisfăcător", "score" => 33 }, { "label" => "Nesatisfăcător", "score" => 0 }], section: @survey.questions.last&.section) %>
+      <%= form_with model: new_q, url: dashboard_survey_questions_path(@survey), method: :post, scope: :survey_question do |f| %>
+        <%= render "question_fields", f: f, question: new_q, prefix: "new" %>
+        <div class="sv-question-actions">
+          <%= f.submit "Adaugă întrebarea", class: "sv-btn sv-btn--primary" %>
+        </div>
+      <% end %>
+    </article>
+  </section>
+</div>

@@ -15,6 +15,9 @@
     <%= render partial: "specialties/contact_cta", locals: { placement: "bottom" } %>
   </div>
   <%= motto('Fiecare pacient care pleacă cu zâmbetul pe buze ne face să ne simțim împliniți.', 'row-span-1 row-start-8 col-span-full col-start-1') %>
+  <div class="feedback-cta-wrap row-span-1 row-start-9 col-span-full col-start-1">
+    <%= render "surveys/feedback_cta", key: "home" %>
+  </div>
   <%#= render 'pages/home_partials/home_attractions' %>
   <%#= render 'pages/home_partials/home_info' %>
   <%#= render 'pages/home_partials/home_second_landing' %>

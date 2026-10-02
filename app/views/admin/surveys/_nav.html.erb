@@ -1,0 +1,7 @@
+<%# Tabs shared by a questionnaire's dashboard pages. %>
+<nav class="sv-tabs" aria-label="Secțiunile chestionarului">
+  <% [["Interpretare", insights_dashboard_survey_path(survey)], ["Răspunsuri", dashboard_survey_responses_path(survey)], ["Formular și întrebări", edit_dashboard_survey_path(survey)]].each do |label, path| %>
+    <%= link_to label, path, class: "sv-tab #{'is-active' if current_page?(path)}", "aria-current": (current_page?(path) ? "page" : nil) %>
+  <% end %>
+  <%= link_to "Vezi pe site ↗", public_survey_path(survey.slug), class: "sv-tab sv-tab--external", target: "_blank", rel: "noopener" %>
+</nav>

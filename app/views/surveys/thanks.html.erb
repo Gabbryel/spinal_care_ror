@@ -1,0 +1,11 @@
+<%= content_for :meta_title, page_title("Vă mulțumim") %>
+<%= content_for :head, tag.meta(name: "robots", content: "noindex, follow") %>
+
+<div class="survey-page">
+  <header class="survey-hero survey-hero--done">
+    <p class="survey-kicker">Răspunsurile au fost trimise</p>
+    <h1>Vă mulțumim!</h1>
+    <p class="survey-intro"><%= @survey.thank_you.presence || "Părerea dumneavoastră ne ajută să devenim mai buni." %></p>
+    <%= link_to "Înapoi la site", root_path, class: "survey-submit" %>
+  </header>
+</div>

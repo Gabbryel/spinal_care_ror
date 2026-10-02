@@ -1,0 +1,19 @@
+Un pacient a completat „<%= @survey.title %>” pe <%= l(@response.created_at, format: "%d.%m.%Y %H:%M") %> și răspunsul a fost marcat ca negativ:
+
+<% @response.alert_reasons.each do |reason| %>
+- <%= reason %>
+<% end %>
+<% if @response.headline_label %>
+Impresia generală: <%= @response.headline_label %>
+<% end %>
+<% if @response.score %>
+Scor general: <%= @response.score.round %>/100
+<% end %>
+<% if @response.comment %>
+
+Comentariul pacientului:
+<%= @response.comment %>
+<% end %>
+
+Vezi răspunsul complet și marchează-l ca rezolvat:
+<%= @url %>

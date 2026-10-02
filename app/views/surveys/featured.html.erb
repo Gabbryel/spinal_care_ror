@@ -1,0 +1,19 @@
+<%= content_for :meta_title, page_title("Spune-ne părerea ta") %>
+<%= content_for :head, tag.meta(name: "robots", content: "noindex, follow") %>
+
+<div class="survey-page">
+  <header class="survey-hero">
+    <p class="survey-kicker">Ești pacientul nostru? Spune-ne părerea ta!</p>
+    <h1>Chestionare de satisfacție</h1>
+    <% if @surveys.any? %>
+      <p class="survey-intro">Alegeți chestionarul potrivit. Răspunsurile sunt anonime.</p>
+      <ul class="survey-list">
+        <% @surveys.each do |survey| %>
+          <li><%= link_to survey.title, public_survey_path(survey.slug), class: "survey-submit" %></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="survey-intro">Momentan nu avem niciun chestionar deschis. Ne puteți spune părerea și la telefon: <a href="tel:0374554344">0374 554 344</a>.</p>
+    <% end %>
+  </header>
+</div>

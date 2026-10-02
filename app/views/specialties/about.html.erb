@@ -79,6 +79,9 @@
     <% end %>
 
     <%= render partial: "specialties/contact_cta", locals: { specialty: @specialty, placement: "bottom" } %>
+    <% if @specialty.is_day_hospitalize %>
+      <%= render "surveys/feedback_cta", key: "spital" %>
+    <% end %>
 
     <!-- Specialists Section -->
     <div class="specialty-section">

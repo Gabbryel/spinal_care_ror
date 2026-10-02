@@ -1,0 +1,26 @@
+<div class="sv-question-grid">
+  <div class="sv-field sv-field--wide">
+    <%= f.label :text, "Întrebarea", for: "#{prefix}-text" %>
+    <%= f.text_area :text, rows: 2, required: true, id: "#{prefix}-text" %>
+  </div>
+  <div class="sv-field">
+    <%= f.label :section, "Pasul / secțiunea", for: "#{prefix}-section" %>
+    <%= f.text_field :section, id: "#{prefix}-section", list: "sv-sections" %>
+  </div>
+  <div class="sv-field">
+    <%= f.label :kind, "Tip", for: "#{prefix}-kind" %>
+    <%= f.select :kind, SurveyQuestion::KINDS.invert, {}, id: "#{prefix}-kind" %>
+  </div>
+  <div class="sv-field sv-field--wide">
+    <%= f.label :options_text, "Variante de răspuns (câte una pe rând; la evaluare cu scor 0–100, ex. „Foarte bine=100”)", for: "#{prefix}-options" %>
+    <%= f.text_area :options_text, rows: [question.options.size, 3].max, id: "#{prefix}-options" %>
+  </div>
+  <div class="sv-checks">
+    <label class="sv-check"><%= f.check_box :required, id: "#{prefix}-required" %> Obligatorie</label>
+    <label class="sv-check"><%= f.check_box :segment, id: "#{prefix}-segment" %> Grupează interpretarea (ex. specialitate, vârstă)</label>
+    <label class="sv-check"><%= f.check_box :headline, id: "#{prefix}-headline" %> Impresia generală</label>
+    <% if question.persisted? %>
+      <label class="sv-check"><%= f.check_box :active, id: "#{prefix}-active" %> Apare în formular</label>
+    <% end %>
+  </div>
+</div>

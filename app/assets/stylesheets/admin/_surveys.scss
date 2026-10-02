@@ -1,0 +1,347 @@
+// ---------------------------------------------------------------------------
+// Dashboard: patient questionnaires (/dashboard/chestionare). Text #1f2937 /
+// #4b5563 on white; accents reuse the dashboard's indigo (#4f46e5) and the
+// finding colours from analytics.scss.
+// ---------------------------------------------------------------------------
+:where(.dashboard-body) {
+  .sv-page {
+    max-width: 1200px;
+    margin: calc(var(--vh, 1vh) * 10) auto 3rem;
+    padding: 0 1.5rem;
+
+    @media (max-width: 768px) { padding: 0 1rem; }
+  }
+
+  .sv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+
+    h1 { font-size: 1.75rem; font-weight: 700; color: #1f2937; margin: 0; }
+  }
+
+  .sv-crumb { margin: 0 0 0.25rem; font-size: 0.9rem; a { color: #4f46e5; } }
+  .sv-sub, .sv-note { color: #4b5563; margin: 0.25rem 0 0.75rem; }
+  .sv-muted { color: #6b7280; }
+  .sv-empty { color: #4b5563; padding: 1rem 0; }
+
+  .sv-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    border-bottom: 2px solid #e5e7eb;
+    margin-bottom: 1.5rem;
+  }
+
+  .sv-tab {
+    padding: 0.6rem 1rem;
+    color: #374151;
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+
+    &.is-active { color: #4f46e5; border-bottom-color: #4f46e5; }
+    &:hover { color: #4f46e5; }
+  }
+
+  .sv-tab--external { margin-left: auto; font-weight: 500; }
+
+  .sv-panel {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+
+    h2 { font-size: 1.2rem; font-weight: 700; color: #1f2937; margin: 0 0 0.75rem; }
+    h3 { font-size: 1rem; font-weight: 600; color: #1f2937; margin: 0 0 0.5rem; }
+  }
+
+  .sv-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    background: white;
+    color: #1f2937;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover { border-color: #4f46e5; color: #4f46e5; }
+  }
+
+  .sv-btn--primary {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    color: white;
+
+    &:hover { background: #4338ca; color: white; }
+  }
+
+  .sv-btn--danger {
+    color: #b91c1c;
+    border-color: #fecaca;
+
+    &:hover { background: #fef2f2; color: #991b1b; border-color: #fca5a5; }
+  }
+
+  .sv-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .sv-badge--on { background: #dcfce7; color: #166534; }
+  .sv-badge--off { background: #f3f4f6; color: #374151; }
+  .sv-badge--alert { background: #fee2e2; color: #991b1b; margin-left: 0.35rem; }
+
+  .sv-status { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+  .sv-status--new { background: #fef3c7; color: #92400e; }
+  .sv-status--reviewed { background: #e0e7ff; color: #3730a3; }
+  .sv-status--resolved { background: #dcfce7; color: #166534; }
+
+  .sv-cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+
+  .sv-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+
+    h2 { font-size: 1.1rem; margin: 0; a { color: #1f2937; text-decoration: none; } }
+  }
+
+  .sv-card-head { display: flex; justify-content: space-between; gap: 0.75rem; align-items: flex-start; }
+  .sv-card-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+
+  .sv-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin: 1rem 0 0;
+
+    dt { font-size: 0.8rem; color: #4b5563; font-weight: 500; }
+    dd { margin: 0; font-size: 1.4rem; font-weight: 700; color: #1f2937; }
+  }
+
+  .sv-stat--alert dd { color: #b91c1c; }
+
+  .sv-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sv-kpi {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sv-kpi-label { font-size: 0.85rem; color: #4b5563; }
+  .sv-kpi-value { font-size: 1.75rem; font-weight: 700; color: #1f2937; a { color: inherit; } }
+  .sv-kpi--alert { border-color: #fca5a5; .sv-kpi-value { color: #b91c1c; } }
+
+  .sv-findings { display: grid; gap: 0.75rem; }
+
+  .sv-period {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    label { font-weight: 600; color: #374151; }
+    select { padding: 0.45rem 0.6rem; border: 1px solid #d1d5db; border-radius: 0.5rem; }
+  }
+
+  .sv-bars { display: grid; gap: 0.5rem; max-width: 640px; }
+  .sv-bar-row { display: grid; grid-template-columns: 9rem 1fr 4rem; align-items: center; gap: 0.75rem; }
+  .sv-bar-label { color: #1f2937; font-weight: 500; }
+  .sv-bar-track { height: 0.9rem; background: #f3f4f6; border-radius: 4px; overflow: hidden; }
+  .sv-bar-fill { display: block; height: 100%; background: #1d4ed8; border-radius: 0 4px 4px 0; }
+  .sv-bar-value { text-align: right; font-variant-numeric: tabular-nums; color: #1f2937; }
+
+  .sv-mini-bar {
+    height: 4px;
+    background: #f3f4f6;
+    border-radius: 2px;
+    margin-top: 0.35rem;
+    max-width: 320px;
+
+    span { display: block; height: 100%; background: #1d4ed8; border-radius: 2px; }
+  }
+
+  .sv-trend-table { margin-top: 1rem; max-width: 420px; }
+
+  .sv-comments {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: grid;
+    gap: 0.75rem;
+
+    li { border-left: 4px solid #e5e7eb; padding: 0.25rem 0 0.25rem 1rem; }
+    li.is-alert { border-left-color: #ef4444; }
+    blockquote { margin: 0; color: #1f2937; p:last-child { margin-bottom: 0; } }
+  }
+
+  .sv-comment-meta { margin: 0.25rem 0 0; font-size: 0.85rem; color: #4b5563; a { color: #4f46e5; } }
+
+  .sv-choice-grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+
+  .sv-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+
+    .sv-field { margin: 0; }
+  }
+
+  .sv-responses {
+    tr.is-alert td:first-child { box-shadow: inset 4px 0 0 #ef4444; }
+  }
+
+  .sv-comment-cell { max-width: 28rem; color: #374151; }
+
+  .sv-pager { display: flex; gap: 1rem; align-items: center; justify-content: center; margin-top: 1rem; a { color: #4f46e5; } }
+
+  .sv-form { display: grid; gap: 1rem; max-width: 760px; }
+
+  .sv-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    label { font-weight: 600; color: #374151; font-size: 0.9rem; }
+    input[type="text"], input[type="email"], textarea, select {
+      padding: 0.6rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      color: #1f2937;
+      background: white;
+
+      &:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
+    }
+    small { color: #4b5563; }
+  }
+
+  .sv-check { display: flex; align-items: center; gap: 0.5rem; color: #1f2937; font-weight: 500; }
+
+  .sv-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .sv-question {
+    position: relative;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+    scroll-margin-top: 100px;
+
+    &.is-inactive { background: #f9fafb; opacity: 0.85; }
+  }
+
+  .sv-question--new { border-style: dashed; border-color: #a5b4fc; }
+
+  .sv-question-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+
+  .sv-question-no {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    background: #eef2ff;
+    color: #3730a3;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .sv-question-meta { color: #4b5563; font-size: 0.9rem; flex: 1; }
+  .sv-question-move { display: flex; gap: 0.25rem; form { margin: 0; } }
+
+  .sv-icon-btn {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.4rem;
+    background: white;
+    color: #1f2937;
+    cursor: pointer;
+
+    &:disabled { opacity: 0.4; cursor: default; }
+  }
+
+  .sv-question-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1rem;
+
+    @media (max-width: 768px) { grid-template-columns: 1fr; }
+  }
+
+  .sv-field--wide { grid-column: 1 / -1; }
+  .sv-checks { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+  .sv-question-actions { margin-top: 0.75rem; }
+
+  // The delete form sits next to the save button, outside the question form.
+  .sv-delete { position: absolute; right: 1.25rem; bottom: 1rem; }
+  form:has(> .sv-delete) { margin: 0; }
+
+  .sv-response-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+
+    @media (max-width: 992px) { grid-template-columns: 1fr; }
+  }
+
+  .sv-alert-box { margin-bottom: 1.5rem; }
+
+  .sv-answers {
+    margin: 0;
+    display: grid;
+    gap: 0;
+
+    .sv-answer { padding: 0.65rem 0; border-bottom: 1px solid #f3f4f6; }
+    .sv-answer.is-low dd { color: #b91c1c; font-weight: 700; }
+    dt { font-weight: 500; color: #4b5563; font-size: 0.9rem; }
+    dd { margin: 0.15rem 0 0; color: #1f2937; font-weight: 600; p:last-child { margin-bottom: 0; } }
+  }
+}
+
+// Count of unseen negative answers next to "Chestionare" in the sidebar.
+.nav-alert-count {
+  margin-left: auto;
+  min-width: 1.4rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: #dc2626;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.4rem;
+  text-align: center;
+}

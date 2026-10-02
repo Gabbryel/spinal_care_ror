@@ -1,0 +1,12 @@
+<div class="sv-page">
+  <header class="sv-header">
+    <div>
+      <p class="sv-crumb"><%= link_to "Chestionare", dashboard_surveys_path %></p>
+      <h1>Chestionar nou</h1>
+      <p class="sv-sub">Pornește inactiv. După ce adăugați întrebările, îl activați din pagina lui.</p>
+    </div>
+  </header>
+  <section class="sv-panel">
+    <%= render "settings_form", survey: @survey %>
+  </section>
+</div>
