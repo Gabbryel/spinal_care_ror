@@ -1,4 +1,5 @@
-# Repairs what pasting into the rich-text editor leaves behind, on save:
+# Repairs what pasting into the rich-text editor leaves behind, on save
+# (condition/procedure pages, specialties, team members, patient info):
 #
 # - Text pasted while the cursor sat in a numbered list arrives as one big
 #   <ol> whose items are the paragraphs and headings, so the page showed a

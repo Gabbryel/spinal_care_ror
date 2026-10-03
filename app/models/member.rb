@@ -12,6 +12,8 @@ class Member < ApplicationRecord
   include SlugHelper
   include CheckSlugHelper
   include Auditable
+  include CleanRichText
+  cleans_rich_text :description
   # Before slugify: it saves the record again from inside after_save.
   before_save :prepare_specialties
   after_save :write_specialties

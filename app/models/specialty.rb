@@ -11,6 +11,8 @@ class Specialty < ApplicationRecord
   include SlugHelper
   include CheckSlugHelper
   include Auditable
+  include CleanRichText
+  cleans_rich_text :description
   after_save :slugify, unless: :check_slug
   def to_param
     "#{slug}"

@@ -148,6 +148,16 @@ class HealthTopicsTest < ActionDispatch::IntegrationTest
     assert_equal "Coloana", attachment.caption
   end
 
+  test "specialty, team and patient-info texts get the same repair" do
+    @neuro.update!(description: "<ol><li><h2>Ce tratăm</h2></li><li>Hernii de disc.</li></ol>")
+    doc = Nokogiri::HTML::DocumentFragment.parse(@neuro.reload.description.body.to_html)
+    assert_nil doc.at_css("ol")
+    assert_equal "Ce tratăm", doc.at_css("h2").text
+
+    fact = Fact.create!(name: "Ghid", description: "<ul><li><h2>Acte</h2></li><li>Buletin.</li></ul>")
+    assert_nil Nokogiri::HTML::DocumentFragment.parse(fact.reload.description.body.to_html).at_css("ul")
+  end
+
   test "only admins manage the pages" do
     sign_in User.create!(email: "seo@example.com", password: "secret-password-1", seo_specialist: true)
     get "/dashboard/afectiuni"
