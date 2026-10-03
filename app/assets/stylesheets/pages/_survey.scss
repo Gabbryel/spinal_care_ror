@@ -445,28 +445,62 @@
   .feedback-cta-button { min-height: 2.75rem; padding: 0.6rem 1.25rem; }
 }
 
-// Site-wide link in the top bar ("Programări & info").
+// Site-wide link in the top bar ("Programări & info"): an amber pill, the
+// strongest contrast on the slate bar (#1f2937 on #fbbf24 is 8.8:1; the pill
+// against #4a6775 is 3.6:1). A short pulse a few seconds after the page
+// loads draws the eye once; none with reduced motion.
 .before-nav-feedback {
   margin-left: auto;
-  padding-right: 1rem;
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  margin-right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.9rem 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: #fbbf24;
+  color: #1f2937;
+  font-size: 1rem;
+  line-height: 1.3;
+  text-decoration: none;
   white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  animation: before-nav-feedback-pulse 1.6s ease-out 2.5s 3;
 
-  &:hover { color: white; }
+  svg { flex: none; width: 1.15rem; height: 1.15rem; }
+  strong { font-weight: 700; }
 
-  .before-nav-feedback-long { display: inline; }
-  .before-nav-feedback-short { display: none; }
+  &:hover { background: #fcd34d; color: #1f2937; }
+  &:focus-visible { outline: 3px solid white; outline-offset: 2px; }
 
-  // Phones: an icon only, so the bar keeps to one line next to the phone number.
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+
+  // Phones: the bubble alone in an amber circle, so the bar keeps to one
+  // line next to the phone number.
   @media (max-width: 640px) {
-    padding-right: 0.75rem;
+    margin-right: 0.6rem;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    justify-content: center;
 
     .before-nav-feedback-long { display: none; }
-    .before-nav-feedback-short { display: inline-flex; }
-    svg { width: 1.4rem; height: 1.4rem; }
+    svg { width: 1.15rem; height: 1.15rem; }
   }
+}
+
+// Phones: one step smaller text and tighter gaps, so the phone number, the
+// social icons and the amber circle fit on one line down to 360px.
+@media (max-width: 640px) {
+  #before-nav {
+    font-size: 1rem;
+    column-gap: 0.4rem;
+  }
+}
+
+@keyframes before-nav-feedback-pulse {
+  0% { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 0 rgba(251, 191, 36, 0.75); }
+  70% { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 12px rgba(251, 191, 36, 0); }
+  100% { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 0 rgba(251, 191, 36, 0); }
 }
 
 // Questionnaire invitation 20 s into a visit: a corner card on desktop, a bar
