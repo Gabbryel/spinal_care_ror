@@ -3,6 +3,7 @@
 # specialty pages until published.
 class HealthTopic < ApplicationRecord
   include Auditable
+  include CleanRichText
 
   KINDS = {
     "afectiune" => { label: "Afecțiune", plural: "Afecțiuni", path: "afectiuni", schema: "MedicalCondition" },
@@ -10,6 +11,7 @@ class HealthTopic < ApplicationRecord
   }.freeze
 
   has_rich_text :body
+  cleans_rich_text :body
   has_many :health_topic_specialties, dependent: :destroy
   has_many :specialties, -> { order(:name) }, through: :health_topic_specialties
   has_many :health_topic_services, dependent: :destroy

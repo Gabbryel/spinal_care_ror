@@ -123,6 +123,31 @@ class HealthTopicsTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "text pasted into a numbered list is unwrapped, real lists are kept" do
+    topic = HealthTopic.create!(name: "Lombosciatică", body: <<~HTML)
+      <ol><li><br></li><li><h2>Pe scurt</h2></li><li>Primul paragraf.<br>Al doilea rând.</li><li><h2>Simptome</h2></li><li>Durerea apare:<ul><li>la mers</li><li>la ridicat</li></ul></li></ol>
+    HTML
+    doc = Nokogiri::HTML::DocumentFragment.parse(topic.reload.body.body.to_html)
+    assert_nil doc.at_css("ol"), "the pasted numbering is gone"
+    assert_equal ["Pe scurt", "Simptome"], doc.css("h2").map(&:text)
+    assert_includes doc.css("div").map(&:text), "Primul paragraf.Al doilea rând."
+    assert_equal ["la mers", "la ridicat"], doc.css("ul li").map(&:text), "a list inside an item stays a list"
+
+    real = HealthTopic.create!(name: "Migrenă", body: "<div>Declanșatori:</div><ol><li>stres</li><li>somn puțin</li></ol>")
+    assert_equal ["stres", "somn puțin"], Nokogiri::HTML::DocumentFragment.parse(real.reload.body.body.to_html).css("ol li").map(&:text)
+  end
+
+  test "images pasted as data URLs are uploaded and attached instead of stored in the text" do
+    png = Base64.strict_encode64(File.binread(Rails.root.join("test/fixtures/files/pixel.png")))
+    topic = HealthTopic.create!(name: "Scolioză", body: %(<div>Radiografie:</div><action-text-attachment content-type="image" url="data:image/png;base64,#{png}" caption="Coloana"></action-text-attachment>))
+    html = topic.reload.body.body.to_html
+    refute_includes html, "data:image"
+    attachment = topic.body.body.attachments.first
+    assert_kind_of ActiveStorage::Blob, attachment.attachable
+    assert_equal "image/png", attachment.attachable.content_type
+    assert_equal "Coloana", attachment.caption
+  end
+
   test "only admins manage the pages" do
     sign_in User.create!(email: "seo@example.com", password: "secret-password-1", seo_specialist: true)
     get "/dashboard/afectiuni"
