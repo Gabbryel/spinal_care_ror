@@ -21,15 +21,18 @@ class SurveysController < ApplicationController
     # Newest first: the consultations questionnaire (most patients) above the inpatient one.
     surveys = Survey.active.order(created_at: :desc)
     wanted = surveys.find { |s| s.slug == params[:chestionar] }
-    return redirect_to(public_survey_path(wanted.slug)) if wanted
+    return redirect_to(public_survey_path(wanted.slug, membru: params[:membru].presence)) if wanted
     return redirect_to(public_survey_path(surveys.first.slug)) if surveys.one?
 
     @surveys = surveys
   end
 
+  # ?membru=<slug> (from a doctor's or therapist's profile) preselects that
+  # person in the "who are you rating" question.
   def show
     @response = @survey.responses.new
     @started = started_token
+    @submitted = preselected_member
   end
 
   def create
@@ -53,6 +56,17 @@ class SurveysController < ApplicationController
 
   def set_survey
     @survey = Survey.active.includes(:questions).find_by!(slug: params[:slug])
+  end
+
+  def preselected_member
+    return {} if params[:membru].blank?
+
+    question = @survey.active_questions.find { |q| q.options_source == "medical_staff" }
+    member = question && Member.find_by(slug: params[:membru], is_active: true)
+    return {} unless member
+
+    label = SurveyQuestion.staff_label(member)
+    question.labels.include?(label) ? { question.id.to_s => label } : {}
   end
 
   def verifier

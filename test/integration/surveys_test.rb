@@ -1,6 +1,7 @@
 require "test_helper"
 require Rails.root.join("db/migrate/20261002090100_seed_inpatient_satisfaction_survey")
 require Rails.root.join("db/migrate/20261002120000_seed_outpatient_satisfaction_survey")
+require Rails.root.join("db/migrate/20261003140000_seed_medical_staff_survey")
 
 # Patient questionnaires: the public form (anonymous, anti-spam, validation,
 # scoring and alerts), the dashboard (management, answers, interpretation)
@@ -254,8 +255,9 @@ class SurveysTest < ActionDispatch::IntegrationTest
                             has_own_page: true, is_active: true, order: 1)
     PromoPackage.create!(name: "Pachet", valid_until: Date.current + 10.days)
     consult = "/parerea-ta?chestionar=satisfactie-pacienti-ambulatoriu"
+    staff = "/parerea-ta?chestionar=evaluare-echipa-medicala"
     {
-      "/specialitati-medicale/#{ortho.slug}" => consult, "/echipa/#{member.slug}" => consult, "/echipa" => consult,
+      "/specialitati-medicale/#{ortho.slug}" => consult, "/echipa/#{member.slug}" => "#{staff}&membru=#{member.slug}", "/echipa" => staff,
       "/servicii-medicale" => consult, "/specialitati-medicale" => "/parerea-ta", "/promotii" => "/parerea-ta"
     }.each do |path, href|
       get path
@@ -290,6 +292,65 @@ class SurveysTest < ActionDispatch::IntegrationTest
     box = css_select(".sv-card").find { |c| c.text.include?("Invitația de pe site") }
     values = box.css(".sv-stats dd").map { |dd| dd.text.squish }
     assert_equal ["4", "1 (25.0%)", "2 (50.0%)"], values
+  end
+
+  # ------------------------------------------------- medical staff survey
+
+  def seed_staff
+    medic = Profession.create!(name: "medic")
+    nurse = Profession.create!(name: "asistent medical generalist")
+    desk = Profession.create!(name: "front desk officer medical")
+    neuro = Specialty.create!(name: "Neurologie", description: "<p>x</p>", is_active: true)
+    @dr = Member.create!(first_name: "Roxana", last_name: "Matei", profession: medic, specialty: neuro, academic_title: "dr.",
+                         doctor_grade: "primar", has_own_page: true, is_active: true, order: 1)
+    @nurse = Member.create!(first_name: "Ana", last_name: "Pop", profession: nurse, is_active: true, order: 2)
+    Member.create!(first_name: "Ion", last_name: "Recepție", profession: desk, is_active: true, order: 3)
+    Member.create!(first_name: "Vechi", last_name: "Plecat", profession: medic, is_active: false, order: 4)
+    ActiveRecord::Migration.suppress_messages { SeedMedicalStaffSurvey.new.migrate(:up) }
+    Survey.find_by!(slug: "evaluare-echipa-medicala")
+  end
+
+  test "the staff questionnaire lists the active doctors, therapists and nurses only" do
+    survey = seed_staff
+    who = survey.questions.first
+    assert_equal ["dr. Roxana Matei (medic, Neurologie)", "Ana Pop (asistent medical generalist)", "Altcineva din echipă / nu știu numele"], who.labels
+    assert who.segment && who.required
+    assert survey.headline_question.text.start_with?("Cât de mulțumit sunteți")
+  end
+
+  test "a profile opens the staff questionnaire with that person already chosen" do
+    seed_staff
+    get "/echipa/#{@dr.slug}"
+    assert_select ".feedback-cta a[href=?]", "/parerea-ta?chestionar=evaluare-echipa-medicala&membru=#{@dr.slug}"
+    assert_select ".feedback-cta-title", "Spune-ne cum te-a tratat!"
+
+    get "/parerea-ta", params: { chestionar: "evaluare-echipa-medicala", membru: @dr.slug }
+    assert_redirected_to "/chestionare/evaluare-echipa-medicala?membru=#{@dr.slug}"
+    follow_redirect!
+    assert_select "input[type=radio][checked][value=?]", "dr. Roxana Matei (medic, Neurologie)"
+
+    get "/chestionare/evaluare-echipa-medicala", params: { membru: "nu-exista" }
+    assert_response :success
+    assert_select "input[type=radio][checked]", 0
+  end
+
+  test "each colleague gets their own index in the interpretation" do
+    @survey = seed_staff
+    submit(answers("Pe cine doriți" => "dr. Roxana Matei (medic, Neurologie)"))
+    submit(answers("Pe cine doriți" => "Ana Pop (asistent medical generalist)", "Amabilitatea" => "Nesatisfăcător"))
+    sign_in @admin
+    get "/dashboard/chestionare/#{@survey.slug}/interpretare"
+    rows = css_select("table.bh-table tr").map { |tr| tr.css("td").map { |td| td.text.squish } }
+    assert rows.any? { |r| r[0] == "dr. Roxana Matei (medic, Neurologie)" && r[1] == "1" }
+    assert rows.any? { |r| r[0] == "Ana Pop (asistent medical generalist)" && r[1] == "1" }
+  end
+
+  test "with three questionnaires the choice page shows three cards" do
+    seed_outpatient
+    seed_staff
+    get "/parerea-ta"
+    assert_select ".pt-card", 3
+    assert_select ".pt-card--staff h3", "Vreau să evaluez un medic, un kinetoterapeut sau o asistentă"
   end
 
   test "the top bar links to the questionnaires on every page" do

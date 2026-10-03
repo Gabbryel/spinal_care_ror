@@ -80,7 +80,12 @@
     </div>
 
     <%= render partial: "specialties/contact_cta", locals: { placement: "bottom" } %>
-    <%= render "surveys/feedback_cta", key: "profil", survey: "satisfactie-pacienti-ambulatoriu", compact: true,
-               kicker: "Ați fost la #{full_name_with_title(@member).squish}?" %>
+    <%# Doctors, therapists and nurses: the staff questionnaire, with them preselected. %>
+    <% clinical = SurveyQuestion::MEDICAL_STAFF_PROFESSIONS.include?(@member.profession&.slug) %>
+    <%= render "surveys/feedback_cta", key: "profil", compact: true,
+               survey: (clinical ? "evaluare-echipa-medicala" : "satisfactie-pacienti-ambulatoriu"),
+               member: (@member.slug if clinical),
+               kicker: "Ați fost la #{full_name_with_title(@member).squish}?",
+               title: (clinical ? "Spune-ne cum te-a tratat!" : nil) %>
   </div>
 </div>

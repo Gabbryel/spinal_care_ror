@@ -5,7 +5,8 @@
     kicker / title: override the default wording (e.g. a doctor's name).
     compact: true for a one-line strip. %>
 <% key = local_assigns[:key] || "main" %>
-<% href = local_assigns[:survey] ? parerea_ta_path(chestionar: local_assigns[:survey]) : parerea_ta_path %>
+<%# member: slug of a colleague to preselect in the staff questionnaire. %>
+<% href = local_assigns[:survey] ? parerea_ta_path(chestionar: local_assigns[:survey], membru: local_assigns[:member]) : parerea_ta_path %>
 <aside class="feedback-cta<%= ' feedback-cta--compact' if local_assigns[:compact] %>" aria-labelledby="feedback-cta-title-<%= key %>">
   <div class="feedback-cta-icon" aria-hidden="true">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" focusable="false">

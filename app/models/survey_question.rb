@@ -7,18 +7,48 @@ class SurveyQuestion < ApplicationRecord
   KINDS = { "rating" => "Evaluare (cu scor)", "choice" => "Alegere (fără scor)", "text" => "Text liber" }.freeze
 
   # Option lists read from the database every time a form opens, so a new or
-  # renamed specialty shows up without anyone editing the questionnaire.
+  # renamed specialty or colleague shows up without anyone editing the
+  # questionnaire. Each source ends with its own "other" option.
   OTHER = "Altă specialitate / nu știu".freeze
+  OTHER_STAFF = "Altcineva din echipă / nu știu numele".freeze
+  # Clinical professions a patient deals with directly: doctors,
+  # physiotherapists and nurses (not reception, management or orderlies).
+  MEDICAL_STAFF_PROFESSIONS = %w[medic fiziokinetoterapeut asistent-medical-generalist asistent-medical-bfkt asistent-medical-de-radiologie].freeze
   SOURCES = {
     "specialties" => {
       label: "Specialitățile active ale clinicii (fără spitalizarea de zi)",
-      names: -> { Specialty.where(is_active: true).where(is_day_hospitalize: [false, nil]).order(:name).pluck(:name) }
+      names: -> { Specialty.where(is_active: true).where(is_day_hospitalize: [false, nil]).order(:name).pluck(:name) },
+      other: OTHER
     },
     "day_hospital_specialties" => {
       label: "Specialitățile cu spitalizare de zi",
-      names: -> { Specialty.where(is_active: true, has_day_hospitalization: true).order(:name).pluck(:name) }
+      names: -> { Specialty.where(is_active: true, has_day_hospitalization: true).order(:name).pluck(:name) },
+      other: OTHER
+    },
+    "medical_staff" => {
+      label: "Medicii, kinetoterapeuții și asistenții activi",
+      names: -> { SurveyQuestion.medical_staff.map { |m| SurveyQuestion.staff_label(m) } },
+      other: OTHER_STAFF
     }
   }.freeze
+
+  # Doctors first, then physiotherapists, then nurses; by surname within each.
+  def self.medical_staff
+    Member.joins(:profession).where(is_active: true, professions: { slug: MEDICAL_STAFF_PROFESSIONS })
+          .includes(:profession, :specialties).to_a
+          .sort_by { |m| [MEDICAL_STAFF_PROFESSIONS.index(m.profession.slug), I18n.transliterate(m.last_name.to_s), m.first_name.to_s] }
+  end
+
+  # "dr. Mădălina Andriescu (medic, Obstetrică-Ginecologie)",
+  # "Ana Pop (asistent medical generalist)". Answers keep this label.
+  def self.staff_label(member)
+    title = member.academic_title.to_s.strip
+    title = "" if title == "-"
+    name = [title, member.first_name, member.last_name].map(&:to_s).map(&:strip).reject(&:empty?).join(" ")
+    role = member.profession.name.to_s.strip
+    field = member.profession.slug == "medic" ? member.specialties.map { |sp| sp.name.sub(/\s*\(.*\)\s*\z/, "") }.join(", ") : nil
+    "#{name} (#{[role, field].compact_blank.join(', ')})"
+  end
 
   belongs_to :survey, inverse_of: :questions
 
@@ -40,7 +70,8 @@ class SurveyQuestion < ApplicationRecord
   def options
     return super if options_source.blank? || !SOURCES.key?(options_source)
 
-    @source_options ||= (SOURCES[options_source][:names].call + [OTHER]).map { |name| { "label" => name, "score" => nil } }
+    source = SOURCES[options_source]
+    @source_options ||= (source[:names].call + [source[:other]]).map { |name| { "label" => name, "score" => nil } }
   end
 
   def options_source=(value)
